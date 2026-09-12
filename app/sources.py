@@ -22,6 +22,9 @@ _DEFAULT_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 MAX_SEARCH_WORKERS = 8
 
+PROBE_WORD = "test"
+PROBE_FALLBACK_WORD = "1080p"
+
 _RETRY_STATUS = (429, 500, 502, 503, 504)
 
 _STRICT = ssl.create_default_context()
@@ -700,7 +703,9 @@ class Source:
     def probe(self, timeout=None):
         t0 = time.monotonic()
         try:
-            items = self.search("test", 1, timeout or self.timeout)
+            items = self.search(PROBE_WORD, 1, timeout or self.timeout)
+            if not items:
+                items = self.search(PROBE_FALLBACK_WORD, 1, timeout or self.timeout)
             ms = int((time.monotonic() - t0) * 1000)
             return True, ms, len(items or []), ""
         except ProxyUnreachable as exc:

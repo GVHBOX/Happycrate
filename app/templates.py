@@ -15,9 +15,6 @@ _DEFAULT_SIZE_PATTERN = r">([\d.]+\s*[KMGT]i?B)\s*<"
 
 _CONTEXT_WINDOW = 600
 
-_MAP_KEYS = ("title", "name", "hash", "size", "seeders", "leechers",
-             "added", "magnet")
-
 def render_url(template: str, query: str, page: int) -> str:
     if not template:
         return ""

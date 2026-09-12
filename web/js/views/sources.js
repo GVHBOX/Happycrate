@@ -41,7 +41,7 @@
       ? '<button class="cb ' + (store.isChecked(s.key) ? "on" : "") + '" data-check="' + esc(s.key) + '">' +
         (store.isChecked(s.key) ? ICON.check : "") + '</button>'
       : '<button class="sw ' + (s.enabled ? "" : "off") + '" data-sw="' + esc(s.key) +
-        '" title="' + (s.enabled ? "点击禁用" : "点击启用") + '"></button>';
+        '"></button>';
 
     var ops = "";
     if (st.batch){
@@ -119,9 +119,10 @@
     var isEdit = !!existing;
     var d = existing || {key:"", label:"", type:"json", timeout:15, addr:"", listPath:"", map:{}};
     var TYPE_LABEL = {builtin:"内置", rss:"RSS", json:"JSON", html:"HTML"};
-    var types = (isEdit && d.type === "builtin")
-      ? ["builtin", "rss", "json", "html"]
-      : ["rss", "json", "html"];
+    var types;
+    if (isEdit && d.type === "builtin") types = ["builtin", "rss", "json", "html"];
+    else if (isEdit) types = ["rss", "json", "html"];
+    else types = ["rss", "json"];
     var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["时间","added"],["链接","magnet"]];
     var map = d.map || {};
 
@@ -227,7 +228,7 @@
           btn.classList.remove("busy");
           if (!r.ok){ showErr(m, (r.errors && r.errors[0]) || "测试失败"); return; }
           if (r.count === 0){
-            showErr(m, "返回 0 条 —— 地址能连上，但抠不出结果，疑似站点改版");
+            showErr(m, "返回 0 条 —— 关键词可能真无结果，也可能是站点结构或字段映射对不上");
             return;
           }
           showErr(m, "", "测试通过 · 返回 " + r.count + " 条结果");
@@ -407,7 +408,6 @@
         '<div class="rows" id="rows"></div>' +
         '<div class="dfoot"><div class="dot"></div><span class="status" id="status"></span>' +
           '<div class="spacer"></div>' +
-          '<button class="btn btn-brand" id="btnSave">' + ICON.save + '保存</button>' +
         '</div>' +
       '</div>' +
       '<div class="caption" id="caption"></div>';
@@ -474,7 +474,6 @@
         var key = sw.dataset.sw, s = store.byKey(key);
         s.enabled = !s.enabled;
         sw.classList.toggle("off", !s.enabled);
-        sw.title = s.enabled ? "点击禁用" : "点击启用";
         sw.closest(".row").classList.toggle("off", !s.enabled);
         api.toggleSource(key, s.enabled);
         updateStatus();
@@ -588,9 +587,6 @@
       });
     };
 
-    root.querySelector("#btnSave").onclick = function(){
-      M.toast("已保存 · 共 " + store.get().sources.length + " 个源，已启用 " + store.enabledCount() + " 个", "ok");
-    };
     root.querySelector("#btnClose").onclick = function(){
       location.hash = "search";
     };

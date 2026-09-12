@@ -64,9 +64,6 @@ SETTING_SPECS = {
     "ui_font_size": {"type": int, "min": 12, "max": 24},
 }
 
-def config_dir():
-    return paths.data_dir()
-
 def config_path():
     return paths.sources_path()
 

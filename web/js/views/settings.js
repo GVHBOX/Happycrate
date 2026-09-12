@@ -168,7 +168,6 @@
       var b = e.target.closest("[data-dl]");
       if (!b) return;
       dlKey = b.dataset.dl;
-      paintDl(null, dlKey);
       var cur = root.querySelector("#s_dl");
       [].slice.call(cur.querySelectorAll("button")).forEach(function(x){
         x.classList.toggle("on", x.dataset.dl === dlKey);
@@ -183,8 +182,9 @@
           applyFont(root.querySelector("#s_ui_font_size").value);
           HC.motion.toast("设置已保存");
         } else {
-          st.textContent = "有 " + ((r && r.errors) || []).length + " 项没保存";
-          HC.motion.toast("有设置项不合法", "err");
+          var first = ((r && r.errors) || [])[0] || "有设置项不合法";
+          st.textContent = first;
+          HC.motion.toast(first, "err");
         }
       });
     };
@@ -196,7 +196,7 @@
         ui_font_size: 18
       }).then(function(){
         dlKey = "";
-        applyFont(20);
+        applyFont(18);
         mountEl.innerHTML = "";
         mount(mountEl);
         HC.motion.toast("已恢复默认设置");

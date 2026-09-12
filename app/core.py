@@ -132,9 +132,6 @@ class SearchResult:
         self.items: list[dict] = []
         self.errors: dict[str, str] = {}
 
-    def failed(self) -> bool:
-        return not self.items and bool(self.errors)
-
 def search(query: str, page: int, timeout: int, enabled,
            min_len: int = 2, on_source=None,
            batch: int | None = None) -> tuple[SearchResult, str | None]:

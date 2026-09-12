@@ -229,7 +229,7 @@
         out.push("  地址  " + s.addr);
         out.push("  现象  " + (empty
           ? "返回 200，但解析出 0 条结果"
-          : "连接超时（" + s.timeout + " 秒）"));
+          : (s.health.err || "请求失败")));
         out.push("  最近  " + (s.health.times.join(" ") || "无记录"));
         out.push("  建议  " + (empty ? "疑似站点改版，需要改解析代码" : "换镜像地址"));
         out.push("  位置  app/sources.py :: _search_" + s.key);
@@ -294,12 +294,17 @@
       return Promise.resolve({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 20
+        ui_font_size: 18
       });
     },
 
     saveSettings: function(fields){
       if (live()) return window.pywebview.api.save_settings(fields || {});
+      var f = fields || {};
+      var proxy = String(f.proxy || "").trim();
+      if (proxy && !/^https?:\/\//i.test(proxy)){
+        return Promise.resolve({ok: false, errors: ["代理仅支持 http:// 或 https:// 开头"]});
+      }
       return Promise.resolve({ok: true, errors: []});
     },
 

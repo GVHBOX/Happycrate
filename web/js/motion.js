@@ -135,9 +135,6 @@
     esc: esc,
     toast: toast,
     copy: copy,
-    dragRows: dragRows,
-    icon: {
-      check: ICON_CHECK
-    }
+    dragRows: dragRows
   };
 })();

@@ -106,7 +106,7 @@ def _draft(item: dict) -> dict:
         "hash_pattern": item.get("hashPattern", "") or item.get("hash_pattern", "") or "",
         "title_pattern": item.get("titlePattern", "") or item.get("title_pattern", "") or "",
         "size_pattern": item.get("sizePattern", "") or item.get("size_pattern", "") or "",
-        "timeout": int(item.get("timeout", 15) or 15),
+        "timeout": item.get("timeout", 15),
     }
 
 
@@ -251,7 +251,7 @@ class Api:
                     "label": item.get("label") or current.get("label"),
                     "type": "builtin",
                     "base": _base_field(key, _addr_of(item) or current.get("base", "")),
-                    "timeout": int(item.get("timeout", current.get("timeout", 15)) or 15),
+                    "timeout": item.get("timeout", current.get("timeout", 15)),
                     "enabled": bool(item.get("enabled", current.get("enabled", True))),
                 }
             else:
@@ -261,10 +261,13 @@ class Api:
                     "url": _addr_of(item),
                     "list_path": item.get("listPath", "") or "",
                     "map": item.get("map") or {},
-                    "timeout": int(item.get("timeout", current.get("timeout", 15)) or 15),
+                    "timeout": item.get("timeout", current.get("timeout", 15)),
                     "enabled": bool(item.get("enabled", current.get("enabled", True))),
                     **_pattern_fields(item),
                 }
+            errs = config.validate_source({**current, **payload})
+            if errs:
+                return {"ok": False, "errors": errs}
             self._cfg.update(key, **payload)
             self._cfg.save()
             sources.reload_from_config(self._cfg)
@@ -315,7 +318,7 @@ class Api:
             return {"ok": False, "count": 0, "errors": errors}
         try:
             ok, count, msg = templates.test_source(
-                draft, "test", int(item.get("timeout", 15) or 15))
+                draft, "test", int(draft.get("timeout") or 15))
         except ValueError as exc:
             return {"ok": False, "count": 0, "errors": [str(exc)]}
         return {
@@ -377,6 +380,7 @@ class Api:
         if not keys:
             return {"ok": False, "token": 0, "total": 0, "error": "没有启用的数据源"}
 
+        self._search_token = 0
         token = sources.start_batch()
         self._search_token = token
         threading.Thread(
@@ -391,8 +395,8 @@ class Api:
             t = 0
         if not t:
             t = self._search_token
-        sources.cancel_batch(t)
         self._search_token = 0
+        sources.cancel_batch(t)
         return True
 
     def _search_worker(self, token: int, text: str, keys: list[str]) -> None:
@@ -494,7 +498,7 @@ class Api:
             out.append(f"> {e.get('label', key)} ({key})")
             out.append(f"  地址  {_addr_of(e)}")
             out.append("  现象  " + ("返回 200，但解析出 0 条结果" if empty
-                                     else f"连接超时（{e.get('timeout', 15)} 秒）"))
+                                     else (h.get("err") or "请求失败")))
             out.append(f"  最近  {' '.join(h.get('times', [])) or '无记录'}")
             out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
             out.append(f"  位置  app/sources.py :: _search_{key}")
@@ -506,6 +510,9 @@ class Api:
         return {k: data.get(k) for k in config.SETTING_SPECS if k in data}
 
     def save_settings(self, fields: dict) -> dict:
+        proxy = str((fields or {}).get("proxy") or "").strip()
+        if proxy and not proxy.lower().startswith(("http://", "https://")):
+            return {"ok": False, "errors": ["代理仅支持 http:// 或 https:// 开头"]}
         bad = self._settings.update(**(fields or {}))
         if bad:
             return {"ok": False, "errors": bad}

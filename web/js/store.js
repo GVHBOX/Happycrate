@@ -44,15 +44,7 @@
       return state.sources.filter(function(s){ return s.enabled; }).length;
     },
 
-    isChecked: function(key){ return state.checked.indexOf(key) >= 0; },
-
-    toggleChecked: function(key){
-      var i = state.checked.indexOf(key);
-      if (i >= 0) state.checked.splice(i, 1);
-      else state.checked.push(key);
-    },
-
-    clearChecked: function(){ state.checked = []; emit(); }
+    isChecked: function(key){ return state.checked.indexOf(key) >= 0; }
   };
 
   function emit(){

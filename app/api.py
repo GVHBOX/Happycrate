@@ -1,0 +1,597 @@
+from __future__ import annotations
+
+import concurrent.futures as futures
+import json
+import os
+import threading
+import time
+
+from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
+               paths, runtime, sources, store, templates)
+
+logger = log.get_logger(__name__)
+
+HEALTH_WINDOW = 5
+SLOW_MS = 5000
+
+
+def _addr_of(entry: dict) -> str:
+    if entry.get("type") == "builtin":
+        if entry.get("addr"):
+            return str(entry["addr"])
+        return sources.base_of(entry.get("key", ""), entry.get("base") or "")
+    return entry.get("addr") or entry.get("url") or ""
+
+
+def _base_field(key: str, addr: str) -> str:
+    addr = (addr or "").strip().rstrip("/")
+    if not addr or addr == sources.base_of(key, ""):
+        return ""
+    return addr
+
+
+def _to_view(entry: dict, health: dict | None = None) -> dict:
+    h = health or entry.get("health") or {}
+    return {
+        "key": entry.get("key", ""),
+        "label": entry.get("label", entry.get("key", "")),
+        "type": entry.get("type", "builtin"),
+        "enabled": bool(entry.get("enabled", True)),
+        "timeout": int(entry.get("timeout", 15) or 15),
+        "addr": _addr_of(entry),
+        "listPath": entry.get("list_path", "") or "",
+        "map": entry.get("map") or {},
+        "health": {
+            "state": h.get("state", "na"),
+            "ms": int(h.get("ms", 0) or 0),
+            "err": h.get("err", ""),
+            "times": list(h.get("times", []) or []),
+        },
+    }
+
+
+def _err_text(ok: bool, count: int, err: str) -> str:
+    if ok and count == 0:
+        return "返回 0 条"
+    if ok:
+        return ""
+    low = (err or "").lower()
+    if "proxy" in low:
+        return "代理不可达"
+    if "timed out" in low or "timeout" in low:
+        return "超时"
+    if "403" in low:
+        return "403 拒绝"
+    if "503" in low or " 500" in low or "500 " in low:
+        return "服务异常"
+    if "getaddrinfo" in low or "name or service" in low or "refused" in low:
+        return "无法连接"
+    return "请求失败"
+
+
+def _state_of(times: list[str], ms: int, err: str = "") -> str:
+    recent = times[-HEALTH_WINDOW:]
+    if not recent:
+        return "na"
+    if err and recent[-1] == "err":
+        return "err"
+    bad = sum(1 for t in recent if t in ("err", "empty"))
+    if bad >= 3:
+        return "err"
+    if ms and ms >= SLOW_MS:
+        return "warn"
+    return "ok"
+
+
+def _pattern_fields(item: dict) -> dict:
+    out = {}
+    for name, camel in (("hash_pattern", "hashPattern"),
+                        ("title_pattern", "titlePattern"),
+                        ("size_pattern", "sizePattern")):
+        value = str(item.get(camel) or item.get(name) or "").strip()
+        if value:
+            out[name] = value
+    return out
+
+
+def _draft(item: dict) -> dict:
+    return {
+        "key": item.get("key") or "test",
+        "label": item.get("label") or "test",
+        "type": item.get("type") or "json",
+        "url": _addr_of(item),
+        "base": item.get("base", "") or "",
+        "list_path": item.get("listPath", "") or "",
+        "map": item.get("map") or {},
+        "hash_pattern": item.get("hashPattern", "") or item.get("hash_pattern", "") or "",
+        "title_pattern": item.get("titlePattern", "") or item.get("title_pattern", "") or "",
+        "size_pattern": item.get("sizePattern", "") or item.get("size_pattern", "") or "",
+        "timeout": int(item.get("timeout", 15) or 15),
+    }
+
+
+def _item_view(item: dict) -> dict:
+    size = item.get("size")
+    added = item.get("added")
+    names = item.get("sources")
+    if not isinstance(names, list) or not names:
+        only = item.get("source")
+        names = [str(only)] if only else []
+    return {
+        "hash": (item.get("info_hash") or "").lower(),
+        "title": item.get("title") or "",
+        "size": int(size or 0),
+        "sizeText": core.format_size(size),
+        "seeders": int(item.get("seeders") or 0),
+        "leechers": int(item.get("leechers") or 0),
+        "added": int(added or 0),
+        "addedText": core.format_time_relative(added),
+        "magnet": core.magnet_of(item),
+        "sources": [str(n) for n in names if n],
+    }
+
+
+def _migration_source(report) -> str:
+    if not isinstance(report, dict):
+        return ""
+    src = report.get("source") or ""
+    if isinstance(src, dict):
+        src = src.get("path", "")
+    return str(src or "")
+
+
+def _stamp() -> str:
+    return time.strftime("%Y-%m-%d %H:%M:%S")
+
+
+class Api:
+
+    def __init__(self, window=None):
+        self._window = window
+        self._cfg = config.Config()
+        self._settings = config.Settings()
+        self._health: dict[str, dict] = {}
+        self._probe_token = 0
+        self._search_token = 0
+        self._migration: dict = {}
+        self._maxed = False
+
+    def boot(self) -> None:
+        paths.ensure_dirs()
+        self._cfg.load()
+        self._settings.load()
+        runtime.replace(dict(self._settings.data))
+        try:
+            self._migration = migrate.run(self._cfg, self._settings)
+        except Exception as exc:
+            self._migration = {"done": False, "error": f"{type(exc).__name__}: {exc}"}
+            logger.warning("旧配置迁移跳过：%s", exc)
+        runtime.replace(dict(self._settings.data))
+        self._load_health()
+        sources.reload_from_config(self._cfg)
+        logger.info("%s v%s 启动 · 数据目录 %s", APP_TITLE, __version__, paths.data_dir())
+
+    def _load_health(self) -> None:
+        for entry in self._cfg.sources:
+            h = entry.get("health")
+            if isinstance(h, dict):
+                self._health[entry.get("key", "")] = {
+                    "state": h.get("state", "na"),
+                    "ms": int(h.get("ms", 0) or 0),
+                    "err": h.get("err", ""),
+                    "times": list(h.get("times", []) or [])[-HEALTH_WINDOW:],
+                }
+
+    def _demote_bad(self) -> None:
+        entries = self._cfg.sources
+        if len(entries) < 2:
+            return
+        bad = set()
+        for entry in entries:
+            times = self._health.get(entry.get("key", ""), {}).get("times") or []
+            if len(times) >= HEALTH_WINDOW and all(t == "err" for t in times):
+                bad.add(entry.get("key", ""))
+        if not bad:
+            return
+        ordered = [e for e in entries if e.get("key", "") not in bad] + \
+                  [e for e in entries if e.get("key", "") in bad]
+        for i, entry in enumerate(ordered):
+            entry["order"] = i
+        self._cfg.data["sources"] = ordered
+        sources.reload_from_config(self._cfg)
+
+    def _persist_health(self) -> None:
+        for entry in self._cfg.sources:
+            key = entry.get("key", "")
+            if key in self._health:
+                entry["health"] = self._health[key]
+        self._demote_bad()
+        self._cfg.save()
+
+    def _push(self, js: str) -> None:
+        if not self._window:
+            return
+        try:
+            self._window.evaluate_js(js)
+        except Exception as exc:
+            logger.debug("推送前端失败：%s", exc)
+
+    def list_sources(self) -> list[dict]:
+        return [_to_view(e, self._health.get(e.get("key", ""))) for e in self._cfg.sources]
+
+    def toggle_source(self, key: str, on: bool) -> bool:
+        if not self._cfg.set_enabled(key, bool(on)):
+            return False
+        self._cfg.save()
+        sources.reload_from_config(self._cfg)
+        return True
+
+    def reorder_sources(self, keys: list[str]) -> bool:
+        order = {k: i for i, k in enumerate(keys or [])}
+        entries = sorted(
+            self._cfg.sources,
+            key=lambda e: order.get(e.get("key", ""), len(order)),
+        )
+        for i, entry in enumerate(entries):
+            entry["order"] = i
+        self._cfg.data["sources"] = entries
+        self._cfg.save()
+        sources.reload_from_config(self._cfg)
+        return True
+
+    def save_source(self, entry: dict) -> dict:
+        item = dict(entry or {})
+        key = str(item.get("key") or "").strip()
+
+        if key and self._cfg.get(key):
+            current = self._cfg.get(key)
+            final_type = str(item.get("type") or current.get("type") or "builtin")
+            if final_type == "builtin":
+                payload = {
+                    "label": item.get("label") or current.get("label"),
+                    "type": "builtin",
+                    "base": _base_field(key, _addr_of(item) or current.get("base", "")),
+                    "timeout": int(item.get("timeout", current.get("timeout", 15)) or 15),
+                    "enabled": bool(item.get("enabled", current.get("enabled", True))),
+                }
+            else:
+                payload = {
+                    "label": item.get("label") or current.get("label"),
+                    "type": final_type,
+                    "url": _addr_of(item),
+                    "list_path": item.get("listPath", "") or "",
+                    "map": item.get("map") or {},
+                    "timeout": int(item.get("timeout", current.get("timeout", 15)) or 15),
+                    "enabled": bool(item.get("enabled", current.get("enabled", True))),
+                    **_pattern_fields(item),
+                }
+            self._cfg.update(key, **payload)
+            self._cfg.save()
+            sources.reload_from_config(self._cfg)
+            return {"ok": True, "errors": []}
+
+        new = {
+            "key": key or self._cfg.next_custom_key(),
+            "label": item.get("label") or "未命名源",
+            "type": item.get("type") or "json",
+            "url": _addr_of(item),
+            "list_path": item.get("listPath", "") or "",
+            "map": item.get("map") or {},
+            "timeout": int(item.get("timeout", 15) or 15),
+            "enabled": bool(item.get("enabled", True)),
+            **_pattern_fields(item),
+        }
+        ok, errors = self._cfg.add_source(new)
+        if ok:
+            self._cfg.save()
+            sources.reload_from_config(self._cfg)
+        return {"ok": ok, "errors": errors}
+
+    def remove_source(self, key: str) -> bool:
+        if not self._cfg.remove_source(key):
+            return False
+        self._health.pop(key, None)
+        self._cfg.save()
+        sources.reload_from_config(self._cfg)
+        return True
+
+    def test_source(self, entry: dict) -> dict:
+        item = dict(entry or {})
+        if item.get("type") == "builtin":
+            src = sources.get(item.get("key", ""))
+            if not src:
+                return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
+            ok, ms, count, err = src.probe()
+            return {
+                "ok": ok,
+                "count": count if ok else 0,
+                "ms": ms,
+                "errors": [] if ok else [_err_text(ok, count, err)],
+            }
+
+        draft = _draft(item)
+        errors = config.validate_source(draft)
+        if errors:
+            return {"ok": False, "count": 0, "errors": errors}
+        try:
+            ok, count, msg = templates.test_source(
+                draft, "test", int(item.get("timeout", 15) or 15))
+        except ValueError as exc:
+            return {"ok": False, "count": 0, "errors": [str(exc)]}
+        return {
+            "ok": ok,
+            "count": count,
+            "errors": [] if ok else [msg or "请求失败"],
+        }
+
+    def probe_sources(self, keys: list[str] | None = None) -> int:
+        targets = [
+            s for s in sources.ALL_SOURCES
+            if s.enabled and (not keys or s.key in set(keys))
+        ]
+        if not targets:
+            return 0
+        self._probe_token += 1
+        token = self._probe_token
+        threading.Thread(
+            target=self._probe_worker, args=(token, targets), daemon=True
+        ).start()
+        return len(targets)
+
+    def _mark(self, key: str, ok: bool, count: int, ms: int, err: str) -> dict:
+        mark = "ok" if ok and count else ("empty" if ok else "err")
+        h = self._health.setdefault(key, {"state": "na", "ms": 0, "err": "", "times": []})
+        h["times"] = (h.get("times", []) + [mark])[-HEALTH_WINDOW:]
+        if ms:
+            h["ms"] = int(ms)
+        h["err"] = err
+        h["state"] = _state_of(h["times"], h.get("ms", 0), err)
+        return h
+
+    def _probe_worker(self, token: int, targets) -> None:
+        def one(src):
+            if token != self._probe_token:
+                return
+            ok, ms, count, err = src.probe()
+            text = _err_text(ok, count, err)
+            h = self._mark(src.key, ok, count, ms, text)
+            payload = json.dumps({"key": src.key, "state": h["state"], "ms": h["ms"], "err": text},
+                                 ensure_ascii=False)
+            self._push(f"window.__onProbe && window.__onProbe({payload})")
+
+        workers = max(1, min(8, len(targets)))
+        with futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            for _ in pool.map(one, targets):
+                pass
+        self._persist_health()
+        self._push("window.__onProbeDone && window.__onProbeDone()")
+
+    def start_search(self, query: str) -> dict:
+        text = (query or "").strip()
+        min_len = int(self._settings.get("min_query_len", 2) or 2)
+        if len(text) < min_len:
+            return {"ok": False, "token": 0, "total": 0,
+                    "error": f"关键字至少 {min_len} 个字符"}
+
+        keys = sources.enabled_keys()
+        if not keys:
+            return {"ok": False, "token": 0, "total": 0, "error": "没有启用的数据源"}
+
+        token = sources.start_batch()
+        self._search_token = token
+        threading.Thread(
+            target=self._search_worker, args=(token, text, keys), daemon=True
+        ).start()
+        return {"ok": True, "token": token, "total": len(keys), "error": ""}
+
+    def cancel_search(self, token=0) -> bool:
+        try:
+            t = int(token)
+        except (TypeError, ValueError):
+            t = 0
+        if not t:
+            t = self._search_token
+        sources.cancel_batch(t)
+        self._search_token = 0
+        return True
+
+    def _search_worker(self, token: int, text: str, keys: list[str]) -> None:
+        timeout = int(self._settings.get("timeout", 15) or 15)
+        min_len = int(self._settings.get("min_query_len", 2) or 2)
+        seen: set[str] = set()
+        pushed = 0
+
+        def on_source(key, items, err, ms=0):
+            if token != self._search_token:
+                return
+            nonlocal pushed
+            count = len(items or [])
+            text_err = _err_text(not err, count, err)
+            self._mark(key, not err, count, ms, text_err)
+            payload = json.dumps(
+                {"token": token, "key": key, "count": count, "err": text_err},
+                ensure_ascii=False,
+            )
+            self._push(f"window.__onSearchSource && window.__onSearchSource({payload})")
+
+            batch = []
+            for it in core.dedupe(items or []):
+                h = (it.get("info_hash") or "").lower()
+                if h:
+                    if h in seen:
+                        continue
+                    seen.add(h)
+                batch.append(_item_view(it))
+            if batch:
+                pushed += len(batch)
+                payload = json.dumps(
+                    {"token": token, "key": key, "items": batch},
+                    ensure_ascii=False,
+                )
+                self._push(f"window.__onSearchBatch && window.__onSearchBatch({payload})")
+
+        errors: dict[str, str] = {}
+        try:
+            result, fatal = core.search(
+                text, 1, timeout, keys, min_len=min_len,
+                on_source=on_source, batch=token,
+            )
+            if fatal:
+                errors[""] = fatal
+            for key, msg in (result.errors or {}).items():
+                if msg and msg != "已停止":
+                    errors[key] = _err_text(False, 0, msg)
+        except Exception as exc:
+            logger.exception("搜索异常")
+            errors[""] = f"{type(exc).__name__}: {exc}"
+
+        if token != self._search_token:
+            return
+
+        self._persist_health()
+        payload = json.dumps(
+            {"token": token, "total": pushed, "errors": errors}, ensure_ascii=False
+        )
+        self._push(f"window.__onSearchDone && window.__onSearchDone({payload})")
+
+    def reset_sources(self) -> bool:
+        self._cfg.reset_defaults()
+        self._cfg.save()
+        self._health = {}
+        sources.reload_from_config(self._cfg)
+        return True
+
+    def export_sources(self) -> dict:
+        target = os.path.join(str(paths.data_dir()), "happycrate-sources.json")
+        if self._cfg.export_to(target):
+            return {"ok": True, "path": target}
+        return {"ok": False, "path": ""}
+
+    def import_sources(self) -> dict:
+        target = os.path.join(str(paths.data_dir()), "happycrate-sources.json")
+        if not os.path.isfile(target):
+            return {"ok": False, "error": "没有找到可导入的文件"}
+        ok, msg = self._cfg.import_from(target)
+        if ok:
+            self._cfg.save()
+            sources.reload_from_config(self._cfg)
+            return {"ok": True, "added": 0, "updated": 0, "message": msg}
+        return {"ok": False, "error": msg}
+
+    def diagnostics(self, keys: list[str] | None = None) -> str:
+        picked = [
+            e for e in self._cfg.sources
+            if (self._health.get(e.get("key", ""), {}).get("state") == "err")
+            and (not keys or e.get("key") in set(keys))
+        ]
+        if not picked:
+            return ""
+        out = [f"[happycrate 诊断] {_stamp()}", ""]
+        for e in picked:
+            key = e.get("key", "")
+            h = self._health.get(key, {})
+            empty = "0 条" in (h.get("err") or "")
+            out.append(f"> {e.get('label', key)} ({key})")
+            out.append(f"  地址  {_addr_of(e)}")
+            out.append("  现象  " + ("返回 200，但解析出 0 条结果" if empty
+                                     else f"连接超时（{e.get('timeout', 15)} 秒）"))
+            out.append(f"  最近  {' '.join(h.get('times', [])) or '无记录'}")
+            out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
+            out.append(f"  位置  app/sources.py :: _search_{key}")
+            out.append("")
+        return "\n".join(out)
+
+    def get_settings(self) -> dict:
+        data = self._settings.data or {}
+        return {k: data.get(k) for k in config.SETTING_SPECS if k in data}
+
+    def save_settings(self, fields: dict) -> dict:
+        bad = self._settings.update(**(fields or {}))
+        if bad:
+            return {"ok": False, "errors": bad}
+        self._settings.save()
+        runtime.replace(dict(self._settings.data))
+        return {"ok": True, "errors": []}
+
+    def selftest(self) -> dict:
+        missing = []
+        try:
+            view = self.list_sources()
+            if not view:
+                missing.append("sources 为空")
+            else:
+                need = ("key", "label", "type", "enabled", "timeout", "addr", "health")
+                for field in need:
+                    if field not in view[0]:
+                        missing.append(field)
+        except Exception as exc:
+            missing.append(f"{type(exc).__name__}: {exc}")
+        return {"ok": not missing, "missing": missing}
+
+    def app_info(self) -> dict:
+        d, label = store.data_dir_info()
+        return {
+            "version": __version__,
+            "title": APP_TITLE,
+            "dataDir": d,
+            "mode": label,
+            "logFile": log.current_log_file(),
+            "migratedFrom": _migration_source(self._migration),
+        }
+
+    def open_logs(self) -> bool:
+        ok, _msg = log.open_logs_dir()
+        return ok
+
+    def win_min(self) -> bool:
+        try:
+            self._window.minimize()
+        except Exception:
+            return False
+        return True
+
+    def win_max(self) -> bool:
+        try:
+            if self._maxed:
+                self._window.restore()
+            else:
+                self._window.maximize()
+            self._maxed = not self._maxed
+        except Exception:
+            return False
+        return True
+
+    def win_close(self) -> bool:
+        try:
+            self._window.destroy()
+        except Exception:
+            return False
+        return True
+
+    def downloaders(self) -> list[dict]:
+        out = []
+        for d in downloaders.all_downloaders():
+            out.append({"key": d.key, "label": d.label, "available": bool(d.available())})
+        return out
+
+    def deliver(self, magnets, key: str = "") -> dict:
+        items = [str(m) for m in (magnets or []) if m]
+        if not items:
+            return {"ok": False, "message": "没有可提交的磁力链接"}
+
+        prefer = str(key or self._settings.get("default_downloader", "") or "")
+        target = downloaders.pick_default(prefer, refresh=True)
+        if target is None:
+            return {"ok": False, "message": "没找到可用的下载工具"}
+
+        try:
+            result = target.add(items, timeout=int(self._settings.get("timeout", 15) or 15))
+        except Exception as exc:
+            logger.warning("投递失败：%s", exc)
+            return {"ok": False, "message": f"投递失败：{type(exc).__name__}"}
+
+        return {
+            "ok": bool(result.ok),
+            "message": result.message(),
+            "method": result.method or target.label,
+        }

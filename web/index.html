@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>happycrate</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/motion.css">
+<link rel="stylesheet" href="styles/base.css">
+</head>
+<body>
+<div class="titlebar">
+  <div class="tb-drag pywebview-drag-region">
+    <img class="tb-logo" src="logo.png" alt="">
+    <span class="tb-title">Happycrate v1.0.0</span>
+  </div>
+  <div class="tb-btns">
+    <button class="tb-btn" id="tbMin" title="最小化">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M1 5h8" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </button>
+    <button class="tb-btn" id="tbMax" title="最大化">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <rect x="1.5" y="1.5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1"/></svg>
+    </button>
+    <button class="tb-btn close" id="tbClose" title="关闭">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+<div id="app"></div>
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/views/sources.js"></script>
+<script src="js/views/search.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/diagnostics.js"></script>
+<script>
+(function(){
+  if (new URLSearchParams(location.search).has("static")){
+    document.documentElement.classList.add("static");
+  }
+
+  var app = document.getElementById("app");
+  var current = null;
+
+  function go(){
+    var name = location.hash.replace("#", "") || "search";
+    if (name === current) return;
+    current = name;
+    app.innerHTML = "";
+    if (name === "search") HC.views.search.mount(app);
+    else if (name === "settings") HC.views.settings.mount(app);
+    else HC.views.sources.mount(app);
+  }
+
+  window.addEventListener("hashchange", go);
+  go();
+
+  function applyFont(v){
+    var n = parseInt(v, 10);
+    if (n >= 12 && n <= 24) document.documentElement.style.setProperty("--fr", String(n / 13));
+  }
+  HC.applyFont = applyFont;
+  HC.api.getSettings().then(function(s){ applyFont(s && s.ui_font_size); });
+})();
+
+(function(){
+  function call(name){
+    var api = window.pywebview && window.pywebview.api;
+    if (api && typeof api[name] === "function") api[name]();
+  }
+  document.getElementById("tbMin").onclick = function(){ call("win_min"); };
+  document.getElementById("tbMax").onclick = function(){ call("win_max"); };
+  document.getElementById("tbClose").onclick = function(){ call("win_close"); };
+  var drag = document.querySelector(".tb-drag");
+  drag.addEventListener("dblclick", function(){ call("win_max"); });
+})();
+</script>
+</body>
+</html>

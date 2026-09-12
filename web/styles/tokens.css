@@ -1,0 +1,101 @@
+:root{
+  --brand:#5865F2;
+  --brand-hover:#4752C4;
+  --brand-soft:#EEF0FE;
+  --brand-line:#C7CCF8;
+  --brand-ring:rgba(88,101,242,.28);
+
+  --shell:#F4F5F8;
+  --shell-hover:#EEF0F3;
+  --panel:#FFFFFF;
+  --head:#FAFAFC;
+  --divider:#EAEBF0;
+  --rowline:#F1F2F5;
+  --border:#E2E5EC;
+  --hover:#F4F6FB;
+  --pressed:#E9ECF4;
+
+  --t1:#1E1F2E;
+  --t2:#2B2D42;
+  --t3:#6B7280;
+  --t4:#8A90A0;
+  --t5:#9AA1B5;
+  --t-disabled:#C4C7D0;
+  --track-off:#D3D7E0;
+
+  --ok:#16A34A;
+  --warn:#CA8A04;
+  --err:#DC2626;
+  --danger:#EF4444;
+  --danger-soft:#FDECEC;
+  --danger-line:#F5C6C6;
+
+  --ink:#0D0D1F;
+  --ink-8:rgba(13,13,31,.08);
+  --ink-13:rgba(13,13,31,.13);
+  --ink-38:rgba(13,13,31,.38);
+
+  --r-card:16px;
+  --r-modal:14px;
+  --r-menu:10px;
+  --r-ctrl:10px;
+  --r-tile:8px;
+  --r-chip:6px;
+  --r-sm:6px;
+
+  --sh-card:0 16px 40px -6px rgba(13,13,31,.16), 0 2px 8px rgba(13,13,31,.05);
+  --sh-modal:0 24px 64px rgba(13,13,31,.3);
+  --sh-menu:0 12px 32px rgba(13,13,31,.16), 0 0 0 1px rgba(13,13,31,.04);
+  --sh-toast:0 10px 30px rgba(13,13,31,.3);
+  --sh-drag:0 10px 28px rgba(13,13,31,.18);
+  --sh-btn:0 1px 2px rgba(13,13,31,.14);
+  --sh-btn-hover:0 8px 20px rgba(88,101,242,.38);
+  --sh-btn-active:0 2px 6px rgba(88,101,242,.28);
+  --sh-seg:0 1px 3px rgba(13,13,31,.08);
+
+  --sp-1:4px;
+  --sp-2:6px;
+  --sp-3:8px;
+  --sp-4:12px;
+  --sp-5:16px;
+  --sp-6:20px;
+
+  --fr:1;
+  --frc:clamp(0.9, calc(var(--fr) * 0.9 + 0.1), 1.6);
+  --fcd:clamp(1, calc(var(--fr) * 0.55 + 0.45), 1.3);
+  --fcc:1;
+  --h-row:calc(58px*var(--fr));
+  --h-head:calc(56px*var(--fr));
+  --h-bar:52px;
+  --h-ctrl:36px;
+  --h-thead:calc(38px*var(--fr));
+  --h-foot:52px;
+
+  --fs-lg:calc(15px*var(--fr));
+  --fs-md:calc(13px*var(--fr));
+  --fs-sm:calc(12px*var(--fr));
+  --fs-xs:calc(11px*var(--fr));
+  --fs-2xs:calc(10px*var(--fr));
+
+  --fc-lg:calc(15px*var(--fcd));
+  --fc-md:calc(13px*var(--fcd));
+  --fc-sm:calc(12px*var(--fcd));
+  --fc-xs:calc(11px*var(--fcd));
+  --fc-2xs:calc(10px*var(--fcd));
+
+  --cw-drag:calc(28px*var(--frc));
+  --cw-check:calc(44px*var(--frc));
+  --cw-health:calc(92px*var(--frc));
+  --cw-ops:calc(76px*var(--frc));
+  --cw-idx:calc(56px*var(--frc));
+  --cw-size:calc(92px*var(--frc));
+  --cw-time:calc(104px*var(--frc));
+  --cw-seed:calc(72px*var(--frc));
+  --cw-src:calc(88px*var(--frc));
+  --w-modal:calc(520px*var(--fr));
+  --w-modal-wide:calc(640px*var(--fr));
+
+  --font:"Noto Sans SC","Microsoft YaHei UI","PingFang SC",-apple-system,sans-serif;
+  --font-num:"Inter","Segoe UI",sans-serif;
+  --font-mono:"Inter",ui-monospace,"Cascadia Code",monospace;
+}

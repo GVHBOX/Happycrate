@@ -701,6 +701,10 @@ body{
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   text-align:center;
 }
+.srow .c-title mark.hl{
+  background:var(--brand-soft); color:var(--brand);
+  border-radius:3px; padding:0 1px; font-weight:600;
+}
 .srow .c-src{
   font:500 var(--fs-xs)/1 var(--font); color:var(--brand); text-align:center;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;

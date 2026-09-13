@@ -40,6 +40,7 @@
     enabledCount: 0, totalSources: 0,
     lines: [], flash: false, flashT: null,
     srcList: [], strip: {}, cursor: -1,
+    query: "", qtokens: [], qphrase: "", hlRe: null,
     roomy: false, selbarOn: false
   };
 
@@ -70,11 +71,34 @@
   }
 
   function visible(){
-    if (!st.field) return st.items;
+    if (!st.field){
+      if (st.busy || !st.qtokens.length) return st.items;
+      var scored = st.items.map(function(it){ return { it: it, r: relevance(it) }; });
+      scored.sort(function(a, b){ return b.r - a.r; });
+      return scored.map(function(s){ return s.it; });
+    }
     return st.items.slice().sort(function(a, b){
       var x = Number(a[st.field]) || 0, y = Number(b[st.field]) || 0;
       return st.desc ? y - x : x - y;
     });
+  }
+
+  var WORD_EDGE = /[\s\[\]()（）·\-_.【】,，、:：;；!！?？'"\/\\|]/;
+
+  function relevance(it){
+    var title = (it.title || "").toLowerCase();
+    var score = 0, hit = 0;
+    if (st.qphrase && title.indexOf(st.qphrase) >= 0) score += 100;
+    for (var i = 0; i < st.qtokens.length; i++){
+      var tk = st.qtokens[i], pos = title.indexOf(tk);
+      if (pos < 0){ score -= 25; continue; }
+      hit++;
+      score += 10;
+      if (pos === 0 || WORD_EDGE.test(title[pos - 1])) score += 6;
+    }
+    if (st.qtokens.length > 1 && hit === st.qtokens.length) score += 30;
+    score += Math.min((Number(it.seeders) || 0) / 1000, 5);
+    return score;
   }
 
   function selList(){
@@ -172,6 +196,16 @@
     }).join("");
   }
 
+  function reEscape(t){
+    return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function hlTitle(escaped){
+    if (!st.hlRe) return escaped;
+    st.hlRe.lastIndex = 0;
+    return escaped.replace(st.hlRe, '<mark class="hl">$&</mark>');
+  }
+
   function rowHtml(it, i, animate){
     var cls = "srow" + (st.sel[it.hash] ? " sel" : "");
     var anim = animate
@@ -180,12 +214,13 @@
     var src = (it.sources || []).map(function(k){
       return st.names[k] || k;
     }).join(" · ");
+    var title = hlTitle(esc(it.title));
     return '<div class="' + cls + '" data-hash="' + esc(it.hash) + '"' + anim + '>' +
       '<span class="c-idx">' + pad(i) + '</span>' +
       '<span class="c-size">' + esc(it.sizeText) + '</span>' +
       '<span class="c-time">' + esc(it.addedText) + '</span>' +
       '<span class="c-seed ' + tier(it.seeders) + '">' + fmtCount(it.seeders) + '</span>' +
-      '<span class="c-title" title="' + esc(it.title) + '">' + esc(it.title) + '</span>' +
+      '<span class="c-title" title="' + esc(it.title) + '">' + title + '</span>' +
       '<span class="c-src" title="' + esc(src) + '">' + esc(src) + '</span></div>';
   }
 
@@ -420,6 +455,13 @@
     }
     var q = inp.value.trim();
     if (!q) return;
+    st.query = q;
+    st.qphrase = q.toLowerCase();
+    st.qtokens = st.qphrase.split(/\s+/).filter(Boolean);
+    st.hlRe = st.qtokens.length
+      ? new RegExp(st.qtokens.slice().sort(function(a, b){ return b.length - a.length; })
+          .map(function(t){ return reEscape(esc(t)); }).join("|"), "gi")
+      : null;
     reset();
     st.srcList.forEach(function(s){ st.strip[s.key] = {state:"pending"}; });
     st.busy = true;
@@ -462,7 +504,16 @@
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
     });
     paintStrip();
+    var curRow = st.cursor >= 0 ? rowsEl.children[st.cursor] : null;
+    var curHash = curRow && curRow.dataset ? curRow.dataset.hash : "";
     renderRows();
+    if (curHash){
+      var list = visible();
+      for (var i = 0; i < list.length; i++){
+        if (list[i].hash === curHash){ st.cursor = i; break; }
+      }
+      paintCursor();
+    }
     paintBadge();
   }
 

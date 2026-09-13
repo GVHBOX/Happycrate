@@ -592,7 +592,6 @@
         cy0: e.clientY - rect.top + rowsEl.scrollTop,
         active: false, el: null
       };
-      try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
     });
 
     rowsEl.addEventListener("pointermove", function(e){
@@ -603,6 +602,7 @@
       if (!marquee.active){
         if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
         marquee.active = true;
+        try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
         var el = document.createElement("div");
         el.className = "marquee";
         rowsEl.appendChild(el);

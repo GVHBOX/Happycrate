@@ -189,12 +189,16 @@
       '<span class="c-src" title="' + esc(src) + '">' + esc(src) + '</span></div>';
   }
 
+  function skelHtml(){
+    var sk = '<div class="skel"><div class="col"><i></i><i></i></div></div>';
+    return sk + sk + sk + sk + sk + sk;
+  }
+
   function renderRows(){
     var list = visible();
     if (!list.length){
       if (st.busy){
-        var sk = '<div class="skel"><div class="col"><i></i><i></i></div></div>';
-        rowsEl.innerHTML = sk + sk + sk + sk + sk + sk;
+        rowsEl.innerHTML = skelHtml();
       } else {
         rowsEl.innerHTML = '<div class="empty">' +
           (st.searched ? "没有搜到相关结果" : "输入关键词开始搜索") +
@@ -204,19 +208,23 @@
     }
     rowsEl.innerHTML = list.map(function(it, i){
       return rowHtml(it, i, false);
-    }).join("");
+    }).join("") + (st.busy ? skelHtml() : "");
     paintCursor();
   }
 
   function appendRows(count){
-    var ph = rowsEl.querySelector(".empty, .skel");
-    if (ph) ph.remove();
+    rowsEl.querySelectorAll(".empty, .skel").forEach(function(n){ n.remove(); });
     var list = visible();
     var start = Math.max(0, list.length - count);
     var frag = document.createElement("div");
     frag.innerHTML = list.slice(start).map(function(it, i){
       return rowHtml(it, i, true);
     }).join("");
+    if (st.busy){
+      var tmp = document.createElement("div");
+      tmp.innerHTML = skelHtml();
+      while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+    }
     while (frag.firstChild) rowsEl.appendChild(frag.firstChild);
     renumber();
   }

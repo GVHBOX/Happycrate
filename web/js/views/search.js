@@ -446,7 +446,7 @@
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
-            '<input id="inp" placeholder="输入关键字，空格分隔多个词" autocomplete="off">' +
+            '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
           '<button class="iconbtn" id="btnRows" title="行高">' + ICONS.rows + '</button>' +
@@ -868,7 +868,7 @@
         '<div class="hero-in">' +
           '<img class="brandmark" src="assets/app-256.png" alt="">' +
           '<div class="hero-search">' + ICONS.search +
-            '<input id="heroInp" placeholder="输入关键字，空格分隔多个词" autocomplete="off">' +
+            '<input id="heroInp" placeholder="输入搜索内容" autocomplete="off">' +
             '<button class="gobtn" id="heroGo">搜索</button>' +
           '</div>' +
           '<div class="hero-srcs" id="heroSrcs"></div>' +

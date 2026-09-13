@@ -12,8 +12,8 @@ from . import APP_TITLE, APP_TITLE_FULL, __version__, api, log, single, store
 
 logger = log.get_logger(__name__)
 
-WIDTH = 1180
-HEIGHT = 760
+WIDTH = 1341
+HEIGHT = 687
 MIN_WIDTH = 960
 MIN_HEIGHT = 640
 BACKGROUND = "#FFFFFF"

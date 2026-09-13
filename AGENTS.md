@@ -84,6 +84,18 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
   靠 `!happycrate.spec` 放行——别删那行。
 - `data/sources.json` 是核心资产，改动前先备份到 `.ai/backups/`。
 
+## 构建与测试
+
+- 打包**必须用项目 .venv**：`./.venv/Scripts/python.exe -m PyInstaller happycrate.spec --noconfirm`。
+  全局 python（3.14，无 pywebview）打出来是空壳：`import webview` 变成命名空间包，
+  启动即 `no attribute 'create_window'`，且不报构建错误。
+- 打包同步 = taskkill 旧 exe 后 `cp -r dist/happycrate/. ./`，**cp 不删旧文件**，
+  要对照 `dist/happycrate/_internal` 清掉根目录多出来的残留（如 python314.dll）。
+- mock 的 startSearch 按源逐个投放（约 2.3s），E2E/探针等搜索完成必须等
+  `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
+- `.rows` 是列向 flex 容器，行高会被压缩塞满视口；行高调节（.roomy）靠
+  `flex:none` 才能生效。
+
 ## 边界
 
 本工具**不涉及账号体系**：不登录、不保存任何站点的用户名或令牌。

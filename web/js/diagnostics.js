@@ -128,9 +128,12 @@
     document.body.appendChild(bd);
     bd.addEventListener("click", function(e){
       if (e.target === bd || e.target.closest("[data-close]")) close();
-      if (e.target.closest("[data-copy]")){
-        HC.motion.copy(text());
-        HC.motion.toast("诊断信息已复制");
+      var cp = e.target.closest("[data-copy]");
+      if (cp){
+        HC.motion.copy(text()).then(function(ok){
+          if (ok) HC.motion.morph(cp, "已复制");
+          else HC.motion.toast("复制失败", "err");
+        });
       }
     });
   }
@@ -140,8 +143,11 @@
   }
 
   function close(){
-    var bd = document.querySelector(".backdrop");
-    if (bd) bd.remove();
+    var bds = document.querySelectorAll(".backdrop");
+    var bd = bds[bds.length - 1];
+    if (!bd || bd.classList.contains("closing")) return;
+    bd.classList.add("closing");
+    setTimeout(function(){ bd.remove(); }, 180);
   }
 
   document.addEventListener("keydown", function(e){

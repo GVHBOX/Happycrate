@@ -9,7 +9,7 @@
   }
 
   function rippleHost(el){
-    return el.closest(".btn, .op, .iconbtn, .mi, .cb");
+    return el.closest(".btn, .op, .iconbtn, .mi, .cb, .gobtn, .chipbtn, .seg button, .stepper button, .tb-btn");
   }
 
   document.addEventListener("pointerdown", function(e){
@@ -66,6 +66,19 @@
     }catch(e){
       return false;
     }
+  }
+
+  function morph(btn, doneText){
+    if (!btn || btn.dataset.morphing === "1") return;
+    btn.dataset.morphing = "1";
+    var html = btn.innerHTML;
+    btn.classList.add("done");
+    btn.innerHTML = ICON_CHECK + "<span>" + esc(doneText) + "</span>";
+    setTimeout(function(){
+      btn.classList.remove("done");
+      btn.innerHTML = html;
+      delete btn.dataset.morphing;
+    }, 1100);
   }
 
   function dragRows(container, opts){
@@ -135,6 +148,7 @@
     esc: esc,
     toast: toast,
     copy: copy,
+    morph: morph,
     dragRows: dragRows
   };
 })();

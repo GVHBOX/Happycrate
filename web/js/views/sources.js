@@ -52,7 +52,7 @@
     var cls = "row" + (s.enabled ? "" : " off") +
               (st.batch && store.isChecked(s.key) ? " sel" : "");
     var anim = st.firstPaint
-      ? "animation:rowIn .5s var(--land) both " + (i * 38) + "ms;"
+      ? "animation:rowIn .3s var(--land) both " + Math.min(i, 10) * 28 + "ms;"
       : "";
 
     return '<div class="' + cls + '" data-key="' + esc(s.key) + '" style="' + anim + '">' +
@@ -79,8 +79,11 @@
   }
 
   function closeModal(){
-    var bd = document.querySelector(".backdrop");
-    if (bd) bd.remove();
+    var bds = document.querySelectorAll(".backdrop");
+    var bd = bds[bds.length - 1];
+    if (!bd || bd.classList.contains("closing")) return;
+    bd.classList.add("closing");
+    setTimeout(function(){ bd.remove(); }, 180);
   }
 
   function stepper(btnRoot, valEl, min, max){
@@ -262,8 +265,10 @@
         true
       );
       m.querySelector("#mCopy").onclick = function(){
+        var btn = this;
         M.copy(text).then(function(ok){
-          M.toast(ok ? "诊断信息已复制 —— 直接贴给 AI" : "复制失败", "long");
+          if (ok) M.morph(btn, "已复制");
+          else M.toast("复制失败", "err");
         });
       };
     });

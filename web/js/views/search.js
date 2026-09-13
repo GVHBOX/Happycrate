@@ -22,7 +22,10 @@
     dl: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
       '<path d="M7 2.4v6.4M4.4 6.4L7 9l2.6-2.6" stroke="currentColor" stroke-width="1.3" ' +
       'stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<path d="M2.6 11.4h8.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'
+      '<path d="M2.6 11.4h8.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+    arw: '<svg class="arw" width="9" height="9" viewBox="0 0 10 10" fill="none">' +
+      '<path d="M5 8V2M2.4 4.6L5 2l2.6 2.6" stroke="currentColor" stroke-width="1.4" ' +
+      'stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   var st = {
@@ -35,7 +38,7 @@
     lines: [], flash: false, flashT: null
   };
 
-  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl;
+  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl;
 
   function esc(t){
     return String(t === undefined || t === null ? "" : t)
@@ -73,15 +76,26 @@
 
   function selCount(){ return selList().length; }
 
-  function badgeText(){
+  function badgeHtml(){
     var n = selCount(), total = st.items.length;
-    return n ? "已选中 " + n + " 条 / 共 " + total + " 条" : "共 " + total + " 条";
+    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条'
+             : '共 ' + total + ' 条';
   }
 
-  function paintBadge(){
+  var popT = null;
+
+  function paintBadge(still){
     if (st.flash) return;
+    var t = badgeHtml();
+    if (badgeEl.innerHTML === t) return;
     badgeEl.className = "badge";
-    badgeEl.textContent = badgeText();
+    badgeEl.innerHTML = t;
+    if (still) return;
+    badgeEl.classList.remove("pop");
+    void badgeEl.offsetWidth;
+    badgeEl.classList.add("pop");
+    clearTimeout(popT);
+    popT = setTimeout(function(){ badgeEl.classList.remove("pop"); }, 300);
   }
 
   function flash(text, kind){
@@ -117,7 +131,7 @@
   function rowHtml(it, i, animate){
     var cls = "srow" + (st.sel[it.hash] ? " sel" : "");
     var anim = animate
-      ? ' style="animation:rowIn .46s var(--land) both ' + Math.min(i, 12) * 38 + 'ms"'
+      ? ' style="animation:rowIn .3s var(--land) both ' + Math.min(i, 10) * 28 + 'ms"'
       : "";
     var src = (it.sources || []).map(function(k){
       return st.names[k] || k;
@@ -134,10 +148,14 @@
   function renderRows(){
     var list = visible();
     if (!list.length){
-      rowsEl.innerHTML = '<div class="empty">' +
-        (st.busy ? "正在搜索…"
-          : (st.searched ? "没有搜到相关结果" : "输入关键词开始搜索")) +
-        '</div>';
+      if (st.busy){
+        var sk = '<div class="skel"><div class="col"><i></i><i></i></div></div>';
+        rowsEl.innerHTML = sk + sk + sk + sk + sk + sk;
+      } else {
+        rowsEl.innerHTML = '<div class="empty">' +
+          (st.searched ? "没有搜到相关结果" : "输入关键词开始搜索") +
+          '</div>';
+      }
       return;
     }
     rowsEl.innerHTML = list.map(function(it, i){
@@ -146,8 +164,8 @@
   }
 
   function appendRows(count){
-    var empty = rowsEl.querySelector(".empty");
-    if (empty) empty.remove();
+    var ph = rowsEl.querySelector(".empty, .skel");
+    if (ph) ph.remove();
     var list = visible();
     var start = Math.max(0, list.length - count);
     var frag = document.createElement("div");
@@ -164,27 +182,26 @@
     });
   }
 
-  function updateSelUI(){
+  function updateSelUI(still){
     [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
       row.classList.toggle("sel", !!st.sel[row.dataset.hash]);
     });
     var n = selCount(), list = visible();
     ckAllEl.classList.toggle("on", n > 0 && n === list.length);
     ckAllEl.innerHTML = (n > 0 && n === list.length) ? ICONS.check : "";
-    paintBadge();
-  }
-
-  function arrow(k){
-    return st.field === k
-      ? '<span class="up">' + (st.desc ? "↓" : "↑") + '</span>'
-      : "";
+    paintBadge(still);
   }
 
   function headHtml(){
+    function chip(k){
+      var on = st.field === k;
+      return '<button class="chipbtn' + (on ? " on" : "") + (on && st.desc ? " desc" : "") +
+        '" data-sort="' + k + '">' + SORTS[k] + ICONS.arw + '</button>';
+    }
     return '<span class="r">序号</span>' +
-      '<span class="sort r" data-sort="size">体积' + arrow("size") + '</span>' +
-      '<span class="sort r" data-sort="added">时间' + arrow("added") + '</span>' +
-      '<span class="sort r" data-sort="seeders">做种' + arrow("seeders") + '</span>' +
+      '<span class="r">' + chip("size") + '</span>' +
+      '<span class="r">' + chip("added") + '</span>' +
+      '<span class="r">' + chip("seeders") + '</span>' +
       '<span class="r">文件名称</span>' +
       '<span class="r">来源</span>';
   }
@@ -192,10 +209,11 @@
   var ctxEl = null;
 
   function closeCtx(){
-    if (ctxEl){
-      ctxEl.remove();
-      ctxEl = null;
-    }
+    if (!ctxEl) return;
+    var el = ctxEl;
+    ctxEl = null;
+    el.classList.add("closing");
+    setTimeout(function(){ el.remove(); }, 150);
   }
 
   function openCtx(x, y){
@@ -282,6 +300,7 @@
       st.busy = false;
       goBtn.textContent = "搜索";
       goBtn.classList.remove("stop");
+      progEl.classList.remove("on");
       chipIdle();
       flash("已停止搜索", "warn");
       renderRows();
@@ -297,11 +316,13 @@
     setChip("搜索中…", "busy");
     goBtn.textContent = "停止";
     goBtn.classList.add("stop");
+    progEl.classList.add("on");
     HC.api.startSearch(q).then(function(res){
       if (!res || !res.ok){
         st.busy = false;
         goBtn.textContent = "搜索";
         goBtn.classList.remove("stop");
+        progEl.classList.remove("on");
         chipIdle();
         if (res && res.error) HC.motion.toast(res.error, "err");
         renderRows();
@@ -318,6 +339,7 @@
     st.searched = true;
     goBtn.textContent = "搜索";
     goBtn.classList.remove("stop");
+    progEl.classList.remove("on");
     st.errors = st.errors || {};
     var fails = Object.keys(st.errors).length;
     var total = st.items.length;
@@ -348,6 +370,7 @@
           '</div>' +
           '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
         '</div>' +
+        '<div class="progress" id="prog"><div class="fill"></div></div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead" style="grid-template-columns:' + GRID + '">' + headHtml() + '</div>' +
         '<div class="rows" id="rows"></div>' +
@@ -362,6 +385,8 @@
     inp = root.querySelector("#inp");
     goBtn = root.querySelector("#goBtn");
     headEl = root.querySelector("#shead");
+    progEl = root.querySelector("#prog");
+    badgeEl.innerHTML = badgeHtml();
 
     function refreshSources(){
       HC.api.listSources().then(function(list){
@@ -469,6 +494,10 @@
     });
 
     rowsEl.addEventListener("click", function(e){
+      if (justMarqueed){
+        justMarqueed = false;
+        return;
+      }
       var row = e.target.closest(".srow");
       if (!row) return;
       var hash = row.dataset.hash;
@@ -496,6 +525,62 @@
       }
       updateSelUI();
     });
+
+    var justMarqueed = false;
+    var marquee = null;
+
+    rowsEl.addEventListener("pointerdown", function(e){
+      if (e.button !== 0) return;
+      justMarqueed = false;
+      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+      var rect = rowsEl.getBoundingClientRect();
+      if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
+      marquee = { id: e.pointerId, x0: e.clientX, y0: e.clientY, active: false, el: null };
+      try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
+    });
+
+    rowsEl.addEventListener("pointermove", function(e){
+      if (!marquee || e.pointerId !== marquee.id) return;
+      var dx = e.clientX - marquee.x0, dy = e.clientY - marquee.y0;
+      if (!marquee.active){
+        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        marquee.active = true;
+        var el = document.createElement("div");
+        el.className = "marquee";
+        rowsEl.appendChild(el);
+        marquee.el = el;
+        st.sel = {};
+      }
+      var rect = rowsEl.getBoundingClientRect();
+      marquee.el.style.left = (Math.min(marquee.x0, e.clientX) - rect.left + rowsEl.scrollLeft) + "px";
+      marquee.el.style.top = (Math.min(marquee.y0, e.clientY) - rect.top + rowsEl.scrollTop) + "px";
+      marquee.el.style.width = Math.abs(dx) + "px";
+      marquee.el.style.height = Math.abs(dy) + "px";
+
+      var l = Math.min(marquee.x0, e.clientX), t = Math.min(marquee.y0, e.clientY);
+      var r = Math.max(marquee.x0, e.clientX), b = Math.max(marquee.y0, e.clientY);
+      [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
+        var rc = row.getBoundingClientRect();
+        var hit = rc.left < r && rc.right > l && rc.top < b && rc.bottom > t;
+        if (hit) st.sel[row.dataset.hash] = true;
+        else delete st.sel[row.dataset.hash];
+      });
+      updateSelUI(true);
+    });
+
+    function endMarquee(e){
+      if (!marquee || e.pointerId !== marquee.id) return;
+      var m = marquee;
+      marquee = null;
+      if (m.el) m.el.remove();
+      if (m.active){
+        justMarqueed = true;
+        st.anchor = "";
+        updateSelUI();
+      }
+    }
+    rowsEl.addEventListener("pointerup", endMarquee);
+    rowsEl.addEventListener("pointercancel", endMarquee);
 
     rowsEl.addEventListener("dblclick", function(e){
       var row = e.target.closest(".srow");

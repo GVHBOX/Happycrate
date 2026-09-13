@@ -59,7 +59,7 @@ body{
 
 .app{width:100%; min-width:0; min-height:0; display:flex; flex-direction:column}
 .app > .card{flex:1; display:flex; flex-direction:column; min-height:0}
-.app > .card .rows{flex:1; overflow-y:auto; min-height:0; scrollbar-width:auto; scrollbar-gutter:stable}
+.app > .card .rows{flex:1; overflow-y:auto; min-height:0; position:relative; scrollbar-width:auto; scrollbar-gutter:stable}
 .app > .card .rows::-webkit-scrollbar{width:12px}
 .app > .card .rows::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:6px; border:3px solid #fff; background-clip:padding-box}
 .app > .card .rows::-webkit-scrollbar-track{background:transparent}
@@ -107,7 +107,7 @@ body{
              transform .32s var(--spring);
 }
 .iconbtn:hover{background:var(--shell); color:var(--t2)}
-.iconbtn:active{transform:scale(.82); transition:transform .08s var(--e-out)}
+.iconbtn:active{transform:scale(.92); transition:transform var(--d-press) var(--e-out)}
 
 .btn{
   display:inline-flex; align-items:center; gap:var(--sp-2);
@@ -122,9 +122,9 @@ body{
              border-color var(--d-hover) var(--e),
              box-shadow .3s var(--e), transform .34s var(--spring);
 }
-.btn:hover{transform:translateY(-2px)}
+.btn:hover{transform:translateY(-1px)}
 .btn:active{
-  transform:translateY(0) scale(.95);
+  transform:translateY(0) scale(.96);
   transition:transform var(--d-press) var(--e-out), box-shadow .09s linear;
 }
 .btn-brand{background:var(--brand); color:#fff; box-shadow:var(--sh-btn)}
@@ -137,6 +137,7 @@ body{
 .btn-icon{width:var(--h-ctrl); padding:0; justify-content:center}
 .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none}
 .btn[disabled] .ripple{display:none}
+.btn.done{background:var(--ok); color:#fff; border-color:transparent}
 .btn.busy svg{animation:spin 1s linear infinite}
 
 .ripple{
@@ -271,7 +272,7 @@ body{
              transform .34s var(--spring);
 }
 .cb:hover{border-color:var(--brand-line); transform:scale(1.14)}
-.cb:active{transform:scale(.8); transition:transform .08s var(--e-out)}
+.cb:active{transform:scale(.86); transition:transform var(--d-press) var(--e-out)}
 .cb.on{border-color:var(--brand); background:var(--brand); animation:cbPop var(--d-state) var(--e)}
 .cb[disabled]{opacity:.35; cursor:not-allowed}
 
@@ -318,7 +319,7 @@ body{
              transform .32s var(--spring);
 }
 .op:hover{background:var(--shell); color:var(--t1); transform:scale(1.08)}
-.op:active{transform:scale(.8); transition:transform .08s var(--e-out)}
+.op:active{transform:scale(.9); transition:transform var(--d-press) var(--e-out)}
 .op[disabled]{color:var(--t-disabled); cursor:not-allowed}
 .op[disabled]:hover{background:transparent}
 .op.danger{color:var(--danger)}
@@ -440,10 +441,10 @@ body{
   cursor:pointer;
   display:grid; place-items:center;
   color:var(--t2);
-  transition:background .13s var(--e), transform .08s var(--e);
+  transition:background .13s var(--e), transform var(--d-release) var(--spring);
 }
 .stepper button:hover{background:var(--shell)}
-.stepper button:active{transform:scale(.84)}
+.stepper button:active{transform:scale(.88); transition-duration:var(--d-press); transition-timing-function:var(--e-out)}
 .stepper .val{
   width:44px; text-align:center;
   font:500 var(--fc-md)/1 var(--font-num);
@@ -470,10 +471,10 @@ body{
   font:400 var(--fc-sm)/1 var(--font);
   color:var(--t3);
   transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e),
-             box-shadow var(--d-hover) var(--e), transform .1s var(--e);
+             box-shadow var(--d-hover) var(--e), transform var(--d-release) var(--spring);
 }
 .seg button:hover{color:var(--t2)}
-.seg button:active{transform:scale(.96)}
+.seg button:active{transform:scale(.94); transition-duration:var(--d-press); transition-timing-function:var(--e-out)}
 .seg button.on{
   background:#fff; color:var(--t1);
   font-weight:500; box-shadow:var(--sh-seg);
@@ -548,6 +549,28 @@ body{
 
 .hidden{display:none !important}
 
+.marquee{position:absolute; z-index:5; pointer-events:none; border-radius:2px;
+  background:rgba(88,101,242,.12); border:1px solid rgba(88,101,242,.55)}
+
+.progress{flex:none;height:2px;overflow:hidden}
+.progress .fill{height:100%;background:var(--brand);transform-origin:left center;
+  transform:scaleX(0);opacity:0;
+  transition:transform .34s var(--e-out),opacity .2s linear}
+.progress.on .fill{opacity:1;transform:scaleX(1)}
+
+.skel{display:flex;align-items:center;gap:var(--sp-4);
+  padding:12px var(--sp-6);border-bottom:1px solid var(--rowline)}
+.skel .col{flex:1}
+.skel i{height:11px;border-radius:5px;display:block;
+  background:linear-gradient(90deg,var(--shell) 25%,var(--shell-hover) 50%,var(--shell) 75%);
+  background-size:320px 100%;
+  animation:shimmer 1.2s linear infinite}
+.skel i + i{margin-top:8px;width:44%}
+
+.backdrop.closing{animation:fadeOut .16s both}
+.backdrop.closing .modal{animation:popOut .18s var(--e) both}
+.menu.closing{animation:menuOut .15s var(--e) both}
+
 .caption{
   margin-top:var(--sp-5);
   font:400 var(--fs-xs)/1 var(--font);
@@ -569,6 +592,8 @@ body{
 .badge.warn{background:#FBF3DC; color:var(--warn)}
 .badge.err{background:var(--danger-soft); color:var(--err)}
 .badge.busy{background:var(--brand-soft); color:var(--brand)}
+.badge.pop{animation:countPop .26s var(--spring)}
+.badge b{color:var(--brand); font-weight:600}
 
 .allabel{font:400 var(--fc-xs)/1 var(--font); color:var(--t2)}
 
@@ -579,9 +604,18 @@ body{
   border:0; background:var(--shell);
   font:500 var(--fc-xs)/1 var(--font); color:var(--t3);
   cursor:pointer; white-space:nowrap;
-  transition:background .18s var(--e), color .18s var(--e);
+  display:inline-flex; align-items:center; gap:4px;
+  transition:background .18s var(--e), color .18s var(--e),
+             transform var(--d-release) var(--spring);
 }
 .chipbtn:hover{background:var(--shell-hover); color:var(--t2)}
+.chipbtn:active{transform:scale(.94); transition-duration:var(--d-press); transition-timing-function:var(--e-out)}
+.chipbtn.on{background:var(--brand-soft); color:var(--brand)}
+.chipbtn .arw{width:9px; height:9px; opacity:0; margin-left:-2px;
+  transition:opacity var(--d-hover) var(--e), transform var(--d-state) var(--spring)}
+.chipbtn:hover .arw{opacity:.4}
+.chipbtn.on .arw{opacity:1}
+.chipbtn.desc .arw{transform:rotate(180deg)}
 .chipbtn.busy{background:var(--brand-soft); color:var(--brand)}
 .chipbtn.warn{background:#FBF3DC; color:var(--warn)}
 .chipbtn.ok{background:#E8F7EE; color:var(--ok)}
@@ -621,10 +655,10 @@ body{
   border:0; border-radius:7px;
   background:var(--brand); color:#fff; cursor:pointer;
   font:500 var(--fc-xs)/1 var(--font);
-  transition:background .16s var(--e), transform .1s var(--e);
+  transition:background .16s var(--e), transform var(--d-release) var(--spring);
 }
 .sentry .gobtn:hover{background:var(--brand-hover)}
-.sentry .gobtn:active{transform:scale(.94)}
+.sentry .gobtn:active{transform:scale(.94); transition-duration:var(--d-press); transition-timing-function:var(--e-out)}
 .sentry .gobtn.stop{background:#fff; color:var(--t2); box-shadow:inset 0 0 0 1px var(--ink-8)}
 .sentry .gobtn.stop:hover{background:var(--shell); color:var(--t1)}
 
@@ -638,9 +672,6 @@ body{
 .app > .card .shead{padding-right:calc(var(--sp-6) + var(--sbw, 0px))}
 .shead{height:var(--h-thead); background:var(--head)}
 .shead span{font:500 var(--fs-xs)/1 var(--font); color:var(--t3)}
-.shead .sort{cursor:pointer; user-select:none; transition:color .15s var(--e)}
-.shead .sort:hover{color:var(--t1)}
-.shead .up{color:var(--brand); margin-left:2px; font-weight:600}
 .shead .r{text-align:center}
 .srow{
   height:calc(40px*var(--fr,1)); background:#fff; position:relative;
@@ -649,8 +680,11 @@ body{
 }
 .srow:nth-child(even){background:#F7F8FA}
 .srow:hover{background:var(--hover)}
+.srow:active{background:var(--pressed)}
 .srow:last-child{border-bottom:0}
 .srow.sel{background:var(--brand-soft)}
+.srow.sel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--brand);animation:barSlide var(--d-state) var(--e-out) both}
 .srow .c-idx{font:500 var(--fs-xs)/1 var(--font-num); color:var(--t5); text-align:center}
 .srow .c-size{font:500 var(--fs-xs)/1 var(--font-num); color:var(--t2); text-align:center}
 .srow .c-time{font:400 var(--fs-xs)/1 var(--font-num); color:var(--t4); text-align:center}

@@ -316,6 +316,7 @@
 
   function mockItems(query){
     var q = query || "关键词";
+    if (q.indexOf("空") >= 0) return [];
     var tags = ["1080p", "720p", "2160p", "WEB-DL", "BluRay", "BDRip"];
     var out = [];
     for (var i = 0; i < 24; i++){

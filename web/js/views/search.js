@@ -9,10 +9,10 @@
     search: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
       '<circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.4"/>' +
       '<path d="M9.6 9.6L12.6 12.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-    gear: '<svg width="15" height="15" viewBox="0 0 15 15" fill="none">' +
-      '<circle cx="7.5" cy="7.5" r="2.2" stroke="currentColor" stroke-width="1.3"/>' +
-      '<path d="M7.5 1.6v1.7M7.5 11.7v1.7M1.6 7.5h1.7M11.7 7.5h1.7M3.4 3.4l1.2 1.2M10.4 10.4l1.2 1.2M11.6 3.4l-1.2 1.2M4.6 10.4l-1.2 1.2" ' +
-      'stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+    gear: '<svg width="15" height="15" viewBox="0 0 14 14" fill="none">' +
+      '<path d="M8.37 12.94L5.63 12.94L5.44 11.06A4.35 4.35 0 0 1 4.26 10.38L2.54 11.16L1.17 8.78L2.7 7.68A4.35 4.35 0 0 1 2.7 6.32L1.17 5.22L2.54 2.84L4.26 3.62A4.35 4.35 0 0 1 5.44 2.94L5.63 1.06L8.37 1.06L8.56 2.94A4.35 4.35 0 0 1 9.74 3.62L11.46 2.84L12.83 5.22L11.3 6.32A4.35 4.35 0 0 1 11.3 7.68L12.83 8.78L11.46 11.16L9.74 10.38A4.35 4.35 0 0 1 8.56 11.06Z" ' +
+      'stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
+      '<circle cx="7" cy="7" r="1.9" stroke="currentColor" stroke-width="1.3"/></svg>',
     check: '<svg width="10" height="10" viewBox="0 0 14 14" fill="none">' +
       '<path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -499,7 +499,12 @@
         return;
       }
       var row = e.target.closest(".srow");
-      if (!row) return;
+      if (!row){
+        st.sel = {};
+        st.anchor = "";
+        updateSelUI();
+        return;
+      }
       var hash = row.dataset.hash;
       if (e.shiftKey && st.anchor){
         var list = visible();
@@ -518,9 +523,8 @@
         else st.sel[hash] = true;
         st.anchor = hash;
       } else {
-        var only = selCount() === 1 && st.sel[hash];
-        st.sel = only ? {} : {};
-        if (!only) st.sel[hash] = true;
+        st.sel = {};
+        st.sel[hash] = true;
         st.anchor = hash;
       }
       updateSelUI();
@@ -528,6 +532,53 @@
 
     var justMarqueed = false;
     var marquee = null;
+    var autoT = null;
+
+    function stopAuto(){
+      if (autoT){
+        clearInterval(autoT);
+        autoT = null;
+      }
+    }
+
+    function startAuto(){
+      stopAuto();
+      autoT = setInterval(function(){
+        if (!marquee || !marquee.active){
+          stopAuto();
+          return;
+        }
+        var rect = rowsEl.getBoundingClientRect();
+        var edge = 24;
+        var dir = 0;
+        if (marquee.y < rect.top + edge) dir = -1;
+        else if (marquee.y > rect.bottom - edge) dir = 1;
+        if (dir){
+          rowsEl.scrollTop += dir * 12;
+          paintMarquee();
+        }
+      }, 16);
+    }
+
+    function paintMarquee(){
+      var rect = rowsEl.getBoundingClientRect();
+      var sx = rowsEl.scrollLeft, sy = rowsEl.scrollTop;
+      var cx = marquee.x - rect.left + sx, cy = marquee.y - rect.top + sy;
+      var l = Math.min(marquee.cx0, cx), t = Math.min(marquee.cy0, cy);
+      var r = Math.max(marquee.cx0, cx), b = Math.max(marquee.cy0, cy);
+      marquee.el.style.left = l + "px";
+      marquee.el.style.top = t + "px";
+      marquee.el.style.width = (r - l) + "px";
+      marquee.el.style.height = (b - t) + "px";
+      [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
+        var rc = row.getBoundingClientRect();
+        var hit = (rc.left - rect.left + sx) < r && (rc.right - rect.left + sx) > l &&
+                  (rc.top - rect.top + sy) < b && (rc.bottom - rect.top + sy) > t;
+        if (hit) st.sel[row.dataset.hash] = true;
+        else delete st.sel[row.dataset.hash];
+      });
+      updateSelUI();
+    }
 
     rowsEl.addEventListener("pointerdown", function(e){
       if (e.button !== 0) return;
@@ -535,12 +586,19 @@
       if (e.shiftKey || e.ctrlKey || e.metaKey) return;
       var rect = rowsEl.getBoundingClientRect();
       if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
-      marquee = { id: e.pointerId, x0: e.clientX, y0: e.clientY, active: false, el: null };
+      marquee = {
+        id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY,
+        cx0: e.clientX - rect.left + rowsEl.scrollLeft,
+        cy0: e.clientY - rect.top + rowsEl.scrollTop,
+        active: false, el: null
+      };
       try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
     });
 
     rowsEl.addEventListener("pointermove", function(e){
       if (!marquee || e.pointerId !== marquee.id) return;
+      marquee.x = e.clientX;
+      marquee.y = e.clientY;
       var dx = e.clientX - marquee.x0, dy = e.clientY - marquee.y0;
       if (!marquee.active){
         if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
@@ -550,28 +608,16 @@
         rowsEl.appendChild(el);
         marquee.el = el;
         st.sel = {};
+        startAuto();
       }
-      var rect = rowsEl.getBoundingClientRect();
-      marquee.el.style.left = (Math.min(marquee.x0, e.clientX) - rect.left + rowsEl.scrollLeft) + "px";
-      marquee.el.style.top = (Math.min(marquee.y0, e.clientY) - rect.top + rowsEl.scrollTop) + "px";
-      marquee.el.style.width = Math.abs(dx) + "px";
-      marquee.el.style.height = Math.abs(dy) + "px";
-
-      var l = Math.min(marquee.x0, e.clientX), t = Math.min(marquee.y0, e.clientY);
-      var r = Math.max(marquee.x0, e.clientX), b = Math.max(marquee.y0, e.clientY);
-      [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
-        var rc = row.getBoundingClientRect();
-        var hit = rc.left < r && rc.right > l && rc.top < b && rc.bottom > t;
-        if (hit) st.sel[row.dataset.hash] = true;
-        else delete st.sel[row.dataset.hash];
-      });
-      updateSelUI(true);
+      paintMarquee();
     });
 
     function endMarquee(e){
       if (!marquee || e.pointerId !== marquee.id) return;
       var m = marquee;
       marquee = null;
+      stopAuto();
       if (m.el) m.el.remove();
       if (m.active){
         justMarqueed = true;

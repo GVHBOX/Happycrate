@@ -15,6 +15,7 @@
   var root = null;
   var dlKey = "";
   var selbarOn = true;
+  var themeOn = false;
 
   var STEP_BTN = {
     minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
@@ -96,6 +97,7 @@
     });
     out.default_downloader = dlKey;
     out.selbar = selbarOn;
+    out.theme = themeOn ? "dark" : "light";
     return out;
   }
 
@@ -121,6 +123,8 @@
             '<div class="seg" id="s_dl" style="margin-top:8px"></div></div>' +
           '<div class="field"><label>浮动选择条</label>' +
             '<button type="button" class="sw" id="s_selbar" style="margin-top:8px"></button></div>' +
+          '<div class="field"><label>暗夜主题</label>' +
+            '<button type="button" class="sw" id="s_theme" style="margin-top:8px"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -154,6 +158,9 @@
         selbarOn = settings.selbar !== false;
         var sb = root.querySelector("#s_selbar");
         if (sb) sb.classList.toggle("off", !selbarOn);
+        themeOn = settings.theme === "dark";
+        var th = root.querySelector("#s_theme");
+        if (th) th.classList.toggle("off", !themeOn);
 
         var lines = [
           ["版本", info.version],
@@ -186,6 +193,12 @@
       this.classList.toggle("off", !selbarOn);
     };
 
+    root.querySelector("#s_theme").onclick = function(){
+      themeOn = !themeOn;
+      this.classList.toggle("off", !themeOn);
+      if (HC.applyTheme) HC.applyTheme(themeOn ? "dark" : "light");
+    };
+
     root.querySelector("#btnSave").onclick = function(){
       var st = root.querySelector("#st");
       HC.api.saveSettings(readFields()).then(function(r){
@@ -205,10 +218,12 @@
       HC.api.saveSettings({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: true
+        ui_font_size: 18, selbar: true, theme: "light"
       }).then(function(){
         dlKey = "";
         selbarOn = true;
+        themeOn = false;
+        if (HC.applyTheme) HC.applyTheme("light");
         applyFont(18);
         mountEl.innerHTML = "";
         mount(mountEl);

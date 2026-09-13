@@ -52,6 +52,7 @@ DEFAULT_SETTINGS = {
     "proxy": "",
     "ui_font_size": 18,
     "selbar": True,
+    "theme": "light",
 }
 
 SETTING_SPECS = {
@@ -64,6 +65,7 @@ SETTING_SPECS = {
     "proxy": {"type": str},
     "ui_font_size": {"type": int, "min": 12, "max": 24},
     "selbar": {"type": bool},
+    "theme": {"type": str},
 }
 
 def config_path():

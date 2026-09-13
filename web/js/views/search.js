@@ -866,7 +866,7 @@
       hero.className = "hero";
       hero.innerHTML =
         '<div class="hero-in">' +
-          '<div class="brandmark">H</div>' +
+          '<img class="brandmark" src="assets/app-256.png" alt="">' +
           '<div class="hero-search">' + ICONS.search +
             '<input id="heroInp" placeholder="输入关键字，空格分隔多个词" autocomplete="off">' +
             '<button class="gobtn" id="heroGo">搜索</button>' +
@@ -888,5 +888,8 @@
     HC.views.search.st = st;
   }
 
-  HC.views.search = { mount: mount };
+  HC.views.search = {
+    mount: mount,
+    enterHero: function(){ st.hero = true; }
+  };
 })();

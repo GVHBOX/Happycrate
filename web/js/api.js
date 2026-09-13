@@ -82,6 +82,11 @@
   var probeDone = null;
   var sHooks = {};
   var mockToken = 0;
+  var mockSettings = {
+    min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
+    default_downloader: "", proxy: "", user_agent: "",
+    ui_font_size: 18, selbar: true, theme: "light"
+  };
 
   window.__onProbeDone = function(){
     if (probeDone) probeDone();
@@ -247,7 +252,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.2", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.3", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
@@ -298,11 +303,7 @@
 
     getSettings: function(){
       if (live()) return window.pywebview.api.get_settings();
-      return Promise.resolve({
-        min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
-        default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: true
-      });
+      return Promise.resolve(Object.assign({}, mockSettings));
     },
 
     saveSettings: function(fields){
@@ -312,6 +313,7 @@
       if (proxy && !/^https?:\/\//i.test(proxy)){
         return Promise.resolve({ok: false, errors: ["代理仅支持 http:// 或 https:// 开头"]});
       }
+      mockSettings = Object.assign(mockSettings, f);
       return Promise.resolve({ok: true, errors: []});
     },
 

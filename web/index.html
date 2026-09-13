@@ -10,10 +10,11 @@
 </head>
 <body>
 <div class="titlebar">
-  <div class="tb-drag pywebview-drag-region">
+  <button class="tb-home" id="tbHome" title="Happycrate">
     <img class="tb-logo" src="logo.png" alt="">
     <span class="tb-title" id="tbTitle">Happycrate</span>
-  </div>
+  </button>
+  <div class="tb-drag pywebview-drag-region"></div>
   <div class="tb-tools">
     <button class="tb-dot" id="tbDot" title="数据源" hidden>
       <span class="dot" id="tbDotI"></span>
@@ -85,13 +86,25 @@
   document.getElementById("tbDot").onclick = function(){
     location.hash = "sources";
   };
+  document.getElementById("tbHome").onclick = function(){
+    if (HC.views.search.enterHero) HC.views.search.enterHero();
+    var name = location.hash.replace("#", "") || "search";
+    if (name === "search"){ current = null; go(); }
+    else location.hash = "search";
+  };
 
   function applyFont(v){
     var n = parseInt(v, 10);
     if (n >= 12 && n <= 24) document.documentElement.style.setProperty("--fr", String(n / 13));
   }
   HC.applyFont = applyFont;
-  HC.api.getSettings().then(function(s){ applyFont(s && s.ui_font_size); });
+  HC.applyTheme = function(t){
+    document.body.classList.toggle("dark", t === "dark");
+  };
+  HC.api.getSettings().then(function(s){
+    applyFont(s && s.ui_font_size);
+    HC.applyTheme(s && s.theme);
+  });
   HC.api.appInfo().then(function(info){
     if (info && info.version){
       document.getElementById("tbTitle").textContent = "Happycrate v" + info.version;

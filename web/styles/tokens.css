@@ -1,4 +1,5 @@
 :root{
+  --page:#FFFFFF;
   --brand:#5865F2;
   --brand-hover:#4752C4;
   --brand-soft:#EEF0FE;
@@ -98,4 +99,43 @@
   --font:"Noto Sans SC","Microsoft YaHei UI","PingFang SC",-apple-system,sans-serif;
   --font-num:"Inter","Segoe UI",sans-serif;
   --font-mono:"Inter",ui-monospace,"Cascadia Code",monospace;
+}
+
+body.dark{
+  --page:#131419;
+  --brand-soft:rgba(88,101,242,.18);
+  --brand-line:#5A63B0;
+
+  --shell:#23242D;
+  --shell-hover:#2A2B36;
+  --panel:#1B1C24;
+  --head:#1F2028;
+  --divider:#2B2D38;
+  --rowline:#252732;
+  --border:#34364A;
+  --hover:#232637;
+  --pressed:#2A2E42;
+
+  --t1:#E7E9F2;
+  --t2:#C6CAD9;
+  --t3:#9095A9;
+  --t4:#71758A;
+  --t5:#5C6074;
+  --t-disabled:#4B4F60;
+  --track-off:#3A3D4C;
+
+  --danger-soft:rgba(239,68,68,.15);
+  --danger-line:rgba(239,68,68,.42);
+
+  --ink-8:rgba(255,255,255,.07);
+  --ink-13:rgba(255,255,255,.13);
+  --ink-38:rgba(255,255,255,.38);
+
+  --sh-card:0 16px 40px -6px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);
+  --sh-modal:0 24px 64px rgba(0,0,0,.55);
+  --sh-menu:0 12px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+  --sh-toast:0 10px 30px rgba(0,0,0,.5);
+  --sh-drag:0 10px 28px rgba(0,0,0,.5);
+  --sh-btn:0 1px 2px rgba(0,0,0,.4);
+  --sh-seg:0 1px 3px rgba(0,0,0,.35);
 }

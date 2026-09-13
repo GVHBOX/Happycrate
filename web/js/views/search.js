@@ -41,7 +41,7 @@
     lines: [], flash: false, flashT: null,
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
-    open: {},
+    open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {},
     roomy: false, selbarOn: false
   };
@@ -89,6 +89,18 @@
 
   function fileNames(it){
     return (it.files || []).map(function(f){ return (f.n || "").toLowerCase(); }).join("\n");
+  }
+
+  function fileHit(it){
+    if (!st.qtokens.length) return false;
+    var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
+    if (!files || !files.length) return false;
+    var fns = files.map(function(f){ return String(f.n || "").toLowerCase(); }).join("\n");
+    if (st.qphrase && fns.indexOf(st.qphrase) >= 0) return true;
+    for (var i = 0; i < st.qtokens.length; i++){
+      if (fns.indexOf(st.qtokens[i]) >= 0) return true;
+    }
+    return false;
   }
 
   function relevance(it){
@@ -240,7 +252,7 @@
     return "";
   }
 
-  function maybeLoadFiles(h){
+  function loadFiles(h, cb){
     if (st.filesCache[h] || st.filesLoading[h] || st.filesErr[h]) return;
     var it = itemByHash(h);
     if (!it || !it.fetch || !it.fetch.url) return;
@@ -251,7 +263,46 @@
       if (res && res.ok && res.files && res.files.length) st.filesCache[h] = res.files;
       else st.filesErr[h] = (res && res.error) || "获取文件清单失败";
       if (st.open[h]) renderPanels();
+      if (cb) cb();
     });
+  }
+
+  function maybeLoadFiles(h){
+    loadFiles(h, null);
+  }
+
+  var ENRICH_CAP = 10;
+
+  function autoExpand(){
+    if (!st.qtokens.length) return;
+    var lazy = 0;
+    visible().forEach(function(it){
+      var h = it.hash;
+      if (st.userShut[h]) return;
+      if (it.files && it.files.length){
+        if (fileHit(it)) st.open[h] = true;
+        return;
+      }
+      if (it.fetch && it.fetch.url){
+        if (st.filesCache[h]){
+          if (fileHit(it)) st.open[h] = true;
+          return;
+        }
+        if (st.filesLoading[h] || st.filesErr[h]) return;
+        if (lazy < ENRICH_CAP){
+          lazy++;
+          loadFiles(h, function(){
+            if (st.busy || st.userShut[h] || st.open[h]) return;
+            var cur = itemByHash(h);
+            if (cur && fileHit(cur)){
+              st.open[h] = true;
+              renderPanels();
+            }
+          });
+        }
+      }
+    });
+    renderPanels();
   }
 
   function renderPanels(){
@@ -504,6 +555,7 @@
     st.sel = {};
     st.anchor = "";
     st.open = {};
+    st.userShut = {};
     st.filesCache = {};
     st.filesLoading = {};
     st.filesErr = {};
@@ -592,6 +644,7 @@
     var curRow = st.cursor >= 0 ? rowsEl.children[st.cursor] : null;
     var curHash = curRow && curRow.dataset ? curRow.dataset.hash : "";
     renderRows();
+    autoExpand();
     if (curHash){
       var list = visible();
       for (var i = 0; i < list.length; i++){
@@ -792,8 +845,8 @@
       var chev = e.target.closest(".fchev");
       if (chev){
         var ch = chev.dataset.hash;
-        if (st.open[ch]) delete st.open[ch];
-        else st.open[ch] = true;
+        if (st.open[ch]){ delete st.open[ch]; st.userShut[ch] = true; }
+        else { st.open[ch] = true; delete st.userShut[ch]; }
         renderPanels();
         return;
       }

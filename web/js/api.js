@@ -252,7 +252,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.15", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.16", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
@@ -260,7 +260,18 @@
     torrentFiles: function(p){
       if (live()) return window.pywebview.api.torrent_files(p);
       return new Promise(function(res){
-        setTimeout(function(){ res({ok: false, files: [], error: "mock 没有懒加载文件清单"}); }, 500);
+        setTimeout(function(){
+          var u = String((p || {}).url || "");
+          if (u.indexOf("mock.local") >= 0){
+            res({ok: true, files: [
+              {n: "ubuntu 第 6 话 [简繁字幕].mp4", s: "1.1 GB"},
+              {n: "ubuntu 花絮.mp4", s: "88.2 MB"},
+              {n: "credits.nfo", s: "4.1 KB"}
+            ], error: ""});
+          } else {
+            res({ok: false, files: [], error: "mock 没有懒加载文件清单"});
+          }
+        }, 500);
       });
     },
 
@@ -338,7 +349,7 @@
     for (var i = 0; i < 24; i++){
       var gb = (0.4 + i * 0.37).toFixed(1);
       var hash = ("hc" + i + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").slice(0, 40);
-      out.push({
+      var it = {
         hash: hash,
         title: "[" + tags[i % tags.length] + "] " + q + " 第 " + (i + 1) + " 话 [简繁字幕]",
         size: Math.round(parseFloat(gb) * 1073741824),
@@ -348,13 +359,23 @@
         added: Math.round(Date.now() / 1000) - i * 90000,
         addedText: i === 0 ? "今天" : (i < 6 ? i + " 天前" : "2026-08-" + (10 + (i % 18))),
         magnet: "magnet:?xt=urn:btih:" + hash,
-        sources: [["nyaa", "apibay", "dmhy"][i % 3]],
-        files: [
+        sources: [["nyaa", "apibay", "dmhy"][i % 3]]
+      };
+      if (i === 5){
+        it.fetch = {url: "https://mock.local/demo-5.torrent"};
+      } else if (i % 3 === 0){
+        it.files = [
           {n: q + " 第 " + (i + 1) + " 话 [简繁字幕].mp4", s: (890 - i % 90) + "." + (i % 10) + " MB"},
           {n: q + " 第 " + (i + 1) + " 话 花絮.mp4", s: "88.2 MB"},
           {n: "credits.nfo", s: "4.1 KB"}
-        ]
-      });
+        ];
+      } else {
+        it.files = [
+          {n: "vol_" + (i + 1) + "_main.mkv", s: (890 - i % 90) + "." + (i % 10) + " MB"},
+          {n: "credits.nfo", s: "4.1 KB"}
+        ];
+      }
+      out.push(it);
     }
     return out;
   }

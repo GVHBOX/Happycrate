@@ -462,7 +462,6 @@
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
     });
     paintStrip();
-    if (HC.updateHealthDot) HC.updateHealthDot();
     renderRows();
     paintBadge();
   }

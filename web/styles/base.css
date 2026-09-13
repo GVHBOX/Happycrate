@@ -742,9 +742,10 @@ body{
   border:1px solid var(--divider); background:var(--panel);
   display:inline-flex; align-items:center; gap:6px;
   font:500 var(--fs-2xs)/1 var(--font); color:var(--t3);
-  transition:border-color var(--d-hover) var(--e), color var(--d-hover) var(--e), background var(--d-hover) var(--e);
+  transition:transform .22s var(--e-out), box-shadow .22s var(--e-out), border-color var(--d-hover) var(--e), color var(--d-hover) var(--e), background var(--d-hover) var(--e);
 }
-.srcdot:hover{border-color:var(--brand-line); color:var(--brand); background:var(--brand-soft)}
+.srcdot:hover{border-color:var(--brand-line); color:var(--brand); background:var(--brand-soft); transform:translateY(-3px); box-shadow:0 6px 14px rgba(2,6,23,.16)}
+body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .srcdot .sdot{width:6px; height:6px; border-radius:50%; background:var(--ok); flex:none}
 .srcdot.warn .sdot{background:var(--warn)}
 .srcdot.err .sdot{background:var(--err)}
@@ -780,16 +781,6 @@ body{
 .scount{margin-left:auto; flex:none; font:500 var(--fs-2xs)/1 var(--font-num); color:var(--t4); padding-left:var(--sp-3)}
 .scount b{color:var(--t2); font-weight:600}
 
-.tb-tools{display:flex; align-items:center; gap:2px; flex:none; padding-right:6px}
-.tb-dot{
-  width:26px; height:26px; padding:0; border:0; border-radius:var(--r-sm);
-  background:transparent; display:grid; place-items:center;
-  transition:background var(--d-hover) var(--e);
-}
-.tb-dot:hover{background:var(--ink-8)}
-.tb-dot .dot{width:8px; height:8px; border-radius:50%; background:var(--ok); transition:background var(--d-state) var(--e)}
-.tb-dot .dot.warn{background:var(--warn)}
-.tb-dot .dot.err{background:var(--err); animation:breathe 1.6s var(--e) infinite}
 
 .selbar{
   position:fixed; left:50%; bottom:24px; z-index:46;

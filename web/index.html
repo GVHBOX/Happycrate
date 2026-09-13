@@ -15,11 +15,6 @@
     <span class="tb-title" id="tbTitle">Happycrate</span>
   </button>
   <div class="tb-drag pywebview-drag-region"></div>
-  <div class="tb-tools">
-    <button class="tb-dot" id="tbDot" title="数据源" hidden>
-      <span class="dot" id="tbDotI"></span>
-    </button>
-  </div>
   <div class="tb-btns">
     <button class="tb-btn" id="tbMin" title="最小化">
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -60,32 +55,10 @@
     if (name === "search") HC.views.search.mount(app);
     else if (name === "settings") HC.views.settings.mount(app);
     else HC.views.sources.mount(app);
-    if (HC.updateHealthDot) HC.updateHealthDot();
   }
 
   window.addEventListener("hashchange", go);
   go();
-
-  function updateHealthDot(){
-    HC.api.listSources().then(function(list){
-      var btn = document.getElementById("tbDot");
-      var dot = document.getElementById("tbDotI");
-      if (!btn || !dot) return;
-      var err = 0, warn = 0;
-      (list || []).forEach(function(s){
-        var h = s.health && s.health.state;
-        if (h === "err") err++;
-        else if (h === "warn") warn++;
-      });
-      btn.hidden = !(list && list.length);
-      dot.className = "dot" + (err ? " err" : (warn ? " warn" : ""));
-    });
-  }
-  HC.updateHealthDot = updateHealthDot;
-  updateHealthDot();
-  document.getElementById("tbDot").onclick = function(){
-    location.hash = "sources";
-  };
   document.getElementById("tbHome").onclick = function(){
     var name = location.hash.replace("#", "") || "search";
     if (name !== "search"){

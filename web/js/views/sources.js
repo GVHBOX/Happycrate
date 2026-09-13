@@ -476,7 +476,6 @@
         store.set({probing: false});
         root.querySelector("#btnProbe").classList.remove("busy");
         render();
-        if (HC.updateHealthDot) HC.updateHealthDot();
       });
 
       api.probeSources(null, function(key, res){
@@ -498,7 +497,6 @@
         sw.closest(".row").classList.toggle("off", !s.enabled);
         api.toggleSource(key, s.enabled);
         updateStatus();
-        if (HC.updateHealthDot) HC.updateHealthDot();
         return;
       }
 
@@ -522,7 +520,6 @@
           api.removeSource(dk).then(function(ok){
             if (!ok){ M.toast("删除失败"); return; }
             reload();
-            if (HC.updateHealthDot) HC.updateHealthDot();
             M.toast("已删除 " + label, "ok");
           });
         });
@@ -596,7 +593,6 @@
           store.set({checked: []});
           anchor = -1;
           reload();
-          if (HC.updateHealthDot) HC.updateHealthDot();
           M.toast("已删除 " + n + " 个源", "ok");
         });
       });
@@ -609,7 +605,6 @@
           anchor = -1;
           root.querySelector("#search").value = "";
           reload();
-          if (HC.updateHealthDot) HC.updateHealthDot();
           M.toast("已恢复默认配置", "ok");
         });
       });

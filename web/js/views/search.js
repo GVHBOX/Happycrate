@@ -42,7 +42,7 @@
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
     open: {}, userShut: {},
-    filesCache: {}, filesLoading: {}, filesErr: {},
+    filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0,
     roomy: false, selbarOn: false
   };
 
@@ -267,15 +267,10 @@
     });
   }
 
-  function maybeLoadFiles(h){
-    loadFiles(h, null);
-  }
+  var AUTO_EARLY = 8, AUTO_TOTAL = 18;
 
-  var ENRICH_CAP = 10;
-
-  function autoExpand(){
+  function autoExpand(total){
     if (!st.qtokens.length) return;
-    var lazy = 0;
     visible().forEach(function(it){
       var h = it.hash;
       if (st.userShut[h]) return;
@@ -289,10 +284,10 @@
           return;
         }
         if (st.filesLoading[h] || st.filesErr[h]) return;
-        if (lazy < ENRICH_CAP){
-          lazy++;
+        if (st.autoBudget < total){
+          st.autoBudget++;
           loadFiles(h, function(){
-            if (st.busy || st.userShut[h] || st.open[h]) return;
+            if (st.userShut[h] || st.open[h]) return;
             var cur = itemByHash(h);
             if (cur && fileHit(cur)){
               st.open[h] = true;
@@ -330,7 +325,7 @@
       row.classList.add("open");
       var chev = row.querySelector(".fchev");
       if (chev) chev.classList.add("on");
-      maybeLoadFiles(h);
+      loadFiles(h, null);
     });
   }
 
@@ -556,6 +551,7 @@
     st.anchor = "";
     st.open = {};
     st.userShut = {};
+    st.autoBudget = 0;
     st.filesCache = {};
     st.filesLoading = {};
     st.filesErr = {};
@@ -644,7 +640,7 @@
     var curRow = st.cursor >= 0 ? rowsEl.children[st.cursor] : null;
     var curHash = curRow && curRow.dataset ? curRow.dataset.hash : "";
     renderRows();
-    autoExpand();
+    autoExpand(AUTO_TOTAL);
     if (curHash){
       var list = visible();
       for (var i = 0; i < list.length; i++){
@@ -776,6 +772,7 @@
           appendRows(d.items.length);
         }
         paintBadge();
+        autoExpand(AUTO_EARLY);
       },
       done: function(d){
         if (!st.busy || d.token !== st.token) return;

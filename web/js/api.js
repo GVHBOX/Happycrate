@@ -252,7 +252,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.13", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.14", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
@@ -341,7 +341,12 @@
         added: Math.round(Date.now() / 1000) - i * 90000,
         addedText: i === 0 ? "今天" : (i < 6 ? i + " 天前" : "2026-08-" + (10 + (i % 18))),
         magnet: "magnet:?xt=urn:btih:" + hash,
-        sources: [["nyaa", "apibay", "dmhy"][i % 3]]
+        sources: [["nyaa", "apibay", "dmhy"][i % 3]],
+        files: [
+          {n: q + " 第 " + (i + 1) + " 话 [简繁字幕].mp4", s: (890 - i % 90) + "." + (i % 10) + " MB"},
+          {n: q + " 第 " + (i + 1) + " 话 花絮.mp4", s: "88.2 MB"},
+          {n: "credits.nfo", s: "4.1 KB"}
+        ]
       });
     }
     return out;

@@ -697,14 +697,39 @@ body{
 .srow .c-seed.mid{color:var(--t2)}
 .srow .c-seed.hi{color:var(--ok)}
 .srow .c-title{
+  position:relative;
   font:400 var(--fs-sm)/1.2 var(--font); color:var(--t1);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  text-align:center;
+  text-align:center; padding-right:18px;
 }
 .srow .c-title mark.hl{
   background:var(--brand-soft); color:var(--brand);
   border-radius:3px; padding:0 1px; font-weight:600;
 }
+.srow .c-title .fchev{
+  position:absolute; right:2px; top:50%; transform:translateY(-50%);
+  width:18px; height:18px; padding:0; border:0; border-radius:4px;
+  background:transparent; color:var(--t4); display:grid; place-items:center;
+  cursor:pointer; transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e), transform var(--d-hover) var(--e);
+}
+.srow .c-title .fchev:hover{background:var(--ink-8); color:var(--t1)}
+.srow .c-title .fchev.on{color:var(--brand); transform:translateY(-50%) rotate(180deg)}
+.srow .c-title .fchev svg{display:block}
+
+.fpanel{
+  flex:none; margin:-2px 0 4px; padding:6px 16px 6px 58px;
+  border-left:2px solid var(--brand-line);
+  background:var(--shell); border-radius:0 8px 8px 0;
+  display:flex; flex-direction:column; gap:2px;
+  max-height:170px; overflow:auto;
+  animation:panelIn .22s var(--e-out) both;
+}
+.fline{display:flex; align-items:baseline; gap:10px;
+  font:400 var(--fs-xs)/1.5 var(--font); color:var(--t2)}
+.fline .fname{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left}
+.fline .fname mark.hl{background:var(--brand-soft); color:var(--brand); border-radius:3px; padding:0 1px; font-weight:600}
+.fline .fsize{flex:none; font-family:var(--font-num); color:var(--t4)}
+@keyframes panelIn{from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none}}
 .srow .c-src{
   font:500 var(--fs-xs)/1 var(--font); color:var(--brand); text-align:center;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;

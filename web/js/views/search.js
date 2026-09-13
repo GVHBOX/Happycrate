@@ -41,6 +41,7 @@
     lines: [], flash: false, flashT: null,
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
+    open: {},
     roomy: false, selbarOn: false
   };
 
@@ -85,13 +86,24 @@
 
   var WORD_EDGE = /[\s\[\]()（）·\-_.【】,，、:：;；!！?？'"\/\\|]/;
 
+  function fileNames(it){
+    return (it.files || []).map(function(f){ return (f.n || "").toLowerCase(); }).join("\n");
+  }
+
   function relevance(it){
     var title = (it.title || "").toLowerCase();
+    var fns = it.files && it.files.length ? fileNames(it) : "";
     var score = 0, hit = 0;
-    if (st.qphrase && title.indexOf(st.qphrase) >= 0) score += 100;
+    var tPhrase = st.qphrase && title.indexOf(st.qphrase) >= 0;
+    if (tPhrase) score += 100;
+    else if (fns && st.qphrase && fns.indexOf(st.qphrase) >= 0) score += 15;
     for (var i = 0; i < st.qtokens.length; i++){
       var tk = st.qtokens[i], pos = title.indexOf(tk);
-      if (pos < 0){ score -= 25; continue; }
+      if (pos < 0){
+        if (fns && fns.indexOf(tk) >= 0){ score += 4; hit++; }
+        else score -= 25;
+        continue;
+      }
       hit++;
       score += 10;
       if (pos === 0 || WORD_EDGE.test(title[pos - 1])) score += 6;
@@ -206,6 +218,43 @@
     return escaped.replace(st.hlRe, '<mark class="hl">$&</mark>');
   }
 
+  var FCHEV = '<svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function itemByHash(h){
+    var out = null;
+    st.items.some(function(it){ if (it.hash === h){ out = it; return true; } return false; });
+    return out;
+  }
+
+  function renderPanels(){
+    if (!rowsEl || !rowsEl.isConnected) return;
+    rowsEl.querySelectorAll(".fpanel").forEach(function(n){ n.remove(); });
+    rowsEl.querySelectorAll(".fchev.on").forEach(function(n){ n.classList.remove("on"); });
+    rowsEl.querySelectorAll(".srow.open").forEach(function(n){ n.classList.remove("open"); });
+    var rows = {};
+    [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
+      rows[row.dataset.hash] = row;
+    });
+    Object.keys(st.open).forEach(function(h){
+      var row = rows[h], it = itemByHash(h);
+      if (!row || !it || !it.files || !it.files.length){
+        delete st.open[h];
+        return;
+      }
+      var p = document.createElement("div");
+      p.className = "fpanel";
+      p.dataset.hash = h;
+      p.innerHTML = it.files.map(function(f){
+        return '<div class="fline"><span class="fname">' + hlTitle(esc(f.n)) +
+          '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
+      }).join("");
+      row.parentNode.insertBefore(p, row.nextSibling);
+      row.classList.add("open");
+      var chev = row.querySelector(".fchev");
+      if (chev) chev.classList.add("on");
+    });
+  }
+
   function rowHtml(it, i, animate){
     var cls = "srow" + (st.sel[it.hash] ? " sel" : "");
     var anim = animate
@@ -215,12 +264,15 @@
       return st.names[k] || k;
     }).join(" · ");
     var title = hlTitle(esc(it.title));
+    var chev = it.files && it.files.length
+      ? '<button class="fchev" data-hash="' + esc(it.hash) + '" title="文件">' + FCHEV + '</button>'
+      : "";
     return '<div class="' + cls + '" data-hash="' + esc(it.hash) + '"' + anim + '>' +
       '<span class="c-idx">' + pad(i) + '</span>' +
       '<span class="c-size">' + esc(it.sizeText) + '</span>' +
       '<span class="c-time">' + esc(it.addedText) + '</span>' +
       '<span class="c-seed ' + tier(it.seeders) + '">' + fmtCount(it.seeders) + '</span>' +
-      '<span class="c-title" title="' + esc(it.title) + '">' + title + '</span>' +
+      '<span class="c-title" title="' + esc(it.title) + '">' + title + chev + '</span>' +
       '<span class="c-src" title="' + esc(src) + '">' + esc(src) + '</span></div>';
   }
 
@@ -245,6 +297,7 @@
       return rowHtml(it, i, false);
     }).join("") + (st.busy ? skelHtml() : "");
     paintCursor();
+    renderPanels();
   }
 
   function appendRows(count){
@@ -422,6 +475,7 @@
     st.items = [];
     st.sel = {};
     st.anchor = "";
+    st.open = {};
     st.errors = {};
     st.lines = [];
     st.strip = {};
@@ -704,6 +758,15 @@
         justMarqueed = false;
         return;
       }
+      var chev = e.target.closest(".fchev");
+      if (chev){
+        var ch = chev.dataset.hash;
+        if (st.open[ch]) delete st.open[ch];
+        else st.open[ch] = true;
+        renderPanels();
+        return;
+      }
+      if (e.target.closest(".fpanel")) return;
       var row = e.target.closest(".srow");
       if (!row){
         st.sel = {};

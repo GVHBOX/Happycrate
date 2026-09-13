@@ -396,10 +396,10 @@ def _split_items(xml: str) -> list[str]:
     return re.findall(r"<item[^>]*>(.*?)</item>", xml, re.I | re.S)
 
 def _mk(title: str, info_hash: str = "", size=0, seeders=None, leechers=None,
-        added=None, source: str = "") -> dict:
+        added=None, source: str = "", files=None) -> dict:
     clean_title = re.sub(r"\s+", " ", _unescape(title or "")).strip()
     h = _text(info_hash).strip().lower()
-    return {
+    item = {
         "title": clean_title,
         "info_hash": h,
         "size": _size_or_zero(size),
@@ -409,6 +409,9 @@ def _mk(title: str, info_hash: str = "", size=0, seeders=None, leechers=None,
         "source": source,
         "magnet": magnet_for(h, clean_title) if h else "",
     }
+    if files:
+        item["files"] = files
+    return item
 
 def _text(value) -> str:
     if value is None:
@@ -691,6 +694,31 @@ def _btdig_age(text: str) -> float | None:
     except (TypeError, ValueError, OverflowError, KeyError):
         return None
 
+def _btdig_files(block: str) -> list[dict]:
+    re_pair = re.compile(
+        r'class="file[_-]name"[^>]*>(.*?)</[^>]+>'
+        r'(?:(?!file[_-]name).)*?class="file[_-]size"[^>]*>(.*?)<',
+        re.I | re.S)
+    re_loose = re.compile(
+        r'>\s*([^<>]{2,160}?)\s*</[^>]+>\s*(?:<[^>]+>\s*)*'
+        r'<span[^>]*class="file[_-]size"[^>]*>\s*([^<]{2,20}?)\s*<',
+        re.I | re.S)
+    re_tag = re.compile(r"<[^>]+>")
+    out: list[dict] = []
+    seen: set[str] = set()
+    for m in re_pair.findall(block) or re_loose.findall(block):
+        name = _unescape(re_tag.sub("", m[0])).strip()
+        size = _unescape(re_tag.sub("", m[1])).strip()
+        if not name or name in seen:
+            continue
+        if re.search(r"隐藏|hidden|个文件|files? found", name, re.I):
+            continue
+        seen.add(name)
+        out.append({"n": name, "s": size})
+        if len(out) >= 8:
+            break
+    return out
+
 def _search_btdig(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["btdig"])
     url = (f"{root}/search?q={urllib.parse.quote(query)}"
@@ -734,6 +762,7 @@ def _search_btdig(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
             leechers=None,
             added=_btdig_age(_unescape(re_tag.sub("", a.group(1)))) if a else None,
             source="BTDigg",
+            files=_btdig_files(row),
         ))
     return items
 

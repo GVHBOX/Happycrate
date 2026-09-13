@@ -126,6 +126,11 @@ def _item_view(item: dict) -> dict:
     if not isinstance(names, list) or not names:
         only = item.get("source")
         names = [str(only)] if only else []
+    raw_files = item.get("files")
+    files = [
+        {"n": str(f.get("n") or ""), "s": str(f.get("s") or "")}
+        for f in raw_files if isinstance(f, dict) and f.get("n")
+    ][:8] if isinstance(raw_files, list) else []
     return {
         "hash": (item.get("info_hash") or "").lower(),
         "title": item.get("title") or "",
@@ -137,6 +142,7 @@ def _item_view(item: dict) -> dict:
         "addedText": core.format_time_relative(added),
         "magnet": core.magnet_of(item),
         "sources": [str(n) for n in names if n],
+        "files": files,
     }
 
 

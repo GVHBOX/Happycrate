@@ -179,8 +179,8 @@
 
       function syncFields(){
         var wPath = m.querySelector("#wPath"), wMap = m.querySelector("#wMap");
-        var showPath = type === "json" || type === "builtin";
-        var showMap = type !== "html";
+        var showPath = type === "json";
+        var showMap = type === "rss" || type === "json";
         wPath.classList.toggle("hidden", !showPath);
         wMap.classList.toggle("hidden", !showMap);
         m.querySelector("#fAddrLabel").textContent = type === "builtin" ? "镜像地址" : "URL 模板";
@@ -248,6 +248,20 @@
         });
       };
     });
+  }
+
+  function confirmModal(question, okLabel, onOk){
+    var m = openModal(
+      '<div class="dhead"><div class="dtitle">' + esc(question) + '</div></div>' +
+      '<div class="div"></div>' +
+      '<div class="mfoot"><div class="spacer"></div>' +
+        '<button class="btn btn-ghost" data-close>取消</button>' +
+        '<button class="btn btn-brand" id="mOk">' + esc(okLabel) + '</button></div>'
+    );
+    m.querySelector("#mOk").onclick = function(){
+      closeModal();
+      onOk();
+    };
   }
 
   function showBadModal(){
@@ -500,10 +514,13 @@
       var del = e.target.closest("[data-del]");
       if (del && !del.disabled){
         var dk = del.dataset.del, ds = store.byKey(dk);
-        api.removeSource(dk).then(function(ok){
-          if (!ok){ M.toast("删除失败"); return; }
-          reload();
-          M.toast("已删除 " + ds.label, "ok");
+        var label = ds ? ds.label : dk;
+        confirmModal("删除 " + label + "？", "删除", function(){
+          api.removeSource(dk).then(function(ok){
+            if (!ok){ M.toast("删除失败"); return; }
+            reload();
+            M.toast("已删除 " + label, "ok");
+          });
         });
       }
     });
@@ -515,7 +532,7 @@
     });
 
     M.dragRows(rowsEl, {
-      blocked: function(){ return store.get().batch; },
+      blocked: function(){ return store.get().batch || !!store.get().filter.trim(); },
       onDrop: function(key, target){
         var st = store.get();
         var from = st.sources.findIndex(function(s){ return s.key === key; });
@@ -559,21 +576,25 @@
       if (!st.checked.length) return;
       var n = st.checked.length;
       var keys = st.checked.slice();
-      Promise.all(keys.map(function(k){ return api.removeSource(k); })).then(function(){
-        store.set({checked: []});
-        anchor = -1;
-        reload();
-        M.toast("已删除 " + n + " 个源", "ok");
+      confirmModal("删除 " + n + " 个源？", "删除", function(){
+        Promise.all(keys.map(function(k){ return api.removeSource(k); })).then(function(){
+          store.set({checked: []});
+          anchor = -1;
+          reload();
+          M.toast("已删除 " + n + " 个源", "ok");
+        });
       });
     };
 
     root.querySelector("#btnReset").onclick = function(){
-      api.resetSources().then(function(){
-        store.set({filter: "", checked: []});
-        anchor = -1;
-        root.querySelector("#search").value = "";
-        reload();
-        M.toast("已恢复默认配置", "ok");
+      confirmModal("恢复默认会清掉自定义源？", "恢复", function(){
+        api.resetSources().then(function(){
+          store.set({filter: "", checked: []});
+          anchor = -1;
+          root.querySelector("#search").value = "";
+          reload();
+          M.toast("已恢复默认配置", "ok");
+        });
       });
     };
     root.querySelector("#btnExport").onclick = function(){

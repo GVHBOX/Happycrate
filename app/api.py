@@ -69,6 +69,15 @@ def _err_text(ok: bool, count: int, err: str) -> str:
     return "请求失败"
 
 
+def _health_text(key: str, ok: bool, count: int, err: str) -> str:
+    text = _err_text(ok, count, err)
+    if ok and not count:
+        src = sources.BY_KEY.get(key)
+        if src is not None and src.empty_neutral:
+            return ""
+    return text
+
+
 def _state_of(times: list[str], ms: int, err: str = "") -> str:
     recent = times[-HEALTH_WINDOW:]
     if not recent:
@@ -348,7 +357,7 @@ class Api:
         return len(targets)
 
     def _mark(self, key: str, ok: bool, count: int, ms: int, err: str) -> dict:
-        mark = "ok" if ok and count else ("empty" if ok else "err")
+        mark = "ok" if ok and (count or not err) else ("empty" if ok else "err")
         h = self._health.setdefault(key, {"state": "na", "ms": 0, "err": "", "times": []})
         h["times"] = (h.get("times", []) + [mark])[-HEALTH_WINDOW:]
         if ms:
@@ -362,7 +371,7 @@ class Api:
             if token != self._probe_token:
                 return
             ok, ms, count, err = src.probe()
-            text = _err_text(ok, count, err)
+            text = _health_text(src.key, ok, count, err)
             h = self._mark(src.key, ok, count, ms, text)
             payload = json.dumps({"key": src.key, "state": h["state"], "ms": h["ms"], "err": text},
                                  ensure_ascii=False)
@@ -416,7 +425,7 @@ class Api:
                 return
             nonlocal pushed
             count = len(items or [])
-            text_err = _err_text(not err, count, err)
+            text_err = _health_text(key, not err, count, err)
             self._mark(key, not err, count, ms, text_err)
             payload = json.dumps(
                 {"token": token, "key": key, "count": count, "err": text_err},
@@ -507,7 +516,11 @@ class Api:
                                      else (h.get("err") or "请求失败")))
             out.append(f"  最近  {' '.join(h.get('times', [])) or '无记录'}")
             out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
-            out.append(f"  位置  app/sources.py :: _search_{key}")
+            if e.get("type", "builtin") == "builtin":
+                where = f"app/sources.py :: _search_{key}"
+            else:
+                where = f"app/templates.py :: _make_{e.get('type', '')}"
+            out.append(f"  位置  {where}")
             out.append("")
         return "\n".join(out)
 

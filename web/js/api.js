@@ -232,7 +232,9 @@
           : (s.health.err || "请求失败")));
         out.push("  最近  " + (s.health.times.join(" ") || "无记录"));
         out.push("  建议  " + (empty ? "疑似站点改版，需要改解析代码" : "换镜像地址"));
-        out.push("  位置  app/sources.py :: _search_" + s.key);
+        out.push("  位置  " + (s.type === "builtin"
+          ? "app/sources.py :: _search_" + s.key
+          : "app/templates.py :: _make_" + s.type));
         out.push("");
       });
       return Promise.resolve(out.join("\n"));

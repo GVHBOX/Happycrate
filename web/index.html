@@ -12,7 +12,7 @@
 <div class="titlebar">
   <div class="tb-drag pywebview-drag-region">
     <img class="tb-logo" src="logo.png" alt="">
-    <span class="tb-title">Happycrate v1.0.0</span>
+    <span class="tb-title" id="tbTitle">Happycrate</span>
   </div>
   <div class="tb-btns">
     <button class="tb-btn" id="tbMin" title="最小化">
@@ -65,6 +65,11 @@
   }
   HC.applyFont = applyFont;
   HC.api.getSettings().then(function(s){ applyFont(s && s.ui_font_size); });
+  HC.api.appInfo().then(function(info){
+    if (info && info.version){
+      document.getElementById("tbTitle").textContent = "Happycrate v" + info.version;
+    }
+  });
 })();
 
 (function(){

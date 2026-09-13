@@ -795,7 +795,8 @@ body{
   position:fixed; left:50%; bottom:24px; z-index:46;
   transform:translate(-50%, 18px) scale(.95);
   min-width:400px; height:48px;
-  background:var(--ink); color:#fff;
+  background:var(--panel); color:var(--t1);
+  border:1px solid var(--border);
   border-radius:13px; box-shadow:var(--sh-modal);
   display:flex; align-items:center; gap:var(--sp-4);
   padding:0 var(--sp-2) 0 var(--sp-5);
@@ -804,23 +805,23 @@ body{
 }
 .selbar.show{opacity:1; transform:translate(-50%, 0) scale(1); pointer-events:auto}
 .selbar .st{font:500 var(--fs-md)/1 var(--font); white-space:nowrap}
-.selbar .st b{color:var(--brand-line); font-family:var(--font-num); font-size:calc(var(--fs-md) + 2px); margin:0 2px}
-.selbar .sdiv{width:1px; height:20px; background:rgba(255,255,255,.16); flex:none}
+.selbar .st b{color:var(--brand); font-family:var(--font-num); font-size:calc(var(--fs-md) + 2px); margin:0 2px}
+.selbar .sdiv{width:1px; height:20px; background:var(--divider); flex:none}
 .selbar .sbtn{
   height:31px; padding:0 12px; border:0; border-radius:8px;
-  background:rgba(255,255,255,.09); color:#fff;
+  background:var(--shell); color:var(--t2);
   font:500 var(--fs-sm)/1 var(--font); white-space:nowrap;
   transition:background var(--d-hover) var(--e);
 }
-.selbar .sbtn:hover{background:rgba(255,255,255,.18)}
-.selbar .sbtn.primary{background:var(--brand)}
+.selbar .sbtn:hover{background:var(--shell-hover)}
+.selbar .sbtn.primary{background:var(--brand); color:#fff}
 .selbar .sbtn.primary:hover{background:var(--brand-hover)}
 .selbar .sclose{
   width:27px; height:27px; padding:0; border:0; border-radius:6px;
-  background:transparent; color:rgba(255,255,255,.6);
+  background:transparent; color:var(--t4);
   display:grid; place-items:center;
 }
-.selbar .sclose:hover{background:rgba(255,255,255,.12); color:#fff}
+.selbar .sclose:hover{background:var(--ink-8); color:var(--t1)}
 .selbar .ssp{flex:1}
 
 .srow.cursor{box-shadow:inset 0 0 0 1.5px var(--brand-line)}
@@ -844,8 +845,11 @@ body.dark .selbar{
   box-shadow:var(--sh-modal), 0 0 0 1px var(--border);
 }
 body.dark .selbar .st{color:var(--t1)}
+body.dark .selbar .st b{color:var(--brand-line)}
+body.dark .selbar .sdiv{background:rgba(255,255,255,.14)}
 body.dark .selbar .sbtn{background:rgba(255,255,255,.08); color:var(--t1)}
 body.dark .selbar .sbtn:hover{background:rgba(255,255,255,.16)}
 body.dark .selbar .sbtn.primary{color:#fff}
 body.dark .selbar .sclose{color:rgba(255,255,255,.6)}
+body.dark .selbar .sclose:hover{background:rgba(255,255,255,.12); color:#fff}
 body.dark .sw::after{background:#E7E9F2}

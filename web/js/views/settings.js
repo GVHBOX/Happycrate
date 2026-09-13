@@ -218,10 +218,10 @@
       HC.api.saveSettings({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: true, theme: "light"
+        ui_font_size: 18, selbar: false, theme: "light"
       }).then(function(){
         dlKey = "";
-        selbarOn = true;
+        selbarOn = false;
         themeOn = false;
         if (HC.applyTheme) HC.applyTheme("light");
         applyFont(18);

@@ -87,10 +87,13 @@
     location.hash = "sources";
   };
   document.getElementById("tbHome").onclick = function(){
-    if (HC.views.search.enterHero) HC.views.search.enterHero();
     var name = location.hash.replace("#", "") || "search";
-    if (name === "search"){ current = null; go(); }
-    else location.hash = "search";
+    if (name !== "search"){
+      if (HC.views.search.enterHero) HC.views.search.enterHero();
+      location.hash = "search";
+      return;
+    }
+    if (HC.views.search.toggleHero) HC.views.search.toggleHero();
   };
 
   function applyFont(v){

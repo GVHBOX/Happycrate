@@ -51,7 +51,7 @@ DEFAULT_SETTINGS = {
     "user_agent": "",
     "proxy": "",
     "ui_font_size": 18,
-    "selbar": True,
+    "selbar": False,
     "theme": "light",
 }
 

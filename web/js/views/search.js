@@ -40,7 +40,7 @@
     enabledCount: 0, totalSources: 0,
     lines: [], flash: false, flashT: null,
     srcList: [], strip: {}, cursor: -1,
-    roomy: false, selbarOn: true
+    roomy: false, selbarOn: false
   };
 
   try { st.roomy = localStorage.getItem("hc-roomy") === "1"; } catch (e) {}
@@ -119,6 +119,43 @@
   function setChip(text, kind){
     chipEl.textContent = text;
     chipEl.className = "chipbtn" + (kind ? " " + kind : "");
+  }
+
+  function refreshSources(){
+    HC.api.listSources().then(function(list){
+      st.names = {};
+      st.enabledCount = 0;
+      (list || []).forEach(function(s){
+        st.names[s.key] = s.label;
+        if (s.enabled) st.enabledCount++;
+      });
+      st.totalSources = (list || []).length;
+      st.srcList = (list || []).filter(function(s){ return s.enabled; })
+        .map(function(s){ return {key:s.key, label:s.label}; });
+      var srcs = root ? root.querySelector("#heroSrcs") : null;
+      if (srcs){
+        srcs.innerHTML = (list || []).map(function(s){
+          var hst = s.health && s.health.state;
+          return '<button class="srcdot' + (hst === "err" || hst === "warn" ? " " + hst : "") +
+            (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '">' +
+            '<span class="sdot"></span>' + esc(s.label) + '</button>';
+        }).join("");
+      }
+      if (!st.busy) chipIdle();
+      if (st.searched || st.busy){
+        renderRows();
+        updateSelUI(true);
+        paintStrip();
+        paintBadge(true);
+        paintCursor();
+        if (st.busy){
+          goBtn.textContent = "停止";
+          goBtn.classList.add("stop");
+          progEl.classList.add("on");
+          setChip("搜索中…", "busy");
+        }
+      }
+    });
   }
 
   function chipIdle(){
@@ -353,17 +390,9 @@
 
   function go(){
     if (st.hero){
-      st.hero = false;
       var heroInp = document.getElementById("heroInp");
       if (heroInp && heroInp.value.trim()) inp.value = heroInp.value.trim();
-      var heroEl = root.querySelector(".hero");
-      if (heroEl){
-        heroEl.classList.add("leave");
-        setTimeout(function(){
-          if (heroEl.parentNode) heroEl.parentNode.removeChild(heroEl);
-        }, 280);
-      }
-      root.classList.add("card-enter");
+      hideHero();
     }
     if (st.busy){
       HC.api.cancelSearch(st.token);
@@ -430,6 +459,45 @@
     paintBadge();
   }
 
+  function showHero(){
+    st.hero = true;
+    if (!root || !root.isConnected) return;
+    if (root.querySelector(".hero")) return;
+    var hero = document.createElement("div");
+    hero.className = "hero";
+    hero.innerHTML =
+      '<div class="hero-in">' +
+        '<img class="brandmark" src="assets/app-256.png" alt="">' +
+        '<div class="hero-search">' + ICONS.search +
+          '<input id="heroInp" placeholder="输入搜索内容" autocomplete="off">' +
+          '<button class="gobtn" id="heroGo">搜索</button>' +
+        '</div>' +
+        '<div class="hero-srcs" id="heroSrcs"></div>' +
+      '</div>';
+    root.appendChild(hero);
+    var heroInp = hero.querySelector("#heroInp");
+    hero.querySelector("#heroGo").onclick = go;
+    heroInp.onkeydown = function(e){
+      if (e.key === "Enter") go();
+    };
+    hero.querySelector("#heroSrcs").addEventListener("click", function(e){
+      if (e.target.closest("[data-key]")) location.hash = "sources";
+    });
+    refreshSources();
+    setTimeout(function(){ heroInp.focus(); }, 120);
+  }
+
+  function hideHero(){
+    st.hero = false;
+    var heroEl = root.querySelector(".hero");
+    if (!heroEl) return;
+    heroEl.classList.add("leave");
+    setTimeout(function(){
+      if (heroEl.parentNode) heroEl.parentNode.removeChild(heroEl);
+    }, 280);
+    root.classList.add("card-enter");
+  }
+
   function mount(mountEl){
     root = document.createElement("div");
     root.className = "app";
@@ -472,30 +540,6 @@
     stripEl = root.querySelector("#srcstrip");
     badgeEl.innerHTML = badgeHtml();
     root.classList.toggle("roomy", st.roomy);
-
-    function refreshSources(){
-      HC.api.listSources().then(function(list){
-        st.names = {};
-        st.enabledCount = 0;
-        (list || []).forEach(function(s){
-          st.names[s.key] = s.label;
-          if (s.enabled) st.enabledCount++;
-        });
-        st.totalSources = (list || []).length;
-        st.srcList = (list || []).filter(function(s){ return s.enabled; })
-          .map(function(s){ return {key:s.key, label:s.label}; });
-        var srcs = root.querySelector("#heroSrcs");
-        if (srcs){
-          srcs.innerHTML = (list || []).map(function(s){
-            var hst = s.health && s.health.state;
-            return '<button class="srcdot' + (hst === "err" || hst === "warn" ? " " + hst : "") +
-              (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '">' +
-              '<span class="sdot"></span>' + esc(s.label) + '</button>';
-          }).join("");
-        }
-        if (!st.busy) chipIdle();
-      });
-    }
 
     refreshSources();
     if (HC.api.mode() === "mock"){
@@ -776,7 +820,10 @@
       if (e.key === "Escape"){
         if (ctxEl){ closeCtx(); return; }
         st.sel = {};
+        st.anchor = "";
         updateSelUI();
+        showHero();
+        return;
       }
       if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")){
         if (tag === "input" || tag === "textarea") return;
@@ -861,35 +908,17 @@
       updateSelUI(true);
     });
 
-    if (st.hero){
-      var hero = document.createElement("div");
-      hero.className = "hero";
-      hero.innerHTML =
-        '<div class="hero-in">' +
-          '<img class="brandmark" src="assets/app-256.png" alt="">' +
-          '<div class="hero-search">' + ICONS.search +
-            '<input id="heroInp" placeholder="输入搜索内容" autocomplete="off">' +
-            '<button class="gobtn" id="heroGo">搜索</button>' +
-          '</div>' +
-          '<div class="hero-srcs" id="heroSrcs"></div>' +
-        '</div>';
-      root.appendChild(hero);
-      var heroInp = hero.querySelector("#heroInp");
-      hero.querySelector("#heroGo").onclick = go;
-      heroInp.onkeydown = function(e){
-        if (e.key === "Enter") go();
-      };
-      hero.querySelector("#heroSrcs").addEventListener("click", function(e){
-        if (e.target.closest("[data-key]")) location.hash = "sources";
-      });
-      setTimeout(function(){ heroInp.focus(); }, 120);
-    }
+    if (st.hero) showHero();
 
     HC.views.search.st = st;
   }
 
   HC.views.search = {
     mount: mount,
-    enterHero: function(){ st.hero = true; }
+    enterHero: showHero,
+    toggleHero: function(){
+      if (root && root.querySelector(".hero")) hideHero();
+      else showHero();
+    }
   };
 })();

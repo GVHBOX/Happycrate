@@ -725,7 +725,7 @@ body{
   padding:0 7px 0 18px;
   transition:box-shadow .22s var(--e), border-color .2s var(--e);
 }
-.hero-search:focus-within{border-color:var(--brand-line); box-shadow:var(--sh-card), 0 0 0 4px var(--brand-ring)}
+.hero-search:focus-within{border-color:var(--brand-line); box-shadow:var(--sh-card), 0 0 0 2px var(--brand-ring)}
 .hero-search svg{width:18px; height:18px; color:var(--t4); flex:none}
 .hero-search input{
   flex:1; min-width:0; border:0; outline:0; background:transparent;

@@ -252,7 +252,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.6", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.7", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },

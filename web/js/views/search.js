@@ -228,6 +228,8 @@
       '<button class="mi" data-a="title">' + ICONS.copy + '复制标题</button>' +
       '<button class="mi" data-a="dl">' + ICONS.dl + '发送到下载工具</button>';
     document.body.appendChild(ctxEl);
+    ctxEl.style.left = Math.max(4, Math.min(x, window.innerWidth - ctxEl.offsetWidth - 8)) + "px";
+    ctxEl.style.top = Math.max(4, Math.min(y, window.innerHeight - ctxEl.offsetHeight - 8)) + "px";
     ctxEl.addEventListener("click", function(e){
       var b = e.target.closest("[data-a]");
       if (!b) return;
@@ -664,7 +666,6 @@
       var tag = (e.target && e.target.tagName || "").toLowerCase();
       if (e.key === "Escape"){
         if (ctxEl){ closeCtx(); return; }
-        if (tag === "input" || tag === "textarea") return;
         st.sel = {};
         updateSelUI();
       }

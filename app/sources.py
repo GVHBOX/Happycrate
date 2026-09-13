@@ -434,6 +434,7 @@ DEFAULT_BASES = {
     "eztv": "https://eztvx.to",
     "bitsearch": "https://bitsearch.to",
     "tpb": "https://thepiratebay10.org",
+    "btdig": "https://btdig.com",
 }
 
 def base_of(entry_key: str, base: str = "") -> str:
@@ -660,6 +661,82 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
         items.append(_mk(title=title, info_hash=h, source="TPB镜像"))
     return items
 
+_BTDIG_SIZE_RE = re.compile(r"([\d.]+)\s*(B|KB|MB|GB|TB)", re.I)
+_BTDIG_SIZE_MUL = {"B": 1, "KB": 1024, "MB": 1024 ** 2,
+                   "GB": 1024 ** 3, "TB": 1024 ** 4}
+_BTDIG_AGE_RE = re.compile(
+    r"(\d+)\s*(year|month|day|hour|minute|年|个月|天|小时|分钟)", re.I)
+_BTDIG_AGE_MUL = {
+    "year": 365 * 86400, "month": 30 * 86400, "day": 86400,
+    "hour": 3600, "minute": 60,
+    "年": 365 * 86400, "个月": 30 * 86400, "天": 86400,
+    "小时": 3600, "分钟": 60,
+}
+
+def _btdig_size(text: str) -> int:
+    m = _BTDIG_SIZE_RE.search(text.strip())
+    if not m:
+        return 0
+    try:
+        return int(float(m.group(1)) * _BTDIG_SIZE_MUL[m.group(2).upper()])
+    except (TypeError, ValueError, OverflowError, KeyError):
+        return 0
+
+def _btdig_age(text: str) -> float | None:
+    m = _BTDIG_AGE_RE.search(text.strip())
+    if not m:
+        return None
+    try:
+        return max(0.0, time.time() - int(m.group(1)) * _BTDIG_AGE_MUL[m.group(2)])
+    except (TypeError, ValueError, OverflowError, KeyError):
+        return None
+
+def _search_btdig(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["btdig"])
+    url = (f"{root}/search?q={urllib.parse.quote(query)}"
+           f"&p={max(0, int(page) - 1)}&order=0")
+    text = http_get(url, timeout=timeout, batch=batch, headers={
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": root + "/",
+    })
+
+    re_row = re.compile(
+        r'<div class="one_result".*?(?=<div class="one_result"|$)', re.I | re.S)
+    re_magnet = re.compile(r'href="(magnet:\?xt=urn:btih:[0-9a-fA-F]{40})', re.I)
+    re_title = re.compile(
+        r'<div class="torrent_name".*?><a[^>]*>(.*?)</a>', re.I | re.S)
+    re_size = re.compile(
+        r'<span class="torrent_size"[^>]*>(.*?)</span>', re.I | re.S)
+    re_age = re.compile(
+        r'<span class="torrent_age"[^>]*>(.*?)</span>', re.I | re.S)
+    re_tag = re.compile(r"<[^>]+>")
+
+    items: list[dict] = []
+    seen: set[str] = set()
+    for row in re_row.findall(text):
+        mag = re_magnet.search(row)
+        if not mag:
+            continue
+        h = hash_from_magnet(mag.group(1))
+        if not h or h in seen:
+            continue
+        seen.add(h)
+        t = re_title.search(row)
+        title = _unescape(re_tag.sub("", t.group(1))) if t else ""
+        s = re_size.search(row)
+        a = re_age.search(row)
+        items.append(_mk(
+            title=title,
+            info_hash=h,
+            size=_btdig_size(_unescape(re_tag.sub("", s.group(1)))) if s else 0,
+            seeders=None,
+            leechers=None,
+            added=_btdig_age(_unescape(re_tag.sub("", a.group(1)))) if a else None,
+            source="BTDigg",
+        ))
+    return items
+
 _BUILTIN_ADAPTERS = {
     "apibay": ("海盗湾", _search_apibay),
     "nyaa": ("Nyaa", _search_nyaa),
@@ -669,6 +746,7 @@ _BUILTIN_ADAPTERS = {
     "eztv": ("EZTV", _search_eztv),
     "bitsearch": ("BitSearch", _search_bitsearch),
     "tpb": ("TPB镜像", _search_tpb_mirror),
+    "btdig": ("BTDigg", _search_btdig),
 }
 
 EMPTY_NEUTRAL = frozenset({"eztv"})

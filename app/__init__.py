@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__version__ = "1.0.11"
+__version__ = "1.0.12"
 APP_TITLE = "happycrate"
 
 APP_TITLE_FULL = f"Happycrate v{__version__}"

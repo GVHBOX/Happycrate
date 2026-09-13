@@ -20,7 +20,7 @@ ALL_TYPES = ("builtin", *CUSTOM_TYPES)
 
 URL_PLACEHOLDERS = ("{query}", "{page}")
 
-RETIRED_SOURCES = frozenset({"btdig"})
+RETIRED_SOURCES = frozenset()
 
 DEFAULT_SOURCES = [
     {"key": "apibay", "label": "海盗湾", "type": "builtin",
@@ -39,6 +39,8 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 6},
     {"key": "tpb", "label": "TPB镜像", "type": "builtin",
      "enabled": True, "timeout": 15, "base": "", "order": 7},
+    {"key": "btdig", "label": "BTDigg", "type": "builtin",
+     "enabled": True, "timeout": 15, "base": "", "order": 8},
 ]
 
 DEFAULT_SETTINGS = {

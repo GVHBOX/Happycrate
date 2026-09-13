@@ -51,6 +51,7 @@ DEFAULT_SETTINGS = {
     "user_agent": "",
     "proxy": "",
     "ui_font_size": 18,
+    "selbar": True,
 }
 
 SETTING_SPECS = {
@@ -62,6 +63,7 @@ SETTING_SPECS = {
     "user_agent": {"type": str},
     "proxy": {"type": str},
     "ui_font_size": {"type": int, "min": 12, "max": 24},
+    "selbar": {"type": bool},
 }
 
 def config_path():

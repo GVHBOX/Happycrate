@@ -247,7 +247,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.1", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.2", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
@@ -255,20 +255,25 @@
     startSearch: function(query){
       if (live()) return window.pywebview.api.start_search(query);
       var list = mockItems(query);
-      var keys = ["nyaa", "apibay", "dmhy"];
+      var errs = mockErrors(query);
+      var keys = seed().filter(function(s){ return s.enabled; }).map(function(s){ return s.key; });
       var token = Date.now();
       mockToken = token;
-      var cuts = [0, 9, 18, list.length];
       keys.forEach(function(key, i){
-        var part = list.slice(cuts[i], cuts[i + 1]);
+        var part = list.filter(function(it){ return it.sources.indexOf(key) >= 0; });
         setTimeout(function(){
           if (token !== mockToken) return;
-          if (sHooks.source) sHooks.source({token:token, key:key, count:part.length, err:""});
-          if (part.length && sHooks.batch) sHooks.batch({token:token, key:key, items:part});
-          if (i === keys.length - 1 && sHooks.done){
-            sHooks.done({token:token, total:list.length, errors:mockErrors(query)});
+          var err = errs[key] || "";
+          if (sHooks.source){
+            sHooks.source({token:token, key:key, count: err ? 0 : part.length, err:err});
           }
-        }, 420 + i * 560);
+          if (!err && part.length && sHooks.batch){
+            sHooks.batch({token:token, key:key, items:part});
+          }
+          if (i === keys.length - 1 && sHooks.done){
+            sHooks.done({token:token, total:list.length, errors:errs});
+          }
+        }, 420 + i * 380);
       });
       return Promise.resolve({ok:true, token:token, total:keys.length, error:""});
     },
@@ -296,7 +301,7 @@
       return Promise.resolve({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18
+        ui_font_size: 18, selbar: true
       });
     },
 

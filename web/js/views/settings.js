@@ -14,6 +14,7 @@
 
   var root = null;
   var dlKey = "";
+  var selbarOn = true;
 
   var STEP_BTN = {
     minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
@@ -94,6 +95,7 @@
       }
     });
     out.default_downloader = dlKey;
+    out.selbar = selbarOn;
     return out;
   }
 
@@ -117,6 +119,8 @@
           '<div class="mapgrid" id="fields"></div>' +
           '<div class="field"><label>默认下载工具</label>' +
             '<div class="seg" id="s_dl" style="margin-top:8px"></div></div>' +
+          '<div class="field"><label>浮动选择条</label>' +
+            '<button type="button" class="sw" id="s_selbar" style="margin-top:8px"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -147,6 +151,9 @@
 
         dlKey = settings.default_downloader || "";
         paintDl(list, dlKey);
+        selbarOn = settings.selbar !== false;
+        var sb = root.querySelector("#s_selbar");
+        if (sb) sb.classList.toggle("off", !selbarOn);
 
         var lines = [
           ["版本", info.version],
@@ -174,6 +181,11 @@
       });
     });
 
+    root.querySelector("#s_selbar").onclick = function(){
+      selbarOn = !selbarOn;
+      this.classList.toggle("off", !selbarOn);
+    };
+
     root.querySelector("#btnSave").onclick = function(){
       var st = root.querySelector("#st");
       HC.api.saveSettings(readFields()).then(function(r){
@@ -193,9 +205,10 @@
       HC.api.saveSettings({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18
+        ui_font_size: 18, selbar: true
       }).then(function(){
         dlKey = "";
+        selbarOn = true;
         applyFont(18);
         mountEl.innerHTML = "";
         mount(mountEl);

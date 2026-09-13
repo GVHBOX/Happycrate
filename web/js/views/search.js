@@ -25,20 +25,27 @@
       '<path d="M2.6 11.4h8.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
     arw: '<svg class="arw" width="9" height="9" viewBox="0 0 10 10" fill="none">' +
       '<path d="M5 8V2M2.4 4.6L5 2l2.6 2.6" stroke="currentColor" stroke-width="1.4" ' +
-      'stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      'stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    rows: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+      '<path d="M4 2.5v9M4 2.5L2.2 4.3M4 2.5l1.8 1.8M10 11.5v-9M10 11.5l-1.8-1.8M10 11.5l1.8-1.8" ' +
+      'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   var st = {
     items: [], sel: {}, anchor: "",
     field: "", desc: false,
-    busy: false, searched: false,
+    busy: false, searched: false, hero: true,
     token: 0, done: 0, total: 0,
     errors: {}, names: {},
     enabledCount: 0, totalSources: 0,
-    lines: [], flash: false, flashT: null
+    lines: [], flash: false, flashT: null,
+    srcList: [], strip: {}, cursor: -1,
+    roomy: false, selbarOn: true
   };
 
-  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl;
+  try { st.roomy = localStorage.getItem("hc-roomy") === "1"; } catch (e) {}
+
+  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
 
   function esc(t){
     return String(t === undefined || t === null ? "" : t)
@@ -161,6 +168,7 @@
     rowsEl.innerHTML = list.map(function(it, i){
       return rowHtml(it, i, false);
     }).join("");
+    paintCursor();
   }
 
   function appendRows(count){
@@ -190,6 +198,51 @@
     ckAllEl.classList.toggle("on", n > 0 && n === list.length);
     ckAllEl.innerHTML = (n > 0 && n === list.length) ? ICONS.check : "";
     paintBadge(still);
+    if (selbarEl){
+      selbarEl.querySelector("#selN").textContent = n;
+      selbarEl.classList.toggle("show", st.selbarOn && n > 0);
+    }
+  }
+
+  function paintCursor(){
+    if (!rowsEl) return;
+    var rows = rowsEl.querySelectorAll(".srow");
+    if (st.cursor >= rows.length) st.cursor = rows.length - 1;
+    [].slice.call(rows).forEach(function(row, i){
+      row.classList.toggle("cursor", i === st.cursor);
+    });
+    if (st.cursor >= 0 && rows[st.cursor]) rows[st.cursor].scrollIntoView({block:"nearest"});
+  }
+
+  function paintStrip(){
+    if (!stripEl) return;
+    if (!st.busy && !st.searched){
+      stripEl.hidden = true;
+      return;
+    }
+    var order = st.srcList.map(function(s){ return s.key; });
+    Object.keys(st.strip).forEach(function(k){
+      if (order.indexOf(k) < 0) order.push(k);
+    });
+    if (!order.length){
+      stripEl.hidden = true;
+      return;
+    }
+    stripEl.hidden = false;
+    var done = 0;
+    var html = order.map(function(k){
+      var ss = st.strip[k] || {state:"pending"};
+      if (ss.state === "ok" || ss.state === "err" || ss.state === "cancel") done++;
+      var label =
+        ss.state === "ok" ? "<b>" + ss.count + "</b> 条" :
+        ss.state === "err" ? esc(ss.err || "失败") :
+        ss.state === "cancel" ? "已取消" : "等待";
+      var name = st.names[k] || k;
+      return '<span class="stile ' + ss.state + '"><i class="sdot"></i>' + esc(name) + ' · ' + label + '</span>';
+    }).join("");
+    var total = st.total || order.length;
+    html += '<span class="scount"><b>' + done + '</b> / ' + total + ' 完成</span>';
+    stripEl.innerHTML = html;
   }
 
   function headHtml(){
@@ -291,15 +344,34 @@
     st.anchor = "";
     st.errors = {};
     st.lines = [];
+    st.strip = {};
+    st.cursor = -1;
     st.done = 0;
     st.searched = false;
     renderTip();
   }
 
   function go(){
+    if (st.hero){
+      st.hero = false;
+      var heroInp = document.getElementById("heroInp");
+      if (heroInp && heroInp.value.trim()) inp.value = heroInp.value.trim();
+      var heroEl = root.querySelector(".hero");
+      if (heroEl){
+        heroEl.classList.add("leave");
+        setTimeout(function(){
+          if (heroEl.parentNode) heroEl.parentNode.removeChild(heroEl);
+        }, 280);
+      }
+      root.classList.add("card-enter");
+    }
     if (st.busy){
       HC.api.cancelSearch(st.token);
       st.busy = false;
+      Object.keys(st.strip).forEach(function(k){
+        if (st.strip[k].state === "pending" || st.strip[k].state === "busy") st.strip[k] = {state:"cancel"};
+      });
+      paintStrip();
       goBtn.textContent = "搜索";
       goBtn.classList.remove("stop");
       progEl.classList.remove("on");
@@ -312,8 +384,10 @@
     var q = inp.value.trim();
     if (!q) return;
     reset();
+    st.srcList.forEach(function(s){ st.strip[s.key] = {state:"pending"}; });
     st.busy = true;
     renderRows();
+    paintStrip();
     paintBadge();
     setChip("搜索中…", "busy");
     goBtn.textContent = "停止";
@@ -347,6 +421,11 @@
     var total = st.items.length;
     if (fails) setChip(total + " 条 · " + fails + " 个源失败", "warn");
     else setChip("搜索完成 · " + total + " 条", "ok");
+    Object.keys(st.strip).forEach(function(k){
+      if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
+    });
+    paintStrip();
+    if (HC.updateHealthDot) HC.updateHealthDot();
     renderRows();
     paintBadge();
   }
@@ -370,9 +449,11 @@
             '<input id="inp" placeholder="输入关键字，空格分隔多个词" autocomplete="off">' +
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
+          '<button class="iconbtn" id="btnRows" title="行高">' + ICONS.rows + '</button>' +
           '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
         '</div>' +
         '<div class="progress" id="prog"><div class="fill"></div></div>' +
+        '<div class="srcstrip" id="srcstrip" hidden></div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead" style="grid-template-columns:' + GRID + '">' + headHtml() + '</div>' +
         '<div class="rows" id="rows"></div>' +
@@ -388,7 +469,9 @@
     goBtn = root.querySelector("#goBtn");
     headEl = root.querySelector("#shead");
     progEl = root.querySelector("#prog");
+    stripEl = root.querySelector("#srcstrip");
     badgeEl.innerHTML = badgeHtml();
+    root.classList.toggle("roomy", st.roomy);
 
     function refreshSources(){
       HC.api.listSources().then(function(list){
@@ -399,6 +482,17 @@
           if (s.enabled) st.enabledCount++;
         });
         st.totalSources = (list || []).length;
+        st.srcList = (list || []).filter(function(s){ return s.enabled; })
+          .map(function(s){ return {key:s.key, label:s.label}; });
+        var srcs = root.querySelector("#heroSrcs");
+        if (srcs){
+          srcs.innerHTML = (list || []).map(function(s){
+            var hst = s.health && s.health.state;
+            return '<button class="srcdot' + (hst === "err" || hst === "warn" ? " " + hst : "") +
+              (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '">' +
+              '<span class="sdot"></span>' + esc(s.label) + '</button>';
+          }).join("");
+        }
         if (!st.busy) chipIdle();
       });
     }
@@ -423,11 +517,14 @@
         if (d.err){
           st.lines.push({text: name + "：失败（" + d.err + "）", bad: true});
           setChip(name + " 失败", "warn");
+          st.strip[d.key] = {state:"err", err:d.err};
         } else {
           st.lines.push({text: name + "：" + d.count + " 条", bad: false});
           setChip(name + " " + d.count + " 条", "busy");
+          st.strip[d.key] = {state:"ok", count:d.count};
         }
         renderTip();
+        paintStrip();
       },
       batch: function(d){
         if (!st.busy || d.token !== st.token) return;
@@ -458,6 +555,11 @@
 
     root.querySelector("#btnCfg").onclick = function(){
       location.hash = "settings";
+    };
+    root.querySelector("#btnRows").onclick = function(){
+      st.roomy = !st.roomy;
+      try { localStorage.setItem("hc-roomy", st.roomy ? "1" : "0"); } catch (e) {}
+      root.classList.toggle("roomy", st.roomy);
     };
     chipEl.onclick = function(){
       location.hash = "sources";
@@ -508,6 +610,12 @@
         return;
       }
       var hash = row.dataset.hash;
+      var vlist = visible(), cIdx = -1;
+      vlist.forEach(function(it, i){
+        if (it.hash === hash) cIdx = i;
+      });
+      st.cursor = cIdx;
+      paintCursor();
       if (e.shiftKey && st.anchor){
         var list = visible();
         var a = -1, b = -1;
@@ -678,6 +786,34 @@
         visible().forEach(function(it){ st.sel[it.hash] = true; });
         updateSelUI();
       }
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")){
+        e.preventDefault();
+        var heroInp = st.hero ? document.getElementById("heroInp") : null;
+        (heroInp || inp).focus();
+        return;
+      }
+      if (st.hero) return;
+      if (tag === "input" || tag === "textarea") return;
+      var list = visible();
+      if (!list.length) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp"){
+        e.preventDefault();
+        var dir = e.key === "ArrowDown" ? 1 : -1;
+        if (st.cursor < 0) st.cursor = dir > 0 ? 0 : list.length - 1;
+        else st.cursor = Math.max(0, Math.min(list.length - 1, st.cursor + dir));
+        paintCursor();
+        return;
+      }
+      if (e.key === " " && st.cursor >= 0){
+        e.preventDefault();
+        var it = list[st.cursor];
+        if (it){
+          if (st.sel[it.hash]) delete st.sel[it.hash];
+          else st.sel[it.hash] = true;
+          st.anchor = it.hash;
+          updateSelUI();
+        }
+      }
     };
     document.addEventListener("click", mount._docClick);
     document.addEventListener("keydown", mount._docKey);
@@ -692,6 +828,62 @@
     }
     syncScrollbar();
     if (window.ResizeObserver) new ResizeObserver(syncScrollbar).observe(rowsBox);
+
+    selbarEl = document.createElement("div");
+    selbarEl.id = "selbar";
+    selbarEl.className = "selbar";
+    selbarEl.innerHTML =
+      '<span class="st">已选 <b id="selN">0</b> 条</span>' +
+      '<span class="sdiv"></span>' +
+      '<button class="sbtn" data-s="copy">复制磁力</button>' +
+      '<button class="sbtn" data-s="title">复制标题</button>' +
+      '<button class="sbtn primary" data-s="dl">发送下载</button>' +
+      '<span class="ssp"></span>' +
+      '<button class="sclose" data-s="close">' +
+        '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+      '</button>';
+    root.appendChild(selbarEl);
+    selbarEl.addEventListener("click", function(e){
+      var b = e.target.closest("[data-s]");
+      if (!b) return;
+      if (b.dataset.s === "copy") doCopy();
+      else if (b.dataset.s === "title") doCopyTitle();
+      else if (b.dataset.s === "dl") doSend();
+      else {
+        st.sel = {};
+        st.anchor = "";
+        updateSelUI();
+      }
+    });
+
+    HC.api.getSettings().then(function(s){
+      st.selbarOn = !s || s.selbar !== false;
+      updateSelUI(true);
+    });
+
+    if (st.hero){
+      var hero = document.createElement("div");
+      hero.className = "hero";
+      hero.innerHTML =
+        '<div class="hero-in">' +
+          '<div class="brandmark">H</div>' +
+          '<div class="hero-search">' + ICONS.search +
+            '<input id="heroInp" placeholder="输入关键字，空格分隔多个词" autocomplete="off">' +
+            '<button class="gobtn" id="heroGo">搜索</button>' +
+          '</div>' +
+          '<div class="hero-srcs" id="heroSrcs"></div>' +
+        '</div>';
+      root.appendChild(hero);
+      var heroInp = hero.querySelector("#heroInp");
+      hero.querySelector("#heroGo").onclick = go;
+      heroInp.onkeydown = function(e){
+        if (e.key === "Enter") go();
+      };
+      hero.querySelector("#heroSrcs").addEventListener("click", function(e){
+        if (e.target.closest("[data-key]")) location.hash = "sources";
+      });
+      setTimeout(function(){ heroInp.focus(); }, 120);
+    }
 
     HC.views.search.st = st;
   }

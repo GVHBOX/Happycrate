@@ -700,3 +700,127 @@ body{
   font:500 var(--fs-xs)/1 var(--font); color:var(--brand); text-align:center;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+
+.app{position:relative}
+
+.hero{
+  position:absolute; inset:0; z-index:30;
+  background:var(--panel);
+  display:flex; align-items:center; justify-content:center;
+}
+.hero.leave{animation:heroOut .26s var(--e) both}
+.hero-in{width:min(560px, 86%); display:flex; flex-direction:column; align-items:center; gap:var(--sp-5); transform:translateY(-6vh)}
+.brandmark{
+  width:54px; height:54px; border-radius:15px;
+  background:linear-gradient(135deg, var(--brand), #8B5CF6);
+  color:#fff; display:grid; place-items:center;
+  font:700 23px/1 var(--font-num); letter-spacing:-1px;
+  box-shadow:var(--sh-card);
+}
+.hero-search{
+  width:100%; height:calc(52px*var(--fr));
+  border-radius:calc(var(--r-ctrl) + 4px);
+  background:var(--panel); border:1px solid var(--border);
+  box-shadow:var(--sh-card);
+  display:flex; align-items:center; gap:var(--sp-3);
+  padding:0 var(--sp-2) 0 var(--sp-5);
+  transition:box-shadow .22s var(--e), border-color .2s var(--e);
+}
+.hero-search:focus-within{border-color:var(--brand-line); box-shadow:var(--sh-card), 0 0 0 4px var(--brand-ring)}
+.hero-search svg{width:19px; height:19px; color:var(--t4); flex:none}
+.hero-search input{
+  flex:1; min-width:0; border:0; outline:0; background:transparent;
+  font:400 var(--fs-lg)/1 var(--font); color:var(--t1);
+}
+.hero-search input::placeholder{color:var(--t5)}
+.hero-search .gobtn{height:calc(38px*var(--fr)); padding:0 20px; border-radius:calc(var(--r-ctrl) + 2px); font-size:var(--fs-md)}
+.hero-srcs{display:flex; align-items:center; gap:var(--sp-2); flex-wrap:wrap; justify-content:center}
+.srcdot{
+  height:24px; padding:0 10px; border-radius:var(--r-chip);
+  border:1px solid var(--divider); background:var(--panel);
+  display:inline-flex; align-items:center; gap:6px;
+  font:500 var(--fs-2xs)/1 var(--font); color:var(--t3);
+  transition:border-color var(--d-hover) var(--e), color var(--d-hover) var(--e), background var(--d-hover) var(--e);
+}
+.srcdot:hover{border-color:var(--brand-line); color:var(--brand); background:var(--brand-soft)}
+.srcdot .sdot{width:6px; height:6px; border-radius:50%; background:var(--ok); flex:none}
+.srcdot.warn .sdot{background:var(--warn)}
+.srcdot.err .sdot{background:var(--err)}
+.srcdot.off{opacity:.45}
+.srcdot.off .sdot{background:var(--ink-13)}
+
+.app.card-enter > .card{animation:cardRise .34s var(--e-out) both}
+
+.srcstrip{
+  flex:none; display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-6); border-bottom:1px solid var(--divider);
+  background:var(--head); overflow-x:auto; scrollbar-width:thin;
+}
+.srcstrip[hidden]{display:none}
+.srcstrip::-webkit-scrollbar{height:4px}
+.srcstrip::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:2px}
+.stile{
+  flex:none; height:23px; padding:0 10px; border-radius:var(--r-chip);
+  background:var(--panel); border:1px solid var(--divider);
+  display:inline-flex; align-items:center; gap:6px;
+  font:500 var(--fs-2xs)/1 var(--font); color:var(--t3); white-space:nowrap;
+  transition:color var(--d-state) var(--e), border-color var(--d-state) var(--e), background var(--d-state) var(--e);
+}
+.stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}
+.stile.pending .sdot{animation:breathe 1.6s var(--e) infinite}
+.stile.busy{color:var(--brand); border-color:var(--brand-line); background:var(--brand-soft)}
+.stile.busy .sdot{background:var(--brand); animation:breathe 1s var(--e) infinite}
+.stile.ok .sdot{background:var(--ok)}
+.stile.ok b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
+.stile.err{color:var(--err); border-color:var(--danger-line); background:var(--danger-soft)}
+.stile.err .sdot{background:var(--err)}
+.stile.cancel{color:var(--t5)}
+.scount{margin-left:auto; flex:none; font:500 var(--fs-2xs)/1 var(--font-num); color:var(--t4); padding-left:var(--sp-3)}
+.scount b{color:var(--t2); font-weight:600}
+
+.tb-tools{display:flex; align-items:center; gap:2px; flex:none; padding-right:6px}
+.tb-dot{
+  width:26px; height:26px; padding:0; border:0; border-radius:var(--r-sm);
+  background:transparent; display:grid; place-items:center;
+  transition:background var(--d-hover) var(--e);
+}
+.tb-dot:hover{background:var(--ink-8)}
+.tb-dot .dot{width:8px; height:8px; border-radius:50%; background:var(--ok); transition:background var(--d-state) var(--e)}
+.tb-dot .dot.warn{background:var(--warn)}
+.tb-dot .dot.err{background:var(--err); animation:breathe 1.6s var(--e) infinite}
+
+.selbar{
+  position:fixed; left:50%; bottom:24px; z-index:46;
+  transform:translate(-50%, 18px) scale(.95);
+  min-width:400px; height:48px;
+  background:var(--ink); color:#fff;
+  border-radius:13px; box-shadow:var(--sh-modal);
+  display:flex; align-items:center; gap:var(--sp-4);
+  padding:0 var(--sp-2) 0 var(--sp-5);
+  opacity:0; pointer-events:none;
+  transition:transform .32s var(--spring), opacity .2s var(--e);
+}
+.selbar.show{opacity:1; transform:translate(-50%, 0) scale(1); pointer-events:auto}
+.selbar .st{font:500 var(--fs-md)/1 var(--font); white-space:nowrap}
+.selbar .st b{color:var(--brand-line); font-family:var(--font-num); font-size:calc(var(--fs-md) + 2px); margin:0 2px}
+.selbar .sdiv{width:1px; height:20px; background:rgba(255,255,255,.16); flex:none}
+.selbar .sbtn{
+  height:31px; padding:0 12px; border:0; border-radius:8px;
+  background:rgba(255,255,255,.09); color:#fff;
+  font:500 var(--fs-sm)/1 var(--font); white-space:nowrap;
+  transition:background var(--d-hover) var(--e);
+}
+.selbar .sbtn:hover{background:rgba(255,255,255,.18)}
+.selbar .sbtn.primary{background:var(--brand)}
+.selbar .sbtn.primary:hover{background:var(--brand-hover)}
+.selbar .sclose{
+  width:27px; height:27px; padding:0; border:0; border-radius:6px;
+  background:transparent; color:rgba(255,255,255,.6);
+  display:grid; place-items:center;
+}
+.selbar .sclose:hover{background:rgba(255,255,255,.12); color:#fff}
+.selbar .ssp{flex:1}
+
+.srow.cursor{box-shadow:inset 0 0 0 1.5px var(--brand-line)}
+.app.roomy .srow{flex:none; height:calc(52px*var(--fr,1))}
+.app.roomy .srow .c-title{font:400 var(--fs-md)/1.4 var(--font)}

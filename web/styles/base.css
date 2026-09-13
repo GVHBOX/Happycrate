@@ -139,6 +139,9 @@ body{
 .btn[disabled] .ripple{display:none}
 .btn.done{background:var(--ok); color:#fff; border-color:transparent}
 .btn.busy svg{animation:spin 1s linear infinite}
+.btn .i-load{display:none}
+.btn.busy .i-load{display:inline-flex}
+.btn.busy .i-bolt{display:none}
 
 .ripple{
   position:absolute; border-radius:50%;

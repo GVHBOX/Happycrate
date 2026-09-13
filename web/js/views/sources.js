@@ -13,6 +13,7 @@
     info:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.3v3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="4.3" r=".8" fill="currentColor"/></svg>',
     refresh:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.4 6.2a4.6 4.6 0 1 1 1.3 4.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M1.6 2.6v3.9h3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     bolt:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7.7 1.4L3.1 7.8h3.2l-.5 4.8 4.9-6.6H7.4l.3-4.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+    load:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="25 8" stroke-linecap="round"/></svg>',
     plus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.6v8.8M2.6 7h8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     close:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     list:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/><circle cx="2.3" cy="8" r="1" fill="currentColor"/><circle cx="2.3" cy="11.6" r="1" fill="currentColor"/></svg>',
@@ -404,7 +405,7 @@
           '<div class="group" id="groupDaily">' +
             '<button class="btn btn-brand" id="btnAdd">' + ICON.plus + '新增</button>' +
             '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
-            '<button class="btn btn-ghost" id="btnProbe">' + ICON.bolt + '测速</button>' +
+            '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
           '</div>' +
           '<div class="group hidden" id="groupBatch">' +
             '<button class="btn btn-brand" id="btnBatchDone">' + ICON.check + '完成</button>' +
@@ -552,7 +553,18 @@
 
     if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
     mount._docKey = function(e){
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape"){
+        if (document.querySelector(".backdrop")){ closeModal(); return; }
+        var tag = (e.target && e.target.tagName) || "";
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+        if (store.get().batch){
+          anchor = -1;
+          store.set({batch: false, checked: []});
+          return;
+        }
+        location.hash = "search";
+        return;
+      }
       if (!root || !store.get().batch) return;
       if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")){
         var tag = (e.target && e.target.tagName) || "";

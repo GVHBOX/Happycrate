@@ -235,6 +235,17 @@
       location.hash = "search";
     };
 
+    if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
+    mount._docKey = function(e){
+      if (e.key !== "Escape") return;
+      if (!root || !root.isConnected) return;
+      if (document.querySelector(".backdrop")) return;
+      var tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      location.hash = "search";
+    };
+    document.addEventListener("keydown", mount._docKey);
+
     root.querySelector("#btnLogs").onclick = function(){
       HC.api.openLogs();
     };

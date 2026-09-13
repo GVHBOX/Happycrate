@@ -42,6 +42,7 @@
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
     open: {},
+    filesCache: {}, filesLoading: {}, filesErr: {},
     roomy: false, selbarOn: false
   };
 
@@ -226,6 +227,33 @@
     return out;
   }
 
+  function fpanelInner(it){
+    var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
+    if (files && files.length){
+      return files.map(function(f){
+        return '<div class="fline"><span class="fname">' + hlTitle(esc(f.n)) +
+          '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
+      }).join("");
+    }
+    if (st.filesLoading[it.hash]) return '<div class="fline muted">加载中…</div>';
+    if (st.filesErr[it.hash]) return '<div class="fline muted">' + esc(st.filesErr[it.hash]) + '</div>';
+    return "";
+  }
+
+  function maybeLoadFiles(h){
+    if (st.filesCache[h] || st.filesLoading[h] || st.filesErr[h]) return;
+    var it = itemByHash(h);
+    if (!it || !it.fetch || !it.fetch.url) return;
+    st.filesLoading[h] = true;
+    if (st.open[h]) renderPanels();
+    HC.api.torrentFiles({url: it.fetch.url}).then(function(res){
+      delete st.filesLoading[h];
+      if (res && res.ok && res.files && res.files.length) st.filesCache[h] = res.files;
+      else st.filesErr[h] = (res && res.error) || "获取文件清单失败";
+      if (st.open[h]) renderPanels();
+    });
+  }
+
   function renderPanels(){
     if (!rowsEl || !rowsEl.isConnected) return;
     rowsEl.querySelectorAll(".fpanel").forEach(function(n){ n.remove(); });
@@ -237,21 +265,21 @@
     });
     Object.keys(st.open).forEach(function(h){
       var row = rows[h], it = itemByHash(h);
-      if (!row || !it || !it.files || !it.files.length){
+      var lazy = it && it.fetch && it.fetch.url;
+      var has = it && ((it.files && it.files.length) || lazy);
+      if (!row || !it || !has){
         delete st.open[h];
         return;
       }
       var p = document.createElement("div");
       p.className = "fpanel";
       p.dataset.hash = h;
-      p.innerHTML = it.files.map(function(f){
-        return '<div class="fline"><span class="fname">' + hlTitle(esc(f.n)) +
-          '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
-      }).join("");
+      p.innerHTML = fpanelInner(it);
       row.parentNode.insertBefore(p, row.nextSibling);
       row.classList.add("open");
       var chev = row.querySelector(".fchev");
       if (chev) chev.classList.add("on");
+      maybeLoadFiles(h);
     });
   }
 
@@ -264,7 +292,7 @@
       return st.names[k] || k;
     }).join(" · ");
     var title = hlTitle(esc(it.title));
-    var chev = it.files && it.files.length
+    var chev = (it.files && it.files.length) || it.fetch
       ? '<button class="fchev" data-hash="' + esc(it.hash) + '" title="文件">' + FCHEV + '</button>'
       : "";
     return '<div class="' + cls + '" data-hash="' + esc(it.hash) + '"' + anim + '>' +
@@ -476,6 +504,9 @@
     st.sel = {};
     st.anchor = "";
     st.open = {};
+    st.filesCache = {};
+    st.filesLoading = {};
+    st.filesErr = {};
     st.errors = {};
     st.lines = [];
     st.strip = {};

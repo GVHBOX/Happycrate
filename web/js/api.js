@@ -252,10 +252,17 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.14", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.15", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
+
+    torrentFiles: function(p){
+      if (live()) return window.pywebview.api.torrent_files(p);
+      return new Promise(function(res){
+        setTimeout(function(){ res({ok: false, files: [], error: "mock 没有懒加载文件清单"}); }, 500);
+      });
+    },
 
     startSearch: function(query){
       if (live()) return window.pywebview.api.start_search(query);

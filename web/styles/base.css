@@ -729,6 +729,7 @@ body{
 .fline .fname{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left}
 .fline .fname mark.hl{background:var(--brand-soft); color:var(--brand); border-radius:3px; padding:0 1px; font-weight:600}
 .fline .fsize{flex:none; font-family:var(--font-num); color:var(--t4)}
+.fline.muted{color:var(--t4)}
 @keyframes panelIn{from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none}}
 .srow .c-src{
   font:500 var(--fs-xs)/1 var(--font); color:var(--brand); text-align:center;

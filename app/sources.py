@@ -153,7 +153,8 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
              data: bytes | None = None,
              headers: dict | None = None,
              retries: int | None = None,
-             batch: int | None = None) -> str:
+             batch: int | None = None,
+             binary: bool = False) -> str:
     if retries is None:
         retries = _retries()
 
@@ -187,7 +188,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
                     kwargs["context"] = _LAX if use_lax else _STRICT
                 with urllib.request.urlopen(req, **kwargs) as resp:
                     raw = resp.read()
-            return _decode(raw)
+            return raw if binary else _decode(raw)
 
         except urllib.error.HTTPError as exc:
             last_exc = exc
@@ -479,15 +480,15 @@ def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["nyaa"])
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
     return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "Nyaa")
+        http_get(url, timeout=timeout, batch=batch), "Nyaa", root)
 
 def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["sukebei"])
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
     return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "Sukebei")
+        http_get(url, timeout=timeout, batch=batch), "Sukebei", root)
 
-def _parse_nyaa_rss(text: str, label: str) -> list[dict]:
+def _parse_nyaa_rss(text: str, label: str, root: str = "") -> list[dict]:
     items: list[dict] = []
     for chunk in _split_items(text):
         title = _unescape(_tags(chunk, "title")[0])
@@ -497,14 +498,18 @@ def _parse_nyaa_rss(text: str, label: str) -> list[dict]:
             h = m.group(0).lower() if m else ""
         if not h:
             continue
-        items.append(_mk(
+        it = _mk(
             title=title, info_hash=h,
             size=parse_size(_tags(chunk, "nyaa:size")[0]),
             seeders=_to_int(_tags(chunk, "nyaa:seeders")[0]),
             leechers=_to_int(_tags(chunk, "nyaa:leechers")[0]),
             added=_ts_from_rfc(_tags(chunk, "pubDate")[0]),
             source=label,
-        ))
+        )
+        gid = re.search(r"/view/(\d+)", _tags(chunk, "guid")[0])
+        if gid and root:
+            it["fetch"] = {"url": f"{root}/download/{gid.group(1)}.torrent"}
+        items.append(it)
     return items
 
 def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
@@ -554,11 +559,15 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         if not size:
             size = size_from_title(title)
 
-        items.append(_mk(
+        it = _mk(
             title=title, info_hash=h, size=size,
             added=_ts_from_rfc(_tags(chunk, "pubDate")[0]),
             source="DMHY",
-        ))
+        )
+        guid = _tags(chunk, "guid")[0].strip()
+        if guid.startswith("http"):
+            it["fetch"] = {"url": guid}
+        items.append(it)
     return items
 
 EZTV_PAGES = 5
@@ -665,6 +674,64 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
     return items
 
 _BTDIG_SIZE_RE = re.compile(r"([\d.]+)\s*(B|KB|MB|GB|TB)", re.I)
+
+def _bencode_dec(buf: bytes, i: int):
+    c = buf[i:i+1]
+    if c == b"d":
+        i += 1
+        out = {}
+        while buf[i:i+1] != b"e":
+            k, i = _bencode_dec(buf, i)
+            v, i = _bencode_dec(buf, i)
+            out[k] = v
+        return out, i + 1
+    if c == b"l":
+        i += 1
+        out = []
+        while buf[i:i+1] != b"e":
+            v, i = _bencode_dec(buf, i)
+            out.append(v)
+        return out, i + 1
+    if c == b"i":
+        j = buf.index(b"e", i)
+        return int(buf[i + 1:j]), j + 1
+    j = buf.index(b":", i)
+    n = int(buf[i:j])
+    return buf[j + 1:j + 1 + n], j + 1 + n
+
+def decode_torrent_files(data: bytes) -> list[dict]:
+    try:
+        d, _ = _bencode_dec(data, 0)
+    except (ValueError, IndexError, TypeError):
+        return []
+    info = d.get(b"info") if isinstance(d, dict) else None
+    if not isinstance(info, dict):
+        return []
+    out: list[dict] = []
+    rows = info.get(b"files")
+    if isinstance(rows, list):
+        for f in rows:
+            if not isinstance(f, dict) or b"length" not in f or b"path" not in f:
+                continue
+            name = b"/".join(p for p in f[b"path"] if isinstance(p, bytes))
+            out.append({"n": name.decode("utf-8", "replace"),
+                        "b": int(f[b"length"])})
+    elif b"length" in info and b"name" in info:
+        out.append({"n": info[b"name"].decode("utf-8", "replace"),
+                    "b": int(info[b"length"])})
+    return out
+
+def torrent_meta(url: str, timeout: int = 15, referer: str = "") -> list[dict]:
+    if not url.lower().endswith(".torrent"):
+        page = http_get(url, timeout=timeout, referer=referer)
+        m = re.search(r'href="(//[^"]+\.torrent)"', page)
+        if not m:
+            return []
+        link = m.group(1)
+        url = "https:" + link if link.startswith("//") else link
+    data = http_get(url, timeout=timeout, referer=referer, binary=True, retries=0)
+    return decode_torrent_files(data)
+
 _BTDIG_SIZE_MUL = {"B": 1, "KB": 1024, "MB": 1024 ** 2,
                    "GB": 1024 ** 3, "TB": 1024 ** 4}
 _BTDIG_AGE_RE = re.compile(

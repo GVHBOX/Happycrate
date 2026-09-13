@@ -5,6 +5,7 @@ import json
 import os
 import threading
 import time
+import urllib.parse
 
 from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
                paths, runtime, sources, store, templates)
@@ -131,6 +132,12 @@ def _item_view(item: dict) -> dict:
         {"n": str(f.get("n") or ""), "s": str(f.get("s") or "")}
         for f in raw_files if isinstance(f, dict) and f.get("n")
     ][:8] if isinstance(raw_files, list) else []
+    raw_fetch = item.get("fetch")
+    fetch = {}
+    if isinstance(raw_fetch, dict):
+        u = str(raw_fetch.get("url") or "")
+        if u.startswith("http://") or u.startswith("https://"):
+            fetch = {"url": u}
     return {
         "hash": (item.get("info_hash") or "").lower(),
         "title": item.get("title") or "",
@@ -143,6 +150,7 @@ def _item_view(item: dict) -> dict:
         "magnet": core.magnet_of(item),
         "sources": [str(n) for n in names if n],
         "files": files,
+        "fetch": fetch,
     }
 
 
@@ -419,6 +427,26 @@ class Api:
         self._search_token = 0
         sources.cancel_batch(t)
         return True
+
+    def torrent_files(self, payload: dict) -> dict:
+        url = ""
+        if isinstance(payload, dict):
+            url = str(payload.get("url") or "")
+        if not (url.startswith("http://") or url.startswith("https://")):
+            return {"ok": False, "files": [], "error": "缺少有效的种子地址"}
+        host = urllib.parse.urlparse(url)
+        timeout = int(self._settings.get("timeout", 15) or 15)
+        try:
+            rows = sources.torrent_meta(url, timeout,
+                                        referer=f"{host.scheme}://{host.netloc}/")
+        except Exception as exc:
+            return {"ok": False, "files": [],
+                    "error": f"{type(exc).__name__}: {exc}"[:180]}
+        files = [{"n": r["n"], "s": core.format_size(r.get("b", 0))}
+                 for r in rows if r.get("n")][:100]
+        if not files:
+            return {"ok": False, "files": [], "error": "种子内没有文件清单"}
+        return {"ok": True, "files": files, "error": ""}
 
     def _search_worker(self, token: int, text: str, keys: list[str]) -> None:
         timeout = int(self._settings.get("timeout", 15) or 15)

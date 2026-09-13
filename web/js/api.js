@@ -207,7 +207,7 @@
 
     importSources: function(){
       if (live()) return window.pywebview.api.import_sources();
-      return Promise.resolve({ok:true, added:0, updated:0});
+      return Promise.resolve({ok:true, added:1, updated:8, message:"新增 1 个，更新 8 个"});
     },
 
     nextCustomKey: function(){

@@ -441,7 +441,7 @@
         paintBadge();
       },
       done: function(d){
-        if (d.token !== st.token) return;
+        if (!st.busy || d.token !== st.token) return;
         st.errors = d.errors || {};
         searchDone();
       }
@@ -663,6 +663,7 @@
     };
     mount._docKey = function(e){
       if (!root || !root.isConnected) return;
+      if (document.querySelector(".backdrop")) return;
       var tag = (e.target && e.target.tagName || "").toLowerCase();
       if (e.key === "Escape"){
         if (ctxEl){ closeCtx(); return; }

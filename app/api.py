@@ -304,7 +304,13 @@ class Api:
             src = sources.get(item.get("key", ""))
             if not src:
                 return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
-            ok, ms, count, err = src.probe()
+            base = _base_field(item.get("key", ""), _addr_of(item))
+            draft = sources.Source(
+                key=src.key, label=src.label, func=src.func, enabled=True,
+                timeout=int(item.get("timeout") or src.timeout),
+                base=base or sources.base_of(item.get("key", ""), ""),
+            )
+            ok, ms, count, err = draft.probe()
             return {
                 "ok": ok,
                 "count": count if ok else 0,
@@ -475,11 +481,11 @@ class Api:
         target = os.path.join(str(paths.data_dir()), "happycrate-sources.json")
         if not os.path.isfile(target):
             return {"ok": False, "error": "没有找到可导入的文件"}
-        ok, msg = self._cfg.import_from(target)
+        ok, msg, added, updated = self._cfg.import_from(target)
         if ok:
             self._cfg.save()
             sources.reload_from_config(self._cfg)
-            return {"ok": True, "added": 0, "updated": 0, "message": msg}
+            return {"ok": True, "added": added, "updated": updated, "message": msg}
         return {"ok": False, "error": msg}
 
     def diagnostics(self, keys: list[str] | None = None) -> str:

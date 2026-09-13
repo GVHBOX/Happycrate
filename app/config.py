@@ -344,7 +344,7 @@ class Config:
             logger.error("导出配置失败：%s", exc)
             return False
 
-    def import_from(self, path) -> tuple[bool, str]:
+    def import_from(self, path) -> tuple[bool, str, int, int]:
         try:
             with open(path, encoding="utf-8") as fh:
                 raw = json.load(fh)
@@ -401,7 +401,7 @@ class Config:
         msg = f"新增 {added} 个，更新 {updated} 个"
         if skipped:
             msg += f"，跳过 {len(skipped)} 个：{'；'.join(skipped[:3])}"
-        return True, msg
+        return True, msg, added, updated
 
 class Settings:
 

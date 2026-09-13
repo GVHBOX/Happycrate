@@ -204,6 +204,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             if not use_lax:
                 logger.warning("SSL 严格校验失败，降级到 lax：%s (%s)", url, exc)
                 use_lax = True
+                attempt -= 1
                 continue
             raise
 

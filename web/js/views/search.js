@@ -42,7 +42,7 @@
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
     open: {}, userShut: {},
-    filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0,
+    filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
     roomy: false, selbarOn: false
   };
 
@@ -252,24 +252,55 @@
     return "";
   }
 
-  function loadFiles(h, cb){
-    if (st.filesCache[h] || st.filesLoading[h] || st.filesErr[h]) return;
+  function loadFiles(h, cb, quiet){
+    if (st.filesCache[h] || st.filesLoading[h] || st.filesErr[h]){ if (cb) cb(); return; }
     var it = itemByHash(h);
-    if (!it || !it.fetch || !it.fetch.url) return;
+    if (!it || !it.fetch || !it.fetch.url){ if (cb) cb(); return; }
     st.filesLoading[h] = true;
     if (st.open[h]) renderPanels();
     HC.api.torrentFiles({url: it.fetch.url}).then(function(res){
       delete st.filesLoading[h];
       if (res && res.ok && res.files && res.files.length) st.filesCache[h] = res.files;
-      else st.filesErr[h] = (res && res.error) || "获取文件清单失败";
+      else if (!quiet) st.filesErr[h] = (res && res.error) || "获取文件清单失败";
+      if (st.open[h]) renderPanels();
+      if (cb) cb();
+    }, function(){
+      delete st.filesLoading[h];
+      if (!quiet) st.filesErr[h] = "获取文件清单失败";
       if (st.open[h]) renderPanels();
       if (cb) cb();
     });
   }
 
-  var AUTO_EARLY = 8, AUTO_TOTAL = 18;
+  var fetchQ = [], fetchActive = 0;
 
-  function autoExpand(total){
+  function pumpFetch(){
+    if (fetchActive >= 3 || !fetchQ.length) return;
+    var job = fetchQ.shift();
+    if (st.filesCache[job.h] || st.filesLoading[job.h] || st.filesErr[job.h]){
+      pumpFetch();
+      return;
+    }
+    fetchActive++;
+    loadFiles(job.h, function(){
+      if (job.cb) job.cb();
+      setTimeout(function(){
+        fetchActive--;
+        pumpFetch();
+      }, 400);
+    }, true);
+  }
+
+  function queueLoad(h, cb, urgent){
+    var job = {h: h, cb: cb || null};
+    if (urgent) fetchQ.unshift(job);
+    else fetchQ.push(job);
+    pumpFetch();
+  }
+
+  var AUTO_EARLY = 4, AUTO_TOTAL = 24;
+
+  function autoExpand(total, urgent){
     if (!st.qtokens.length) return;
     visible().forEach(function(it){
       var h = it.hash;
@@ -284,16 +315,18 @@
           return;
         }
         if (st.filesLoading[h] || st.filesErr[h]) return;
+        if (st.autoTried[h]) return;
         if (st.autoBudget < total){
           st.autoBudget++;
-          loadFiles(h, function(){
+          st.autoTried[h] = true;
+          queueLoad(h, function(){
             if (st.userShut[h] || st.open[h]) return;
             var cur = itemByHash(h);
             if (cur && fileHit(cur)){
               st.open[h] = true;
               renderPanels();
             }
-          });
+          }, urgent);
         }
       }
     });
@@ -552,6 +585,8 @@
     st.open = {};
     st.userShut = {};
     st.autoBudget = 0;
+    st.autoTried = {};
+    fetchQ = [];
     st.filesCache = {};
     st.filesLoading = {};
     st.filesErr = {};
@@ -640,7 +675,7 @@
     var curRow = st.cursor >= 0 ? rowsEl.children[st.cursor] : null;
     var curHash = curRow && curRow.dataset ? curRow.dataset.hash : "";
     renderRows();
-    autoExpand(AUTO_TOTAL);
+    autoExpand(AUTO_TOTAL, true);
     if (curHash){
       var list = visible();
       for (var i = 0; i < list.length; i++){
@@ -772,7 +807,7 @@
           appendRows(d.items.length);
         }
         paintBadge();
-        autoExpand(AUTO_EARLY);
+        autoExpand(AUTO_EARLY, false);
       },
       done: function(d){
         if (!st.busy || d.token !== st.token) return;

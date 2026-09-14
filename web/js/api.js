@@ -105,7 +105,7 @@
   var mockSettings = {
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
-    ui_font_size: 18, selbar: false, theme: "light", auto_files: true
+    ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true
   };
 
   window.__onProbeDone = function(){

@@ -17,6 +17,7 @@
   var selbarOn = true;
   var themeOn = false;
   var autoFilesOn = true;
+  var brandKey = "";
 
   var STEP_BTN = {
     minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
@@ -81,6 +82,21 @@
     }).join("");
   }
 
+  var BRAND_OPTS = [
+    {key:"", label:"默认"},
+    {key:"teal", label:"青碧"},
+    {key:"slate", label:"石墨蓝"}
+  ];
+
+  function paintBrand(current){
+    var box = root.querySelector("#s_brand");
+    if (!box) return;
+    box.innerHTML = BRAND_OPTS.map(function(o){
+      return '<button type="button" data-brand="' + o.key + '" class="' +
+        (o.key === current ? "on" : "") + '">' + o.label + '</button>';
+    }).join("");
+  }
+
   function readFields(){
     var out = {};
     FIELDS.forEach(function(f){
@@ -95,6 +111,7 @@
     out.default_downloader = dlKey;
     out.selbar = selbarOn;
     out.theme = themeOn ? "dark" : "light";
+    out.brand = brandKey;
     out.auto_files = autoFilesOn;
     return out;
   }
@@ -120,6 +137,8 @@
             '<button type="button" class="sw" id="s_selbar" style="margin-top:8px"></button></div>' +
           '<div class="field"><label>暗夜主题</label>' +
             '<button type="button" class="sw" id="s_theme" style="margin-top:8px"></button></div>' +
+          '<div class="field"><label>主题色</label>' +
+            '<div class="seg" id="s_brand" style="margin-top:8px"></div></div>' +
           '<div class="field"><label>文件命中时自动展开</label>' +
             '<button type="button" class="sw" id="s_autofiles" style="margin-top:8px"></button></div>' +
         '</div>' +
@@ -162,6 +181,9 @@
         var af = root.querySelector("#s_autofiles");
         if (af){ af.classList.toggle("off", !autoFilesOn); af.setAttribute("aria-pressed", String(autoFilesOn)); }
 
+        brandKey = settings.brand || "";
+        paintBrand(brandKey);
+
         var lines = [
           ["版本", info.version],
           ["数据目录", info.dataDir],
@@ -192,6 +214,14 @@
       [].slice.call(cur.querySelectorAll("button")).forEach(function(x){
         x.classList.toggle("on", x.dataset.dl === dlKey);
       });
+    });
+
+    root.querySelector("#s_brand").addEventListener("click", function(e){
+      var b = e.target.closest("[data-brand]");
+      if (!b) return;
+      brandKey = b.dataset.brand;
+      paintBrand(brandKey);
+      if (HC.applyBrand) HC.applyBrand(brandKey);
     });
 
     root.querySelector("#s_selbar").onclick = function(){
@@ -232,13 +262,15 @@
       HC.api.saveSettings({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: false, theme: "light", auto_files: true
+        ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true
       }).then(function(){
         dlKey = "";
         selbarOn = false;
         themeOn = false;
         autoFilesOn = true;
+        brandKey = "";
         if (HC.applyTheme) HC.applyTheme("light");
+        if (HC.applyBrand) HC.applyBrand("");
         applyFont(18);
         mountEl.innerHTML = "";
         mount(mountEl);

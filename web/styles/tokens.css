@@ -184,3 +184,29 @@ body.dark{
   --sh-btn:0 1px 2px rgba(0,0,0,.4);
   --sh-seg:0 1px 3px rgba(0,0,0,.35);
 }
+
+body[data-brand="teal"]{
+  --brand:#0D9488;
+  --brand-hover:#0F766E;
+  --brand-soft:#E6F7F5;
+  --brand-line:#99E2DB;
+  --brand-ring:rgba(13,148,136,.28);
+}
+
+body.dark[data-brand="teal"]{
+  --brand-soft:rgba(20,184,166,.18);
+  --brand-line:#2C7A72;
+}
+
+body[data-brand="slate"]{
+  --brand:#5B6B8C;
+  --brand-hover:#485774;
+  --brand-soft:#EDF0F5;
+  --brand-line:#C3CCDA;
+  --brand-ring:rgba(91,107,140,.28);
+}
+
+body.dark[data-brand="slate"]{
+  --brand-soft:rgba(120,140,175,.18);
+  --brand-line:#4E5A70;
+}

@@ -55,6 +55,7 @@ DEFAULT_SETTINGS = {
     "ui_font_size": 18,
     "selbar": False,
     "theme": "light",
+    "brand": "",
     "auto_files": True,
 }
 
@@ -69,6 +70,7 @@ SETTING_SPECS = {
     "ui_font_size": {"type": int, "min": 12, "max": 24},
     "selbar": {"type": bool},
     "theme": {"type": str},
+    "brand": {"type": str},
     "auto_files": {"type": bool},
 }
 
@@ -84,6 +86,7 @@ SETTING_LABELS = {    "min_query_len": "最短关键词",
     "ui_font_size": "界面字号",
     "selbar": "浮动选择条",
     "theme": "主题",
+    "brand": "主题色",
     "auto_files": "自动展开",
 }
 

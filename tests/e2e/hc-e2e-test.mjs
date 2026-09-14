@@ -457,6 +457,48 @@ async function runOnce(exe, profileDir, pageUrl) {
     await key("Escape", 27);
     await sleep(300);
     check("esc-exits-batch-mode", !!(await evaluate("document.getElementById('groupBatchOps') && document.getElementById('groupBatchOps').classList.contains('hidden')", page)));
+
+    const editAlwaysVisible = await evaluate("document.querySelectorAll('#rows .op[data-edit]').length", page);
+    const delOnlyBatch = await evaluate("document.querySelectorAll('#rows .op[data-del]').length", page);
+    check("edit-reachable-without-batch", editAlwaysVisible >= 10 && delOnlyBatch === 0,
+      "edit=" + editAlwaysVisible + " del=" + delOnlyBatch);
+
+    const editBtnRect = centerOf(await rectOf("#rows .op[data-edit]", 0));
+    await realClick(editBtnRect.x, editBtnRect.y);
+    await waitFor(async () => !!(await evaluate("document.querySelector('.backdrop #fLabel')", page)), 4000, 150, "builtin-editor");
+    const builtinEditor = await evaluate(`JSON.stringify({
+      hasType: !!document.querySelector("#fType"),
+      addrLabel: (document.querySelector("#fAddrLabel")||{}).textContent,
+      fields: [].slice.call(document.querySelectorAll(".mbody .field"))
+        .filter(function(f){ return !f.classList.contains("hidden"); })
+        .map(function(f){ return (f.querySelector("label")||{}).textContent; })
+    })`, page);
+    const be = JSON.parse(builtinEditor);
+    check("builtin-editor-shows-mirror-only",
+      !be.hasType && be.addrLabel === "镜像地址" &&
+      be.fields.length === 3 &&
+      be.fields.indexOf("镜像地址") >= 0 && be.fields.indexOf("URL 模板") < 0 &&
+      be.fields.indexOf("列表路径") < 0 && be.fields.indexOf("字段映射") < 0,
+      builtinEditor);
+    await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
+    await sleep(400);
+
+    const addBtnRect = centerOf(await rectOf("#btnAdd", 0));
+    await realClick(addBtnRect.x, addBtnRect.y);
+    await waitFor(async () => !!(await evaluate("document.querySelector('#fType')", page)), 4000, 150, "custom-editor");
+    const customEditor = await evaluate(`JSON.stringify({
+      title: (document.querySelector(".backdrop .dtitle")||{}).textContent,
+      types: [].slice.call(document.querySelectorAll("#fType button")).map(function(b){ return b.textContent; }),
+      addrLabel: (document.querySelector("#fAddrLabel")||{}).textContent
+    })`, page);
+    const ce = JSON.parse(customEditor);
+    check("custom-editor-keeps-type-switch",
+      ce.title === "添加自定义" && ce.types.join(",") === "RSS,JSON,HTML" &&
+      ce.addrLabel === "URL 模板",
+      customEditor);
+    await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
+    await sleep(400);
+
     await key("Escape", 27);
     await waitFor(async () => !!(await evaluate("document.querySelector('#inp')", page)), 4000, 150, "esc-back-sources");
     check("esc-returns-from-sources", !!(await evaluate("document.querySelector('#inp')", page)));

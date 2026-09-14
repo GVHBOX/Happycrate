@@ -45,10 +45,9 @@
       : '<button class="sw ' + (s.enabled ? "" : "off") + '" data-sw="' + esc(s.key) +
         '"></button>';
 
-    var ops = "";
+    var ops = '<button class="op" data-edit="' + esc(s.key) + '" title="编辑">' + ICON.edit + '</button>';
     if (st.batch){
-      ops = '<button class="op" data-edit="' + esc(s.key) + '" title="编辑">' + ICON.edit + '</button>' +
-        '<button class="op danger" data-del="' + esc(s.key) + '" title="删除">' + ICON.trash + '</button>';
+      ops += '<button class="op danger" data-del="' + esc(s.key) + '" title="删除">' + ICON.trash + '</button>';
     }
 
     var cls = "row" + (s.enabled ? "" : " off") +
@@ -125,9 +124,8 @@
     var d = existing || {key:"", label:"", type:"json", timeout:15, addr:"", listPath:"", map:{},
                          hashPattern:"", titlePattern:"", sizePattern:""};
     var TYPE_LABEL = {builtin:"内置", rss:"RSS", json:"JSON", html:"HTML"};
-    var types;
-    if (isEdit && d.type === "builtin") types = ["builtin", "rss", "json", "html"];
-    else types = ["rss", "json", "html"];
+    var isBuiltin = isEdit && d.type === "builtin";
+    var types = ["rss", "json", "html"];
     var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["时间","added"],["链接","magnet"]];
     var map = d.map || {};
 
@@ -145,12 +143,13 @@
             '<span class="idchip">' + esc(newKey) + '</span></div>' +
           '<div class="field"><label>名称</label>' +
             '<input class="input" id="fLabel" value="' + esc(d.label) + '" placeholder="我的源"></div>' +
-          '<div class="field"><label>类型</label>' +
+          (isBuiltin ? "" :
+            '<div class="field"><label>类型</label>' +
             '<div class="seg" id="fType" style="margin-top:8px">' +
               types.map(function(t){
                 return '<button data-t="' + t + '" class="' + (d.type === t ? "on" : "") + '">' + TYPE_LABEL[t] + '</button>';
               }).join("") +
-            '</div></div>' +
+            '</div></div>') +
           '<div class="field"><label id="fAddrLabel">URL 模板</label>' +
             '<input class="input mono" id="fUrl" value="' + esc(d.addr) + '" placeholder="https://e.com/api/search?q={query}&p={page}"></div>' +
           '<div class="field" id="wPath"><label>列表路径</label>' +
@@ -195,17 +194,21 @@
         ["#wPatH", "#wPatT", "#wPatS"].forEach(function(id){
           m.querySelector(id).classList.toggle("hidden", !showPat);
         });
-        m.querySelector("#fAddrLabel").textContent = type === "builtin" ? "镜像地址" : "URL 模板";
+        var addr = m.querySelector("#fAddrLabel");
+        if (addr) addr.textContent = type === "builtin" ? "镜像地址" : "URL 模板";
       }
 
-      m.querySelectorAll("#fType button").forEach(function(b){
-        b.onclick = function(){
-          type = b.dataset.t;
-          m.querySelectorAll("#fType button").forEach(function(x){ x.classList.remove("on"); });
-          b.classList.add("on");
-          syncFields();
-        };
-      });
+      var typeBox = m.querySelector("#fType");
+      if (typeBox){
+        typeBox.querySelectorAll("button").forEach(function(b){
+          b.onclick = function(){
+            type = b.dataset.t;
+            typeBox.querySelectorAll("button").forEach(function(x){ x.classList.remove("on"); });
+            b.classList.add("on");
+            syncFields();
+          };
+        });
+      }
       syncFields();
 
       stepper(m, m.querySelector("#fTo"), 1, 120);
@@ -429,10 +432,10 @@
         '<div class="div"></div>' +
         '<div class="bar">' +
           '<div class="group" id="groupDaily">' +
-            '<button class="btn btn-brand" id="btnAdd">' + ICON.plus + '新增</button>' +
-            '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
             '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
             '<button class="btn btn-ghost" id="btnAuto">自动排序</button>' +
+            '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
+            '<button class="btn btn-ghost" id="btnAdd">' + ICON.plus + '自定义源</button>' +
           '</div>' +
           '<div class="group hidden" id="groupBatch">' +
             '<button class="btn btn-brand" id="btnBatchDone">' + ICON.check + '完成</button>' +

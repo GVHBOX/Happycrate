@@ -862,6 +862,14 @@ _BUILTIN_ADAPTERS = {
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
+BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
+
+def adapter_location(key: str, stype: str = "builtin") -> str:
+    if stype == "builtin":
+        name = BUILTIN_ADAPTER_NAMES.get(key)
+        return f"app/sources.py :: {name}" if name else f"app/sources.py :: (未知内置源 {key})"
+    return f"app/templates.py :: _make_{stype}"
+
 EMPTY_NEUTRAL = frozenset({"eztv"})
 
 class Source:

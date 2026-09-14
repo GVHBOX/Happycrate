@@ -41,6 +41,19 @@ def frontend_calls():
     return set(re.findall(r"window\.pywebview\.api\.([A-Za-z_0-9]+)", text))
 
 
+HC_API_EXEMPT = {"mode", "onSearch", "onProbeDone", "adapterLocation", "adapterName"}
+
+
+def camel_to_snake(name: str) -> str:
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
+
+def hc_api_methods():
+    text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+    body = text.split("var api = {", 1)[1]
+    return set(re.findall(r"^\s{4}([a-zA-Z_][A-Za-z_0-9]*):\s*function", body, re.M))
+
+
 def backend_methods():
     return {name for name, _ in inspect.getmembers(api_mod.Api, inspect.isfunction)
             if not name.startswith("_")}
@@ -58,6 +71,38 @@ class ContractCoverageTest(unittest.TestCase):
 
     def test_backend_method_count_is_stable(self):
         self.assertGreaterEqual(len(backend_methods()), 25)
+
+    def test_hc_api_methods_have_backend_counterpart(self):
+        missing = sorted(
+            name for name in hc_api_methods()
+            if name not in HC_API_EXEMPT
+            and camel_to_snake(name) not in backend_methods()
+        )
+        self.assertEqual(
+            missing, [],
+            f"HC.api 暴露了后端没有对应的方法（真机会静默走 mock 分支）：{missing}",
+        )
+
+    def test_adapter_location_matches_real_function(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        defined = set(re.findall(r"^def (_search_[A-Za-z0-9_]+)", src, re.M))
+        wrong = {}
+        for key in sources.BUILTIN_KEYS:
+            loc = sources.adapter_location(key)
+            name = loc.rsplit(" ", 1)[-1]
+            if name not in defined:
+                wrong[key] = loc
+        self.assertEqual(wrong, {}, f"诊断给出的适配器位置不存在：{wrong}")
+
+    def test_adapter_location_covers_every_builtin(self):
+        for key in sources.BUILTIN_KEYS:
+            with self.subTest(key=key):
+                self.assertNotIn("未知内置源", sources.adapter_location(key))
+
+    def test_custom_type_location_points_to_template(self):
+        self.assertEqual(sources.adapter_location("x", "html"),
+                         "app/templates.py :: _make_html")
+
 
 
 class SafeCallSmokeTest(unittest.TestCase):

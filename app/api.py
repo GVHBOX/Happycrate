@@ -274,6 +274,9 @@ class Api:
     def list_sources(self) -> list[dict]:
         return [_to_view(e, self._health.get(e.get("key", ""))) for e in self._cfg.sources]
 
+    def next_custom_key(self) -> str:
+        return self._cfg.next_custom_key()
+
     def toggle_source(self, key: str, on: bool) -> bool:
         if not self._cfg.set_enabled(key, bool(on)):
             return False
@@ -590,11 +593,8 @@ class Api:
                                      else (h.get("err") or "请求失败")))
             out.append(f"  最近  {' '.join(h.get('times', [])) or '无记录'}")
             out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
-            if e.get("type", "builtin") == "builtin":
-                where = f"app/sources.py :: _search_{key}"
-            else:
-                where = f"app/templates.py :: _make_{e.get('type', '')}"
-            out.append(f"  位置  {where}")
+            out.append("  位置  " + sources.adapter_location(
+                key, e.get("type", "builtin")))
             out.append("")
         return "\n".join(out)
 

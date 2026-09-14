@@ -213,6 +213,7 @@
     },
 
     nextCustomKey: function(){
+      if (live()) return window.pywebview.api.next_custom_key();
       var list = seed(), n = 1;
       while (list.filter(function(s){ return s.key === "custom" + n; })[0]) n++;
       return "custom" + n;
@@ -234,9 +235,7 @@
           : (s.health.err || "请求失败")));
         out.push("  最近  " + (s.health.times.join(" ") || "无记录"));
         out.push("  建议  " + (empty ? "疑似站点改版，需要改解析代码" : "换镜像地址"));
-        out.push("  位置  " + (s.type === "builtin"
-          ? "app/sources.py :: _search_" + s.key
-          : "app/templates.py :: _make_" + s.type));
+        out.push("  位置  " + adapterLocation(s));
         out.push("");
       });
       return Promise.resolve(out.join("\n"));
@@ -395,6 +394,22 @@
     var t = Number(e.timeout);
     if (!t || t < 1 || t > 120) errs.push("超时需在 1-120 秒之间");
     return errs;
+  }
+
+  function adapterName(key){
+    var MAP = {
+      apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
+      dmhy:"_search_dmhy", sukebei:"_search_sukebei", eztv:"_search_eztv",
+      bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror", btdig:"_search_btdig"
+    };
+    return MAP[key] || null;
+  }
+
+  function adapterLocation(s){
+    if (s.type !== "builtin") return "app/templates.py :: _make_" + s.type;
+    var n = adapterName(s.key);
+    return n ? "app/sources.py :: " + n
+             : "app/sources.py :: (未知内置源 " + s.key + ")";
   }
 
   function stamp(){

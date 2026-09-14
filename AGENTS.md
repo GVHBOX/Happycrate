@@ -33,9 +33,8 @@
 仓库元文件（`README.md`、`LICENSE`、`pyproject.toml`、`happycrate.spec`、
 `happycrate.bat`、`.gitignore`、`.gitattributes`、`AGENTS.md`）、运行时数据（`data/`）、构建产物（`dist/`、`build/`）。
 
-`.ai/reports/` 里的成品报告对工具可见（gitignore 已放行），交付时用原生
+`.ai/` 整体不进版本库，`.ai/reports/` 的成品报告也不例外，交付时用原生
 Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路径。
-`.ai/` 其余子目录（tmp、backups、extracted 等）仍是纯工作区，不进版本库。
 
 ## 产品边界
 
@@ -82,7 +81,9 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
 - `.ai/` 不进版本库，不需要 `git add`。
 - `happycrate.spec` 是手写构建配方，必须跟踪。`.gitignore` 里 `*.spec` 会误伤它，
   靠 `!happycrate.spec` 放行——别删那行。
-- `data/sources.json` 是核心资产，改动前先备份到 `.ai/backups/`。
+- `data/sources.json` 是核心资产，已纳入版本管理（`.gitignore` 用 `data/*` 排除整个目录、
+  再用 `!data/sources.json` 放行它，别把这两行合并成 `data/`——那样例外不会生效）。
+  改动前先备份到 `.ai/backups/`。
 
 ## 构建与测试
 

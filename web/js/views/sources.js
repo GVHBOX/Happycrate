@@ -568,6 +568,7 @@
     if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
     mount._docKey = function(e){
       if (e.key === "Escape"){
+        if (!root || !root.isConnected) return;
         if (document.querySelector(".backdrop")){ closeModal(); return; }
         var tag = (e.target && e.target.tagName) || "";
         if (tag === "INPUT" || tag === "TEXTAREA") return;
@@ -611,6 +612,8 @@
           anchor = -1;
           reload();
           M.toast("已删除 " + n + " 个源", "ok");
+        }).catch(function(err){
+          M.toast(err && err.message ? err.message : String(err), "err");
         });
       });
     };

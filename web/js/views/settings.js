@@ -101,10 +101,7 @@
     return out;
   }
 
-  function applyFont(v){
-    var n = parseInt(v, 10);
-    if (n >= 12 && n <= 24) document.documentElement.style.setProperty("--fr", String(n / 13));
-  }
+  var applyFont = function(v){ if (HC.applyFont) HC.applyFont(v); };
 
   function mount(mountEl){
     root = document.createElement("div");
@@ -176,6 +173,11 @@
             '<span class="mono" style="flex:1;word-break:break-all">' + esc(p[1]) + '</span>' +
             '</div>';
         }).join("");
+      })
+      .catch(function(err){
+        root.querySelector("#about").innerHTML =
+          '<div style="color:var(--err)">设置加载失败：' +
+          esc(err && err.message ? err.message : String(err)) + '</div>';
       });
 
     root.querySelector("#s_dl").addEventListener("click", function(e){

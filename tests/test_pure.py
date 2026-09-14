@@ -186,6 +186,40 @@ class ImportFromTest(unittest.TestCase):
         result = self.cfg.import_from(path)
         self.assertEqual(len(result), 4)
 
+    def _import_one(self, payload):
+        import json
+        import tempfile
+        path = tempfile.mktemp(suffix=".json")
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({"sources": [payload]}, fh)
+        self.cfg.import_from(path)
+        return self.cfg.get(payload["key"])
+
+    def test_builtin_timeout_clamped(self):
+        src = self._import_one({"key": "nyaa", "type": "builtin", "timeout": 99999})
+        self.assertEqual(src["timeout"], 120)
+
+    def test_builtin_timeout_low_clamped(self):
+        src = self._import_one({"key": "nyaa", "type": "builtin", "timeout": 0})
+        self.assertEqual(src["timeout"], 1)
+
+    def test_builtin_timeout_garbage_falls_back(self):
+        src = self._import_one({"key": "nyaa", "type": "builtin", "timeout": "abc"})
+        self.assertEqual(src["timeout"], 15)
+
+    def test_custom_timeout_clamped(self):
+        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
+                                 "base": "https://example.org/?q={query}",
+                                 "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myrss", "timeout": 99999})
+        self.assertEqual(src["timeout"], 120)
+
+    def test_new_source_timeout_still_rejected(self):
+        result = self._import_one({"key": "myrss", "label": "M", "type": "rss",
+                                   "base": "https://example.org/?q={query}",
+                                   "timeout": 99999})
+        self.assertIsNone(result)
+
 
 class SslLaxMemoryTest(unittest.TestCase):
 

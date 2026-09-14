@@ -99,9 +99,7 @@ def _manual_proxy() -> dict:
             part = part.strip()
             if not part:
                 continue
-            if part.startswith("socks"):
-                out["socks"] = part
-            elif part.startswith("http://"):
+            if part.startswith("http://"):
                 out["http"] = part
             elif part.startswith("https://"):
                 out["https"] = part

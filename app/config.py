@@ -70,6 +70,16 @@ SETTING_SPECS = {
     "theme": {"type": str},
 }
 
+SOURCE_TIMEOUT_MIN = 1
+SOURCE_TIMEOUT_MAX = 120
+
+def clamp_timeout(value, default: int = 15) -> int:
+    try:
+        num = int(value)
+    except (TypeError, ValueError, OverflowError):
+        return default
+    return max(SOURCE_TIMEOUT_MIN, min(SOURCE_TIMEOUT_MAX, num))
+
 def config_path():
     return paths.sources_path()
 
@@ -261,10 +271,7 @@ class Config:
             entry.setdefault("label", key)
             entry.setdefault("type", "builtin")
             entry.setdefault("enabled", True)
-            try:
-                entry["timeout"] = int(entry.get("timeout", 15) or 15)
-            except (TypeError, ValueError, OverflowError):
-                entry["timeout"] = 15
+            entry["timeout"] = clamp_timeout(entry.get("timeout", 15))
             entry.setdefault("base", "")
             try:
                 entry["order"] = int(entry.get("order", 0) or 0)
@@ -398,6 +405,8 @@ class Config:
                 for field in builtin_ok:
                     if field in src:
                         cur[field] = src[field]
+                if "timeout" in src:
+                    cur["timeout"] = clamp_timeout(src["timeout"])
                 updated += 1
                 continue
 
@@ -408,6 +417,8 @@ class Config:
                     if field == "type" and value == "builtin":
                         continue
                     cur[field] = value
+                if "timeout" in src:
+                    cur["timeout"] = clamp_timeout(src["timeout"])
                 updated += 1
                 continue
 

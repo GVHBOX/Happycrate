@@ -29,6 +29,10 @@ COM_PROGID = "ThunderAgent.Agent.1"
 
 _PROTOCOL_FLAG = "-StartType:magnet"
 
+_GAP_WARMUP = 0.2
+_GAP_BATCH = 0.05
+_WARMUP_TASKS = 3
+
 def find_exe() -> str | None:
     for candidate in THUNDER_EXE_CANDIDATES:
         if os.path.isfile(candidate):
@@ -140,12 +144,14 @@ class ProtocolMethod(Method):
 
         added = 0
         errors: list[str] = []
-        for magnet in magnets:
+        last = len(magnets) - 1
+        for i, magnet in enumerate(magnets):
             try:
                 subprocess.Popen([exe, magnet, _PROTOCOL_FLAG],
                                  close_fds=True)
                 added += 1
-                time.sleep(0.2)
+                if i < last:
+                    time.sleep(_GAP_WARMUP if i < _WARMUP_TASKS else _GAP_BATCH)
             except Exception as exc:
                 errors.append(f"{type(exc).__name__}: {exc}")
 

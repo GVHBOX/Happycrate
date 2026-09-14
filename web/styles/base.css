@@ -673,7 +673,7 @@ body{
   border-bottom:1px solid var(--rowline);
   transition:background var(--d-hover) var(--e);
 }
-.srow:nth-child(even){background:var(--row-alt, #F7F8FA)}
+.srow.alt{background:var(--row-alt, #F7F8FA)}
 .srow:hover{background:var(--hover)}
 .srow:active{background:var(--pressed)}
 .srow:last-child{border-bottom:0}
@@ -848,7 +848,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .tb-home:hover{background:var(--ink-8)}
 .tb-home .tb-logo{pointer-events:none}
 
-body.dark .srow:nth-child(even){background:var(--row-alt, #1E202A)}
+body.dark .srow.alt{background:var(--row-alt, #1E202A)}
 body.dark .chipbtn.warn{background:rgba(202,138,4,.16)}
 body.dark .chipbtn.ok{background:rgba(22,163,74,.16)}
 body.dark .selbar{

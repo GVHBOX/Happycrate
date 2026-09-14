@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ctypes
+import json
 import sys
 import threading
 import time
@@ -242,9 +243,10 @@ def _on_loaded(bridge, window) -> None:
     missing = result.get("missing") or []
     logger.error("契约自检失败：%s", missing)
     try:
+        text = json.dumps("接口自检失败：" + ",".join(missing), ensure_ascii=False)
         window.evaluate_js(
             "window.HC && window.HC.motion && window.HC.motion.toast"
-            " && window.HC.motion.toast('接口自检失败：" + ",".join(missing) + "')"
+            " && window.HC.motion.toast(" + text + ")"
         )
     except Exception:
         pass

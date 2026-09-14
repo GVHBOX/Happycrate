@@ -15,6 +15,7 @@
   --border:#E2E5EC;
   --hover:#F4F6FB;
   --pressed:#E9ECF4;
+  --row-alt:#F7F8FA;
 
   --t1:#1E1F2E;
   --t2:#2B2D42;
@@ -37,7 +38,6 @@
   --ink-38:rgba(13,13,31,.38);
 
   --r-card:16px;
-  --r-modal:14px;
   --r-menu:10px;
   --r-ctrl:10px;
   --r-tile:8px;
@@ -64,7 +64,6 @@
   --fr:1;
   --frc:clamp(0.9, calc(var(--fr) * 0.9 + 0.1), 1.6);
   --fcd:clamp(1, calc(var(--fr) * 0.55 + 0.45), 1.3);
-  --fcc:1;
   --h-row:calc(58px*var(--fr));
   --h-head:calc(56px*var(--fr));
   --h-bar:52px;
@@ -78,7 +77,6 @@
   --fs-xs:calc(11px*var(--fr));
   --fs-2xs:calc(10px*var(--fr));
 
-  --fc-lg:calc(15px*var(--fcd));
   --fc-md:calc(13px*var(--fcd));
   --fc-sm:calc(12px*var(--fcd));
   --fc-xs:calc(11px*var(--fcd));
@@ -115,6 +113,7 @@ body.dark{
   --border:#34364A;
   --hover:#232637;
   --pressed:#2A2E42;
+  --row-alt:#1E202A;
 
   --t1:#E7E9F2;
   --t2:#C6CAD9;

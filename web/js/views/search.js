@@ -298,7 +298,7 @@
     pumpFetch();
   }
 
-  var AUTO_EARLY = 4, AUTO_TOTAL = 24;
+  var AUTO_EARLY = 4, AUTO_TOTAL = 6;
 
   function autoExpand(total, urgent){
     if (!st.qtokens.length) return;
@@ -363,7 +363,7 @@
   }
 
   function rowHtml(it, i, animate){
-    var cls = "srow" + (st.sel[it.hash] ? " sel" : "");
+    var cls = "srow" + (i % 2 ? " alt" : "") + (st.sel[it.hash] ? " sel" : "");
     var anim = animate
       ? ' style="animation:rowIn .3s var(--land) both ' + Math.min(i, 10) * 28 + 'ms"'
       : "";
@@ -413,7 +413,7 @@
     var start = Math.max(0, list.length - count);
     var frag = document.createElement("div");
     frag.innerHTML = list.slice(start).map(function(it, i){
-      return rowHtml(it, i, true);
+      return rowHtml(it, start + i, true);
     }).join("");
     if (st.busy){
       var tmp = document.createElement("div");
@@ -654,6 +654,14 @@
       st.token = res.token;
       st.total = res.total;
       setChip("搜索中 0/" + res.total + "…", "busy");
+    }).catch(function(err){
+      st.busy = false;
+      goBtn.textContent = "搜索";
+      goBtn.classList.remove("stop");
+      progEl.classList.remove("on");
+      chipIdle();
+      HC.motion.toast(err && err.message ? err.message : String(err), "err");
+      renderRows();
     });
   }
 
@@ -672,7 +680,8 @@
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
     });
     paintStrip();
-    var curRow = st.cursor >= 0 ? rowsEl.children[st.cursor] : null;
+    var curRows = rowsEl.querySelectorAll(".srow");
+    var curRow = st.cursor >= 0 ? curRows[st.cursor] : null;
     var curHash = curRow && curRow.dataset ? curRow.dataset.hash : "";
     renderRows();
     autoExpand(AUTO_TOTAL, true);

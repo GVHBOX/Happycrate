@@ -164,38 +164,37 @@ class DiagnosticsRootCauseTest(DataDirCase):
             else:
                 self.api._mark(key, False, 0, 100, "HTTP 503")
 
+    def row_for(self, key):
+        for row in self.api._diagnostic_report()["sources"]:
+            if row["key"] == key:
+                return row
+        return None
+
     def block_for(self, text, key):
-        lines = text.splitlines()
-        for i, line in enumerate(lines):
-            if line.startswith(f"> ") and f"({key})" in line:
-                out = []
-                for nxt in lines[i + 1:]:
-                    if nxt.startswith("> ") or nxt == "":
-                        break
-                    out.append(nxt)
-                return "\n".join(out)
-        return ""
+        return json.dumps(self.row_for(key) or {}, ensure_ascii=False)
 
     def test_empty_window_reports_no_content_not_mirror(self):
         self.feed("nyaa", ["ok", "empty", "empty", "empty", "empty", "empty"])
-        key = "nyaa"
-        block = self.block_for(self.api.diagnostics(), key)
-        self.assertIn("解析代码", block)
-        self.assertNotIn("换镜像地址", block,
-                         "连得上只是没内容，不该让用户去换地址")
+        row = self.row_for("nyaa")
+        self.assertIsNotNone(row)
+        self.assertEqual(row["kind"], "empty",
+                         "连得上只是没内容，不能与连接失败混为一类")
+        self.assertEqual(row["outcomes"][-1], "empty")
+        self.assertTrue(row["adapter"].startswith("app/sources.py"),
+                        "无结果要能定位到适配器，供后续改解析")
 
     def test_last_success_does_not_mask_empty_history(self):
         self.feed("mikan", ["empty", "empty", "empty", "empty", "empty", "ok"])
-        block = self.block_for(self.api.diagnostics(), "mikan")
-        self.assertTrue(block, "mikan 应出现在诊断里")
-        self.assertIn("无结果", block,
-                      "末次成功把状态洗白后，仍应按窗口里的 empty 保留提示")
+        row = self.row_for("mikan")
+        self.assertIsNotNone(row, "末次成功后仍应按窗口里的 empty 出现在报告里")
+        self.assertGreaterEqual(row["outcomes"].count("empty"), 4)
 
-    def test_empty_mixed_with_conn_error_reports_mirror(self):
+    def test_empty_mixed_with_conn_error_keeps_both_facts(self):
         self.feed("btdig", ["err", "empty", "err", "empty", "empty"])
-        block = self.block_for(self.api.diagnostics(), "btdig")
-        self.assertIn("换镜像地址", block,
-                      "窗口里混着连接失败时，换地址比改解析优先")
+        row = self.row_for("btdig")
+        self.assertEqual(row["kind"], "empty")
+        self.assertEqual(sum(1 for o in row["outcomes"] if o in api_mod.FATAL_OUTCOMES), 2,
+                         "窗口里混着的连接失败次数必须如实带出，供 agent 判断")
 
     def test_window_empty_true_when_empty_dominates(self):
         self.feed("eztv", ["empty", "empty", "empty", "empty", "ok"])
@@ -221,15 +220,31 @@ class DiagnosticsRootCauseTest(DataDirCase):
 
     def test_diagnostics_location_points_to_real_adapter(self):
         self.feed("tpb", ["empty", "empty", "empty", "empty"])
-        text = self.api.diagnostics()
-        self.assertIn("app/sources.py :: _search_tpb_mirror", text)
+        row = self.row_for("tpb")
+        self.assertEqual(row["adapter"], "app/sources.py :: _search_tpb_mirror")
 
     def test_diagnostics_carries_per_attempt_detail(self):
         self.feed("tpb", ["empty", "empty"])
-        text = self.api.diagnostics()
-        self.assertIn("明细", text,
-                      "诊断要能交给 agent 判断，必须带每次的码/条数/耗时")
-        self.assertIn("ms", text)
+        row = self.row_for("tpb")
+        self.assertTrue(row["events"], "诊断要带每次的码/条数/耗时，供 agent 判断")
+        ev = row["events"][-1]
+        for field in ("outcome", "code", "count", "ms", "round"):
+            self.assertIn(field, ev)
+
+    def test_diagnostics_is_structured_not_prose(self):
+        self.feed("tpb", ["empty", "empty"])
+        report = self.api._diagnostic_report()
+        self.assertIn("at", report)
+        self.assertIn("version", report)
+        self.assertIsInstance(report["sources"], list)
+        for label in ("现象", "明细", "建议", "位置", "地址"):
+            self.assertNotIn(label, json.dumps(report, ensure_ascii=False),
+                             "给 agent 的诊断不该用中文标签做字段名")
+
+    def test_diagnostics_empty_when_nothing_wrong(self):
+        self.feed("nyaa", ["ok", "ok"])
+        self.assertEqual(self.api.diagnostics(), "",
+                         "没有异常时不产生任何诊断文本")
 
 
 class SourceIssuesTest(DataDirCase):
@@ -256,11 +271,11 @@ class SourceIssuesTest(DataDirCase):
         self.feed("bitsearch", ["err"] * 3)
         row = [i for i in self.api.source_issues() if i["key"] == "bitsearch"][0]
         self.assertEqual(row["kind"], "fail")
-        self.assertTrue(row["action"])
+        self.assertTrue(row["detail"])
         blob = json.dumps(row, ensure_ascii=False)
-        for leak in (".py", "app/", "http5xx", "outcome", "round"):
+        for leak in (".py", "app/", "http5xx", "outcome", "round", "现象", "建议"):
             self.assertNotIn(leak, blob,
-                             f"给界面看的字段不该出现内部细节：{leak}")
+                             f"给界面看的字段不该出现内部细节或标签：{leak}")
 
     def test_issue_rows_carry_label_and_addr(self):
         self.feed("mikan", ["empty"] * 5)
@@ -275,21 +290,14 @@ class SourceIssuesTest(DataDirCase):
         self.assertEqual(kinds.get("eztv"), "empty")
         self.assertEqual(kinds.get("dmhy"), "fail")
 
-    def test_peer_comparison_drives_advice(self):
-        for _ in range(5):
-            self.api._mark("nyaa", True, 0, 100, "", round_id="77")
-            self.api._mark("apibay", True, 4, 100, "", round_id="77")
-        row = [i for i in self.api.source_issues() if i["key"] == "nyaa"][0]
-        self.assertIn("其他源", row["action"],
-                      "同批有源出结果时，建议应指向本站收录或解析")
-
-    def test_lonely_empty_points_at_keyword(self):
-        for _ in range(5):
-            self.api._mark("nyaa", True, 0, 100, "", round_id="88")
-            self.api._mark("apibay", True, 0, 100, "", round_id="88")
-        row = [i for i in self.api.source_issues() if i["key"] == "nyaa"][0]
-        self.assertIn("冷门", row["action"],
-                      "同批都没结果时，不该让用户去怀疑源坏了")
+    def test_issue_detail_has_no_advice_text(self):
+        self.feed("bitsearch", ["err"] * 3)
+        self.feed("mikan", ["empty"] * 5)
+        for row in self.api.source_issues():
+            blob = json.dumps(row, ensure_ascii=False)
+            for banned in ("试试", "建议", "可以", "应该", "需要"):
+                self.assertNotIn(banned, blob,
+                                 f"界面只写事实与原因，不写怎么用/怎么修：{banned}")
 
     def test_diagnostics_still_available_for_agent(self):
         self.feed("bitsearch", ["err"] * 3)
@@ -391,29 +399,28 @@ class RelativeJudgementTest(DataDirCase):
         for key, count in results.items():
             self.api._mark(key, True, count, 100, "", round_id=str(token))
 
+    def row_for(self, key):
+        for row in self.api._diagnostic_report()["sources"]:
+            if row["key"] == key:
+                return row
+        return None
+
     def block_for(self, text, key):
-        lines = text.splitlines()
-        for i, line in enumerate(lines):
-            if line.startswith("> ") and f"({key})" in line:
-                out = []
-                for nxt in lines[i + 1:]:
-                    if nxt.startswith("> ") or nxt == "":
-                        break
-                    out.append(nxt)
-                return "\n".join(out)
-        return ""
+        return json.dumps(self.row_for(key) or {}, ensure_ascii=False)
 
     def test_lonely_empty_source_is_suspicious(self):
         self.feed_round(1, {"nyaa": 0, "mikan": 5, "dmhy": 8})
-        block = self.block_for(self.api.diagnostics(), "nyaa")
-        self.assertIn("本源更像", block,
-                      "同轮别人都有结果，只有它没有，才指向源本身")
+        row = self.row_for("nyaa")
+        self.assertEqual(row["peers"], 2, "同轮应看到两个同伴源")
+        self.assertEqual(row["peerHits"], 2,
+                         "同轮别人都有结果，只有它没有，才指向源本身")
 
     def test_all_sources_empty_blames_query(self):
         self.feed_round(1, {"nyaa": 0, "mikan": 0, "dmhy": 0})
-        block = self.block_for(self.api.diagnostics(), "nyaa")
-        self.assertIn("关键字太冷门", block,
-                      "全都搜不到时该怪关键字，不该把源标成故障")
+        row = self.row_for("nyaa")
+        self.assertEqual(row["peers"], 2)
+        self.assertEqual(row["peerHits"], 0,
+                         "全都搜不到时是关键字问题，不该把源标成故障")
 
     def test_round_id_is_recorded(self):
         self.feed_round(77, {"nyaa": 0})

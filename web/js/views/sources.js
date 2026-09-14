@@ -294,12 +294,10 @@
       if (!issues.length && !detail){ M.toast("没有异常源"); return; }
 
       var body = issues.map(function(it){
-        var tone = it.kind === "err" || it.kind === "fail" ? "err" : "empty";
-        return '<div class="issue"><span class="ib ' + tone + '"></span>' +
+        return '<div class="issue"><span class="ib ' + esc(it.kind) + '"></span>' +
           '<div class="ibody"><div class="ihead">' + esc(it.label) +
             '<span class="iaddr">' + esc(it.addr) + '</span></div>' +
-          '<div class="iline">' + esc(it.reason) + '</div>' +
-          '<div class="iact">' + esc(it.action) + '</div></div></div>';
+          '<div class="iline">' + esc(it.detail) + '</div></div></div>';
       }).join("");
 
       var m = openModal(
@@ -307,9 +305,7 @@
         '<div class="dtitle">异常详情</div><div class="spacer"></div>' +
         '<button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
-        '<div class="mbody"><div class="issues">' +
-          (body || '<div class="iline">证书校验已临时放宽，没有其他异常</div>') +
-        '</div></div>' +
+        '<div class="mbody"><div class="issues">' + body + '</div></div>' +
         '<div class="mfoot"><div class="spacer"></div>' +
           '<button class="btn btn-ghost" data-close>关闭</button>' +
           '<button class="btn btn-brand" id="mCopy">' + ICON.copy + '复制诊断信息</button></div>',
@@ -468,7 +464,7 @@
           '</div>' +
         '</div>' +
         '<div class="thead"><span></span><span id="hCol2">启用</span><span>数据源</span>' +
-          '<span class="r">延迟</span><span class="r">操作</span></div>' +
+          '<span class="r">状态</span><span class="r">操作</span></div>' +
         '<div class="rows" id="rows"></div>' +
         '<div class="dfoot"><div class="dot"></div><span class="status" id="status"></span>' +
           '<div class="spacer"></div>' +

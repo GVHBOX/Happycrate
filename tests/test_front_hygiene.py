@@ -114,6 +114,25 @@ class CssHygieneTest(unittest.TestCase):
                          "代码路径不该出现在用户界面里")
         self.assertIn("issue", body, "应改用结构化的问题列表")
 
+    def test_user_facing_strings_carry_no_advice(self):
+        banned = ("点击", "请选择", "您可以", "建议", "试试", "请注意",
+                  "使用方法", "该字段", "点击这里")
+        targets = [ROOT / "web" / "js" / "views" / "sources.js",
+                   ROOT / "web" / "js" / "views" / "search.js",
+                   ROOT / "web" / "js" / "views" / "settings.js",
+                   ROOT / "app" / "api.py"]
+        for p in targets:
+            text = p.read_text(encoding="utf-8")
+            for lineno, line in enumerate(text.splitlines(), 1):
+                if not re.search(r"[\u4e00-\u9fff]", line):
+                    continue
+                for b in banned:
+                    with self.subTest(file=p.name, line=lineno, banned=b):
+                        self.assertNotIn(
+                            b, line,
+                            f"{p.name}:{lineno} 界面只写「是什么」和「出了什么问题」，"
+                            f"不写「怎么用」"),
+
     def test_health_dot_has_fixed_size(self):
         base = ROOT / "web" / "styles" / "base.css"
         text = base.read_text(encoding="utf-8")

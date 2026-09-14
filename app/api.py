@@ -194,19 +194,6 @@ def _blank_health() -> dict:
             "events": [], "lastOk": 0, "lastCount": 0}
 
 
-def _age_text(ts: int) -> str:
-    if not ts:
-        return "从未取到结果"
-    gap = max(0, int(time.time()) - int(ts))
-    if gap < 120:
-        return "上次有结果在 1 分钟内"
-    if gap < 7200:
-        return f"上次有结果在 {gap // 60} 分钟前"
-    if gap < 172800:
-        return f"上次有结果在 {gap // 3600} 小时前"
-    return f"上次有结果在 {gap // 86400} 天前"
-
-
 def _pattern_fields(item: dict) -> dict:
     out = {}
     for name, camel in (("hash_pattern", "hashPattern"),
@@ -736,95 +723,50 @@ class Api:
         return {"ok": False, "error": msg}
 
     def diagnostics(self, keys: list[str] | None = None) -> str:
-        broken, silent, lax = self._scan_health(keys)
-        if not broken and not silent and not lax:
+        report = self._diagnostic_report(keys)
+        if not report["sources"] and not report["lax"]:
             return ""
+        return json.dumps(report, ensure_ascii=False, indent=2)
 
-        out = [f"[happycrate 诊断] {_stamp()}", ""]
-        if lax:
-            out.append("证书校验")
-            out.append("  这些地址证书校验失败，已跳过校验继续取回：")
-            for host in lax[:8]:
-                out.append(f"  {host}")
-            out.append("")
-
-        if broken:
-            out.append("连接失败（需要换地址或查网络）")
-            for e, h in broken:
-                out.extend(self._diag_block(e, h, False))
-            out.append("")
-
-        if silent:
-            out.append("无结果（连得上但没内容）")
-            for e, h in silent:
-                out.extend(self._diag_block(e, h, True))
-            out.append("")
-
-        return "\n".join(out).rstrip() + "\n"
-
-    def _scan_health(self, keys=None):
-        broken: list[tuple[dict, dict]] = []
-        silent: list[tuple[dict, dict]] = []
-        for e in self._cfg.sources:
-            if keys and e.get("key") not in set(keys):
-                continue
-            h = self._health_store.get(e.get("key", "")) or {}
-            state = h.get("state", "na")
-            outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
-            last = outcomes[-1] if outcomes else ""
-            if state == "err" or last in FATAL_OUTCOMES:
-                broken.append((e, h))
-            elif _window_empty(outcomes):
-                silent.append((e, h))
-        return broken, silent, sources.ssl_lax_hosts()
-
-    def source_issues(self) -> list[dict]:
-        broken, silent, _lax = self._scan_health()
-        out: list[dict] = []
-        for e, h in broken:
-            out.append({
-                "key": e.get("key", ""),
-                "label": e.get("label", e.get("key", "")),
-                "addr": _addr_of(e),
-                "kind": "fail",
-                "reason": h.get("err") or "请求失败",
-                "action": self._action_for(e, h, False),
-            })
-        for e, h in silent:
-            out.append({
-                "key": e.get("key", ""),
-                "label": e.get("label", e.get("key", "")),
-                "addr": _addr_of(e),
-                "kind": "empty",
-                "reason": f"连得上，但最近 {min(len([o for o in (h.get('outcomes') or []) if o and o != OUTCOME_CANCEL]), HEALTH_WINDOW)} 次都没搜到内容",
-                "action": self._action_for(e, h, True),
-            })
-        return out
-
-    def _action_for(self, entry: dict, h: dict, is_empty: bool) -> str:
-        if is_empty:
-            outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
-            if sum(1 for o in outcomes[-HEALTH_WINDOW:] if o in FATAL_OUTCOMES):
-                return "网络或地址不稳，稍后重试；持续这样换个可用地址"
-            peers, hits = self._peer_stats(entry.get("key", ""), outcomes)
-            if peers and hits * 2 >= peers:
-                return "同批其他源能搜到，本站可能不再收录或解析失效，需要更新适配"
-            if peers:
-                return "同批其他源也大多没结果，多半是关键字太冷门，换个词试试"
-            return "换个关键字试试；一直搜不到则需要更新适配"
-        return "站点暂时不可用，稍后重试；长期如此换个可用地址"
-
-    @staticmethod
-    def _diag_lines(h: dict) -> list[str]:
-        events = list(h.get("events") or [])[-HEALTH_WINDOW:]
-        if not events:
-            return []
+    def _diagnostic_report(self, keys: list[str] | None = None) -> dict:
+        broken, silent, lax = self._scan_health(keys)
         rows = []
-        for ev in events:
-            code = ev.get("code") or 0
-            head = f"HTTP {code}" if code else "—"
-            rows.append(f"{head}/{ev.get('count', 0)}条/{ev.get('ms', 0)}ms")
-        return ["  明细  " + "  ".join(rows)]
+        for e, h in broken:
+            rows.append(self._diag_row(e, h, "fail"))
+        for e, h in silent:
+            rows.append(self._diag_row(e, h, "empty"))
+        return {
+            "at": _stamp(),
+            "version": __version__,
+            "lax": list(lax[:8]),
+            "sources": rows,
+        }
+
+    def _diag_row(self, entry: dict, h: dict, kind: str) -> dict:
+        key = entry.get("key", "")
+        outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
+        events = list(h.get("events") or [])[-HEALTH_WINDOW:]
+        peers, hits = self._peer_stats(key, outcomes)
+        return {
+            "key": key,
+            "label": entry.get("label", key),
+            "addr": _addr_of(entry),
+            "kind": kind,
+            "state": h.get("state", "na"),
+            "err": h.get("err", ""),
+            "lastOk": int(h.get("lastOk", 0) or 0),
+            "outcomes": outcomes[-HEALTH_WINDOW:],
+            "peers": peers,
+            "peerHits": hits,
+            "events": [
+                {"at": ev.get("at", 0), "outcome": ev.get("outcome", ""),
+                 "code": ev.get("code", 0), "count": ev.get("count", 0),
+                 "ms": ev.get("ms", 0), "round": ev.get("round", ""),
+                 "err": ev.get("err", "")}
+                for ev in events
+            ],
+            "adapter": sources.adapter_location(key, entry.get("type", "builtin")),
+        }
 
     def _peer_stats(self, key: str, outcomes: list[str]) -> tuple[int, int]:
         events = [e for e in ((self._health_store.get(key) or {}).get("events") or [])
@@ -851,37 +793,42 @@ class Api:
                     hits += 1
         return peers, hits
 
-    def _diag_block(self, entry: dict, h: dict, is_empty: bool) -> list[str]:
-        key = entry.get("key", "")
-        outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
-        lines = [f"> {entry.get('label', key)} ({key})",
-                 f"  地址  {_addr_of(entry)}"]
-        if is_empty:
-            lines.append(f"  现象  最近 {min(len(outcomes), HEALTH_WINDOW)} 次均无结果"
-                         f"（{_age_text(int(h.get('lastOk', 0) or 0))}）")
-        else:
-            lines.append("  现象  " + (h.get("err") or "请求失败"))
-        lines.extend(self._diag_lines(h))
-        lines.append(f"  最近  {' '.join(outcomes[-HEALTH_WINDOW:]) or '无记录'}")
-        fatal = sum(1 for o in outcomes[-HEALTH_WINDOW:] if o in FATAL_OUTCOMES)
-        if is_empty and fatal:
-            lines.append(f"  建议  近 {HEALTH_WINDOW} 次里还有 {fatal} 次连接失败，先换镜像地址再确认解析")
-        elif is_empty:
-            peers, hits = self._peer_stats(key, outcomes)
-            if peers and hits * 2 >= peers:
-                lines.append(f"  对照  同轮 {peers} 个源里有 {hits} 个出结果，本源更像不收录或解析失效")
-                lines.append("  建议  换关键字仍无结果则需改解析代码")
-            elif peers:
-                lines.append(f"  对照  同轮 {peers} 个源里只有 {hits} 个出结果")
-                lines.append("  建议  多数源都没结果，多半是关键字太冷门，不是源的故障")
-            else:
-                lines.append("  建议  先换关键字确认；仍无结果则需改解析代码")
-        else:
-            lines.append("  建议  换镜像地址")
-        lines.append("  位置  " + sources.adapter_location(
-            key, entry.get("type", "builtin")))
-        lines.append("")
-        return lines
+    def source_issues(self) -> list[dict]:
+        broken, silent, _lax = self._scan_health()
+        out: list[dict] = []
+        for e, h in broken:
+            out.append({
+                "key": e.get("key", ""),
+                "label": e.get("label", e.get("key", "")),
+                "addr": _addr_of(e),
+                "kind": "fail",
+                "detail": h.get("err") or "请求失败",
+            })
+        for e, h in silent:
+            out.append({
+                "key": e.get("key", ""),
+                "label": e.get("label", e.get("key", "")),
+                "addr": _addr_of(e),
+                "kind": "empty",
+                "detail": f"最近 {min(len([o for o in (h.get('outcomes') or []) if o and o != OUTCOME_CANCEL]), HEALTH_WINDOW)} 次请求均为 0 条",
+            })
+        return out
+
+    def _scan_health(self, keys=None):
+        broken: list[tuple[dict, dict]] = []
+        silent: list[tuple[dict, dict]] = []
+        for e in self._cfg.sources:
+            if keys and e.get("key") not in set(keys):
+                continue
+            h = self._health_store.get(e.get("key", "")) or {}
+            state = h.get("state", "na")
+            outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
+            last = outcomes[-1] if outcomes else ""
+            if state == "err" or last in FATAL_OUTCOMES:
+                broken.append((e, h))
+            elif _window_empty(outcomes):
+                silent.append((e, h))
+        return broken, silent, sources.ssl_lax_hosts()
 
     def get_settings(self) -> dict:
         data = self._settings.data or {}

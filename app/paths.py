@@ -18,8 +18,8 @@ MODE_FALLBACK = "fallback"
 
 MODE_LABELS = {
     MODE_ENV: "环境变量指定",
-    MODE_PORTABLE: "便携模式（随程序目录）",
-    MODE_FALLBACK: "回退模式（程序目录不可写）",
+    MODE_PORTABLE: "便携模式",
+    MODE_FALLBACK: "回退模式",
 }
 
 _cache: tuple[Path, str] | None = None

@@ -281,10 +281,7 @@
         return {
           key: s.key, label: s.label, addr: s.addr,
           kind: s.health.state === "err" ? "fail" : "empty",
-          reason: s.health.state === "err" ? (s.health.err || "请求失败") : "最近几次都没结果",
-          action: s.health.state === "err"
-            ? "站点暂时不可用，稍后重试；长期如此换个可用地址"
-            : "换个关键字试试；一直搜不到则需要更新适配"
+          detail: s.health.state === "err" ? (s.health.err || "请求失败") : "最近 5 次请求均为 0 条"
         };
       }));
     },

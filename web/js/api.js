@@ -13,7 +13,7 @@
     {key:"sukebei", label:"Sukebei", type:"builtin", enabled:true, timeout:15,
      addr:"https://sukebei.nyaa.si", health:{state:"ok", ms:183, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"eztv", label:"EZTV", type:"builtin", enabled:true, timeout:15,
-     addr:"https://eztvx.to", health:{state:"err", ms:94, err:"返回 0 条", times:["ok","empty","empty","empty","empty"]}},
+     addr:"https://eztvx.to", health:{state:"err", ms:94, err:"返回 0 条", times:["ok","empty","empty","empty","empty"], empty:true}},
     {key:"bitsearch", label:"BitSearch", type:"builtin", enabled:true, timeout:15,
      addr:"https://bitsearch.to", health:{state:"ok", ms:41, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"tpb", label:"TPB镜像", type:"builtin", enabled:true, timeout:15,
@@ -70,7 +70,8 @@
           state: (s.health && s.health.state) || "na",
           ms: (s.health && s.health.ms) || 0,
           err: (s.health && s.health.err) || "",
-          times: (s.health && s.health.times) || []
+          times: (s.health && s.health.times) || [],
+          empty: !!(s.health && s.health.empty)
         }
       };
     });
@@ -134,7 +135,7 @@
       } else {
         var item = {};
         for (var j in entry) item[j] = entry[j];
-        item.health = {state:"na", ms:0, err:"", times:[]};
+        item.health = {state:"na", ms:0, err:"", times:[], empty:false};
         list.push(item);
       }
       return Promise.resolve({ok:true, errors:[]});
@@ -174,7 +175,8 @@
                ms: roll === "warn" ? 4800 + Math.round(Math.random()*900)
                                    : 30 + Math.round(Math.random()*260),
                err:""};
-          s.health = {state:res.state, ms:res.ms, err:res.err, times:s.health.times};
+          s.health = {state:res.state, ms:res.ms, err:res.err, times:s.health.times,
+                      empty: s.health.state === "err" && (s.health.times || []).indexOf("empty") >= 0};
           if (probeOne) probeOne(s.key, res);
           left--;
           if (!left && probeDone) probeDone();
@@ -227,7 +229,7 @@
       if (!list.length) return Promise.resolve("");
       var out = ["[happycrate 诊断] " + stamp(), ""];
       list.forEach(function(s){
-        var empty = s.health.err && s.health.err.indexOf("0 条") >= 0;
+        var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
         out.push("> " + s.label + " (" + s.key + ")");
         out.push("  地址  " + s.addr);
         out.push("  现象  " + (empty

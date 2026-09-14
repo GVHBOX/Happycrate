@@ -103,6 +103,9 @@ def sources_path() -> Path:
 def settings_path() -> Path:
     return data_file("settings.json")
 
+def health_path() -> Path:
+    return data_file("health.json")
+
 def logs_dir() -> Path:
     override = os.environ.get(ENV_LOG_DIR)
     if override:

@@ -50,8 +50,25 @@ def _to_view(entry: dict, health: dict | None = None) -> dict:
             "ms": int(h.get("ms", 0) or 0),
             "err": h.get("err", ""),
             "times": list(h.get("times", []) or []),
+            "empty": _window_empty(h.get("times")),
         },
     }
+
+
+def _window_empty(times, err: str = "") -> bool:
+    recent = list(times or [])[-HEALTH_WINDOW:]
+    if not recent:
+        return False
+    hit = sum(1 for t in recent if t == "empty")
+    miss = sum(1 for t in recent if t == "err")
+    if not hit or hit < miss:
+        return False
+    return recent[-1] == "empty" or hit > len(recent) - hit
+
+
+def _blank_health() -> dict:
+    return {"state": "na", "ms": 0, "err": "", "times": []}
+
 
 
 def _err_text(ok: bool, count: int, err: str) -> str:
@@ -176,7 +193,8 @@ class Api:
         self._window = window
         self._cfg = config.Config()
         self._settings = config.Settings()
-        self._health: dict[str, dict] = {}
+        self._health_store = config.HealthStore()
+        self._health_lock = threading.Lock()
         self._probe_token = 0
         self._search_token = 0
         self._migration: dict = {}
@@ -198,15 +216,11 @@ class Api:
         logger.info("%s v%s 启动 · 数据目录 %s", APP_TITLE, __version__, paths.data_dir())
 
     def _load_health(self) -> None:
-        for entry in self._cfg.sources:
-            h = entry.get("health")
-            if isinstance(h, dict):
-                self._health[entry.get("key", "")] = {
-                    "state": h.get("state", "na"),
-                    "ms": int(h.get("ms", 0) or 0),
-                    "err": h.get("err", ""),
-                    "times": list(h.get("times", []) or [])[-HEALTH_WINDOW:],
-                }
+        self._health_store.load(self._cfg.sources).prune(
+            [e.get("key", "") for e in self._cfg.sources])
+        self._cfg.strip_health()
+        self._health_store.save()
+        self._cfg.save()
 
     def _demote_bad(self) -> None:
         if self._cfg.order_locked():
@@ -215,11 +229,12 @@ class Api:
         if len(entries) < 2:
             return
 
+        health = self._health_store.all()
         bad = set()
         good = set()
         for entry in entries:
             key = entry.get("key", "")
-            times = self._health.get(key, {}).get("times") or []
+            times = (health.get(key) or {}).get("times") or []
             window = times[-HEALTH_WINDOW:]
             if len(window) < HEALTH_WINDOW:
                 continue
@@ -256,11 +271,9 @@ class Api:
         sources.reload_from_config(self._cfg)
 
     def _persist_health(self) -> None:
-        for entry in self._cfg.sources:
-            key = entry.get("key", "")
-            if key in self._health:
-                entry["health"] = self._health[key]
         self._demote_bad()
+        self._health_store.prune([e.get("key", "") for e in self._cfg.sources])
+        self._health_store.save()
         self._cfg.save()
 
     def _push(self, js: str) -> None:
@@ -272,7 +285,7 @@ class Api:
             logger.debug("推送前端失败：%s", exc)
 
     def list_sources(self) -> list[dict]:
-        return [_to_view(e, self._health.get(e.get("key", ""))) for e in self._cfg.sources]
+        return [_to_view(e, self._health_store.get(e.get("key", ""))) for e in self._cfg.sources]
 
     def next_custom_key(self) -> str:
         return self._cfg.next_custom_key()
@@ -352,7 +365,7 @@ class Api:
     def remove_source(self, key: str) -> bool:
         if not self._cfg.remove_source(key):
             return False
-        self._health.pop(key, None)
+        self._health_store.drop(key)
         self._cfg.save()
         sources.reload_from_config(self._cfg)
         return True
@@ -408,13 +421,14 @@ class Api:
 
     def _mark(self, key: str, ok: bool, count: int, ms: int, err: str) -> dict:
         mark = "ok" if ok and (count or not err) else ("empty" if ok else "err")
-        h = self._health.setdefault(key, {"state": "na", "ms": 0, "err": "", "times": []})
-        h["times"] = (h.get("times", []) + [mark])[-HEALTH_WINDOW:]
-        if ms:
-            h["ms"] = int(ms)
-        h["err"] = err
-        h["state"] = _state_of(h["times"], h.get("ms", 0), err)
-        return h
+        with self._health_lock:
+            h = self._health_store.data.setdefault(key, _blank_health())
+            h["times"] = (h.get("times", []) + [mark])[-HEALTH_WINDOW:]
+            if ms:
+                h["ms"] = int(ms)
+            h["err"] = err if mark != "empty" else ""
+            h["state"] = _state_of(h["times"], h.get("ms", 0), err)
+            return dict(h)
 
     def _probe_worker(self, token: int, targets) -> None:
         def one(src):
@@ -546,7 +560,7 @@ class Api:
     def reset_sources(self) -> bool:
         self._cfg.reset_defaults()
         self._cfg.save()
-        self._health = {}
+        self._health_store.replace({})
         sources.reload_from_config(self._cfg)
         return True
 
@@ -570,7 +584,7 @@ class Api:
     def diagnostics(self, keys: list[str] | None = None) -> str:
         picked = [
             e for e in self._cfg.sources
-            if (self._health.get(e.get("key", ""), {}).get("state") == "err")
+            if (self._health_store.get(e.get("key", "")) or {}).get("state") == "err"
             and (not keys or e.get("key") in set(keys))
         ]
         lax = sources.ssl_lax_hosts()
@@ -585,13 +599,16 @@ class Api:
             out.append("")
         for e in picked:
             key = e.get("key", "")
-            h = self._health.get(key, {})
-            empty = "0 条" in (h.get("err") or "")
+            h = self._health_store.get(key) or {}
+            times = list(h.get("times", []) or [])
+            empty = _window_empty(times)
             out.append(f"> {e.get('label', key)} ({key})")
             out.append(f"  地址  {_addr_of(e)}")
-            out.append("  现象  " + ("返回 200，但解析出 0 条结果" if empty
-                                     else (h.get("err") or "请求失败")))
-            out.append(f"  最近  {' '.join(h.get('times', [])) or '无记录'}")
+            if empty:
+                out.append("  现象  HTTP 200 正常，但解析出 0 条结果")
+            else:
+                out.append("  现象  " + (h.get("err") or "请求失败"))
+            out.append(f"  最近  {' '.join(times) or '无记录'}")
             out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
             out.append("  位置  " + sources.adapter_location(
                 key, e.get("type", "builtin")))

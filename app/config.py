@@ -86,6 +86,9 @@ def config_path():
 def settings_path():
     return paths.settings_path()
 
+def health_path():
+    return paths.health_path()
+
 def broken_path(path) -> str:
     p = str(path)
     if p.lower().endswith(".json"):
@@ -288,7 +291,12 @@ class Config:
 
     def save(self) -> bool:
         self._normalize()
-        return atomic_write_json(self.path, self.data)
+        payload = dict(self.data)
+        payload["sources"] = [
+            {k: v for k, v in entry.items() if k != "health"}
+            for entry in self.sources
+        ]
+        return atomic_write_json(self.path, payload)
 
     @property
     def sources(self) -> list[dict]:
@@ -343,6 +351,16 @@ class Config:
     def order_locked(self) -> bool:
         return bool(self.data.get("orderLocked"))
 
+    def strip_health(self) -> bool:
+        removed = False
+        for entry in self.sources:
+            if "health" in entry:
+                entry.pop("health", None)
+                removed = True
+        if removed:
+            self.data["sources"] = self.sources
+        return removed
+
     def set_order_locked(self, on: bool) -> None:
         if on:
             self.data["orderLocked"] = True
@@ -365,8 +383,13 @@ class Config:
 
     def export_to(self, path) -> bool:
         try:
+            payload = dict(self.data)
+            payload["sources"] = [
+                {k: v for k, v in entry.items() if k != "health"}
+                for entry in self.sources
+            ]
             with open(path, "w", encoding="utf-8") as fh:
-                json.dump(self.data, fh, ensure_ascii=False, indent=2)
+                json.dump(payload, fh, ensure_ascii=False, indent=2)
             return True
         except OSError as exc:
             logger.error("导出配置失败：%s", exc)
@@ -412,7 +435,7 @@ class Config:
 
             if cur is not None:
                 for field, value in src.items():
-                    if field == "key":
+                    if field in ("key", "health"):
                         continue
                     if field == "type" and value == "builtin":
                         continue
@@ -426,7 +449,8 @@ class Config:
             if errs:
                 skipped.append(f"{key} ({errs[0]})")
                 continue
-            self.sources.append(dict(src))
+            item = {k: v for k, v in src.items() if k != "health"}
+            self.sources.append(item)
             added += 1
 
         self._normalize()
@@ -514,5 +538,86 @@ class Settings:
 
     def reset_defaults(self) -> None:
         self.data = settings_defaults()
+
+
+HEALTH_WINDOW = 5
+
+class HealthStore:
+
+    def __init__(self, path=None):
+        self.path = path or health_path()
+        self.data: dict[str, dict] = {}
+
+    def load(self, legacy_entries=None) -> HealthStore:
+        raw, is_default, _broken = _load_json(self.path, {})
+        if is_default:
+            self.data = {}
+            if legacy_entries:
+                self._absorb_legacy(legacy_entries)
+        elif isinstance(raw, dict):
+            entries = raw.get("sources")
+            self.data = {}
+            if isinstance(entries, dict):
+                for key, value in entries.items():
+                    if isinstance(value, dict):
+                        self.data[str(key)] = self._clean(value)
+        else:
+            self.data = {}
+        return self
+
+    def _absorb_legacy(self, entries) -> None:
+        got = False
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            h = entry.get("health")
+            key = str(entry.get("key") or "")
+            if key and isinstance(h, dict):
+                self.data[key] = self._clean(h)
+                got = True
+        if got:
+            logger.info("已从 sources.json 接收 %d 条健康度记录", len(self.data))
+
+    @staticmethod
+    def _clean(value: dict) -> dict:
+        return {
+            "state": str(value.get("state", "na") or "na"),
+            "ms": HealthStore._safe_int(value.get("ms"), 0),
+            "err": str(value.get("err", "") or ""),
+            "times": [str(t) for t in (value.get("times") or [])][-HEALTH_WINDOW:],
+        }
+
+    @staticmethod
+    def _safe_int(value, fallback: int) -> int:
+        try:
+            return int(value)
+        except (TypeError, ValueError, OverflowError):
+            return fallback
+
+    def get(self, key: str) -> dict | None:
+        return self.data.get(key)
+
+    def all(self) -> dict[str, dict]:
+        return dict(self.data)
+
+    def set(self, key: str, value: dict) -> None:
+        self.data[key] = self._clean(value)
+
+    def drop(self, key: str) -> None:
+        self.data.pop(key, None)
+
+    def replace(self, data: dict) -> None:
+        self.data = {str(k): self._clean(v) for k, v in (data or {}).items()
+                     if isinstance(v, dict)}
+
+    def prune(self, keep_keys) -> None:
+        keep = set(keep_keys or ())
+        for key in list(self.data):
+            if key not in keep:
+                self.data.pop(key, None)
+
+    def save(self) -> bool:
+        return atomic_write_json(self.path, {"version": 1, "sources": self.data})
+
 
 

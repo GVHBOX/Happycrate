@@ -154,6 +154,42 @@ class CssHygieneTest(unittest.TestCase):
         )
 
 
+class JsonHighlightTest(unittest.TestCase):
+
+    def semantic_map(self):
+        src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
+        block = src.split("var SEMANTIC = {", 1)[1].split("};", 1)[0]
+        return dict(re.findall(r"(\w+)\s*:\s*\"(\w+)\"", block))
+
+    def test_every_outcome_maps_to_its_state_color(self):
+        from app import api as api_mod
+        m = self.semantic_map()
+        missing = [o for o in api_mod.OUTCOME_STATE if o not in m]
+        self.assertEqual(missing, [],
+                         f"诊断里会出现这些 outcome，高亮表漏了：{missing}")
+        for outcome, state in api_mod.OUTCOME_STATE.items():
+            with self.subTest(outcome=outcome):
+                self.assertEqual(m[outcome], state,
+                                 f"{outcome} 的颜色必须与后端 OUTCOME_STATE 一致，"
+                                 f"否则颜色就成了乱标")
+
+    def test_kind_values_are_mapped(self):
+        m = self.semantic_map()
+        self.assertIn("fail", m)
+        self.assertEqual(m["fail"], "err", "kind=fail 是故障，应与 err 同色")
+        self.assertIn("empty", m)
+
+    def test_colors_come_from_existing_tokens(self):
+        base = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        for cls, tok in (("js-ok", "ok"), ("js-warn", "warn"),
+                         ("js-empty", "empty"), ("js-err", "err")):
+            with self.subTest(cls=cls):
+                self.assertRegex(
+                    base,
+                    rf"\.{cls}\{{[^}}]*var\(--{tok}\)",
+                    f".{cls} 必须用项目既有的 --{tok}，不要另造色值")
+
+
 class MockHashTest(unittest.TestCase):
 
     def node(self):

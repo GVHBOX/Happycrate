@@ -62,6 +62,12 @@ input, textarea{
 .app > .card .rows::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:6px; border:3px solid var(--panel); background-clip:padding-box}
 .app > .card .rows::-webkit-scrollbar-track{background:transparent}
 
+.scroll-slim::-webkit-scrollbar{width:12px; height:12px}
+.scroll-slim::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:6px; border:3px solid transparent; background-clip:padding-box}
+.scroll-slim::-webkit-scrollbar-thumb:hover{background:var(--t4); background-clip:padding-box}
+.scroll-slim::-webkit-scrollbar-track{background:transparent}
+.scroll-slim::-webkit-scrollbar-corner{background:transparent}
+
 .app.settings{display:block; overflow-y:auto}
 .app.settings .card{flex:none; max-width:860px; margin:0 auto}
 .app.settings .card + .card{margin-top:12px}
@@ -580,9 +586,18 @@ input, textarea{
   max-height:38vh;
   background:transparent;
   color:var(--t2);
-  padding:0 var(--sp-5) var(--sp-5);
+  padding:0 var(--sp-3) var(--sp-5) var(--sp-5);
 }
 .logbox:not([open]) .term{display:none}
+.jk{color:var(--t3)}
+.jn{color:var(--t1)}
+.jb{color:var(--t3)}
+.js{color:var(--t2)}
+.js-ok{color:var(--ok)}
+.js-warn{color:var(--warn)}
+.js-empty{color:var(--empty)}
+.js-na{color:var(--empty)}
+.js-err{color:var(--err)}
 
 .hidden{display:none !important}
 

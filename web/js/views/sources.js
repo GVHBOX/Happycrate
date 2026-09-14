@@ -288,6 +288,28 @@
     };
   }
 
+  var SEMANTIC = {
+    ok: "ok", slow: "warn", http429: "warn", http4xx: "warn",
+    empty: "empty", na: "na",
+    timeout: "err", net: "err", http403: "err", http5xx: "err",
+    err: "err", warn: "warn", cancel: "na", fail: "err"
+  };
+
+  function highlightJson(text){
+    return esc(text).replace(
+      /(&quot;(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\])*?&quot;(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
+      function(match, _all, colon){
+        if (match.indexOf("&quot;") === 0){
+          if (colon) return '<span class="jk">' + match + '</span>';
+          var inner = match.slice(6, -6);
+          var tone = SEMANTIC[inner];
+          return '<span class="' + (tone ? "js js-" + tone : "js") + '">' + match + '</span>';
+        }
+        if (/^(?:true|false|null)$/.test(match)) return '<span class="jb">' + match + '</span>';
+        return '<span class="jn">' + match + '</span>';
+      });
+  }
+
   function showBadModal(){
     Promise.all([api.sourceIssues(), api.diagnostics([])]).then(function(res){
       var issues = res[0] || [];
@@ -303,7 +325,7 @@
 
       var logBlock = detail
         ? '<details class="logbox"><summary>' + ICON.chev + '诊断原文</summary>' +
-          '<pre class="term selectable">' + esc(detail) + '</pre></details>'
+          '<pre class="term selectable scroll-slim">' + highlightJson(detail) + '</pre></details>'
         : "";
 
       var m = openModal(

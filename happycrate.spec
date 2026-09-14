@@ -2,7 +2,7 @@ import os
 
 block_cipher = None
 
-datas = [("web", "web")]
+datas = [("web", "web"), ("app", "app")]
 
 _icon = os.path.join("assets", "app.ico")
 if os.path.exists(_icon):
@@ -13,11 +13,7 @@ a = Analysis(
     pathex=["."],
     binaries=[],
     datas=datas,
-    hiddenimports=[
-        "app.api",
-        "app.shell",
-        "app.downloaders.thunder",
-    ],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -25,12 +21,15 @@ a = Analysis(
         "PIL", "numpy", "pandas", "matplotlib", "scipy",
         "PyQt5", "PyQt6", "PySide2", "PySide6",
         "IPython", "pytest", "setuptools", "pip",
+        "pythonwin", "win32ui",
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
+
+a.pure = [m for m in a.pure if m[0] != "app" and not m[0].startswith("app.")]
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 

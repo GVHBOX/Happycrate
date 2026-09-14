@@ -87,15 +87,30 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
 
 ## 构建与测试
 
+**改代码不用打包。** `app/` 和 `web/` 都是外置的（不编译进 exe）：
+
+- 改 `app/*.py` → 改 `dist/happycrate/_internal/app/` 里那份，重启生效
+- 改 `web/*` → 改 `dist/happycrate/_internal/web/` 里那份，刷新生效
+- 只有**新增或删除第三方依赖**才需要重新打包
+
 - 打包**必须用项目 .venv**：`./.venv/Scripts/python.exe -m PyInstaller happycrate.spec --noconfirm`。
   全局 python（3.14，无 pywebview）打出来是空壳：`import webview` 变成命名空间包，
   启动即 `no attribute 'create_window'`，且不报构建错误。
-- 打包同步 = taskkill 旧 exe 后 `cp -r dist/happycrate/. ./`，**cp 不删旧文件**，
-  要对照 `dist/happycrate/_internal` 清掉根目录多出来的残留（如 python314.dll）。
+- 程序从 `dist/happycrate/happycrate.exe` 运行，根目录不再放 exe 和 `_internal/`。
+  别把它们同步回根目录——那样很容易留下过期的旧副本（体积一模一样，看不出来）。
+- `build/` 是打包中间产物，每次打包自动生成，可随时删。
+- 打包会删 `dist/happycrate/` 重建（166+ 文件），可能触发沙箱的批量删除阈值。
+  真拦了就先手工 `rmSync('dist/happycrate')` 再跑打包。
+- 源码外置靠 `happycrate.spec` 里的 `a.pure` 过滤（`m[0] != "app" and not m[0].startswith("app.")`）。
+  升级 PyInstaller 后若失效，表现是「改了代码重启不生效」—— 很好发现，重新确认这行即可。
+
 - mock 的 startSearch 按源逐个投放（约 2.3s），E2E/探针等搜索完成必须等
   `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
 - `.rows` 是列向 flex 容器，行高会被压缩塞满视口；行高调节（.roomy）靠
   `flex:none` 才能生效。
+- `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（520 行，CDP 协议驱动），
+  能自动跑完搜索/框选/全选/弹窗/主题切换等 30+ 项。它每次运行会在 `.ai/tmp`
+  生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.ai/tmp`**。
 
 ## 边界
 

@@ -166,6 +166,9 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
         errs.append("超时必须是整数")
 
     if stype == "builtin":
+        from . import sources as sourcesmod
+        if key and key not in sourcesmod.BUILTIN_KEYS:
+            errs.append(f"未知内置源 key：{key}")
         base = str(src.get("base") or "").strip()
         if base and not base.lower().startswith(("http://", "https://")):
             errs.append("URL 覆盖必须以 http:// 或 https:// 开头")
@@ -330,6 +333,18 @@ class Config:
         self._normalize()
         return True
 
+    def order_locked(self) -> bool:
+        return bool(self.data.get("orderLocked"))
+
+    def set_order_locked(self, on: bool) -> None:
+        if on:
+            self.data["orderLocked"] = True
+            for entry in self.sources:
+                entry.pop("demoted", None)
+                entry.pop("demoteFrom", None)
+        else:
+            self.data.pop("orderLocked", None)
+
     def reset_defaults(self) -> None:
         self.data = defaults()
         self._normalize()
@@ -355,15 +370,16 @@ class Config:
             with open(path, encoding="utf-8") as fh:
                 raw = json.load(fh)
         except Exception as exc:
-            return False, f"读取失败：{exc}"
+            return False, f"读取失败：{exc}", 0, 0
 
         if isinstance(raw, dict):
             srcs = raw.get("sources")
         else:
             srcs = raw
         if not isinstance(srcs, list) or not srcs:
-            return False, "文件里没有 sources 列表"
+            return False, "文件里没有 sources 列表", 0, 0
 
+        self.data.pop("orderLocked", None)
         builtin_ok = {"enabled", "timeout", "base", "label"}
         added = updated = 0
         skipped: list[str] = []

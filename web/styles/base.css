@@ -134,7 +134,6 @@ body{
 .btn-ghost:hover{background:var(--shell); border-color:rgba(13,13,31,.22); color:var(--t1)}
 .btn-ghost:active{background:var(--rowline)}
 .btn-ghost[aria-pressed="true"]{background:var(--brand-soft); border-color:var(--brand-line); color:var(--brand)}
-.btn-icon{width:var(--h-ctrl); padding:0; justify-content:center}
 .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none}
 .btn[disabled] .ripple{display:none}
 .btn.done{background:var(--ok); color:#fff; border-color:transparent}
@@ -367,7 +366,6 @@ body{
 .mi:hover{background:var(--shell)}
 .mi:active{background:var(--brand-soft); color:var(--brand)}
 .mi svg{color:var(--t3)}
-.msep{height:1px; background:var(--rowline); margin:var(--sp-2) 2px}
 
 .backdrop{
   position:fixed; inset:0;
@@ -392,14 +390,6 @@ body{
   padding:var(--sp-6);
   overflow:auto;
   display:flex; flex-direction:column; gap:var(--sp-5);
-}
-.notice{
-  display:flex; align-items:center; gap:var(--sp-3);
-  background:var(--shell);
-  border-radius:var(--r-ctrl);
-  padding:var(--sp-4);
-  font:400 var(--fs-xs)/1.5 var(--font);
-  color:var(--t3);
 }
 .field label{display:block; font:500 var(--fc-md)/1 var(--font); color:var(--t1)}
 .input{

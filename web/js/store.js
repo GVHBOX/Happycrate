@@ -22,7 +22,7 @@
       emit();
     },
 
-    subscribe: function(fn){ subs.push(fn); },
+    subscribe: function(fn){ if (subs.indexOf(fn) < 0) subs.push(fn); },
 
     byKey: function(key){
       return state.sources.filter(function(s){ return s.key === key; })[0] || null;

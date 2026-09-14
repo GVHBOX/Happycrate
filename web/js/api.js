@@ -34,7 +34,6 @@
   ];
 
   var db = null;
-  var customSeq = 1;
 
   function clone(list){
     return list.map(function(s){
@@ -47,7 +46,6 @@
   function seed(){
     if (!db){
       db = clone(MOCK);
-      customSeq = 1;
     }
     return db;
   }
@@ -201,7 +199,6 @@
     resetSources: function(){
       if (live()) return window.pywebview.api.reset_sources();
       db = clone(MOCK);
-      customSeq = 1;
       return Promise.resolve(true);
     },
 

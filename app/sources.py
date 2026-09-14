@@ -32,6 +32,17 @@ _LAX = ssl.create_default_context()
 _LAX.check_hostname = False
 _LAX.verify_mode = ssl.CERT_NONE
 
+_LAX_HOSTS: set[str] = set()
+
+def ssl_lax_hosts() -> list[str]:
+    return sorted(_LAX_HOSTS)
+
+def ssl_known_lax(url: str) -> bool:
+    return (urllib.parse.urlsplit(url).hostname or "") in _LAX_HOSTS
+
+def reset_ssl_lax() -> None:
+    _LAX_HOSTS.clear()
+
 _SIZE_RE = re.compile(r"(-?\d{1,12}(?:\.\d{1,4})?)\s*([KMGTP]?)i?[Bb](?![A-Za-z0-9])")
 _SIZE_SCAN_LIMIT = 200
 _SIZE_UNITS = {"": 1, "K": 1024, "M": 1024 ** 2, "G": 1024 ** 3,
@@ -170,7 +181,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
 
     attempt = 0
     last_exc: Exception | None = None
-    use_lax = False
+    use_lax = ssl_known_lax(url)
 
     while attempt <= max(0, retries):
         attempt += 1
@@ -204,6 +215,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             last_exc = exc
             if not use_lax:
                 logger.warning("SSL 严格校验失败，降级到 lax：%s (%s)", url, exc)
+                _LAX_HOSTS.add(urllib.parse.urlsplit(url).hostname or url)
                 use_lax = True
                 attempt -= 1
                 continue
@@ -844,6 +856,8 @@ _BUILTIN_ADAPTERS = {
     "tpb": ("TPB镜像", _search_tpb_mirror),
     "btdig": ("BTDigg", _search_btdig),
 }
+
+BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
 EMPTY_NEUTRAL = frozenset({"eztv"})
 

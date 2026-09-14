@@ -47,12 +47,6 @@ def _safe_available(inst: Downloader) -> bool:
     except Exception:
         return False
 
-def _safe(method: Method) -> bool:
-    try:
-        return bool(method.available())
-    except Exception:
-        return False
-
 __all__ = [
     "DeliveryResult",
     "Downloader",

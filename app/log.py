@@ -14,7 +14,6 @@ MAX_BYTES = 1 * 1024 * 1024
 BACKUP_COUNT = 3
 
 ENV_LEVEL = "HAPPYCRATE_LOG_LEVEL"
-DEFAULT_LEVEL = "INFO"
 
 _initialized = False
 _file_ok = False

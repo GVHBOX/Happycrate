@@ -42,6 +42,9 @@ def _to_view(entry: dict, health: dict | None = None) -> dict:
         "addr": _addr_of(entry),
         "listPath": entry.get("list_path", "") or "",
         "map": entry.get("map") or {},
+        "hashPattern": entry.get("hash_pattern", "") or "",
+        "titlePattern": entry.get("title_pattern", "") or "",
+        "sizePattern": entry.get("size_pattern", "") or "",
         "health": {
             "state": h.get("state", "na"),
             "ms": int(h.get("ms", 0) or 0),
@@ -206,18 +209,47 @@ class Api:
                 }
 
     def _demote_bad(self) -> None:
+        if self._cfg.order_locked():
+            return
         entries = self._cfg.sources
         if len(entries) < 2:
             return
+
         bad = set()
+        good = set()
         for entry in entries:
-            times = self._health.get(entry.get("key", ""), {}).get("times") or []
-            if len(times) >= HEALTH_WINDOW and all(t == "err" for t in times):
-                bad.add(entry.get("key", ""))
-        if not bad:
+            key = entry.get("key", "")
+            times = self._health.get(key, {}).get("times") or []
+            window = times[-HEALTH_WINDOW:]
+            if len(window) < HEALTH_WINDOW:
+                continue
+            if all(t in ("err", "empty") for t in window):
+                bad.add(key)
+            elif all(t == "ok" for t in window):
+                good.add(key)
+
+        risen = set()
+        for entry in entries:
+            key = entry.get("key", "")
+            if key in bad and not entry.get("demoted"):
+                entry["demoted"] = True
+                entry["demoteFrom"] = int(entry.get("order", 0) or 0)
+            elif key in good and entry.get("demoted"):
+                entry.pop("demoted", None)
+                risen.add(key)
+
+        def sort_key(item):
+            index, entry = item
+            key = entry.get("key", "")
+            if key in bad:
+                return (1, 0, index)
+            if key in risen:
+                return (0, int(entry.get("demoteFrom", index) or 0), 0)
+            return (0, index, 1)
+
+        ordered = [e for _, e in sorted(enumerate(entries), key=sort_key)]
+        if [e.get("key", "") for e in ordered] == [e.get("key", "") for e in entries]:
             return
-        ordered = [e for e in entries if e.get("key", "") not in bad] + \
-                  [e for e in entries if e.get("key", "") in bad]
         for i, entry in enumerate(ordered):
             entry["order"] = i
         self._cfg.data["sources"] = ordered
@@ -258,6 +290,7 @@ class Api:
         for i, entry in enumerate(entries):
             entry["order"] = i
         self._cfg.data["sources"] = entries
+        self._cfg.set_order_locked(True)
         self._cfg.save()
         sources.reload_from_config(self._cfg)
         return True
@@ -537,9 +570,16 @@ class Api:
             if (self._health.get(e.get("key", ""), {}).get("state") == "err")
             and (not keys or e.get("key") in set(keys))
         ]
-        if not picked:
+        lax = sources.ssl_lax_hosts()
+        if not picked and not lax:
             return ""
         out = [f"[happycrate 诊断] {_stamp()}", ""]
+        if lax:
+            out.append("证书校验")
+            out.append("  这些地址证书校验失败，已跳过校验继续取回：")
+            for host in lax[:8]:
+                out.append(f"  {host}")
+            out.append("")
         for e in picked:
             key = e.get("key", "")
             h = self._health.get(key, {})

@@ -121,12 +121,12 @@
 
   function editorSource(existing){
     var isEdit = !!existing;
-    var d = existing || {key:"", label:"", type:"json", timeout:15, addr:"", listPath:"", map:{}};
+    var d = existing || {key:"", label:"", type:"json", timeout:15, addr:"", listPath:"", map:{},
+                         hashPattern:"", titlePattern:"", sizePattern:""};
     var TYPE_LABEL = {builtin:"内置", rss:"RSS", json:"JSON", html:"HTML"};
     var types;
     if (isEdit && d.type === "builtin") types = ["builtin", "rss", "json", "html"];
-    else if (isEdit) types = ["rss", "json", "html"];
-    else types = ["rss", "json"];
+    else types = ["rss", "json", "html"];
     var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["时间","added"],["链接","magnet"]];
     var map = d.map || {};
 
@@ -161,6 +161,12 @@
                 esc(map[f[1]] || "") + '" placeholder="' + f[1] + '"></div>';
             }).join("") +
           '</div></div>' +
+          '<div class="field" id="wPatH"><label>哈希正则</label>' +
+            '<input class="input mono" id="fHashPat" value="' + esc(d.hashPattern) + '" placeholder="magnet:\\?xt=urn:btih:([0-9a-fA-F]{40})"></div>' +
+          '<div class="field" id="wPatT"><label>标题正则</label>' +
+            '<input class="input mono" id="fTitlePat" value="' + esc(d.titlePattern) + '" placeholder="&gt;([^&lt;&gt;]{4,200})\\s*&lt;"></div>' +
+          '<div class="field" id="wPatS"><label>体积正则</label>' +
+            '<input class="input mono" id="fSizePat" value="' + esc(d.sizePattern) + '" placeholder="&gt;([\\d.]+\\s*[KMGT]i?B)\\s*&lt;"></div>' +
           '<div class="field"><label>超时（秒）</label>' +
             '<div class="stepper" style="margin-top:8px">' +
               '<button data-step="-1">' + STEP_BTN.minus + '</button>' +
@@ -182,8 +188,12 @@
         var wPath = m.querySelector("#wPath"), wMap = m.querySelector("#wMap");
         var showPath = type === "json";
         var showMap = type === "rss" || type === "json";
+        var showPat = type === "html";
         wPath.classList.toggle("hidden", !showPath);
         wMap.classList.toggle("hidden", !showMap);
+        ["#wPatH", "#wPatT", "#wPatS"].forEach(function(id){
+          m.querySelector(id).classList.toggle("hidden", !showPat);
+        });
         m.querySelector("#fAddrLabel").textContent = type === "builtin" ? "镜像地址" : "URL 模板";
       }
 
@@ -215,6 +225,13 @@
           if (v) mapOut[i.dataset.map] = v;
         });
         out.map = mapOut;
+        function pat(id){
+          var el = m.querySelector(id);
+          return el ? el.value.trim() : "";
+        }
+        out.hashPattern = pat("#fHashPat");
+        out.titlePattern = pat("#fTitlePat");
+        out.sizePattern = pat("#fSizePat");
         return out;
       }
 
@@ -622,6 +639,8 @@
         } else {
           M.toast(r.error || "导入失败", "long");
         }
+      }, function(e){
+        M.toast("导入失败：" + ((e && e.message) || e || "未知错误"), "long");
       });
     };
 

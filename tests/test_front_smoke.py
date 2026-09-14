@@ -36,6 +36,22 @@ class FrontEndSmokeTest(unittest.TestCase):
         if not SCRIPT.is_file():
             self.fail(f"冒烟脚本缺失：{SCRIPT}")
 
+    def run_script(self, script):
+        proc = subprocess.run(
+            [self.node, str(script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+
+    def test_window_tone_follows_theme_and_modal(self):
+        script = ROOT / "tests" / "tone_smoke.cjs"
+        self.assertTrue(script.is_file(), f"缺失：{script}")
+        code, out = self.run_script(script)
+        self.assertEqual(code, 0,
+                         "窗口留白底色未跟随主题/弹窗状态，会出现边缘白框：\n" + out)
+        self.assertIn("RESULT: PASS", out)
+
     def test_all_views_mount_without_throwing(self):
         proc = subprocess.run(
             [self.node, str(SCRIPT)],

@@ -17,7 +17,7 @@ WIDTH = 1400
 HEIGHT = 900
 MIN_WIDTH = 960
 MIN_HEIGHT = 640
-BACKGROUND = "#FFFFFF"
+WINDOW_TONE = {"light": "#FFFFFF", "dark": "#131419"}
 
 WEBVIEW2_GUID = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
 WEBVIEW2_URL = "https://developer.microsoft.com/microsoft-edge/webview2/"
@@ -267,6 +267,13 @@ def _watch(window, url: str, bridge) -> None:
     _on_loaded(bridge, window)
 
 
+def saved_tone(bridge) -> str:
+    try:
+        return WINDOW_TONE["dark"] if bridge.get_settings().get("theme") == "dark" else WINDOW_TONE["light"]
+    except Exception:
+        return WINDOW_TONE["light"]
+
+
 def run() -> int:
     log.setup_logging()
 
@@ -283,7 +290,6 @@ def run() -> int:
         return 1
 
     logger.info("%s v%s 就绪 · 界面目录 %s", APP_TITLE, __version__, web_dir())
-
     if not (web_dir() / "index.html").is_file():
         alert("找不到界面文件：%s\n\n程序可能损坏，请重新下载完整压缩包。" % (web_dir() / "index.html"))
         single.release()
@@ -308,7 +314,7 @@ def run() -> int:
         width=WIDTH,
         height=HEIGHT,
         min_size=(MIN_WIDTH, MIN_HEIGHT),
-        background_color=BACKGROUND,
+        background_color=saved_tone(bridge),
         text_select=True,
         frameless=True,
         shadow=False,

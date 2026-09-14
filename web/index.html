@@ -76,7 +76,28 @@
   HC.applyFont = applyFont;
   HC.applyTheme = function(t){
     document.body.classList.toggle("dark", t === "dark");
+    syncWindowTone();
   };
+
+  var TONE = {light: "#FFFFFF", dark: "#131419"};
+  var DIMMED = {light: "#A3A3AA", dark: "#6D6D70"};
+
+  function syncWindowTone(){
+    var dark = document.body.classList.contains("dark");
+    var dim = !!document.querySelector(".backdrop");
+    HC.api.setWindowTone(dim ? DIMMED[dark ? "dark" : "light"]
+                             : TONE[dark ? "dark" : "light"]);
+  }
+  HC.syncWindowTone = syncWindowTone;
+
+  var toneTimer = 0;
+  function watchBackdrop(){
+    clearTimeout(toneTimer);
+    toneTimer = setTimeout(syncWindowTone, 30);
+  }
+  document.addEventListener("DOMContentLoaded", function(){
+    new MutationObserver(watchBackdrop).observe(document.body, {childList: true});
+  });
 
   function loadSettings(){
     return HC.api.getSettings().then(function(s){

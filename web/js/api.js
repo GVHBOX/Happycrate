@@ -394,6 +394,11 @@
     openLogs: function(){
       if (live()) return window.pywebview.api.open_logs();
       return Promise.resolve(true);
+    },
+
+    setWindowTone: function(color){
+      if (live()) return window.pywebview.api.set_window_tone(color);
+      return Promise.resolve(true);
     }
   };
 

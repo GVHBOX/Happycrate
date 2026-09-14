@@ -60,6 +60,7 @@ FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
                             OUTCOME_403, OUTCOME_5XX})
 
 _HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+)?\b([45]\d{2})\b")
+_HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
 def _addr_of(entry: dict) -> str:
@@ -901,6 +902,33 @@ class Api:
         except Exception:
             return False
         return True
+
+    def set_window_tone(self, color: str) -> bool:
+        value = str(color or "").strip()
+        if not _HEX_COLOR_RE.match(value):
+            return False
+        try:
+            import webview.platforms.winforms as wf
+            from System.Drawing import ColorTranslator
+            insts = list(getattr(wf.BrowserView, "instances", {}).values())
+            if not insts:
+                return False
+
+            def apply():
+                try:
+                    insts[0].BackColor = ColorTranslator.FromHtml(value)
+                except Exception as exc:
+                    logger.debug("窗体底色切换失败：%s", exc)
+
+            try:
+                from System import Action
+                insts[0].BeginInvoke(Action(apply))
+            except Exception:
+                apply()
+            return True
+        except Exception as exc:
+            logger.debug("窗体底色不可用：%s", exc)
+            return False
 
     def downloaders(self) -> list[dict]:
         out = []

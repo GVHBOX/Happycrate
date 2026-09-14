@@ -520,7 +520,7 @@ class Api:
         try:
             result, fatal = core.search(
                 text, 1, timeout, keys, min_len=min_len,
-                on_source=on_source, batch=token,
+                on_source=on_source, batch=token, collect=False,
             )
             if fatal:
                 errors[""] = fatal

@@ -186,12 +186,12 @@
     testSource: function(entry){
       if (live()) return window.pywebview.api.test_source(entry);
       var errors = validate(entry, []);
-      if (errors.length) return Promise.resolve({ok:false, count:0, errors:errors});
+      if (errors.length) return Promise.resolve({ok:false, count:0, ms:0, errors:errors});
       return new Promise(function(res){
         setTimeout(function(){
           var bad = /example\.com|e\.com/.test(entry.addr || "");
-          res(bad ? {ok:true, count:0, warn:"返回 0 条"}
-                  : {ok:true, count: 3 + Math.floor(Math.random()*20), warn:""});
+          res({ok: true, ms: 620, errors: [],
+               count: bad ? 0 : 3 + Math.floor(Math.random()*20)});
         }, 700);
       });
     },

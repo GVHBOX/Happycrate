@@ -134,7 +134,8 @@ class SearchResult:
 
 def search(query: str, page: int, timeout: int, enabled,
            min_len: int = 2, on_source=None,
-           batch: int | None = None) -> tuple[SearchResult, str | None]:
+           batch: int | None = None,
+           collect: bool = True) -> tuple[SearchResult, str | None]:
     from . import sources
 
     result = SearchResult()
@@ -152,10 +153,11 @@ def search(query: str, page: int, timeout: int, enabled,
     for key, (items, err, _ms) in by_key.items():
         if err:
             result.errors[key] = err
-        if items:
+        if collect and items:
             collected.extend(items)
 
-    result.items = dedupe(collected)
+    if collect:
+        result.items = dedupe(collected)
 
     if not result.items and result.errors:
         from . import sources as _s

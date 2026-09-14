@@ -22,6 +22,8 @@ _DEFAULT_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 MAX_SEARCH_WORKERS = 8
 
+_CANCEL_POLL = 0.1
+
 PROBE_WORD = "test"
 PROBE_FALLBACK_WORD = "1080p"
 
@@ -580,7 +582,8 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         items.append(it)
     return items
 
-EZTV_PAGES = 5
+EZTV_PAGES = 3
+EZTV_MAX_HITS = 80
 
 def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["eztv"])
@@ -617,6 +620,8 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
                 added=_to_int(row.get("date_released_unix")),
                 source="EZTV",
             ))
+        if len(items) >= EZTV_MAX_HITS:
+            break
     return items
 
 def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
@@ -1022,18 +1027,29 @@ def search_many(query: str, page: int = 1, timeout: int = 15,
         workers = max(1, min(int(max_workers), len(picked)))
 
     results: dict[str, tuple[list[dict], str, int]] = {}
-    with futures.ThreadPoolExecutor(max_workers=workers) as pool:
+    pool = futures.ThreadPoolExecutor(max_workers=workers)
+    try:
         jobs = {
             pool.submit(search_one, s, query, page, timeout, batch): s.key
             for s in picked
         }
-        for job in futures.as_completed(jobs):
-            key, items, err, ms = job.result()
-            results[key] = (items, err, ms)
-            if on_source is not None:
-                try:
-                    on_source(key, items, err, ms)
-                except Exception as exc:
-                    logger.debug("on_source 回调异常：%s", exc)
+        pending = set(jobs)
+        while pending:
+            if batch is not None and not _batch_alive(batch):
+                logger.info("搜索已停止，放弃等待剩余 %d 个源", len(pending))
+                break
+            done, pending = futures.wait(
+                pending, timeout=_CANCEL_POLL,
+                return_when=futures.FIRST_COMPLETED)
+            for job in done:
+                key, items, err, ms = job.result()
+                results[key] = (items, err, ms)
+                if on_source is not None:
+                    try:
+                        on_source(key, items, err, ms)
+                    except Exception as exc:
+                        logger.debug("on_source 回调异常：%s", exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     return results
 

@@ -123,6 +123,7 @@ async function runOnce(exe, profileDir, pageUrl) {
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-session-crashed-bubble",
+    "--no-proxy-server",
     "--window-size=1280,1500",
     "--headless",
     pageUrl,

@@ -9,6 +9,7 @@
   --d-release:180ms;
   --d-state:200ms;
   --d-spring:340ms;
+  --d-push:240ms;
   --d-ripple:460ms;
 }
 

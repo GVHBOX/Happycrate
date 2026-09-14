@@ -429,13 +429,18 @@
     return sk + sk + sk + sk + sk + sk;
   }
 
+  var EMPTY_IC = '<svg viewBox="0 0 34 34" fill="none">' +
+    '<circle cx="15" cy="15" r="9" stroke="currentColor" stroke-width="2"/>' +
+    '<path d="M22 22l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<path d="M11 15h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
   function renderRows(){
     var list = visible();
     if (!list.length){
       if (st.busy){
         rowsEl.innerHTML = skelHtml();
       } else {
-        rowsEl.innerHTML = '<div class="empty">' +
+        rowsEl.innerHTML = '<div class="empty">' + EMPTY_IC +
           (st.searched ? "没有搜到相关结果" : "输入关键词开始搜索") +
           '</div>';
       }
@@ -1077,6 +1082,7 @@
       if (e.shiftKey || e.ctrlKey || e.metaKey) return;
       var rect = rowsEl.getBoundingClientRect();
       if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
+      rowsEl.classList.add("mq-ing");
       marquee = {
         id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY,
         cx0: e.clientX - rect.left + rowsEl.scrollLeft,
@@ -1110,6 +1116,7 @@
       if (!marquee || e.pointerId !== marquee.id) return;
       var m = marquee;
       marquee = null;
+      rowsEl.classList.remove("mq-ing");
       stopAuto();
       if (m.el) m.el.remove();
       if (m.active){

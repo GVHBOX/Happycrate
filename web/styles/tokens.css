@@ -4,7 +4,8 @@
   --brand-hover:#4752C4;
   --brand-soft:#EEF0FE;
   --brand-line:#C7CCF8;
-  --brand-ring:rgba(88,101,242,.28);
+  --brand-rgb:88,101,242;
+  --brand-ring:rgba(var(--brand-rgb),.28);
 
   --shell:#F4F5F8;
   --shell-hover:#EEF0F3;
@@ -64,8 +65,8 @@
   --sh-toast:0 10px 30px rgba(13,13,31,.3);
   --sh-drag:0 10px 28px rgba(13,13,31,.18);
   --sh-btn:0 1px 2px rgba(13,13,31,.14);
-  --sh-btn-hover:0 8px 20px rgba(88,101,242,.38);
-  --sh-btn-active:0 2px 6px rgba(88,101,242,.28);
+  --sh-btn-hover:0 8px 20px rgba(var(--brand-rgb),.38);
+  --sh-btn-active:0 2px 6px rgba(var(--brand-rgb),.28);
   --sh-seg:0 1px 3px rgba(13,13,31,.08);
 
   --s-press-btn:.95;
@@ -190,7 +191,8 @@ body[data-brand="teal"]{
   --brand-hover:#0F766E;
   --brand-soft:#E6F7F5;
   --brand-line:#99E2DB;
-  --brand-ring:rgba(13,148,136,.28);
+  --brand-rgb:13,148,136;
+  --brand-ring:rgba(var(--brand-rgb),.28);
 }
 
 body.dark[data-brand="teal"]{
@@ -203,7 +205,8 @@ body[data-brand="slate"]{
   --brand-hover:#485774;
   --brand-soft:#EDF0F5;
   --brand-line:#C3CCDA;
-  --brand-ring:rgba(91,107,140,.28);
+  --brand-rgb:91,107,140;
+  --brand-ring:rgba(var(--brand-rgb),.28);
 }
 
 body.dark[data-brand="slate"]{

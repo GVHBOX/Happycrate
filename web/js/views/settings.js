@@ -154,13 +154,13 @@
         paintDl(list, dlKey);
         selbarOn = settings.selbar !== false;
         var sb = root.querySelector("#s_selbar");
-        if (sb) sb.classList.toggle("off", !selbarOn);
+        if (sb){ sb.classList.toggle("off", !selbarOn); sb.setAttribute("aria-pressed", String(selbarOn)); }
         themeOn = settings.theme === "dark";
         var th = root.querySelector("#s_theme");
-        if (th) th.classList.toggle("off", !themeOn);
+        if (th){ th.classList.toggle("off", !themeOn); th.setAttribute("aria-pressed", String(themeOn)); }
         autoFilesOn = settings.auto_files !== false;
         var af = root.querySelector("#s_autofiles");
-        if (af) af.classList.toggle("off", !autoFilesOn);
+        if (af){ af.classList.toggle("off", !autoFilesOn); af.setAttribute("aria-pressed", String(autoFilesOn)); }
 
         var lines = [
           ["版本", info.version],
@@ -197,16 +197,19 @@
     root.querySelector("#s_selbar").onclick = function(){
       selbarOn = !selbarOn;
       this.classList.toggle("off", !selbarOn);
+      this.setAttribute("aria-pressed", String(selbarOn));
     };
 
     root.querySelector("#s_autofiles").onclick = function(){
       autoFilesOn = !autoFilesOn;
       this.classList.toggle("off", !autoFilesOn);
+      this.setAttribute("aria-pressed", String(autoFilesOn));
     };
 
     root.querySelector("#s_theme").onclick = function(){
       themeOn = !themeOn;
       this.classList.toggle("off", !themeOn);
+      this.setAttribute("aria-pressed", String(themeOn));
       if (HC.applyTheme) HC.applyTheme(themeOn ? "dark" : "light");
     };
 

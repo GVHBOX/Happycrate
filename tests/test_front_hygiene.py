@@ -244,6 +244,55 @@ class CssHygieneTest(unittest.TestCase):
         )
 
 
+class A11yTest(unittest.TestCase):
+
+    def test_toast_is_live_region(self):
+        src = (ROOT / "web" / "js" / "motion.js").read_text(encoding="utf-8")
+        self.assertIn('setAttribute("role", "status")', src,
+                      "toast 必须带 role=status")
+        self.assertIn('setAttribute("aria-live", "polite")', src,
+                      "toast 必须是 polite live region，否则提示出现时不可感知")
+
+    def test_modal_is_dialog(self):
+        src = (ROOT / "web" / "js" / "motion.js").read_text(encoding="utf-8")
+        self.assertRegex(src, r'class="modal[\s\S]{0,80}role="dialog" aria-modal="true"',
+                         "模态必须声明 dialog 语义")
+
+    def test_modal_manages_focus(self):
+        src = (ROOT / "web" / "js" / "motion.js").read_text(encoding="utf-8")
+        self.assertIn("function focusables(", src,
+                      "必须有可聚焦元素收集器")
+        self.assertIn("bd._opener", src,
+                      "openModal 必须记录触发者，closeModal 才能归还焦点")
+        self.assertIn("(target || modal).focus()", src,
+                      "模态打开后初始焦点必须落在模态内")
+        self.assertIn('e.key !== "Tab"', src,
+                      "Tab 陷阱缺失时键盘焦点会掉到模态背后的页面")
+
+    def test_modal_implementation_is_shared(self):
+        for rel in ("web/js/views/sources.js", "web/js/diagnostics.js"):
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r'className\s*=\s*"backdrop"',
+                                f"{rel} 不得自建模态——两份 close() 会让 Esc 的"
+                                "closing 守卫抢先，焦点归还永远轮空")
+        diag = (ROOT / "web" / "js" / "diagnostics.js").read_text(encoding="utf-8")
+        self.assertIn("HC.motion.openModal(", diag)
+        self.assertIn("HC.motion.closeModal()", diag)
+
+    def test_switch_buttons_carry_aria_pressed(self):
+        src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
+        start = src.find("function rowHtml(")
+        body = src[start:start + 900]
+        self.assertRegex(body, r'class="cb [\s\S]{0,120}aria-pressed=',
+                         "批量复选按钮缺状态语义")
+        self.assertRegex(body, r'class="sw [\s\S]{0,120}aria-pressed=',
+                         "源启停开关缺状态语义")
+        settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        for sid in ("s_selbar", "s_theme", "s_autofiles"):
+            self.assertRegex(settings, r'#' + sid + r'"\)\.onclick[\s\S]{0,220}aria-pressed',
+                             f"设置页开关 {sid} 的点击处理必须同步 aria-pressed")
+
+
 class JsonHighlightTest(unittest.TestCase):
 
     def semantic_map(self):

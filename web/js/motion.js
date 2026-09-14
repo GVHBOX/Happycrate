@@ -28,6 +28,8 @@
       el = document.createElement("div");
       el.id = "toast";
       el.className = "toast";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
       document.body.appendChild(el);
     }
     el.innerHTML = (kind === "ok" ? ICON_CHECK : "") + "<span>" + esc(msg) + "</span>";
@@ -37,6 +39,51 @@
   }
 
   var ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function focusables(scope){
+    return [].slice.call(scope.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'))
+      .filter(function(x){ return x.offsetParent !== null; });
+  }
+
+  function openModal(html, wide){
+    closeModal();
+    var bd = document.createElement("div");
+    bd.className = "backdrop";
+    bd.innerHTML = '<div class="modal' + (wide ? " w640" : "") + '" role="dialog" aria-modal="true" tabindex="-1">' + html + '</div>';
+    bd._opener = document.activeElement;
+    document.body.appendChild(bd);
+    bd.addEventListener("click", function(e){
+      if (e.target === bd) closeModal();
+      if (e.target.closest("[data-close]")) closeModal();
+    });
+    bd.addEventListener("keydown", function(e){
+      if (e.key !== "Tab") return;
+      var list = focusables(bd.querySelector(".modal"));
+      if (!list.length) return;
+      var first = list[0], last = list[list.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !bd.contains(document.activeElement))){
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !bd.contains(document.activeElement))){
+        e.preventDefault();
+        first.focus();
+      }
+    });
+    var modal = bd.querySelector(".modal");
+    var target = focusables(modal)[0];
+    (target || modal).focus();
+    return modal;
+  }
+
+  function closeModal(){
+    var bds = document.querySelectorAll(".backdrop");
+    var bd = bds[bds.length - 1];
+    if (!bd || bd.classList.contains("closing")) return;
+    bd.classList.add("closing");
+    var opener = bd._opener;
+    if (opener && opener.isConnected) opener.focus();
+    setTimeout(function(){ bd.remove(); }, 180);
+  }
 
   function copy(text){
     if (!text) return Promise.resolve(false);
@@ -145,6 +192,8 @@
     toast: toast,
     copy: copy,
     morph: morph,
-    dragRows: dragRows
+    dragRows: dragRows,
+    openModal: openModal,
+    closeModal: closeModal
   };
 })();

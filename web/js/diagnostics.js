@@ -110,21 +110,16 @@
 
   function render(){
     close();
-    var bd = document.createElement("div");
-    bd.className = "backdrop";
-    bd.innerHTML =
-      '<div class="modal w640">' +
-        '<div class="dhead"><span class="dtitle">诊断</span></div>' +
-        '<div class="div"></div>' +
-        '<div class="mbody"><div class="term selectable" style="max-height:380px;overflow:auto">' +
-          esc(text()) + '</div></div>' +
-        '<div class="dfoot"><div class="spacer"></div>' +
-          '<button class="btn btn-ghost" data-close>关闭</button>' +
-          '<button class="btn btn-brand" data-copy>复制</button></div>' +
-      '</div>';
-    document.body.appendChild(bd);
-    bd.addEventListener("click", function(e){
-      if (e.target === bd || e.target.closest("[data-close]")) close();
+    var m = HC.motion.openModal(
+      '<div class="dhead"><span class="dtitle">诊断</span></div>' +
+      '<div class="div"></div>' +
+      '<div class="mbody"><div class="term selectable" style="max-height:380px;overflow:auto">' +
+        esc(text()) + '</div></div>' +
+      '<div class="dfoot"><div class="spacer"></div>' +
+        '<button class="btn btn-ghost" data-close>关闭</button>' +
+        '<button class="btn btn-brand" data-copy>复制</button></div>',
+      true);
+    m.addEventListener("click", function(e){
       var cp = e.target.closest("[data-copy]");
       if (cp){
         HC.motion.copy(text()).then(function(ok){
@@ -140,11 +135,7 @@
   }
 
   function close(){
-    var bds = document.querySelectorAll(".backdrop");
-    var bd = bds[bds.length - 1];
-    if (!bd || bd.classList.contains("closing")) return;
-    bd.classList.add("closing");
-    setTimeout(function(){ bd.remove(); }, 180);
+    HC.motion.closeModal();
   }
 
   document.addEventListener("keydown", function(e){

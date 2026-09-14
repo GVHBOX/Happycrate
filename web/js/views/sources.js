@@ -41,9 +41,9 @@
 
   function rowHtml(s, i, st){
     var col2 = st.batch
-      ? '<button class="cb ' + (store.isChecked(s.key) ? "on" : "") + '" data-check="' + esc(s.key) + '">' +
+      ? '<button class="cb ' + (store.isChecked(s.key) ? "on" : "") + '" aria-pressed="' + (store.isChecked(s.key) ? "true" : "false") + '" data-check="' + esc(s.key) + '">' +
         (store.isChecked(s.key) ? ICON.check : "") + '</button>'
-      : '<button class="sw ' + (s.enabled ? "" : "off") + '" data-sw="' + esc(s.key) +
+      : '<button class="sw ' + (s.enabled ? "" : "off") + '" aria-pressed="' + (s.enabled ? "true" : "false") + '" aria-label="' + esc(s.label) + '" data-sw="' + esc(s.key) +
         '"></button>';
 
     var ops = '<button class="op" data-edit="' + esc(s.key) + '" title="编辑">' + ICON.edit + '</button>';
@@ -67,26 +67,8 @@
       '<span class="ops">' + ops + '</span></div>';
   }
 
-  function openModal(html, wide){
-    closeModal();
-    var bd = document.createElement("div");
-    bd.className = "backdrop";
-    bd.innerHTML = '<div class="modal' + (wide ? " w640" : "") + '">' + html + '</div>';
-    document.body.appendChild(bd);
-    bd.addEventListener("click", function(e){
-      if (e.target === bd) closeModal();
-      if (e.target.closest("[data-close]")) closeModal();
-    });
-    return bd.querySelector(".modal");
-  }
-
-  function closeModal(){
-    var bds = document.querySelectorAll(".backdrop");
-    var bd = bds[bds.length - 1];
-    if (!bd || bd.classList.contains("closing")) return;
-    bd.classList.add("closing");
-    setTimeout(function(){ bd.remove(); }, 180);
-  }
+  var openModal = HC.motion.openModal;
+  var closeModal = HC.motion.closeModal;
 
   function stepper(btnRoot, valEl, min, max){
     btnRoot.querySelectorAll("[data-step]").forEach(function(b){

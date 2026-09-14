@@ -10,7 +10,8 @@ dist/
 !happycrate.spec
 .ai/
 .workbuddy/
-data/
+data/*
+!data/sources.json
 
 # 根目录构建产物（测试用）
 /happycrate.exe

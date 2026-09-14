@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0,
+      "health": {
+        "state": "err",
+        "ms": 776,
+        "err": "返回 0 条",
+        "times": [
+          "empty",
+          "empty",
+          "empty",
+          "empty",
+          "empty"
+        ]
+      }
+    },
+    {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1,
+      "health": {
+        "state": "ok",
+        "ms": 715,
+        "err": "返回 0 条",
+        "times": [
+          "ok",
+          "ok",
+          "empty",
+          "ok",
+          "empty"
+        ]
+      }
+    },
+    {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2,
+      "health": {
+        "state": "err",
+        "ms": 828,
+        "err": "返回 0 条",
+        "times": [
+          "empty",
+          "empty",
+          "empty",
+          "empty",
+          "empty"
+        ]
+      }
+    },
+    {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3,
+      "health": {
+        "state": "err",
+        "ms": 650,
+        "err": "返回 0 条",
+        "times": [
+          "empty",
+          "empty",
+          "empty",
+          "empty",
+          "empty"
+        ]
+      }
+    },
+    {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4,
+      "health": {
+        "state": "ok",
+        "ms": 773,
+        "err": "",
+        "times": [
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok"
+        ]
+      }
+    },
+    {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5,
+      "health": {
+        "state": "warn",
+        "ms": 7879,
+        "err": "",
+        "times": [
+          "ok",
+          "ok",
+          "ok",
+          "ok",
+          "ok"
+        ]
+      }
+    },
+    {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6,
+      "health": {
+        "state": "ok",
+        "ms": 2805,
+        "err": "",
+        "times": [
+          "ok",
+          "err",
+          "ok",
+          "ok",
+          "ok"
+        ]
+      }
+    },
+    {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7,
+      "health": {
+        "state": "err",
+        "ms": 1239,
+        "err": "返回 0 条",
+        "times": [
+          "ok",
+          "empty",
+          "empty",
+          "empty",
+          "empty"
+        ]
+      }
+    },
+    {
+      "key": "btdig",
+      "label": "BTDigg",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8,
+      "health": {
+        "state": "err",
+        "ms": 1478,
+        "err": "返回 0 条",
+        "times": [
+          "err",
+          "empty",
+          "err",
+          "empty",
+          "empty"
+        ]
+      }
+    }
+  ]
+}

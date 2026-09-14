@@ -557,6 +557,33 @@ input, textarea{
 .iaddr{font:400 var(--fs-xs)/1.4 var(--font-mono); color:var(--t4); overflow-wrap:anywhere}
 .iline{font:400 var(--fs-sm)/1.6 var(--font); color:var(--t2); margin-top:3px}
 
+.logbox{
+  border:1px solid var(--line);
+  border-radius:var(--r-ctrl);
+  background:var(--shell);
+  overflow:hidden;
+}
+.logbox summary{
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-4) var(--sp-5);
+  font:500 var(--fs-sm)/1 var(--font); color:var(--t3);
+  cursor:pointer; list-style:none; user-select:none;
+  transition:color var(--d-hover) var(--e), background var(--d-hover) var(--e);
+}
+.logbox summary::-webkit-details-marker{display:none}
+.logbox summary:hover{color:var(--t1); background:var(--hover)}
+.logbox summary svg{flex:none; transition:transform var(--d-hover) var(--e)}
+.logbox[open] summary svg{transform:rotate(180deg)}
+.logbox[open] summary{border-bottom:1px solid var(--line)}
+.logbox .term{
+  margin:0; border:0; border-radius:0;
+  max-height:38vh;
+  background:transparent;
+  color:var(--t2);
+  padding:0 var(--sp-5) var(--sp-5);
+}
+.logbox:not([open]) .term{display:none}
+
 .hidden{display:none !important}
 
 .marquee{position:absolute; z-index:5; pointer-events:none; border-radius:2px;

@@ -256,20 +256,31 @@
                (!keys || !keys.length || keys.indexOf(s.key) >= 0);
       });
       if (!list.length) return Promise.resolve("");
-      var out = ["[happycrate 诊断] " + stamp(), ""];
-      list.forEach(function(s){
-        var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
-        out.push("> " + s.label + " (" + s.key + ")");
-        out.push("  地址  " + s.addr);
-        out.push("  现象  " + (empty
-          ? "最近几次均无结果"
-          : (s.health.err || "请求失败")));
-        out.push("  最近  " + (s.health.times.join(" ") || "无记录"));
-        out.push("  建议  " + (empty ? "先换关键字确认；仍无结果则需改解析代码" : "换镜像地址"));
-        out.push("  位置  " + adapterLocation(s));
-        out.push("");
-      });
-      return Promise.resolve(out.join("\n"));
+      var report = {
+        at: stamp(),
+        version: "1.0.22",
+        lax: [],
+        sources: list.map(function(s){
+          var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
+          return {
+            key: s.key,
+            label: s.label,
+            addr: s.addr,
+            kind: empty ? "empty" : "fail",
+            state: s.health.state,
+            err: s.health.err || "",
+            lastOk: s.health.lastOk || 0,
+            outcomes: (s.health.outcomes || s.health.times || []).slice(-5),
+            peers: 0,
+            peerHits: 0,
+            events: (s.health.times || []).slice(-5).map(function(t){
+              return {at: 0, outcome: t, code: 0, count: 0, ms: s.health.ms || 0, round: "", err: ""};
+            }),
+            adapter: adapterLocation(s)
+          };
+        })
+      };
+      return Promise.resolve(JSON.stringify(report, null, 2));
     },
 
     sourceIssues: function(){

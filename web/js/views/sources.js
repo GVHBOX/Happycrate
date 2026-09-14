@@ -20,7 +20,8 @@
     export:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 9.4V2.4M4.2 5.2L7 2.4l2.8 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     import:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.4v7M4.2 6.6L7 9.4l2.8-2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     copy:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M9.4 4.6V3.6a1 1 0 0 0-1-1H3.6a1 1 0 0 0-1 1v4.8a1 1 0 0 0 1 1h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    save:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    save:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    chev:'<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5 L5 6.5 L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   function healthClass(s){
@@ -300,12 +301,17 @@
           '<div class="iline">' + esc(it.detail) + '</div></div></div>';
       }).join("");
 
+      var logBlock = detail
+        ? '<details class="logbox"><summary>' + ICON.chev + '诊断原文</summary>' +
+          '<pre class="term selectable">' + esc(detail) + '</pre></details>'
+        : "";
+
       var m = openModal(
         '<div class="dhead"><div class="tile">' + ICON.info + '</div>' +
         '<div class="dtitle">异常详情</div><div class="spacer"></div>' +
         '<button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
-        '<div class="mbody"><div class="issues">' + body + '</div></div>' +
+        '<div class="mbody"><div class="issues">' + body + '</div>' + logBlock + '</div>' +
         '<div class="mfoot"><div class="spacer"></div>' +
           '<button class="btn btn-ghost" data-close>关闭</button>' +
           '<button class="btn btn-brand" id="mCopy">' + ICON.copy + '复制诊断信息</button></div>',

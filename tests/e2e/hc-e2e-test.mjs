@@ -499,6 +499,49 @@ async function runOnce(exe, profileDir, pageUrl) {
     await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
     await sleep(400);
 
+    await evaluate('location.hash = "search"', page);
+    await sleep(400);
+    await evaluate('location.hash = "sources"', page);
+    await waitFor(async () => !!(await evaluate("document.querySelector('.badlink')", page)), 5000, 150, "badlink");
+    const badRect = centerOf(await rectOf(".badlink", 0));
+    await realClick(badRect.x, badRect.y);
+    await waitFor(async () => !!(await evaluate("document.querySelector('.backdrop .issues')", page)), 4000, 150, "issues-modal");
+    const logState = await evaluate(`JSON.stringify({
+      hasLog: !!document.querySelector(".backdrop .logbox"),
+      closed: !document.querySelector(".backdrop .logbox").open,
+      label: (document.querySelector(".backdrop .logbox summary")||{}).textContent,
+      termHidden: (function(){
+        var t = document.querySelector(".backdrop .logbox .term");
+        return !t || t.getBoundingClientRect().height === 0;
+      })()
+    })`, page);
+    const ls = JSON.parse(logState);
+    check("issues-log-collapsed-by-default",
+      ls.hasLog && ls.closed && ls.label === "诊断原文" && ls.termHidden,
+      logState);
+
+    await evaluate("document.querySelector('.backdrop .logbox summary').click()", page);
+    await sleep(300);
+    const openLog = await evaluate(`JSON.stringify({
+      open: document.querySelector(".backdrop .logbox").open,
+      h: Math.round(document.querySelector(".backdrop .logbox .term").getBoundingClientRect().height)
+    })`, page);
+    const ol = JSON.parse(openLog);
+    check("issues-log-expands", ol.open && ol.h > 40, openLog);
+
+    const issueText = await evaluate(`[].slice.call(document.querySelectorAll(".backdrop .issue"))
+      .map(function(n){ return n.textContent; }).join(" ")`, page);
+    const leaked = ["现象", "明细", "建议", "位置", ".py", "http5xx", "试试", "重试"]
+      .filter((w) => issueText.indexOf(w) >= 0);
+    check("issues-modal-is-facts-only", leaked.length === 0, "leaked=" + JSON.stringify(leaked));
+
+    const logText = await evaluate('document.querySelector(".backdrop .logbox .term").textContent', page);
+    check("issues-log-keeps-agent-detail", logText.indexOf("adapter") >= 0 || logText.indexOf(".py") >= 0,
+      "log=" + logText.slice(0, 80));
+
+    await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
+    await sleep(400);
+
     await key("Escape", 27);
     await waitFor(async () => !!(await evaluate("document.querySelector('#inp')", page)), 4000, 150, "esc-back-sources");
     check("esc-returns-from-sources", !!(await evaluate("document.querySelector('#inp')", page)));

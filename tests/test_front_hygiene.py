@@ -143,6 +143,16 @@ class CssHygieneTest(unittest.TestCase):
         self.assertIn("height:", rule)
         self.assertIn("flex:none", rule, "圆点必须在 flex 容器里禁止伸缩")
 
+    def test_collapsed_logbox_hides_panel(self):
+        base = ROOT / "web" / "styles" / "base.css"
+        text = base.read_text(encoding="utf-8")
+        self.assertRegex(
+            text,
+            r"\.logbox:not\(\[open\]\)\s+\.term\s*\{[^}]*display\s*:\s*none",
+            "折叠时必须显式 display:none —— 全局 .term 的 padding 会压过 "
+            "details 的默认隐藏，面板会以 171px 高度漏出来",
+        )
+
 
 class MockHashTest(unittest.TestCase):
 

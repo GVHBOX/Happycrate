@@ -49,6 +49,8 @@
   try { st.roomy = localStorage.getItem("hc-roomy") === "1"; } catch (e) {}
 
   var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
+  var marquee = null;
+  var justMarqueed = false;
 
   function esc(t){
     return String(t === undefined || t === null ? "" : t)
@@ -933,8 +935,6 @@
       updateSelUI();
     });
 
-    var justMarqueed = false;
-    var marquee = null;
     var autoT = null;
 
     function stopAuto(){

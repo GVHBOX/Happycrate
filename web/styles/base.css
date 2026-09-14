@@ -134,6 +134,9 @@ input, textarea{
 .btn-brand{background:var(--brand); color:#fff; box-shadow:var(--sh-btn)}
 .btn-brand:hover{background:var(--brand-hover); box-shadow:var(--sh-btn-hover)}
 .btn-brand:active{box-shadow:var(--sh-btn-active)}
+.btn-danger{background:var(--danger); color:#fff; box-shadow:var(--sh-btn)}
+.btn-danger:hover{background:var(--err); box-shadow:var(--sh-btn-hover)}
+.btn-danger:active{box-shadow:var(--sh-btn-active)}
 .btn-ghost{background:var(--surface-solid); color:var(--t2); border-color:var(--ink-8)}
 .btn-ghost:hover{background:var(--shell); border-color:rgba(13,13,31,.22); color:var(--t1)}
 .btn-ghost:active{background:var(--rowline)}
@@ -154,6 +157,7 @@ input, textarea{
   animation:ripple var(--d-ripple) var(--e-out) both;
 }
 .btn-brand .ripple{background:rgba(255,255,255,.4)}
+.btn-danger .ripple{background:rgba(255,255,255,.4)}
 .op .ripple,.iconbtn .ripple,.mi .ripple{background:var(--ripple)}
 
 .bar{
@@ -233,11 +237,13 @@ input, textarea{
 }
 
 .handle{
+  position:relative;
   width:calc(28px*var(--frs)); height:calc(16px*var(--frs));
   color:var(--t-disabled);
   cursor:grab; touch-action:none;
   transition:color .2s var(--e), transform .38s var(--spring);
 }
+.handle::before{content:""; position:absolute; inset:calc(-8px*var(--frs));}
 .handle:hover{color:var(--t5); transform:scale(1.3)}
 .handle:active{cursor:grabbing; color:var(--t3); transform:scale(1.05)}
 
@@ -268,7 +274,7 @@ input, textarea{
 .cb{
   width:calc(24px*var(--frs)); height:calc(24px*var(--frs));
   padding:0;
-  border-radius:4px;
+  border-radius:var(--r-xs);
   border:1.5px solid var(--t-disabled);
   background:var(--panel);
   display:grid; place-items:center;
@@ -518,6 +524,7 @@ input, textarea{
 }
 .toast.show{opacity:1; transform:translate(-50%,0) scale(1)}
 .toast svg{color:var(--inv-ok)}
+.toast.err svg{color:var(--inv-err)}
 
 .rows > .empty{
   padding:34px var(--sp-6);
@@ -708,7 +715,7 @@ input, textarea{
   flex:none; height:calc(24px*var(--frs)); padding:0 14px;
 }
 .gobtn{
-  flex:none; border:0; border-radius:7px;
+  flex:none; border:0; border-radius:var(--r-chip);
   background:var(--brand); color:#fff; cursor:pointer;
   font:500 var(--fc-xs)/1 var(--font);
   transition:background .16s var(--e), transform var(--d-release) var(--spring);
@@ -758,7 +765,7 @@ input, textarea{
 }
 .srow .c-title .fchev{
   position:absolute; right:2px; top:50%; transform:translateY(-50%);
-  width:calc(18px*var(--frs)); height:calc(18px*var(--frs)); padding:0; border:0; border-radius:4px;
+  width:calc(18px*var(--frs)); height:calc(18px*var(--frs)); padding:0; border:0; border-radius:var(--r-xs);
   background:transparent; color:var(--t4); display:grid; place-items:center;
   cursor:pointer; transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e), transform var(--d-hover) var(--e);
 }
@@ -801,7 +808,7 @@ input, textarea{
 }
 .hero-search{
   width:100%; height:54px;
-  border-radius:14px;
+  border-radius:var(--r-card);
   background:var(--panel); border:1px solid var(--border);
   box-shadow:var(--sh-card);
   display:flex; align-items:center; gap:var(--sp-3);
@@ -815,7 +822,7 @@ input, textarea{
   font:400 16px/1 var(--font); color:var(--t1);
 }
 .hero-search input::placeholder{color:var(--t5)}
-.hero-search .gobtn{height:calc(40px*var(--frs)); padding:0 22px; border-radius:11px; font-size:14px}
+.hero-search .gobtn{height:calc(40px*var(--frs)); padding:0 22px; border-radius:var(--r-menu); font-size:14px}
 .hero-srcs{display:flex; align-items:center; gap:var(--sp-2); flex-wrap:wrap; justify-content:center}
 .srcdot{
   height:calc(24px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);
@@ -873,7 +880,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
   min-width:400px; height:calc(48px*var(--frs));
   background:var(--panel); color:var(--t1);
   border:1px solid var(--border);
-  border-radius:13px; box-shadow:var(--sh-modal);
+  border-radius:var(--r-card); box-shadow:var(--sh-modal);
   display:flex; align-items:center; gap:var(--sp-4);
   padding:0 var(--sp-2) 0 var(--sp-5);
   opacity:0; pointer-events:none;
@@ -884,7 +891,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar .st b{color:var(--brand); font-family:var(--font-num); font-size:calc(var(--fs-md) + 2px); margin:0 2px}
 .selbar .sdiv{width:1px; height:20px; background:var(--divider); flex:none}
 .selbar .sbtn{
-  height:calc(31px*var(--frs)); padding:0 12px; border:0; border-radius:8px;
+  height:calc(31px*var(--frs)); padding:0 12px; border:0; border-radius:var(--r-tile);
   background:var(--shell); color:var(--t2);
   font:500 var(--fs-sm)/1 var(--font); white-space:nowrap;
   transition:background var(--d-hover) var(--e), transform var(--d-release) var(--spring);
@@ -893,7 +900,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar .sbtn.primary{background:var(--brand); color:#fff}
 .selbar .sbtn.primary:hover{background:var(--brand-hover)}
 .selbar .sclose{
-  width:calc(27px*var(--frs)); height:calc(27px*var(--frs)); padding:0; border:0; border-radius:6px;
+  width:calc(27px*var(--frs)); height:calc(27px*var(--frs)); padding:0; border:0; border-radius:var(--r-chip);
   background:transparent; color:var(--t4);
   display:grid; place-items:center;
 }

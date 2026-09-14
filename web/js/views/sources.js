@@ -262,7 +262,7 @@
       '<div class="div"></div>' +
       '<div class="mfoot"><div class="spacer"></div>' +
         '<button class="btn btn-ghost" data-close>取消</button>' +
-        '<button class="btn btn-brand" id="mOk">' + esc(okLabel) + '</button></div>'
+        '<button class="btn btn-danger" id="mOk">' + esc(okLabel) + '</button></div>'
     );
     m.querySelector("#mOk").onclick = function(){
       closeModal();

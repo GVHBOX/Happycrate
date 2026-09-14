@@ -845,6 +845,7 @@
     stripEl = root.querySelector("#srcstrip");
     badgeEl.innerHTML = badgeHtml();
     root.classList.toggle("roomy", st.roomy);
+    root.querySelector("#btnRows").classList.toggle("on", st.roomy);
 
     refreshSources();
 
@@ -919,6 +920,7 @@
       st.roomy = !st.roomy;
       try { localStorage.setItem("hc-roomy", st.roomy ? "1" : "0"); } catch (e) {}
       root.classList.toggle("roomy", st.roomy);
+      this.classList.toggle("on", st.roomy);
     };
     chipEl.onclick = function(){
       location.hash = "sources";
@@ -927,6 +929,12 @@
       if (st.lines.length) tipEl.classList.add("show");
     });
     chipEl.addEventListener("mouseleave", function(){
+      tipEl.classList.remove("show");
+    });
+    chipEl.addEventListener("focus", function(){
+      if (st.lines.length) tipEl.classList.add("show");
+    });
+    chipEl.addEventListener("blur", function(){
       tipEl.classList.remove("show");
     });
 
@@ -1151,10 +1159,13 @@
       var tag = (e.target && e.target.tagName || "").toLowerCase();
       if (e.key === "Escape"){
         if (ctxEl){ closeCtx(); return; }
-        st.sel = {};
-        st.anchor = "";
-        updateSelUI();
-        showHero();
+        if (selCount()){
+          st.sel = {};
+          st.anchor = "";
+          updateSelUI();
+          return;
+        }
+        if (!st.hero) showHero();
         return;
       }
       if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")){

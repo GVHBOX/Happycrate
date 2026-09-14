@@ -340,6 +340,8 @@ async function runOnce(exe, profileDir, pageUrl) {
     check("focus-back-in-input-selected", (await selCount()) === 1 && (await focusedTag()) === "input", "sel=" + (await selCount()) + " focus=" + (await focusedTag()));
     await key("Escape", 27);
     check("esc-clears-input-focus", (await selCount()) === 0, "sel=" + (await selCount()));
+    check("esc-first-clears-selection-only", !!(await evaluate("!!document.querySelector('#rows .srow')", page)) && !(await evaluate("!!document.querySelector('.hero')", page)));
+    await key("Escape", 27);
     check("esc-opens-hero-from-list", !!(await evaluate("!!document.querySelector('.hero')", page)));
     await evaluate("document.getElementById('tbHome').click()", page);
     await sleep(450);
@@ -349,6 +351,7 @@ async function runOnce(exe, profileDir, pageUrl) {
     await realClick(p.x, p.y);
     await key("Escape", 27);
     check("esc-clears-body-focus", (await selCount()) === 0, "sel=" + (await selCount()));
+    await key("Escape", 27);
     await evaluate("document.getElementById('tbHome').click()", page);
     await sleep(450);
     check("hero-gone-after-toggle", !(await evaluate("!!document.querySelector('.hero')", page)));

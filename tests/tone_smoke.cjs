@@ -94,7 +94,7 @@ function boot() {
         default_downloader: "", proxy: "", user_agent: "",
         ui_font_size: 18, selbar: true, theme: "light", auto_files: true,
       }),
-      app_info: () => Promise.resolve({ version: "1.0.22", autoOrder: true }),
+      app_info: () => Promise.resolve({ version: "1.0.23", autoOrder: true }),
       list_sources: () => Promise.resolve([]),
     },
   };

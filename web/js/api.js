@@ -258,7 +258,7 @@
       if (!list.length) return Promise.resolve("");
       var report = {
         at: stamp(),
-        version: "1.0.22",
+        version: "1.0.23",
         lax: [],
         sources: list.map(function(s){
           var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
@@ -304,7 +304,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.22", dataDir:"(mock 模式)", mode:"mock",
+      return Promise.resolve({version:"1.0.23", dataDir:"(mock 模式)", mode:"mock",
                               proxy:"跟随系统 127.0.0.1:7890"});
     },
 

@@ -5,7 +5,7 @@
   var esc = HC.esc;
 
   function rippleHost(el){
-    return el.closest(".btn, .op, .iconbtn, .mi, .cb, .gobtn, .chipbtn, .seg button, .stepper button, .tb-btn");
+    return el.closest(".btn, .op, .iconbtn, .mi, .cb, .gobtn, .chipbtn, .seg button, .stepper button, .tb-btn, .sbtn, .sclose, .fchev, .srcdot");
   }
 
   document.addEventListener("pointerdown", function(e){

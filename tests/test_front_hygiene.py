@@ -103,6 +103,96 @@ class CssHygieneTest(unittest.TestCase):
                     f"布局样式请收窄作用域，例如 .rows > .{state}",
                 )
 
+    def css_blocks(self):
+        out = []
+        for p in CSS:
+            text = p.read_text(encoding="utf-8")
+            for m in re.finditer(r"([^{}@][^{}]*)\{([^{}]*)\}", text):
+                out.append((p.name, " ".join(m.group(1).split()), m.group(2)))
+        return out
+
+    def test_no_hardcoded_white_surface(self):
+        allow = {".sw::after"}
+        bad = ["%s :: %s" % (f, s) for f, s, body in self.css_blocks()
+               if re.search(r"background\s*:\s*#fff\b", body, re.I) and s not in allow]
+        self.assertEqual(
+            bad, [],
+            "写死的白底不会跟着 body.dark 走，而前景也用 var(--t1)，"
+            "暗色下文字会直接消失（输入框一聚焦就看不见）。改用 var(--surface-solid)")
+
+    def test_z_index_comes_from_tokens(self):
+        bad = ["%s :: %s" % (f, s) for f, s, body in self.css_blocks()
+               if re.search(r"z-index\s*:\s*\d", body)]
+        self.assertEqual(bad, [], "z-index 必须用 --z-* 令牌，散落的魔数会互相盖住")
+
+    def test_every_css_variable_is_defined(self):
+        text = "\n".join(p.read_text(encoding="utf-8") for p in CSS)
+        defined = set(re.findall(r"(--[A-Za-z0-9_-]+)\s*:", text))
+        used = set(re.findall(r"var\(\s*(--[A-Za-z0-9_-]+)", text))
+        missing = sorted(used - defined - {"--sbw"})
+        self.assertEqual(
+            missing, [],
+            "用了未定义的变量时整条声明失效，属性会静默回退（--line 就漏过一次）："
+            + repr(missing))
+
+    def test_no_orphan_css_variable(self):
+        text = "\n".join(p.read_text(encoding="utf-8") for p in CSS)
+        markup = HTML.read_text(encoding="utf-8") + "\n".join(
+            p.read_text(encoding="utf-8") for p in JS)
+        defined = set(re.findall(r"(--[A-Za-z0-9_-]+)\s*:", text))
+        used = set(re.findall(r"var\(\s*(--[A-Za-z0-9_-]+)", text + markup))
+        used |= set(re.findall(r"setProperty\(\s*[\"'](--[A-Za-z0-9_-]+)", markup))
+        orphan = sorted(defined - used)
+        self.assertEqual(orphan, [], "定义了但没人引用的变量：" + repr(orphan))
+
+    def test_ripple_host_contract_is_complete(self):
+        src = (ROOT / "web" / "js" / "motion.js").read_text(encoding="utf-8")
+        m = re.search(r'el\.closest\(\s*"([^"]+)"\s*\)', src)
+        self.assertIsNotNone(m, "找不到 ripple 宿主选择器串")
+        hosts = set()
+        for part in m.group(1).split(","):
+            for cls in part.split():
+                if cls.startswith("."):
+                    hosts.add(cls[1:])
+        need = {"btn", "op", "iconbtn", "mi", "cb", "gobtn", "chipbtn", "tb-btn",
+                "sbtn", "sclose", "fchev", "srcdot"}
+        missing = sorted(need - hosts)
+        self.assertEqual(
+            missing, [],
+            "这些可点控件不在 ripple 白名单里，按下没有任何视觉回应："
+            + repr(missing) + "（新增控件时记得同步这行与 base.css 的 :active）")
+
+    def test_ripple_hosts_can_clip(self):
+        need = {"sbtn", "sclose", "fchev", "srcdot"}
+        ok = set()
+        for _f, sel, body in self.css_blocks():
+            parts = [x for x in re.split(r"[,\s]+", sel) if x.startswith(".")]
+            for p in parts:
+                if p[1:] in need and "overflow:hidden" in body:
+                    ok.add(p[1:])
+        missing = sorted(need - ok)
+        self.assertEqual(
+            missing, [],
+            "波纹靠 overflow:hidden 裁切，缺了会溢出控件："
+            + repr(missing) + "（.fchev 是 absolute 定位，不要加 position:relative）")
+
+    def test_progress_not_fake(self):
+        base = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        m = re.search(r"\.progress\.on\s+\.fill\{([^}]*)\}", base)
+        self.assertIsNotNone(m, "找不到 .progress.on .fill 规则")
+        self.assertIn("var(--p", m.group(1),
+                      "进度条必须跟真实进度走。一次填满后静止等于告诉用户"
+                      "「已完成但仍无结果」，是用动效掩盖状态")
+        self.assertRegex(base, r"\.progress\.on\.wait\s+\.fill\{[^}]*animation",
+                         "总数未知时应切到不确定进度循环，而不是静止不动")
+
+    def test_progress_fed_by_real_counts(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertIn('setProperty("--p"', src, "必须有代码把真实进度写进 --p")
+        self.assertIn("st.done / st.total", src, "进度应来自已完成源数 / 总源数")
+        self.assertIn('classList.add("on", "wait")', src,
+                      "startSearch 返回前总数未知，应先进入不确定态")
+
     def test_issue_modal_has_no_internal_detail(self):
         src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
         start = src.find("function showBadModal()")

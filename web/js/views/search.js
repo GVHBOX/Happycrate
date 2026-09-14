@@ -641,8 +641,20 @@
     st.strip = {};
     st.cursor = -1;
     st.done = 0;
+    st.total = 0;
     st.searched = false;
     renderTip();
+  }
+
+  function setProgress(){
+    if (!progEl || !st.total) return;
+    progEl.style.setProperty("--p", String(Math.min(1, st.done / st.total)));
+  }
+
+  function stopProgress(){
+    if (!progEl) return;
+    progEl.classList.remove("on");
+    progEl.classList.remove("wait");
   }
 
   function go(){
@@ -660,7 +672,7 @@
       paintStrip();
       goBtn.textContent = "搜索";
       goBtn.classList.remove("stop");
-      progEl.classList.remove("on");
+      stopProgress();
       chipIdle();
       flash("已停止搜索", "warn");
       renderRows();
@@ -685,13 +697,14 @@
     setChip("搜索中…", "busy");
     goBtn.textContent = "停止";
     goBtn.classList.add("stop");
-    progEl.classList.add("on");
+    progEl.classList.add("on", "wait");
+    progEl.style.setProperty("--p", "0");
     HC.api.startSearch(q).then(function(res){
       if (!res || !res.ok){
         st.busy = false;
         goBtn.textContent = "搜索";
         goBtn.classList.remove("stop");
-        progEl.classList.remove("on");
+        stopProgress();
         chipIdle();
         if (res && res.error) HC.motion.toast(res.error, "err");
         renderRows();
@@ -699,14 +712,16 @@
       }
       st.token = res.token;
       st.total = res.total;
+      progEl.classList.remove("wait");
+      setProgress();
       setChip("搜索中 0/" + res.total + "…", "busy");
     }).catch(function(err){
       st.busy = false;
-      goBtn.textContent = "搜索";
-      goBtn.classList.remove("stop");
-      progEl.classList.remove("on");
-      chipIdle();
-      HC.motion.toast(err && err.message ? err.message : String(err), "err");
+        goBtn.textContent = "搜索";
+        goBtn.classList.remove("stop");
+        stopProgress();
+        chipIdle();
+        HC.motion.toast(err && err.message ? err.message : String(err), "err");
       renderRows();
     });
   }
@@ -716,7 +731,7 @@
     st.searched = true;
     goBtn.textContent = "搜索";
     goBtn.classList.remove("stop");
-    progEl.classList.remove("on");
+    stopProgress();
     st.errors = st.errors || {};
     var fails = Object.keys(st.errors).length;
     var total = st.items.length;
@@ -837,6 +852,7 @@
       source: function(d){
         if (!st.busy || d.token !== st.token) return;
         st.done += 1;
+        setProgress();
         var name = st.names[d.key] || d.key;
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
         if (ss === "err"){

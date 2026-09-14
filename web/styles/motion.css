@@ -39,3 +39,4 @@
 html.static *{animation:none !important; transition:none !important}
 @keyframes heroOut{to{opacity:0; transform:translateY(-18px) scale(.985)}}
 @keyframes cardRise{from{opacity:0; transform:translateY(10px)}}
+@keyframes indet{from{transform:translateX(-100%)} to{transform:translateX(250%)}}

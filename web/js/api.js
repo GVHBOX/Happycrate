@@ -13,7 +13,7 @@
     {key:"sukebei", label:"Sukebei", type:"builtin", enabled:true, timeout:15,
      addr:"https://sukebei.nyaa.si", health:{state:"ok", ms:183, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"eztv", label:"EZTV", type:"builtin", enabled:true, timeout:15,
-     addr:"https://eztvx.to", health:{state:"err", ms:94, err:"返回 0 条", times:["ok","empty","empty","empty","empty"], empty:true}},
+     addr:"https://eztvx.to", health:{state:"empty", ms:94, err:"无结果", times:["ok","empty","empty","empty","empty"], empty:true}},
     {key:"bitsearch", label:"BitSearch", type:"builtin", enabled:true, timeout:15,
      addr:"https://bitsearch.to", health:{state:"ok", ms:41, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"tpb", label:"TPB镜像", type:"builtin", enabled:true, timeout:15,
@@ -171,6 +171,8 @@
           var roll = s.health.state;
           var res = roll === "err"
             ? {state:"err", ms:0, err:s.health.err || "超时"}
+            : roll === "empty"
+            ? {state:"empty", ms:s.health.ms || 90, err:"无结果"}
             : {state: roll === "warn" ? "warn" : "ok",
                ms: roll === "warn" ? 4800 + Math.round(Math.random()*900)
                                    : 30 + Math.round(Math.random()*260),
@@ -224,7 +226,8 @@
     diagnostics: function(keys){
       if (live()) return window.pywebview.api.diagnostics(keys);
       var list = seed().filter(function(s){
-        return s.health.state === "err" && (!keys || !keys.length || keys.indexOf(s.key) >= 0);
+        return (s.health.state === "err" || s.health.empty) &&
+               (!keys || !keys.length || keys.indexOf(s.key) >= 0);
       });
       if (!list.length) return Promise.resolve("");
       var out = ["[happycrate 诊断] " + stamp(), ""];
@@ -233,10 +236,10 @@
         out.push("> " + s.label + " (" + s.key + ")");
         out.push("  地址  " + s.addr);
         out.push("  现象  " + (empty
-          ? "返回 200，但解析出 0 条结果"
+          ? "最近几次均无结果"
           : (s.health.err || "请求失败")));
         out.push("  最近  " + (s.health.times.join(" ") || "无记录"));
-        out.push("  建议  " + (empty ? "疑似站点改版，需要改解析代码" : "换镜像地址"));
+        out.push("  建议  " + (empty ? "先换关键字确认；仍无结果则需改解析代码" : "换镜像地址"));
         out.push("  位置  " + adapterLocation(s));
         out.push("");
       });
@@ -286,7 +289,8 @@
           if (token !== mockToken) return;
           var err = errs[key] || "";
           if (sHooks.source){
-            sHooks.source({token:token, key:key, count: err ? 0 : part.length, err:err});
+            sHooks.source({token:token, key:key, count: err ? 0 : part.length,
+                           err:err, state: err ? "err" : (part.length ? "ok" : "empty")});
           }
           if (!err && part.length && sHooks.batch){
             sHooks.batch({token:token, key:key, items:part});

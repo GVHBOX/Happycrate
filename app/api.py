@@ -3,6 +3,7 @@ from __future__ import annotations
 import concurrent.futures as futures
 import json
 import os
+import re
 import threading
 import time
 import urllib.parse
@@ -13,8 +14,51 @@ from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
 logger = log.get_logger(__name__)
 
 HEALTH_WINDOW = config.HEALTH_WINDOW
+EVENT_WINDOW = config.EVENT_WINDOW
 BAD_MIN = 3
 SLOW_MS = 5000
+
+OUTCOME_OK = "ok"
+OUTCOME_EMPTY = "empty"
+OUTCOME_SLOW = "slow"
+OUTCOME_TIMEOUT = "timeout"
+OUTCOME_NET = "net"
+OUTCOME_403 = "http403"
+OUTCOME_429 = "http429"
+OUTCOME_5XX = "http5xx"
+OUTCOME_4XX = "http4xx"
+OUTCOME_CANCEL = "cancel"
+
+OUTCOME_STATE = {
+    OUTCOME_OK: "ok",
+    OUTCOME_EMPTY: "empty",
+    OUTCOME_SLOW: "warn",
+    OUTCOME_TIMEOUT: "err",
+    OUTCOME_NET: "err",
+    OUTCOME_403: "err",
+    OUTCOME_5XX: "err",
+    OUTCOME_429: "warn",
+    OUTCOME_4XX: "warn",
+    OUTCOME_CANCEL: "na",
+}
+
+OUTCOME_TEXT = {
+    OUTCOME_OK: "",
+    OUTCOME_EMPTY: "无结果",
+    OUTCOME_SLOW: "",
+    OUTCOME_TIMEOUT: "超时",
+    OUTCOME_NET: "无法连接",
+    OUTCOME_403: "403 拒绝",
+    OUTCOME_429: "429 限流",
+    OUTCOME_5XX: "服务异常",
+    OUTCOME_4XX: "请求被拒",
+    OUTCOME_CANCEL: "",
+}
+
+FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
+                            OUTCOME_403, OUTCOME_5XX})
+
+_HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+)?\b([45]\d{2})\b")
 
 
 def _addr_of(entry: dict) -> str:
@@ -34,6 +78,9 @@ def _base_field(key: str, addr: str) -> str:
 
 def _to_view(entry: dict, health: dict | None = None) -> dict:
     h = health or entry.get("health") or {}
+    outcomes = [o for o in (h.get("outcomes") or []) if o]
+    if not outcomes:
+        outcomes = [t for t in (h.get("times") or []) if t]
     return {
         "key": entry.get("key", ""),
         "label": entry.get("label", entry.get("key", "")),
@@ -51,67 +98,112 @@ def _to_view(entry: dict, health: dict | None = None) -> dict:
             "ms": int(h.get("ms", 0) or 0),
             "err": h.get("err", ""),
             "times": list(h.get("times", []) or []),
-            "empty": _window_empty(h.get("times")),
+            "outcomes": outcomes[-HEALTH_WINDOW:],
+            "empty": _window_empty(outcomes),
+            "lastOk": int(h.get("lastOk", 0) or 0),
+            "lastCount": int(h.get("lastCount", 0) or 0),
         },
     }
 
 
-def _window_empty(times, err: str = "") -> bool:
-    recent = list(times or [])[-HEALTH_WINDOW:]
+def _http_code(err: str) -> int:
+    if not err:
+        return 0
+    match = _HTTP_CODE_RE.search(str(err))
+    if not match:
+        return 0
+    try:
+        return int(match.group(1))
+    except (TypeError, ValueError):
+        return 0
+
+
+def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
+    if ok:
+        if not count:
+            return OUTCOME_EMPTY, 0
+        if ms and ms >= SLOW_MS:
+            return OUTCOME_SLOW, 0
+        return OUTCOME_OK, 0
+
+    low = (err or "").lower()
+    if "已停止" in (err or "") or "cancelled" in low:
+        return OUTCOME_CANCEL, 0
+
+    if "tunnel" in low or "proxy" in low:
+        return OUTCOME_NET, 0
+
+    code = _http_code(err)
+    if code in (401, 403, 451):
+        return OUTCOME_403, code
+    if code == 429:
+        return OUTCOME_429, code
+    if 400 <= code < 500:
+        return OUTCOME_4XX, code
+    if code >= 500:
+        return OUTCOME_5XX, code
+    if "timed out" in low or "timeout" in low or "timeouterror" in low:
+        return OUTCOME_TIMEOUT, 0
+    return OUTCOME_NET, 0
+
+
+def outcome_text(outcome: str, code: int = 0) -> str:
+    if outcome == OUTCOME_403 and code:
+        return f"HTTP {code} 拒绝"
+    if outcome in (OUTCOME_5XX, OUTCOME_4XX) and code:
+        return f"HTTP {code}"
+    return OUTCOME_TEXT.get(outcome, "")
+
+
+def _state_of(outcomes: list[str], ms: int = 0) -> str:
+    recent = [o for o in (outcomes or []) if o and o != OUTCOME_CANCEL]
+    recent = recent[-HEALTH_WINDOW:]
+    if not recent:
+        return "na"
+    if sum(1 for o in recent if o in FATAL_OUTCOMES) >= BAD_MIN:
+        return "err"
+    last = recent[-1]
+    if last in FATAL_OUTCOMES:
+        return "err"
+    if last == OUTCOME_EMPTY:
+        return "empty"
+    if last in (OUTCOME_SLOW, OUTCOME_429, OUTCOME_4XX):
+        return "warn"
+    if last == OUTCOME_OK:
+        if ms and ms >= SLOW_MS:
+            return "warn"
+        return "warn" if _window_empty(recent) else "ok"
+    return OUTCOME_STATE.get(last, "na")
+
+
+def _window_empty(outcomes: list[str]) -> bool:
+    recent = [o for o in (outcomes or []) if o and o != OUTCOME_CANCEL]
+    recent = recent[-HEALTH_WINDOW:]
     if not recent:
         return False
-    hit = sum(1 for t in recent if t == "empty")
-    miss = sum(1 for t in recent if t == "err")
+    hit = sum(1 for o in recent if o == OUTCOME_EMPTY)
+    miss = sum(1 for o in recent if o in FATAL_OUTCOMES)
     if not hit or hit < miss:
         return False
-    return recent[-1] == "empty" or hit > len(recent) - hit
+    return hit > len(recent) - hit
 
 
 def _blank_health() -> dict:
-    return {"state": "na", "ms": 0, "err": "", "times": []}
+    return {"state": "na", "ms": 0, "err": "", "times": [], "outcomes": [],
+            "events": [], "lastOk": 0, "lastCount": 0}
 
 
-
-def _err_text(ok: bool, count: int, err: str) -> str:
-    if ok and count == 0:
-        return "返回 0 条"
-    if ok:
-        return ""
-    low = (err or "").lower()
-    if "proxy" in low:
-        return "代理不可达"
-    if "timed out" in low or "timeout" in low:
-        return "超时"
-    if "403" in low:
-        return "403 拒绝"
-    if "503" in low or " 500" in low or "500 " in low:
-        return "服务异常"
-    if "getaddrinfo" in low or "name or service" in low or "refused" in low:
-        return "无法连接"
-    return "请求失败"
-
-
-def _health_text(key: str, ok: bool, count: int, err: str) -> str:
-    text = _err_text(ok, count, err)
-    if ok and not count:
-        src = sources.BY_KEY.get(key)
-        if src is not None and src.empty_neutral:
-            return ""
-    return text
-
-
-def _state_of(times: list[str], ms: int, err: str = "") -> str:
-    recent = times[-HEALTH_WINDOW:]
-    if not recent:
-        return "na"
-    if err and recent[-1] == "err":
-        return "err"
-    bad = sum(1 for t in recent if t in ("err", "empty"))
-    if bad >= BAD_MIN:
-        return "err"
-    if ms and ms >= SLOW_MS:
-        return "warn"
-    return "ok"
+def _age_text(ts: int) -> str:
+    if not ts:
+        return "从未取到结果"
+    gap = max(0, int(time.time()) - int(ts))
+    if gap < 120:
+        return "上次有结果在 1 分钟内"
+    if gap < 7200:
+        return f"上次有结果在 {gap // 60} 分钟前"
+    if gap < 172800:
+        return f"上次有结果在 {gap // 3600} 小时前"
+    return f"上次有结果在 {gap // 86400} 天前"
 
 
 def _pattern_fields(item: dict) -> dict:
@@ -235,14 +327,15 @@ class Api:
         good = set()
         for entry in entries:
             key = entry.get("key", "")
-            times = (health.get(key) or {}).get("times") or []
-            window = times[-HEALTH_WINDOW:]
+            row = health.get(key) or {}
+            outcomes = [o for o in (row.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
+            window = outcomes[-HEALTH_WINDOW:]
             if len(window) < HEALTH_WINDOW:
                 continue
-            miss = sum(1 for t in window if t in ("err", "empty"))
+            miss = sum(1 for o in window if o in FATAL_OUTCOMES)
             if miss >= BAD_MIN:
                 bad.add(key)
-            elif miss == 0:
+            elif miss == 0 and window[-1] in (OUTCOME_OK, OUTCOME_SLOW):
                 good.add(key)
 
         risen = set()
@@ -385,11 +478,12 @@ class Api:
                 base=base or sources.base_of(item.get("key", ""), ""),
             )
             ok, ms, count, err = draft.probe()
+            outcome, code = classify(ok, count, err, ms)
             return {
                 "ok": ok,
                 "count": count if ok else 0,
                 "ms": ms,
-                "errors": [] if ok else [_err_text(ok, count, err)],
+                "errors": [] if ok else [outcome_text(outcome, code) or "请求失败"],
             }
 
         draft = _draft(item)
@@ -421,15 +515,36 @@ class Api:
         ).start()
         return len(targets)
 
-    def _mark(self, key: str, ok: bool, count: int, ms: int, err: str) -> dict:
-        mark = "ok" if ok and (count or not err) else ("empty" if ok else "err")
+    def _mark(self, key: str, ok: bool, count: int, ms: int, err: str,
+              round_id: str = "") -> dict:
+        outcome, code = classify(ok, count, err, ms)
+        if outcome == OUTCOME_CANCEL:
+            return self._health_store.get(key) or _blank_health()
         with self._health_lock:
             h = self._health_store.data.setdefault(key, _blank_health())
-            h["times"] = (h.get("times", []) + [mark])[-HEALTH_WINDOW:]
+            outcomes = list(h.get("outcomes") or [])
+            outcomes.append(outcome)
+            h["outcomes"] = outcomes[-HEALTH_WINDOW:]
+            h["times"] = (list(h.get("times") or []) + [outcome])[-HEALTH_WINDOW:]
+            events = list(h.get("events") or [])
+            events.append({
+                "at": int(time.time()),
+                "outcome": outcome,
+                "code": code,
+                "count": int(count or 0),
+                "ms": int(ms or 0),
+                "round": str(round_id or ""),
+                "err": str(err or "")[:200],
+            })
+            h["events"] = events[-EVENT_WINDOW:]
             if ms:
                 h["ms"] = int(ms)
-            h["err"] = err if mark != "empty" else ""
-            h["state"] = _state_of(h["times"], h.get("ms", 0), err)
+            if outcome in (OUTCOME_OK, OUTCOME_SLOW):
+                h["lastOk"] = int(time.time())
+                h["lastCount"] = int(count or 0)
+            h["lastCount"] = int(count or 0)
+            h["err"] = outcome_text(outcome, code)
+            h["state"] = _state_of(h["outcomes"], h.get("ms", 0))
             return dict(h)
 
     def _probe_worker(self, token: int, targets) -> None:
@@ -437,8 +552,9 @@ class Api:
             if token != self._probe_token:
                 return
             ok, ms, count, err = src.probe()
-            text = _health_text(src.key, ok, count, err)
-            h = self._mark(src.key, ok, count, ms, text)
+            outcome, code = classify(ok, count, err, ms)
+            text = outcome_text(outcome, code)
+            h = self._mark(src.key, ok, count, ms, err)
             payload = json.dumps({"key": src.key, "state": h["state"], "ms": h["ms"], "err": text},
                                  ensure_ascii=False)
             self._push(f"window.__onProbe && window.__onProbe({payload})")
@@ -513,10 +629,12 @@ class Api:
                 return
             nonlocal pushed
             count = len(items or [])
-            text_err = _health_text(key, not err, count, err)
-            self._mark(key, not err, count, ms, text_err)
+            outcome, code = classify(not err, count, err, ms)
+            text_err = outcome_text(outcome, code)
+            h = self._mark(key, not err, count, ms, err, round_id=str(token))
             payload = json.dumps(
-                {"token": token, "key": key, "count": count, "err": text_err},
+                {"token": token, "key": key, "count": count, "err": text_err,
+                 "outcome": outcome, "state": h.get("state", "na")},
                 ensure_ascii=False,
             )
             self._push(f"window.__onSearchSource && window.__onSearchSource({payload})")
@@ -547,7 +665,8 @@ class Api:
                 errors[""] = fatal
             for key, msg in (result.errors or {}).items():
                 if msg and msg != "已停止":
-                    errors[key] = _err_text(False, 0, msg)
+                    _o, code = classify(False, 0, msg)
+                    errors[key] = outcome_text(_o, code)
         except Exception as exc:
             logger.exception("搜索异常")
             errors[""] = f"{type(exc).__name__}: {exc}"
@@ -586,14 +705,24 @@ class Api:
         return {"ok": False, "error": msg}
 
     def diagnostics(self, keys: list[str] | None = None) -> str:
-        picked = [
-            e for e in self._cfg.sources
-            if (self._health_store.get(e.get("key", "")) or {}).get("state") == "err"
-            and (not keys or e.get("key") in set(keys))
-        ]
+        broken: list[tuple[dict, dict]] = []
+        silent: list[tuple[dict, dict]] = []
+        for e in self._cfg.sources:
+            if keys and e.get("key") not in set(keys):
+                continue
+            h = self._health_store.get(e.get("key", "")) or {}
+            state = h.get("state", "na")
+            outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
+            last = outcomes[-1] if outcomes else ""
+            if state == "err" or last in FATAL_OUTCOMES:
+                broken.append((e, h))
+            elif _window_empty(outcomes):
+                silent.append((e, h))
+
         lax = sources.ssl_lax_hosts()
-        if not picked and not lax:
+        if not broken and not silent and not lax:
             return ""
+
         out = [f"[happycrate 诊断] {_stamp()}", ""]
         if lax:
             out.append("证书校验")
@@ -601,23 +730,89 @@ class Api:
             for host in lax[:8]:
                 out.append(f"  {host}")
             out.append("")
-        for e in picked:
-            key = e.get("key", "")
-            h = self._health_store.get(key) or {}
-            times = list(h.get("times", []) or [])
-            empty = _window_empty(times)
-            out.append(f"> {e.get('label', key)} ({key})")
-            out.append(f"  地址  {_addr_of(e)}")
-            if empty:
-                out.append("  现象  HTTP 200 正常，但解析出 0 条结果")
-            else:
-                out.append("  现象  " + (h.get("err") or "请求失败"))
-            out.append(f"  最近  {' '.join(times) or '无记录'}")
-            out.append("  建议  " + ("疑似站点改版，需要改解析代码" if empty else "换镜像地址"))
-            out.append("  位置  " + sources.adapter_location(
-                key, e.get("type", "builtin")))
+
+        if broken:
+            out.append("连接失败（需要换地址或查网络）")
+            for e, h in broken:
+                out.extend(self._diag_block(e, h, False))
             out.append("")
-        return "\n".join(out)
+
+        if silent:
+            out.append("无结果（连得上但没内容）")
+            for e, h in silent:
+                out.extend(self._diag_block(e, h, True))
+            out.append("")
+
+        return "\n".join(out).rstrip() + "\n"
+
+    @staticmethod
+    def _diag_lines(h: dict) -> list[str]:
+        events = list(h.get("events") or [])[-HEALTH_WINDOW:]
+        if not events:
+            return []
+        rows = []
+        for ev in events:
+            code = ev.get("code") or 0
+            head = f"HTTP {code}" if code else "—"
+            rows.append(f"{head}/{ev.get('count', 0)}条/{ev.get('ms', 0)}ms")
+        return ["  明细  " + "  ".join(rows)]
+
+    def _peer_stats(self, key: str, outcomes: list[str]) -> tuple[int, int]:
+        events = [e for e in ((self._health_store.get(key) or {}).get("events") or [])
+                  if e.get("outcome") == OUTCOME_EMPTY and e.get("round")]
+        if not events:
+            return 0, 0
+        rounds = [e["round"] for e in events[-HEALTH_WINDOW:]]
+        peers = 0
+        hits = 0
+        for other, row in self._health_store.all().items():
+            if other == key:
+                continue
+            seen = False
+            got = False
+            for ev in (row.get("events") or []):
+                if ev.get("round") not in rounds:
+                    continue
+                seen = True
+                if (ev.get("count") or 0) > 0:
+                    got = True
+            if seen:
+                peers += 1
+                if got:
+                    hits += 1
+        return peers, hits
+
+    def _diag_block(self, entry: dict, h: dict, is_empty: bool) -> list[str]:
+        key = entry.get("key", "")
+        outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
+        lines = [f"> {entry.get('label', key)} ({key})",
+                 f"  地址  {_addr_of(entry)}"]
+        if is_empty:
+            lines.append(f"  现象  最近 {min(len(outcomes), HEALTH_WINDOW)} 次均无结果"
+                         f"（{_age_text(int(h.get('lastOk', 0) or 0))}）")
+        else:
+            lines.append("  现象  " + (h.get("err") or "请求失败"))
+        lines.extend(self._diag_lines(h))
+        lines.append(f"  最近  {' '.join(outcomes[-HEALTH_WINDOW:]) or '无记录'}")
+        fatal = sum(1 for o in outcomes[-HEALTH_WINDOW:] if o in FATAL_OUTCOMES)
+        if is_empty and fatal:
+            lines.append(f"  建议  近 {HEALTH_WINDOW} 次里还有 {fatal} 次连接失败，先换镜像地址再确认解析")
+        elif is_empty:
+            peers, hits = self._peer_stats(key, outcomes)
+            if peers and hits * 2 >= peers:
+                lines.append(f"  对照  同轮 {peers} 个源里有 {hits} 个出结果，本源更像不收录或解析失效")
+                lines.append("  建议  换关键字仍无结果则需改解析代码")
+            elif peers:
+                lines.append(f"  对照  同轮 {peers} 个源里只有 {hits} 个出结果")
+                lines.append("  建议  多数源都没结果，多半是关键字太冷门，不是源的故障")
+            else:
+                lines.append("  建议  先换关键字确认；仍无结果则需改解析代码")
+        else:
+            lines.append("  建议  换镜像地址")
+        lines.append("  位置  " + sources.adapter_location(
+            key, entry.get("type", "builtin")))
+        lines.append("")
+        return lines
 
     def get_settings(self) -> dict:
         data = self._settings.data or {}

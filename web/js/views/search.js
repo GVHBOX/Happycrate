@@ -102,26 +102,39 @@
     return false;
   }
 
+  function hasTok(text, tk){
+    return text && text.indexOf(tk) >= 0;
+  }
+
   function relevance(it){
+    var tokens = st.qtokens;
+    if (!tokens.length) return 0;
     var title = (it.title || "").toLowerCase();
     var fns = it.files && it.files.length ? fileNames(it) : "";
-    var score = 0, hit = 0;
-    var tPhrase = st.qphrase && title.indexOf(st.qphrase) >= 0;
-    if (tPhrase) score += 100;
-    else if (fns && st.qphrase && fns.indexOf(st.qphrase) >= 0) score += 15;
-    for (var i = 0; i < st.qtokens.length; i++){
-      var tk = st.qtokens[i], pos = title.indexOf(tk);
-      if (pos < 0){
-        if (fns && fns.indexOf(tk) >= 0){ score += 4; hit++; }
-        else score -= 25;
-        continue;
+    var hit = 0, score = 0;
+
+    for (var i = 0; i < tokens.length; i++){
+      var tk = tokens[i];
+      var pos = title.indexOf(tk);
+      if (pos >= 0){
+        hit++;
+        score += pos === 0 || WORD_EDGE.test(title[pos - 1]) ? 12 : 6;
+      } else if (hasTok(fns, tk)){
+        hit++;
+        score += 4;
       }
-      hit++;
-      score += 10;
-      if (pos === 0 || WORD_EDGE.test(title[pos - 1])) score += 6;
     }
-    if (st.qtokens.length > 1 && hit === st.qtokens.length) score += 30;
-    score += Math.min((Number(it.seeders) || 0) / 1000, 5);
+
+    var miss = tokens.length - hit;
+    if (miss === 0) score += 1000;
+    else if (miss === 1) score += 500;
+    else if (miss === 2) score += 200;
+    else score += 50;
+
+    if (st.qphrase && title.indexOf(st.qphrase) >= 0) score += 300;
+    else if (hasTok(fns, st.qphrase)) score += 60;
+
+    score += Math.min(Math.log((Number(it.seeders) || 0) + 1) * 6, 40);
     return score;
   }
 
@@ -184,7 +197,8 @@
       if (srcs){
         srcs.innerHTML = (list || []).map(function(s){
           var hst = s.health && s.health.state;
-          return '<button class="srcdot' + (hst === "err" || hst === "warn" ? " " + hst : "") +
+          var dot = (hst === "err" || hst === "warn" || hst === "empty") ? " " + hst : "";
+          return '<button class="srcdot' + dot +
             (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '">' +
             '<span class="sdot"></span>' + esc(s.label) + '</button>';
         }).join("");
@@ -473,9 +487,11 @@
     var done = 0;
     var html = order.map(function(k){
       var ss = st.strip[k] || {state:"pending"};
-      if (ss.state === "ok" || ss.state === "err" || ss.state === "cancel") done++;
+      if (ss.state === "ok" || ss.state === "err" ||
+          ss.state === "empty" || ss.state === "cancel") done++;
       var label =
         ss.state === "ok" ? "<b>" + ss.count + "</b> 条" :
+        ss.state === "empty" ? "无结果" :
         ss.state === "err" ? esc(ss.err || "失败") :
         ss.state === "cancel" ? "已取消" : "等待";
       var name = st.names[k] || k;
@@ -676,6 +692,7 @@
     var fails = Object.keys(st.errors).length;
     var total = st.items.length;
     if (fails) setChip(total + " 条 · " + fails + " 个源失败", "warn");
+    else if (!total) setChip("没有找到结果", "");
     else setChip("搜索完成 · " + total + " 条", "ok");
     Object.keys(st.strip).forEach(function(k){
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
@@ -795,10 +812,15 @@
         if (!st.busy || d.token !== st.token) return;
         st.done += 1;
         var name = st.names[d.key] || d.key;
-        if (d.err){
-          st.lines.push({text: name + "：失败（" + d.err + "）", bad: true});
+        var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
+        if (ss === "err"){
+          st.lines.push({text: name + "：失败（" + (d.err || "请求失败") + "）", bad: true});
           setChip(name + " 失败", "warn");
           st.strip[d.key] = {state:"err", err:d.err};
+        } else if (ss === "empty"){
+          st.lines.push({text: name + "：无结果", bad: false});
+          setChip(name + " 无结果", "");
+          st.strip[d.key] = {state:"empty"};
         } else {
           st.lines.push({text: name + "：" + d.count + " 条", bad: false});
           setChip(name + " " + d.count + " 条", "busy");

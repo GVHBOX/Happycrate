@@ -921,13 +921,10 @@ def adapter_location(key: str, stype: str = "builtin") -> str:
         return f"app/sources.py :: {name}" if name else f"app/sources.py :: (未知内置源 {key})"
     return f"app/templates.py :: _make_{stype}"
 
-EMPTY_NEUTRAL = frozenset({"eztv"})
-
 class Source:
 
     __slots__ = (
         "base",
-        "empty_neutral",
         "enabled",
         "func",
         "key",
@@ -939,8 +936,7 @@ class Source:
     )
 
     def __init__(self, key, label, func, enabled=True, timeout=15,
-                 stype="builtin", base="", order=0, raw=None,
-                 empty_neutral=False):
+                 stype="builtin", base="", order=0, raw=None):
         self.key = key
         self.label = label
         self.func = func
@@ -950,7 +946,6 @@ class Source:
         self.base = base or ""
         self.order = int(order or 0)
         self.raw = raw or {}
-        self.empty_neutral = bool(empty_neutral)
 
     def search(self, query, page=1, timeout=None, batch=None):
         return self.func(query, page, timeout or self.timeout, self.base,
@@ -1023,7 +1018,6 @@ def reload_from_config(cfg=None):
             base=entry.get("base", "") or "",
             order=int(entry.get("order", 0) or 0),
             raw=entry,
-            empty_neutral=key in EMPTY_NEUTRAL,
         ))
 
     built.sort(key=lambda s: s.order)

@@ -541,6 +541,43 @@ class Settings:
 
 
 HEALTH_WINDOW = 5
+EVENT_WINDOW = 20
+
+
+def _clean_events(value) -> list[dict]:
+    out = []
+    if not isinstance(value, list):
+        return out
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        try:
+            at = int(item.get("at") or 0)
+        except (TypeError, ValueError):
+            at = 0
+        try:
+            code = int(item.get("code") or 0)
+        except (TypeError, ValueError):
+            code = 0
+        try:
+            count = int(item.get("count") or 0)
+        except (TypeError, ValueError):
+            count = 0
+        try:
+            ms = int(item.get("ms") or 0)
+        except (TypeError, ValueError):
+            ms = 0
+        out.append({
+            "at": at,
+            "outcome": str(item.get("outcome") or ""),
+            "code": code,
+            "count": count,
+            "ms": ms,
+            "round": str(item.get("round") or ""),
+            "err": str(item.get("err") or ""),
+        })
+    return out[-EVENT_WINDOW:]
+
 
 class HealthStore:
 
@@ -580,11 +617,19 @@ class HealthStore:
 
     @staticmethod
     def _clean(value: dict) -> dict:
+        events = _clean_events(value.get("events"))
+        outcomes = [str(t) for t in (value.get("outcomes") or [])][-HEALTH_WINDOW:]
+        if not outcomes:
+            outcomes = [str(t) for t in (value.get("times") or [])][-HEALTH_WINDOW:]
         return {
             "state": str(value.get("state", "na") or "na"),
             "ms": HealthStore._safe_int(value.get("ms"), 0),
             "err": str(value.get("err", "") or ""),
             "times": [str(t) for t in (value.get("times") or [])][-HEALTH_WINDOW:],
+            "outcomes": outcomes,
+            "events": events,
+            "lastOk": HealthStore._safe_int(value.get("lastOk"), 0),
+            "lastCount": HealthStore._safe_int(value.get("lastCount"), 0),
         }
 
     @staticmethod

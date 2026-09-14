@@ -32,6 +32,7 @@
     if (s.probing) return '<span class="d">·</span><span class="d">·</span><span class="d">·</span>';
     var h = s.health;
     if (h.state === "err") return esc(h.err || "异常");
+    if (h.state === "empty") return esc(h.err || "无结果");
     if (h.err && h.state !== "na") return esc(h.err);
     if (h.state === "na" || !h.ms) return "—";
     return h.ms >= 1000 ? (h.ms / 1000).toFixed(1) + "s" : h.ms + "ms";

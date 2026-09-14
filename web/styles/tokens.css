@@ -28,6 +28,7 @@
   --ok:#16A34A;
   --warn:#CA8A04;
   --err:#DC2626;
+  --empty:#8A90A0;
   --danger:#EF4444;
   --danger-soft:#FDECEC;
   --danger-line:#F5C6C6;
@@ -122,6 +123,7 @@ body.dark{
   --t5:#5C6074;
   --t-disabled:#4B4F60;
   --track-off:#3A3D4C;
+  --empty:#71758A;
 
   --danger-soft:rgba(239,68,68,.15);
   --danger-line:rgba(239,68,68,.42);

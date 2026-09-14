@@ -293,7 +293,8 @@ input, textarea{
 .health .ms.ok{color:var(--ok)}
 .health .ms.warn{color:var(--warn)}
 .health .ms.err{color:var(--err)}
-.health .ms.na{color:var(--t5)}
+.health .ms.na,
+.health .ms.empty{color:var(--empty)}
 .health .ms.up{animation:latIn .5s var(--spring) both}
 .health .d{animation:blink 1s infinite}
 .health .d:nth-child(2){animation-delay:.2s}
@@ -303,6 +304,7 @@ input, textarea{
 .hd.warn{background:var(--warn)}
 .hd.err{background:var(--err); animation:breathe 2s var(--e) infinite}
 .hd.na{background:var(--track-off)}
+.hd.empty{background:var(--empty)}
 
 .ops{display:flex; gap:var(--sp-1); justify-content:flex-end}
 .op{
@@ -581,6 +583,7 @@ input, textarea{
 .badge.ok{background:#E8F7EE; color:var(--ok)}
 .badge.warn{background:#FBF3DC; color:var(--warn)}
 .badge.err{background:var(--danger-soft); color:var(--err)}
+.badge.empty{background:var(--rowline); color:var(--empty)}
 .badge.busy{background:var(--brand-soft); color:var(--brand)}
 .badge.pop{animation:countPop .26s var(--spring)}
 .badge b{color:var(--brand); font-weight:600}
@@ -765,6 +768,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .srcdot .sdot{width:6px; height:6px; border-radius:50%; background:var(--ok); flex:none}
 .srcdot.warn .sdot{background:var(--warn)}
 .srcdot.err .sdot{background:var(--err)}
+.srcdot.empty .sdot{background:var(--empty)}
 .srcdot.off{opacity:.45}
 .srcdot.off .sdot{background:var(--ink-13)}
 
@@ -793,6 +797,8 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .stile.ok b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.err{color:var(--err); border-color:var(--danger-line); background:var(--danger-soft)}
 .stile.err .sdot{background:var(--err)}
+.stile.empty{color:var(--empty)}
+.stile.empty .sdot{background:var(--empty)}
 .stile.cancel{color:var(--t5)}
 .scount{margin-left:auto; flex:none; font:500 var(--fs-2xs)/1 var(--font-num); color:var(--t4); padding-left:var(--sp-3)}
 .scount b{color:var(--t2); font-weight:600}

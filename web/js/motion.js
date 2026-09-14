@@ -2,11 +2,7 @@
   var HC = window.HC || (window.HC = {});
   var toastTimer = null;
 
-  function esc(t){
-    return String(t == null ? "" : t).replace(/[&<>"]/g, function(c){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
-    });
-  }
+  var esc = HC.esc;
 
   function rippleHost(el){
     return el.closest(".btn, .op, .iconbtn, .mi, .cb, .gobtn, .chipbtn, .seg button, .stepper button, .tb-btn");

@@ -1,4 +1,7 @@
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 html,body{margin:0;padding:0}
 svg{display:block}
 
@@ -6,6 +9,14 @@ body{
   user-select:none;
   -webkit-user-select:none;
   cursor:default;
+  height:100vh;
+  overflow:hidden;
+  font-family:var(--font);
+  font-size:var(--fs-md);
+  color:var(--t1);
+  background:var(--page);
+  display:flex;
+  flex-direction:column;
 }
 input, textarea{
   user-select:text;
@@ -20,19 +31,6 @@ input, textarea{
   width:1.1em; height:1.1em;
 }
 .handle svg{width:1em; height:1.6em;}
-
-*{-webkit-tap-highlight-color:transparent}
-
-body{
-  height:100vh;
-  overflow:hidden;
-  font-family:var(--font);
-  font-size:var(--fs-md);
-  color:var(--t1);
-  background:var(--page);
-  display:flex;
-  flex-direction:column;
-}
 
 .titlebar{
   height:32px; flex:none;
@@ -133,7 +131,6 @@ body{
 .btn-ghost{background:#fff; color:var(--t2); border-color:var(--ink-8)}
 .btn-ghost:hover{background:var(--shell); border-color:rgba(13,13,31,.22); color:var(--t1)}
 .btn-ghost:active{background:var(--rowline)}
-.btn-ghost[aria-pressed="true"]{background:var(--brand-soft); border-color:var(--brand-line); color:var(--brand)}
 .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none}
 .btn[disabled] .ripple{display:none}
 .btn.done{background:var(--ok); color:#fff; border-color:transparent}
@@ -657,7 +654,6 @@ body{
 .sentry .gobtn.stop{background:var(--panel); color:var(--t2); box-shadow:inset 0 0 0 1px var(--ink-8)}
 .sentry .gobtn.stop:hover{background:var(--shell); color:var(--t1)}
 
-.app > .card .rows{scrollbar-gutter:stable}
 .shead,.srow{
   display:grid;
   grid-template-columns:var(--cw-idx) var(--cw-size) var(--cw-time) var(--cw-seed) minmax(0,1fr) var(--cw-src);

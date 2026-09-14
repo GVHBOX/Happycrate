@@ -52,11 +52,7 @@
   var marquee = null;
   var justMarqueed = false;
 
-  function esc(t){
-    return String(t === undefined || t === null ? "" : t)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
+  var esc = HC.esc;
 
   function fmtCount(n){
     n = Number(n) || 0;

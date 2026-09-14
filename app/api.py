@@ -12,7 +12,8 @@ from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
 
 logger = log.get_logger(__name__)
 
-HEALTH_WINDOW = 5
+HEALTH_WINDOW = config.HEALTH_WINDOW
+BAD_MIN = 3
 SLOW_MS = 5000
 
 
@@ -106,7 +107,7 @@ def _state_of(times: list[str], ms: int, err: str = "") -> str:
     if err and recent[-1] == "err":
         return "err"
     bad = sum(1 for t in recent if t in ("err", "empty"))
-    if bad >= 3:
+    if bad >= BAD_MIN:
         return "err"
     if ms and ms >= SLOW_MS:
         return "warn"
@@ -238,9 +239,10 @@ class Api:
             window = times[-HEALTH_WINDOW:]
             if len(window) < HEALTH_WINDOW:
                 continue
-            if all(t in ("err", "empty") for t in window):
+            miss = sum(1 for t in window if t in ("err", "empty"))
+            if miss >= BAD_MIN:
                 bad.add(key)
-            elif all(t == "ok" for t in window):
+            elif miss == 0:
                 good.add(key)
 
         risen = set()

@@ -1,0 +1,134 @@
+import re
+import subprocess
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+JS = sorted((ROOT / "web" / "js").rglob("*.js"))
+CSS = sorted((ROOT / "web" / "styles").rglob("*.css"))
+HTML = ROOT / "web" / "index.html"
+
+
+class SharedEscTest(unittest.TestCase):
+
+    def test_only_api_js_defines_esc(self):
+        owners = []
+        for p in JS:
+            text = p.read_text(encoding="utf-8")
+            if re.search(r"function\s+esc\s*\(", text):
+                owners.append(str(p.relative_to(ROOT)))
+        self.assertEqual(owners, ["web\\js\\api.js"] if owners else [],
+                         "esc 只能有一份实现，实际分布：" + repr(owners))
+
+    def test_api_exports_esc(self):
+        text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        self.assertRegex(text, r"HC\.esc\s*=\s*esc")
+
+    def test_esc_covers_all_five_characters(self):
+        text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        i = text.find("function esc(")
+        self.assertGreater(i, 0)
+        body = text[i:i + 400]
+        for ch in ("&amp;", "&lt;", "&gt;", "&quot;", "&#39;"):
+            self.assertIn(ch, body, f"esc 缺少 {ch} 转义")
+
+    def test_consumers_alias_to_hc_esc(self):
+        for rel in ("web/js/motion.js", "web/js/diagnostics.js",
+                    "web/js/views/search.js", "web/js/views/settings.js"):
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertIn("var esc = HC.esc;", text,
+                          f"{rel} 应引用共享 esc 而非自带实现")
+
+
+class ScriptOrderTest(unittest.TestCase):
+
+    def html_scripts(self):
+        text = HTML.read_text(encoding="utf-8")
+        tags = re.findall(r'<script\s+src="([^"]+)"', text)
+        return ["web/" + t.replace("./", "") for t in tags]
+
+    def test_api_js_loads_first(self):
+        order = self.html_scripts()
+        self.assertEqual(order[0], "web/js/api.js",
+                         "HC.esc / HC.api 由 api.js 提供，必须最先加载")
+
+    def test_smoke_list_matches_html(self):
+        smoke = (ROOT / "tests" / "front_smoke.cjs").read_text(encoding="utf-8")
+        block = smoke.split("const FRONTEND = [", 1)[1].split("];", 1)[0]
+        listed = re.findall(r'"([^"]+\.js)"', block)
+        self.assertEqual(listed, self.html_scripts(),
+                         "冒烟脚本的前端列表与 index.html 顺序不一致")
+
+
+class CssHygieneTest(unittest.TestCase):
+
+    def selectors_with_lines(self, path):
+        text = path.read_text(encoding="utf-8")
+        out = {}
+        for m in re.finditer(r"^([^{@/\n][^{]*?)\{", text, re.M):
+            sel = " ".join(m.group(1).split())
+            out.setdefault(sel, []).append(text[:m.start()].count("\n") + 1)
+        return out
+
+    def test_no_duplicate_top_level_selectors(self):
+        dupes = {}
+        for p in CSS:
+            for sel, lines in self.selectors_with_lines(p).items():
+                if len(lines) > 1:
+                    dupes[f"{p.name} :: {sel}"] = lines
+        self.assertEqual(dupes, {}, f"CSS 存在重复选择器：{dupes}")
+
+    def test_dead_aria_pressed_rule_removed(self):
+        text = "\n".join(p.read_text(encoding="utf-8") for p in CSS)
+        self.assertNotIn("aria-pressed", text,
+                         "aria-pressed 全项目无人设置，是死样式")
+
+    def test_body_declared_once(self):
+        base = ROOT / "web" / "styles" / "base.css"
+        sels = self.selectors_with_lines(base)
+        self.assertEqual(len(sels.get("body", [])), 1,
+                         "body 只应有一个顶层规则块")
+
+
+class MockHashTest(unittest.TestCase):
+
+    def node(self):
+        import shutil
+        for cand in (shutil.which("node"), r"C:\Program Files\nodejs\node.exe"):
+            if cand and Path(cand).exists():
+                return cand
+        for p in Path.home().glob(".workbuddy/binaries/node/versions/*/node.exe"):
+            return str(p)
+        return None
+
+    def test_mock_hashes_are_valid_hex(self):
+        node = self.node()
+        if not node:
+            self.skipTest("没有可用的 node")
+        script = """
+        const fs=require('fs');
+        const t=fs.readFileSync('web/js/api.js','utf8');
+        const i=t.indexOf('function mockHash(');
+        const j=t.indexOf('\\n  }', i);
+        eval(t.slice(i, j+4));
+        let bad=[], seen={}, dup=[];
+        for(let k=0;k<24;k++){
+          const h=mockHash(k);
+          if(!/^[0-9a-f]{40}$/.test(h)) bad.push(k+':'+h);
+          if(seen[h]) dup.push(k); else seen[h]=1;
+        }
+        console.log(JSON.stringify({bad, dup, n:Object.keys(seen).length}));
+        """
+        proc = subprocess.run([node, "-e", script], cwd=str(ROOT),
+                              capture_output=True, text=True, timeout=60)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        import json
+        data = json.loads(proc.stdout.strip().splitlines()[-1])
+        self.assertEqual(data["bad"], [], "mock hash 不是合法 40 位 hex")
+        self.assertEqual(data["dup"], [], "mock hash 有重复")
+        self.assertEqual(data["n"], 24)
+
+
+if __name__ == "__main__":
+    unittest.main()

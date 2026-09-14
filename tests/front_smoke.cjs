@@ -121,8 +121,26 @@ report("HC.api.startSearch", typeof sandbox.HC?.api?.startSearch === "function")
 report("HC.views.search.mount", typeof sandbox.HC?.views?.search?.mount === "function");
 report("HC.views.sources.mount", typeof sandbox.HC?.views?.sources?.mount === "function");
 report("HC.views.settings.mount", typeof sandbox.HC?.views?.settings?.mount === "function");
+report("HC.esc 共享转义", typeof sandbox.HC?.esc === "function");
+{
+  let escErr = "";
+  try {
+    const v = sandbox.HC.esc('<a b="c">d\'e</a>');
+    if (v !== "&lt;a b=&quot;c&quot;&gt;d&#39;e&lt;/a&gt;") {
+      escErr = "转义结果不符：" + v;
+    }
+  } catch (e) {
+    escErr = e.constructor.name + ": " + e.message;
+  }
+  report("HC.esc 覆盖五种字符", !escErr, escErr);
+}
 
-console.log("== 3. 每个视图 mount 不抛异常（作用域回归护栏）==");
+console.log("== 3. api.js 必须先于其它脚本提供 HC.esc ==");
+report("api.js 是第一个脚本",
+       FRONTEND[0] === "web/js/api.js",
+       "HC.esc 由 api.js 定义，若它不在最前，后面的视图会拿到 undefined");
+
+console.log("== 4. 每个视图 mount 不抛异常（作用域回归护栏）==");
 for (const [name, rel] of VIEWS) {
   const box = makeSandbox();
   let err = null;
@@ -135,7 +153,7 @@ for (const [name, rel] of VIEWS) {
   report("mount " + name, !err, err ? err.constructor.name + ": " + err.message : "");
 }
 
-console.log("== 4. 搜索态数据结构自洽 ==");
+console.log("== 5. 搜索态数据结构自洽 ==");
 {
   const box = makeSandbox();
   let err = null;
@@ -151,6 +169,23 @@ console.log("== 4. 搜索态数据结构自洽 ==");
     err = e;
   }
   report("HC.views.search.st 已导出", !err, err ? err.constructor.name + ": " + err.message : "");
+}
+
+console.log("== 6. 加载顺序与 index.html 一致 ==");
+{
+  let orderErr = "";
+  try {
+    const html = fs.readFileSync(path.join(ROOT, "web/index.html"), "utf8");
+    const tags = [...html.matchAll(/<script\s+src="([^"]+)"/g)].map(m => m[1]);
+    const fromHtml = tags.map(s => "web/" + s.replace(/^\.\//, ""));
+    if (fromHtml.join(",") !== FRONTEND.join(",")) {
+      orderErr = "index.html: " + fromHtml.join(" -> ") +
+                 " ；冒烟列表: " + FRONTEND.join(" -> ");
+    }
+  } catch (e) {
+    orderErr = e.constructor.name + ": " + e.message;
+  }
+  report("冒烟列表 == index.html 脚本顺序", !orderErr, orderErr);
 }
 
 console.log("");

@@ -1,6 +1,6 @@
 [project]
 name = "happycrate"
-version = "1.0.19"
+version = "1.0.22"
 description = "磁力搜索聚合与下载投递工具"
 requires-python = ">=3.11,<3.14"
 dependencies = [

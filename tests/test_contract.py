@@ -59,6 +59,28 @@ def backend_methods():
             if not name.startswith("_")}
 
 
+class VersionAlignmentTest(unittest.TestCase):
+
+    def version_in(self, rel, pattern):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        m = re.search(pattern, text)
+        self.assertIsNotNone(m, f"{rel} 里找不到版本号")
+        return m.group(1)
+
+    def test_versions_match_across_files(self):
+        from app import __version__ as app_version
+        pyproject = self.version_in("pyproject.toml", r'version\s*=\s*"([^"]+)"')
+        mock = self.version_in("web/js/api.js", r'version:\s*"([^"]+)"')
+        self.assertEqual(pyproject, app_version,
+                         "pyproject.toml 与 app/__init__.py 版本号不一致")
+        self.assertEqual(mock, app_version,
+                         "web/js/api.js 的 mock 版本号与后端不一致")
+
+    def test_version_is_three_part(self):
+        from app import __version__ as app_version
+        self.assertRegex(app_version, r"^\d+\.\d+\.\d+$")
+
+
 class ContractCoverageTest(unittest.TestCase):
 
     def test_every_frontend_call_exists_on_backend(self):

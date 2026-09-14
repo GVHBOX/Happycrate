@@ -22,11 +22,7 @@
     plus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
   };
 
-  function esc(v){
-    return String(v === undefined || v === null ? "" : v)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
+  var esc = HC.esc;
 
   function clamp(v, min, max){
     v = parseInt(v, 10);

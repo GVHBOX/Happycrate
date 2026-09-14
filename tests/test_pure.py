@@ -25,6 +25,27 @@ def bencode(obj) -> bytes:
     raise TypeError(obj)
 
 
+class TextCoerceTest(unittest.TestCase):
+
+    def test_string_passthrough(self):
+        self.assertEqual(sources._text("标题"), "标题")
+
+    def test_numbers_become_text(self):
+        self.assertEqual(sources._text(5), "5")
+        self.assertEqual(sources._text(1.5), "1.5")
+
+    def test_none_and_containers_become_empty(self):
+        self.assertEqual(sources._text(None), "")
+        self.assertEqual(sources._text({"a": 1}), "")
+        self.assertEqual(sources._text([1]), "")
+
+    def test_bool_does_not_become_python_literal(self):
+        self.assertEqual(sources._text(True), "",
+                         "JSON 里 title:true 不该渲染成 'True'")
+        self.assertEqual(sources._text(False), "",
+                         "JSON 里 title:false 不该渲染成 'False'")
+
+
 class ParseSizeTest(unittest.TestCase):
 
     def test_gigabyte(self):

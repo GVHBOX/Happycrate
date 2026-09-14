@@ -230,6 +230,66 @@ class DiagnosticsRootCauseTest(DataDirCase):
         self.assertIn("app/sources.py :: _search_tpb_mirror", text)
 
 
+class DemoteTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def order(self):
+        return [e["key"] for e in sorted(self.api._cfg.sources,
+                                         key=lambda x: x.get("order", 0))]
+
+    def feed(self, key, marks):
+        for mark in marks:
+            if mark == "ok":
+                self.api._mark(key, True, 5, 100, "")
+            elif mark == "empty":
+                self.api._mark(key, True, 0, 100, "返回 0 条")
+            else:
+                self.api._mark(key, False, 0, 100, "HTTP 503")
+        self.api._persist_health()
+
+    def test_three_of_five_bad_demotes(self):
+        start = self.order()
+        self.feed("nyaa", ["err", "err", "err", "ok", "ok"])
+        self.assertEqual(self.order()[-1], "nyaa",
+                         "5 次里坏 3 次即应沉底，不必等到全坏")
+        self.assertEqual(sorted(self.order()), sorted(start),
+                         "排序不应增删源")
+
+    def test_two_of_five_bad_does_not_demote(self):
+        self.feed("nyaa", ["err", "err", "ok", "ok", "ok"])
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "只坏 2 次不该沉底")
+
+    def test_insufficient_history_does_not_demote(self):
+        self.feed("nyaa", ["err", "err"])
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "窗口没攒满 5 次前不该动顺序")
+
+    def test_full_recovery_restores_original_slot(self):
+        start = self.order()
+        self.feed("nyaa", ["err"] * 5)
+        self.assertEqual(self.order()[-1], "nyaa")
+        self.feed("nyaa", ["ok"] * 5)
+        self.assertEqual(self.order(), start,
+                         "恢复后应回到原位置，而不是留在末尾之后")
+
+    def test_order_lock_disables_demotion(self):
+        self.api.reorder_sources(self.order())
+        self.feed("nyaa", ["err"] * 5)
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "用户手动排过序就不该再自动调整")
+
+    def test_demote_is_idempotent(self):
+        self.feed("nyaa", ["err"] * 5)
+        once = self.order()
+        self.feed("nyaa", ["err"] * 2)
+        self.assertEqual(self.order(), once)
+
+
 class MarkThreadSafetyTest(DataDirCase):
 
     def setUp(self):

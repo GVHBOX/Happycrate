@@ -250,7 +250,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.18", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.22", dataDir:"(mock 模式)", mode:"mock"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },
@@ -346,7 +346,7 @@
     var out = [];
     for (var i = 0; i < 24; i++){
       var gb = (0.4 + i * 0.37).toFixed(1);
-      var hash = ("hc" + i + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").slice(0, 40);
+      var hash = mockHash(i);
       var it = {
         hash: hash,
         title: "[" + tags[i % tags.length] + "] " + q + " 第 " + (i + 1) + " 话 [简繁字幕]",
@@ -420,6 +420,24 @@
            " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
   }
 
+  function esc(v){
+    return String(v === undefined || v === null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  function mockHash(i){
+    var head = (0x100000 + i * 0x9e3779).toString(16).slice(-6);
+    var body = "";
+    var seed = i * 2654435761 % 4294967296;
+    while (body.length < 34){
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      body += ("0000000" + seed.toString(16)).slice(-7);
+    }
+    return (head + body).slice(0, 40);
+  }
+
   HC.api = api;
   HC.validateSource = validate;
+  HC.esc = esc;
 })();

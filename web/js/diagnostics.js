@@ -59,10 +59,7 @@
     });
   }
 
-  function esc(v){
-    return String(v === undefined || v === null ? "" : v)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
+  var esc = HC.esc;
 
   function text(){
     var lines = ["[happycrate 诊断] " + stamp(Date.now()), ""];

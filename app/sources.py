@@ -470,11 +470,11 @@ def _mk(title: str, info_hash: str = "", size=0, seeders=None, leechers=None,
     return item
 
 def _text(value) -> str:
-    if value is None:
-        return ""
     if isinstance(value, str):
         return value
-    if isinstance(value, (int, float, bool)):
+    if isinstance(value, bool):
+        return ""
+    if isinstance(value, (int, float)):
         return str(value)
     return ""
 

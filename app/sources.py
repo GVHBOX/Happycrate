@@ -55,6 +55,24 @@ def ssl_mark_lax(url: str) -> None:
         for stale in sorted(_LAX_HOSTS, key=_LAX_HOSTS.get)[:len(_LAX_HOSTS) - _LAX_LIMIT]:
             _LAX_HOSTS.pop(stale, None)
 
+def _error_text(exc: BaseException) -> str:
+    reason = getattr(exc, "reason", None)
+    return f"{exc} {reason}" if reason is not None else f"{exc}"
+
+def _cert_failure(exc: BaseException) -> bool:
+    if isinstance(exc, ssl.SSLCertVerificationError):
+        return True
+    reason = getattr(exc, "reason", None)
+    if isinstance(reason, ssl.SSLCertVerificationError):
+        return True
+    text = _error_text(exc).lower()
+    return "certificate_verify_failed" in text or "certificate verify failed" in text
+
+def _demote_ssl(url: str, exc: BaseException) -> None:
+    logger.warning("SSL 严格校验失败，临时降级 %ds：%s (%s)",
+                   int(_LAX_TTL), url, exc)
+    ssl_mark_lax(url)
+
 def reset_ssl_lax() -> None:
     _LAX_HOSTS.clear()
 
@@ -253,22 +271,18 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             logger.debug("HTTP %s：%s（不重试）", exc.code, url)
             raise
 
-        except ssl.SSLError as exc:
-            last_exc = exc
-            if not use_lax:
-                logger.warning("SSL 严格校验失败，临时降级 %ds：%s (%s)",
-                               int(_LAX_TTL), url, exc)
-                ssl_mark_lax(url)
-                use_lax = True
-                attempt -= 1
-                continue
-            raise
-
         except SearchCancelled:
             raise
 
         except Exception as exc:
             last_exc = exc
+            if _cert_failure(exc):
+                if not use_lax:
+                    _demote_ssl(url, exc)
+                    use_lax = True
+                    attempt -= 1
+                    continue
+                raise
             if _looks_like_proxy_failure(exc):
                 logger.warning("代理不可达（%s）：%s", urllib.parse.urlparse(url).netloc, exc)
                 raise ProxyUnreachable(proxy_hint()) from exc
@@ -369,7 +383,7 @@ def hash_from_text(text: str) -> str:
     for cand in _HASH_B32_RE.findall(text):
         try:
             decoded = base64.b32decode(cand.upper()).hex()
-            if len(decoded) == 40:
+            if len(decoded) == 40 and set(decoded) != {"0"}:
                 return decoded
         except Exception:
             continue
@@ -823,7 +837,7 @@ def _btdig_age(text: str) -> float | None:
     if not m:
         return None
     try:
-        return max(0.0, time.time() - int(m.group(1)) * _BTDIG_AGE_MUL[m.group(2)])
+        return max(0.0, time.time() - int(m.group(1)) * _BTDIG_AGE_MUL[m.group(2).lower()])
     except (TypeError, ValueError, OverflowError, KeyError):
         return None
 
@@ -1063,7 +1077,7 @@ def search_one(source: Source, query: str, page: int = 1,
         logger.warning("源 %s 失败：%s", source.key, msg)
         return source.key, [], msg, ms
 
-def search_many(query: str, page: int = 1, timeout: int = 15,
+def search_many(query: str, page: int = 1, timeout: int | None = None,
                 enabled=None, max_workers: int | None = None,
                 on_source=None, batch: int | None = None) -> dict:
     if not ALL_SOURCES:

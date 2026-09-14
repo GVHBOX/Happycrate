@@ -264,6 +264,13 @@
     return out;
   }
 
+  function indexOfHash(h){
+    for (var i = 0; i < st.items.length; i++){
+      if (st.items[i].hash === h) return i;
+    }
+    return -1;
+  }
+
   function fpanelInner(it){
     var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
     if (files && files.length){
@@ -774,6 +781,12 @@
     root.classList.add("card-enter");
   }
 
+  function applySettings(s){
+    st.selbarOn = !s || s.selbar !== false;
+    autoFiles = !s || s.auto_files !== false;
+    updateSelUI(true);
+  }
+
   function mount(mountEl){
     root = document.createElement("div");
     root.className = "app";
@@ -819,16 +832,6 @@
     root.classList.toggle("roomy", st.roomy);
 
     refreshSources();
-    if (HC.api.mode() === "mock"){
-      var tries = 0;
-      var chipTimer = setInterval(function(){
-        tries++;
-        if (HC.api.mode() === "live" || tries > 20){
-          clearInterval(chipTimer);
-          refreshSources();
-        }
-      }, 500);
-    }
 
     HC.api.onSearch({
       source: function(d){
@@ -854,12 +857,22 @@
       },
       batch: function(d){
         if (!st.busy || d.token !== st.token) return;
-        d.items.forEach(function(it){ st.items.push(it); });
-        if (st.field){
+        var fresh = 0, touched = false;
+        d.items.forEach(function(it){
+          var pos = it.hash ? indexOfHash(it.hash) : -1;
+          if (pos >= 0){
+            st.items[pos] = it;
+            touched = true;
+          } else {
+            st.items.push(it);
+            fresh++;
+          }
+        });
+        if (st.field || touched){
           renderRows();
           updateSelUI();
         } else {
-          appendRows(d.items.length);
+          appendRows(fresh);
         }
         paintBadge();
         autoExpand(AUTO_EARLY, false);
@@ -1206,10 +1219,10 @@
       }
     });
 
-    HC.api.getSettings().then(function(s){
-      st.selbarOn = !s || s.selbar !== false;
-      autoFiles = !s || s.auto_files !== false;
-      updateSelUI(true);
+    HC.api.getSettings().then(applySettings);
+    HC.api.onLive(refreshSources);
+    HC.api.onLive(function(){
+      HC.api.getSettings().then(applySettings);
     });
 
     if (st.hero) showHero();

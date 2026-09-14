@@ -165,7 +165,7 @@ def _make_json(entry: dict):
                 title=title, info_hash=info_hash, size=size,
                 seeders=_to_int_or_none(_dig(row, f_seeders)) if f_seeders else None,
                 leechers=_to_int_or_none(_dig(row, f_leechers)) if f_leechers else None,
-                added=(src._ts_from_iso(str(added_val)) if added_val else None),
+                added=_added_value(added_val, src),
                 source=entry.get("label") or entry.get("key") or "自定义",
             ))
         return items
@@ -266,6 +266,18 @@ def _to_int_or_none(value):
         return int(float(value))
     except (TypeError, ValueError, OverflowError):
         return None
+
+def _added_value(value, src):
+    if value is None or value == "" or isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value) if value > 0 else None
+    text = str(value).strip()
+    if not text:
+        return None
+    if text.isdigit():
+        return float(text)
+    return src._ts_from_iso(text)
 
 def build(entry: dict):
     stype = (entry.get("type") or "").strip()

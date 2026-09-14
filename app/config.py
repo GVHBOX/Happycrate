@@ -72,6 +72,21 @@ SETTING_SPECS = {
     "auto_files": {"type": bool},
 }
 
+INTERNAL_SETTING_KEYS = frozenset({"migrated_from"})
+
+SETTING_LABELS = {    "min_query_len": "最短关键词",
+    "max_workers": "并发数",
+    "timeout": "投递/清单超时",
+    "default_downloader": "默认下载工具",
+    "retries": "重试次数",
+    "user_agent": "User-Agent",
+    "proxy": "代理",
+    "ui_font_size": "界面字号",
+    "selbar": "浮动选择条",
+    "theme": "主题",
+    "auto_files": "自动展开",
+}
+
 SOURCE_TIMEOUT_MIN = 1
 SOURCE_TIMEOUT_MAX = 120
 
@@ -97,12 +112,32 @@ def broken_path(path) -> str:
         return p[:-5] + ".broken.json"
     return p + ".broken"
 
+TMP_PREFIX = ".happycrate-tmp-"
+
+def sweep_temp_files(directory) -> int:
+    removed = 0
+    try:
+        names = os.listdir(directory)
+    except OSError:
+        return 0
+    for name in names:
+        if not name.startswith(TMP_PREFIX):
+            continue
+        try:
+            os.unlink(os.path.join(directory, name))
+            removed += 1
+        except OSError:
+            continue
+    if removed:
+        logger.info("清理了 %d 个残留临时文件", removed)
+    return removed
+
 def atomic_write_json(path, data) -> bool:
     target = os.fspath(path)
     directory = os.path.dirname(target) or "."
     try:
         os.makedirs(directory, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(dir=directory, prefix=".happycrate-tmp-",
+        fd, tmp = tempfile.mkstemp(dir=directory, prefix=TMP_PREFIX,
                                    suffix=".json")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
@@ -479,7 +514,7 @@ class Settings:
                     coerced = self._coerce(key, value)
                     if coerced is not None:
                         data[key] = coerced
-                else:
+                elif key in INTERNAL_SETTING_KEYS:
                     data[key] = value
         self.data = data
         return self
@@ -523,19 +558,26 @@ class Settings:
 
     def set(self, key: str, value) -> bool:
         if key not in SETTING_SPECS:
-            self.data[key] = value
-            return True
+            return False
         coerced = self._coerce(key, value)
         if coerced is None:
             return False
         self.data[key] = coerced
         return True
 
+    @staticmethod
+    def reason(key: str) -> str:
+        spec = SETTING_SPECS.get(key) or {}
+        label = SETTING_LABELS.get(key, key)
+        if "min" in spec and "max" in spec:
+            return f"{label}需在 {spec['min']}-{spec['max']} 之间"
+        return f"{label}取值不合法"
+
     def update(self, **fields) -> list[str]:
         rejected = []
         for key, value in fields.items():
             if not self.set(key, value):
-                rejected.append(key)
+                rejected.append(self.reason(key))
         return rejected
 
     def reset_defaults(self) -> None:

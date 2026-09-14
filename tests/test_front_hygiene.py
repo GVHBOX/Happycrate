@@ -90,6 +90,30 @@ class CssHygieneTest(unittest.TestCase):
         self.assertEqual(len(sels.get("body", [])), 1,
                          "body 只应有一个顶层规则块")
 
+    def test_state_class_does_not_clash_with_layout_class(self):
+        base = ROOT / "web" / "styles" / "base.css"
+        sels = self.selectors_with_lines(base)
+        bare = {s for s in sels if s and not s[0].isupper()}
+        for state in ("empty", "ok", "warn", "err", "na"):
+            with self.subTest(state=state):
+                owners = [s for s in sels if s == f".{state}"]
+                self.assertEqual(
+                    owners, [],
+                    f".{state} 既是状态类又是布局类，会互相污染"
+                    f"（健康度圆点曾被 .empty 的 padding 撑成椭圆）；"
+                    f"布局样式请收窄作用域，例如 .rows > .{state}",
+                )
+
+    def test_health_dot_has_fixed_size(self):
+        base = ROOT / "web" / "styles" / "base.css"
+        text = base.read_text(encoding="utf-8")
+        m = re.search(r"^\.hd\{([^}]*)\}", text, re.M)
+        self.assertIsNotNone(m, "找不到 .hd 规则")
+        rule = m.group(1)
+        self.assertIn("width:", rule)
+        self.assertIn("height:", rule)
+        self.assertIn("flex:none", rule, "圆点必须在 flex 容器里禁止伸缩")
+
 
 class MockHashTest(unittest.TestCase):
 

@@ -130,11 +130,13 @@ class ContractCoverageTest(unittest.TestCase):
 class SafeCallSmokeTest(unittest.TestCase):
 
     def setUp(self):
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-contract-")
         self.api = api_mod.Api()
-        self.api._cfg = config.Config(path=tempfile.mktemp(suffix=".json"))
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
         self.api._cfg.load()
-        self.api._settings = config.Settings(path=tempfile.mktemp(suffix=".json"))
+        self.api._settings = config.Settings(path=Path(self.tmpdir) / "settings.json")
         self.api._settings.load()
+        self.api._health_store = config.HealthStore(path=Path(self.tmpdir) / "health.json")
         sources.reload_from_config(self.api._cfg)
 
     def test_safe_calls_return_expected_type(self):
@@ -171,11 +173,13 @@ class SafeCallSmokeTest(unittest.TestCase):
 class MutatingCallSmokeTest(unittest.TestCase):
 
     def setUp(self):
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-mutating-")
         self.api = api_mod.Api()
-        self.api._cfg = config.Config(path=tempfile.mktemp(suffix=".json"))
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
         self.api._cfg.load()
-        self.api._settings = config.Settings(path=tempfile.mktemp(suffix=".json"))
+        self.api._settings = config.Settings(path=Path(self.tmpdir) / "settings.json")
         self.api._settings.load()
+        self.api._health_store = config.HealthStore(path=Path(self.tmpdir) / "health.json")
         sources.reload_from_config(self.api._cfg)
 
     def test_mutating_calls_return_expected_type(self):

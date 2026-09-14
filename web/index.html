@@ -77,15 +77,29 @@
   HC.applyTheme = function(t){
     document.body.classList.toggle("dark", t === "dark");
   };
-  HC.api.getSettings().then(function(s){
-    applyFont(s && s.ui_font_size);
-    HC.applyTheme(s && s.theme);
-  }).catch(function(err){ console.warn("getSettings failed", err); });
-  HC.api.appInfo().then(function(info){
-    if (info && info.version){
-      document.getElementById("tbTitle").textContent = "Happycrate v" + info.version;
-    }
-  }).catch(function(err){ console.warn("appInfo failed", err); });
+
+  function loadSettings(){
+    return HC.api.getSettings().then(function(s){
+      if (!s) return;
+      applyFont(s.ui_font_size);
+      HC.applyTheme(s.theme);
+    });
+  }
+
+  function loadInfo(){
+    return HC.api.appInfo().then(function(info){
+      if (info && info.version){
+        document.getElementById("tbTitle").textContent = "Happycrate v" + info.version;
+      }
+    });
+  }
+
+  loadSettings().catch(function(err){ console.warn("getSettings failed", err); });
+  loadInfo().catch(function(err){ console.warn("appInfo failed", err); });
+  HC.api.onLive(function(){
+    loadSettings().catch(function(err){ console.warn("getSettings failed", err); });
+    loadInfo().catch(function(){});
+  });
 })();
 
 (function(){

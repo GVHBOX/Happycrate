@@ -134,6 +134,7 @@ input, textarea{
 .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none}
 .btn[disabled] .ripple{display:none}
 .btn.done{background:var(--ok); color:#fff; border-color:transparent}
+.btn.on{background:var(--brand-soft); color:var(--brand); border-color:var(--brand-line)}
 .btn.busy svg{animation:spin 1s linear infinite}
 .btn .i-load{display:none}
 .btn.busy .i-load{display:inline-flex}
@@ -512,7 +513,7 @@ input, textarea{
 .toast.show{opacity:1; transform:translate(-50%,0) scale(1)}
 .toast svg{color:#7CE0A3}
 
-.empty{
+.rows > .empty{
   padding:34px var(--sp-6);
   text-align:center;
   font:400 var(--fs-sm)/1.6 var(--font);

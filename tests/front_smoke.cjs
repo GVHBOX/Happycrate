@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 
-const ROOT = "D:\\AI\\happycrate";
+const ROOT = path.resolve(__dirname, "..");
 
 function el(tag) {
   const node = {

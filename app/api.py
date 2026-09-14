@@ -15,6 +15,7 @@ logger = log.get_logger(__name__)
 
 HEALTH_WINDOW = config.HEALTH_WINDOW
 EVENT_WINDOW = config.EVENT_WINDOW
+FILES_CAP = 200
 BAD_MIN = 3
 SLOW_MS = 5000
 
@@ -244,7 +245,7 @@ def _item_view(item: dict) -> dict:
     files = [
         {"n": str(f.get("n") or ""), "s": str(f.get("s") or "")}
         for f in raw_files if isinstance(f, dict) and f.get("n")
-    ][:8] if isinstance(raw_files, list) else []
+    ][:FILES_CAP] if isinstance(raw_files, list) else []
     raw_fetch = item.get("fetch")
     fetch = {}
     if isinstance(raw_fetch, dict):
@@ -314,6 +315,7 @@ class Api:
 
     def boot(self) -> None:
         paths.ensure_dirs()
+        config.sweep_temp_files(paths.data_dir())
         self._cfg.load()
         self._settings.load()
         runtime.replace(dict(self._settings.data))
@@ -425,9 +427,19 @@ class Api:
         sources.reload_from_config(self._cfg)
         return True
 
+    def set_auto_order(self, on: bool) -> bool:
+        self._cfg.set_order_locked(not on)
+        if on:
+            self._demote_bad()
+        self._cfg.save()
+        sources.reload_from_config(self._cfg)
+        return True
+
     def save_source(self, entry: dict) -> dict:
         item = dict(entry or {})
         key = str(item.get("key") or "").strip()
+        if key and item.get("isNew") is False and not self._cfg.get(key):
+            return {"ok": False, "errors": [f"找不到数据源 {key}"]}
 
         if key and self._cfg.get(key):
             current = self._cfg.get(key)
@@ -632,21 +644,19 @@ class Api:
             return {"ok": False, "files": [],
                     "error": f"{type(exc).__name__}: {exc}"[:180]}
         files = [{"n": r["n"], "s": core.format_size(r.get("b", 0))}
-                 for r in rows if r.get("n")][:100]
+                 for r in rows if r.get("n")][:FILES_CAP]
         if not files:
             return {"ok": False, "files": [], "error": "种子内没有文件清单"}
         return {"ok": True, "files": files, "error": ""}
 
     def _search_worker(self, token: int, text: str, keys: list[str]) -> None:
-        timeout = int(self._settings.get("timeout", 15) or 15)
         min_len = int(self._settings.get("min_query_len", 2) or 2)
-        seen: set[str] = set()
-        pushed = 0
+        rows: list[dict] = []
+        index_of: dict[str, int] = {}
 
         def on_source(key, items, err, ms=0):
             if token != self._search_token:
                 return
-            nonlocal pushed
             count = len(items or [])
             outcome, code = classify(not err, count, err, ms)
             text_err = outcome_text(outcome, code)
@@ -662,12 +672,14 @@ class Api:
             for it in core.dedupe(items or []):
                 h = (it.get("info_hash") or "").lower()
                 if h:
-                    if h in seen:
-                        continue
-                    seen.add(h)
-                batch.append(_item_view(it))
+                    pos = index_of.get(h)
+                    if pos is None:
+                        index_of[h] = len(rows)
+                        rows.append(it)
+                    else:
+                        rows[pos] = core.dedupe([rows[pos], it])[0]
+                batch.append(_item_view(rows[index_of[h]] if h else it))
             if batch:
-                pushed += len(batch)
                 payload = json.dumps(
                     {"token": token, "key": key, "items": batch},
                     ensure_ascii=False,
@@ -677,7 +689,7 @@ class Api:
         errors: dict[str, str] = {}
         try:
             result, fatal = core.search(
-                text, 1, timeout, keys, min_len=min_len,
+                text, 1, None, keys, min_len=min_len,
                 on_source=on_source, batch=token, collect=False,
             )
             if fatal:
@@ -695,7 +707,7 @@ class Api:
 
         self._persist_health()
         payload = json.dumps(
-            {"token": token, "total": pushed, "errors": errors}, ensure_ascii=False
+            {"token": token, "total": len(rows), "errors": errors}, ensure_ascii=False
         )
         self._push(f"window.__onSearchDone && window.__onSearchDone({payload})")
 
@@ -873,6 +885,7 @@ class Api:
             "logFile": log.current_log_file(),
             "migratedFrom": _migration_source(self._migration),
             "proxy": _proxy_desc(),
+            "autoOrder": not self._cfg.order_locked(),
         }
 
     def open_logs(self) -> bool:

@@ -5,7 +5,7 @@
   var FIELDS = [
     {key:"min_query_len", label:"最短关键词", min:1, max:20, step:1},
     {key:"max_workers", label:"并发数", min:1, max:32, step:1},
-    {key:"timeout", label:"超时", min:1, max:120, step:1, unit:"秒"},
+    {key:"timeout", label:"投递/清单超时", min:1, max:120, step:1, unit:"秒"},
     {key:"retries", label:"重试次数", min:0, max:5, step:1},
     {key:"proxy", label:"代理", ph:"http://127.0.0.1:7890"},
     {key:"user_agent", label:"User-Agent", ph:"留空用内置"},

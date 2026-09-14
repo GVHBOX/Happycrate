@@ -217,7 +217,8 @@
           type: type,
           addr: m.querySelector("#fUrl").value.trim(),
           timeout: parseInt(m.querySelector("#fTo").textContent, 10),
-          enabled: existing ? existing.enabled : true
+          enabled: existing ? existing.enabled : true,
+          isNew: existing ? false : true
         };
         out.listPath = m.querySelector("#fPath") ? m.querySelector("#fPath").value.trim() : "";
         var mapOut = {};
@@ -307,7 +308,12 @@
     });
   }
 
-  var root = null, rowsEl = null, anchor = -1;
+  var root = null, rowsEl = null, anchor = -1, autoOrder = true;
+
+  function paintAuto(){
+    var b = root && root.querySelector("#btnAuto");
+    if (b) b.classList.toggle("on", autoOrder);
+  }
 
   function reload(){
     api.listSources().then(function(list){
@@ -426,6 +432,7 @@
             '<button class="btn btn-brand" id="btnAdd">' + ICON.plus + '新增</button>' +
             '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
             '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
+            '<button class="btn btn-ghost" id="btnAuto">自动排序</button>' +
           '</div>' +
           '<div class="group hidden" id="groupBatch">' +
             '<button class="btn btn-brand" id="btnBatchDone">' + ICON.check + '完成</button>' +
@@ -459,6 +466,8 @@
       root.querySelector("#caption").textContent =
         "happycrate v" + info.version + " · 数据源管理 · " +
         (api.mode() === "mock" ? "原型模式（mock 数据）" : "数据目录 " + info.dataDir);
+      autoOrder = info.autoOrder !== false;
+      paintAuto();
     });
 
     api.selftest().then(function(r){
@@ -472,6 +481,12 @@
     });
 
     root.querySelector("#btnAdd").onclick = function(){ editorSource(null); };
+
+    root.querySelector("#btnAuto").onclick = function(){
+      autoOrder = !autoOrder;
+      paintAuto();
+      api.setAutoOrder(autoOrder);
+    };
 
     root.querySelector("#btnBatch").onclick = function(){
       anchor = -1;

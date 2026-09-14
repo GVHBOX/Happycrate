@@ -132,7 +132,7 @@ class SearchResult:
         self.items: list[dict] = []
         self.errors: dict[str, str] = {}
 
-def search(query: str, page: int, timeout: int, enabled,
+def search(query: str, page: int, timeout: int | None, enabled,
            min_len: int = 2, on_source=None,
            batch: int | None = None,
            collect: bool = True) -> tuple[SearchResult, str | None]:
@@ -150,16 +150,19 @@ def search(query: str, page: int, timeout: int, enabled,
     )
 
     collected: list[dict] = []
+    reached = 0
     for key, (items, err, _ms) in by_key.items():
         if err:
             result.errors[key] = err
+        else:
+            reached += 1
         if collect and items:
             collected.extend(items)
 
     if collect:
         result.items = dedupe(collected)
 
-    if not result.items and result.errors:
+    if not reached and result.errors:
         from . import sources as _s
         if all(_s.proxy_hint() in (e or "") for e in result.errors.values()):
             return result, _s.proxy_hint()

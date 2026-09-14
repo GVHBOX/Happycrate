@@ -66,15 +66,36 @@
         addr: s.addr || "",
         listPath: s.listPath || "",
         map: s.map || null,
+        hashPattern: s.hashPattern || "",
+        titlePattern: s.titlePattern || "",
+        sizePattern: s.sizePattern || "",
         health: {
           state: (s.health && s.health.state) || "na",
           ms: (s.health && s.health.ms) || 0,
           err: (s.health && s.health.err) || "",
           times: (s.health && s.health.times) || [],
-          empty: !!(s.health && s.health.empty)
+          outcomes: (s.health && s.health.outcomes) || [],
+          empty: !!(s.health && s.health.empty),
+          lastOk: (s.health && s.health.lastOk) || 0,
+          lastCount: (s.health && s.health.lastCount) || 0
         }
       };
     });
+  }
+
+  function onLive(fn){
+    if (typeof fn !== "function") return;
+    if (live()){ fn(); return; }
+    var tries = 0;
+    var timer = setInterval(function(){
+      tries++;
+      if (live()){
+        clearInterval(timer);
+        fn();
+      } else if (tries > 80){
+        clearInterval(timer);
+      }
+    }, 250);
   }
 
   var probeOne = null;
@@ -206,6 +227,11 @@
       return Promise.resolve(true);
     },
 
+    setAutoOrder: function(on){
+      if (live()) return window.pywebview.api.set_auto_order(on);
+      return Promise.resolve(true);
+    },
+
     exportSources: function(){
       if (live()) return window.pywebview.api.export_sources();
       return Promise.resolve({ok:true, path:"happycrate-sources.json"});
@@ -326,6 +352,8 @@
       if (live()) return window.pywebview.api.get_settings();
       return Promise.resolve(Object.assign({}, mockSettings));
     },
+
+    onLive: onLive,
 
     saveSettings: function(fields){
       if (live()) return window.pywebview.api.save_settings(fields || {});

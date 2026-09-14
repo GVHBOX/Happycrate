@@ -80,22 +80,27 @@
   --z-backdrop:60;
   --z-toast:80;
 
-  --sp-1:4px;
-  --sp-2:6px;
-  --sp-3:8px;
-  --sp-4:12px;
-  --sp-5:16px;
-  --sp-6:20px;
+  --sp-1:calc(4px*var(--frs));
+  --sp-2:calc(6px*var(--frs));
+  --sp-3:calc(8px*var(--frs));
+  --sp-4:calc(12px*var(--frs));
+  --sp-5:calc(16px*var(--frs));
+  --sp-6:calc(20px*var(--frs));
 
   --fr:1;
   --frc:clamp(0.9, calc(var(--fr) * 0.9 + 0.1), 1.6);
   --fcd:clamp(1, calc(var(--fr) * 0.55 + 0.45), 1.3);
-  --h-row:calc(58px*var(--fr));
-  --h-head:calc(56px*var(--fr));
-  --h-bar:52px;
-  --h-ctrl:36px;
-  --h-thead:calc(38px*var(--fr));
-  --h-foot:52px;
+  --frs:clamp(0.94, calc(1 + (var(--fr) - 1) / 3), 1.3);
+  --h-row:calc(58px*var(--frs));
+  --h-head:calc(56px*var(--frs));
+  --h-bar:calc(52px*var(--frs));
+  --h-ctrl:calc(36px*var(--frs));
+  --h-thead:calc(38px*var(--frs));
+  --h-foot:calc(52px*var(--frs));
+  --sw-w:calc(34px*var(--frs));
+  --sw-h:calc(20px*var(--frs));
+  --sw-knob:calc(20px*var(--frs) - 6px);
+  --sw-move:calc(14px*var(--frs));
 
   --fs-lg:calc(15px*var(--fr));
   --fs-md:calc(13px*var(--fr));

@@ -87,7 +87,7 @@ input, textarea{
   padding:0 var(--sp-5) 0 var(--sp-6);
 }
 .tile{
-  width:calc(28px*var(--fr)); height:calc(28px*var(--fr));
+  width:calc(28px*var(--frs)); height:calc(28px*var(--frs));
   font-size:var(--fs-md);
   border-radius:var(--r-tile);
   background:var(--brand-soft);
@@ -233,7 +233,7 @@ input, textarea{
 }
 
 .handle{
-  width:calc(28px*var(--fr)); height:calc(16px*var(--fr));
+  width:calc(28px*var(--frs)); height:calc(16px*var(--frs));
   color:var(--t-disabled);
   cursor:grab; touch-action:none;
   transition:color .2s var(--e), transform .38s var(--spring);
@@ -242,8 +242,8 @@ input, textarea{
 .handle:active{cursor:grabbing; color:var(--t3); transform:scale(1.05)}
 
 .sw{
-  width:34px; height:20px;
-  border-radius:10px;
+  width:var(--sw-w); height:var(--sw-h);
+  border-radius:999px;
   background:var(--brand);
   border:0; padding:0;
   position:relative; cursor:pointer;
@@ -253,20 +253,20 @@ input, textarea{
 .sw::after{
   content:""; position:absolute;
   top:3px; left:3px;
-  width:14px; height:14px; border-radius:50%;
+  width:var(--sw-knob); height:var(--sw-knob); border-radius:50%;
   background:#fff;
   box-shadow:0 1px 2px rgba(13,13,31,.25);
   transition:transform .4s var(--spring), width .2s var(--e);
 }
-.sw:active::after{width:17px}
+.sw:active::after{width:calc(var(--sw-knob) + 3px)}
 .sw.off{background:var(--track-off)}
 .sw.off:hover{box-shadow:0 0 0 3px var(--ink-8)}
-.sw.off::after{transform:translateX(14px)}
-.sw.off:active::after{transform:translateX(11px)}
+.sw.off::after{transform:translateX(var(--sw-move))}
+.sw.off:active::after{transform:translateX(calc(var(--sw-move) - 3px))}
 .sw:focus-visible{outline-offset:3px}
 
 .cb{
-  width:24px; height:24px;
+  width:calc(24px*var(--frs)); height:calc(24px*var(--frs));
   padding:0;
   border-radius:4px;
   border:1.5px solid var(--t-disabled);
@@ -434,7 +434,7 @@ input, textarea{
   background:var(--surface-solid); border:1px solid var(--ink-8);
 }
 .stepper button{
-  width:22px; height:22px;
+  width:calc(22px*var(--frs)); height:calc(22px*var(--frs));
   border:0; background:transparent;
   border-radius:var(--r-sm);
   cursor:pointer;
@@ -464,7 +464,7 @@ input, textarea{
   background:var(--shell);
 }
 .seg button{
-  height:28px; padding:0 14px;
+  height:calc(28px*var(--frs)); padding:0 14px;
   border:0; border-radius:var(--r-tile);
   background:transparent; cursor:pointer;
   font:400 var(--fc-sm)/1 var(--font);
@@ -489,14 +489,14 @@ input, textarea{
   color:var(--t4); display:block; margin-bottom:var(--sp-1);
 }
 .mapgrid .input{
-  height:32px; border-radius:var(--r-tile);
+  height:calc(32px*var(--frs)); border-radius:var(--r-tile);
   padding:0 10px;
   font:400 var(--fc-xs)/1 var(--font-mono);
   margin:0;
 }
 .idchip{
   display:inline-flex; align-items:center;
-  height:20px; padding:0 var(--sp-3);
+  height:calc(20px*var(--frs)); padding:0 var(--sp-3);
   border-radius:var(--r-chip);
   background:var(--brand-soft); color:var(--brand);
   font:500 var(--fs-xs)/1 var(--font-mono);
@@ -633,7 +633,7 @@ input, textarea{
 }
 
 .badge{
-  height:24px; padding:0 10px;
+  height:calc(24px*var(--frs)); padding:0 10px;
   border-radius:var(--r-chip);
   display:inline-flex; align-items:center;
   font:500 var(--fc-xs)/1 var(--font);
@@ -653,7 +653,7 @@ input, textarea{
 
 .chipwrap{position:relative; flex:none; display:flex; align-items:center}
 .chipbtn{
-  height:24px; padding:0 12px;
+  height:calc(24px*var(--frs)); padding:0 12px;
   border-radius:var(--r-chip);
   border:0; background:var(--shell);
   font:500 var(--fc-xs)/1 var(--font); color:var(--t3);
@@ -705,7 +705,7 @@ input, textarea{
 }
 .sentry input::placeholder{color:var(--t5)}
 .sentry .gobtn{
-  flex:none; height:24px; padding:0 14px;
+  flex:none; height:calc(24px*var(--frs)); padding:0 14px;
 }
 .gobtn{
   flex:none; border:0; border-radius:7px;
@@ -729,7 +729,7 @@ input, textarea{
 .shead span{font:500 var(--fs-xs)/1 var(--font); color:var(--t3)}
 .shead .r{text-align:center}
 .srow{
-  height:calc(40px*var(--fr,1)); background:var(--panel); position:relative;
+  height:calc(40px*var(--frs)); background:var(--panel); position:relative;
   border-bottom:1px solid var(--rowline);
   transition:background var(--d-hover) var(--e);
 }
@@ -758,7 +758,7 @@ input, textarea{
 }
 .srow .c-title .fchev{
   position:absolute; right:2px; top:50%; transform:translateY(-50%);
-  width:18px; height:18px; padding:0; border:0; border-radius:4px;
+  width:calc(18px*var(--frs)); height:calc(18px*var(--frs)); padding:0; border:0; border-radius:4px;
   background:transparent; color:var(--t4); display:grid; place-items:center;
   cursor:pointer; transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e), transform var(--d-hover) var(--e);
 }
@@ -815,10 +815,10 @@ input, textarea{
   font:400 16px/1 var(--font); color:var(--t1);
 }
 .hero-search input::placeholder{color:var(--t5)}
-.hero-search .gobtn{height:40px; padding:0 22px; border-radius:11px; font-size:14px}
+.hero-search .gobtn{height:calc(40px*var(--frs)); padding:0 22px; border-radius:11px; font-size:14px}
 .hero-srcs{display:flex; align-items:center; gap:var(--sp-2); flex-wrap:wrap; justify-content:center}
 .srcdot{
-  height:24px; padding:0 10px; border-radius:var(--r-chip);
+  height:calc(24px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);
   border:1px solid var(--divider); background:var(--panel);
   display:inline-flex; align-items:center; gap:6px;
   font:500 var(--fs-2xs)/1 var(--font); color:var(--t3);
@@ -846,7 +846,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .srcstrip::-webkit-scrollbar{height:4px}
 .srcstrip::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:2px}
 .stile{
-  flex:none; height:23px; padding:0 10px; border-radius:var(--r-chip);
+  flex:none; height:calc(23px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);
   background:var(--panel); border:1px solid var(--divider);
   display:inline-flex; align-items:center; gap:6px;
   font:500 var(--fs-2xs)/1 var(--font); color:var(--t3); white-space:nowrap;
@@ -870,7 +870,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar{
   position:fixed; left:50%; bottom:24px; z-index:var(--z-selbar);
   transform:translate(-50%, 18px) scale(.95);
-  min-width:400px; height:48px;
+  min-width:400px; height:calc(48px*var(--frs));
   background:var(--panel); color:var(--t1);
   border:1px solid var(--border);
   border-radius:13px; box-shadow:var(--sh-modal);
@@ -884,7 +884,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar .st b{color:var(--brand); font-family:var(--font-num); font-size:calc(var(--fs-md) + 2px); margin:0 2px}
 .selbar .sdiv{width:1px; height:20px; background:var(--divider); flex:none}
 .selbar .sbtn{
-  height:31px; padding:0 12px; border:0; border-radius:8px;
+  height:calc(31px*var(--frs)); padding:0 12px; border:0; border-radius:8px;
   background:var(--shell); color:var(--t2);
   font:500 var(--fs-sm)/1 var(--font); white-space:nowrap;
   transition:background var(--d-hover) var(--e), transform var(--d-release) var(--spring);
@@ -893,7 +893,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar .sbtn.primary{background:var(--brand); color:#fff}
 .selbar .sbtn.primary:hover{background:var(--brand-hover)}
 .selbar .sclose{
-  width:27px; height:27px; padding:0; border:0; border-radius:6px;
+  width:calc(27px*var(--frs)); height:calc(27px*var(--frs)); padding:0; border:0; border-radius:6px;
   background:transparent; color:var(--t4);
   display:grid; place-items:center;
 }
@@ -911,7 +911,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .selbar .ssp{flex:1}
 
 .srow.cursor{box-shadow:inset 0 0 0 1.5px var(--brand-line)}
-.app.roomy .srow{flex:none; height:calc(52px*var(--fr,1))}
+.app.roomy .srow{flex:none; height:calc(52px*var(--frs))}
 .app.roomy .srow .c-title{font:400 var(--fs-md)/1.4 var(--font)}
 
 .tb-home{

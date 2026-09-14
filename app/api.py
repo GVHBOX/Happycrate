@@ -276,6 +276,25 @@ def _migration_source(report) -> str:
     return str(src or "")
 
 
+def _proxy_desc() -> str:
+    try:
+        manual = (self_proxy() or "").strip()
+    except Exception:
+        manual = ""
+    if manual:
+        return "手动设置 " + manual
+    info = sources.proxy_info() or {}
+    addr = info.get("https") or info.get("http") or ""
+    if not addr:
+        return "未检测到代理"
+    return "跟随系统 " + addr
+
+
+def self_proxy() -> str:
+    from . import runtime
+    return str(runtime.get("proxy", "") or "")
+
+
 def _stamp() -> str:
     return time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -853,6 +872,7 @@ class Api:
             "mode": label,
             "logFile": log.current_log_file(),
             "migratedFrom": _migration_source(self._migration),
+            "proxy": _proxy_desc(),
         }
 
     def open_logs(self) -> bool:

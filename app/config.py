@@ -55,6 +55,7 @@ DEFAULT_SETTINGS = {
     "ui_font_size": 18,
     "selbar": False,
     "theme": "light",
+    "auto_files": True,
 }
 
 SETTING_SPECS = {
@@ -68,6 +69,7 @@ SETTING_SPECS = {
     "ui_font_size": {"type": int, "min": 12, "max": 24},
     "selbar": {"type": bool},
     "theme": {"type": str},
+    "auto_files": {"type": bool},
 }
 
 SOURCE_TIMEOUT_MIN = 1

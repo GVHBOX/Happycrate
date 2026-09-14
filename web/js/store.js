@@ -40,6 +40,10 @@
       return state.sources.filter(function(s){ return s.health.state === "err"; }).length;
     },
 
+    emptyCount: function(){
+      return state.sources.filter(function(s){ return s.health.state === "empty"; }).length;
+    },
+
     enabledCount: function(){
       return state.sources.filter(function(s){ return s.enabled; }).length;
     },

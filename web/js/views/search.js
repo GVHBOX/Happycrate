@@ -28,8 +28,15 @@
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
     rows: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
       '<path d="M4 2.5v9M4 2.5L2.2 4.3M4 2.5l1.8 1.8M10 11.5v-9M10 11.5l-1.8-1.8M10 11.5l1.8-1.8" ' +
-      'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    srclist: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none">' +
+      '<path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" ' +
+      'stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/>' +
+      '<circle cx="2.3" cy="8" r="1" fill="currentColor"/>' +
+      '<circle cx="2.3" cy="11.6" r="1" fill="currentColor"/></svg>'
   };
+
+  var autoFiles = true;
 
   var st = {
     items: [], sel: {}, anchor: "",
@@ -87,14 +94,19 @@
   var WORD_EDGE = /[\s\[\]()（）·\-_.【】,，、:：;；!！?？'"\/\\|]/;
 
   function fileNames(it){
-    return (it.files || []).map(function(f){ return (f.n || "").toLowerCase(); }).join("\n");
+    return (filesOf(it) || []).map(function(f){ return (f.n || "").toLowerCase(); }).join("\n");
+  }
+
+  function filesOf(it){
+    if (it.files && it.files.length) return it.files;
+    return st.filesCache[it.hash] || [];
   }
 
   function fileHit(it){
     if (!st.qtokens.length) return false;
-    var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
-    if (!files || !files.length) return false;
-    var fns = files.map(function(f){ return String(f.n || "").toLowerCase(); }).join("\n");
+    var files = filesOf(it);
+    if (!files.length) return false;
+    var fns = fileNames(it);
     if (st.qphrase && fns.indexOf(st.qphrase) >= 0) return true;
     for (var i = 0; i < st.qtokens.length; i++){
       if (fns.indexOf(st.qtokens[i]) >= 0) return true;
@@ -110,7 +122,7 @@
     var tokens = st.qtokens;
     if (!tokens.length) return 0;
     var title = (it.title || "").toLowerCase();
-    var fns = it.files && it.files.length ? fileNames(it) : "";
+    var fns = fileNames(it);
     var hit = 0, score = 0;
 
     for (var i = 0; i < tokens.length; i++){
@@ -311,38 +323,48 @@
     pumpFetch();
   }
 
-  var AUTO_EARLY = 4, AUTO_TOTAL = 6;
+  var AUTO_EARLY = 6, AUTO_TOTAL = 18;
+
+  function titleMiss(it){
+    var title = (it.title || "").toLowerCase();
+    var miss = 0;
+    for (var i = 0; i < st.qtokens.length; i++){
+      if (title.indexOf(st.qtokens[i]) < 0) miss++;
+    }
+    return miss;
+  }
 
   function autoExpand(total, urgent){
     if (!st.qtokens.length) return;
+    if (!autoFiles) return;
+    var pending = [];
     visible().forEach(function(it){
       var h = it.hash;
       if (st.userShut[h]) return;
-      if (it.files && it.files.length){
+      if (filesOf(it).length){
         if (fileHit(it)) st.open[h] = true;
         return;
       }
-      if (it.fetch && it.fetch.url){
-        if (st.filesCache[h]){
-          if (fileHit(it)) st.open[h] = true;
-          return;
-        }
-        if (st.filesLoading[h] || st.filesErr[h]) return;
-        if (st.autoTried[h]) return;
-        if (st.autoBudget < total){
-          st.autoBudget++;
-          st.autoTried[h] = true;
-          queueLoad(h, function(){
-            if (st.userShut[h] || st.open[h]) return;
-            var cur = itemByHash(h);
-            if (cur && fileHit(cur)){
-              st.open[h] = true;
-              renderPanels();
-            }
-          }, urgent);
-        }
-      }
+      if (!it.fetch || !it.fetch.url) return;
+      if (st.filesLoading[h] || st.filesErr[h] || st.autoTried[h]) return;
+      pending.push(it);
     });
+    pending.sort(function(a, b){ return titleMiss(b) - titleMiss(a); });
+    for (var i = 0; i < pending.length && st.autoBudget < total; i++){
+      (function(it){
+        var h = it.hash;
+        st.autoBudget++;
+        st.autoTried[h] = true;
+        queueLoad(h, function(){
+          if (st.userShut[h] || st.open[h]) return;
+          var cur = itemByHash(h);
+          if (cur && fileHit(cur)){
+            st.open[h] = true;
+            renderPanels();
+          }
+        }, urgent);
+      })(pending[i]);
+    }
     renderPanels();
   }
 
@@ -771,6 +793,7 @@
             '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
+          '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
           '<button class="iconbtn" id="btnRows" title="行高">' + ICONS.rows + '</button>' +
           '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
         '</div>' +
@@ -857,6 +880,9 @@
       if (e.key === "Enter") go();
     };
 
+    root.querySelector("#btnSrc").onclick = function(){
+      location.hash = "sources";
+    };
     root.querySelector("#btnCfg").onclick = function(){
       location.hash = "settings";
     };
@@ -1182,6 +1208,7 @@
 
     HC.api.getSettings().then(function(s){
       st.selbarOn = !s || s.selbar !== false;
+      autoFiles = !s || s.auto_files !== false;
       updateSelUI(true);
     });
 

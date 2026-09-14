@@ -351,8 +351,10 @@
       var prefix = st.filter
         ? "匹配 " + list.length + " / " + st.sources.length + " 个源"
         : "共 " + st.sources.length + " 个源";
+      var emptyN = store.emptyCount();
       statusEl.innerHTML = prefix + " · 已启用 " + store.enabledCount() + " 个" +
-        (badge ? ' · <a class="badlink" href="#">' + badge + " 个异常</a>" : "");
+        (badge ? ' · <a class="badlink" href="#">' + badge + " 个异常</a>" : "") +
+        (emptyN ? ' · <span class="muted">' + emptyN + " 个无结果</span>" : "");
     }
 
     root.querySelector("#batchInfo").textContent = "已选 " + st.checked.length + " 项";

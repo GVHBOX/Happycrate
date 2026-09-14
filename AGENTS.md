@@ -74,12 +74,12 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
 
 ### 颜色语义（界面一律按这个来）
 
-| 颜色 | 含义 | 对应的 state |
-|---|---|---|
-| 绿 | 正常 | `ok` |
-| 黄 | 提示、会自愈 | `warn`（慢 / 429 / 4xx / 时有时无）|
-| 灰 | 未知、不存在 | `empty` / `na` |
-| 红 | 故障、超时、被拒 | `err`（timeout / net / 403 / 5xx）|
+| 颜色  | 含义       | 对应的 state                        |
+| --- | -------- | -------------------------------- |
+| 绿   | 正常       | `ok`                             |
+| 黄   | 提示、会自愈   | `warn`（慢 / 429 / 4xx / 时有时无）     |
+| 灰   | 未知、不存在   | `empty` / `na`                   |
+| 红   | 故障、超时、被拒 | `err`（timeout / net / 403 / 5xx） |
 
 **返回 0 条永远不许标红。** 冷门关键字搜不到是正常结果，不是源坏了。
 
@@ -97,6 +97,23 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
 健康度不后台轮询，搜索和手动探测时顺带记录。连续 5 次真故障才自动排到最后，
 **不禁用，仍然会试**；`empty` 和 429 不参与降级。
 
+## 网络与代理
+
+程序走不走代理由 `app/sources.py :: _opener` 决定：设置里填了 `proxy` 就用它，
+没填则 `urlopen` 走 `urllib.request.getproxies()`（Windows 读系统/IE 代理，**PAC 脚本读不到**）。
+设置页「关于 → 网络出口」显示实际用的是「手动设置 x」/「跟随系统 x」/「未检测到代理」。
+
+**排查网络问题前先问用户，不要自己反复试。**
+
+连不上的原因跨好几层：目标站点、代理工具、TUN 还是系统代理、PAC、安全软件、地区封锁。
+这些只有用户知道，试探是试不出来的。正确顺序：
+
+1. 一次实测拿到错误原文（`Tunnel 502` / `451` / `timed out` 等）
+2. 把「网络出口显示什么 + 错误原文 + 浏览器里能不能开」一起告诉用户
+3. 等用户确认再动手
+
+禁止：串行/并发反复试探、反复重装 Runtime、把环境问题当成代码问题改代码。
+
 ## 提交纪律
 
 - `.ai/` 不进版本库，不需要 `git add`。
@@ -104,31 +121,38 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
   靠 `!happycrate.spec` 放行——别删那行。
 - `data/sources.json` 是核心资产，已纳入版本管理（`.gitignore` 用 `data/*` 排除整个目录、
   再用 `!data/sources.json` 放行它，别把这两行合并成 `data/`——那样例外不会生效）。
-  改动前先备份到 `.ai/backups/`。
 
 ## 构建与测试
 
 **改代码不用打包。** `app/` 和 `web/` 都是外置的（不编译进 exe）：
 
 - 改 `app/*.py` → 改 `dist/happycrate/_internal/app/` 里那份，重启生效
+
 - 改 `web/*` → 改 `dist/happycrate/_internal/web/` 里那份，刷新生效
+
 - 只有**新增或删除第三方依赖**才需要重新打包
 
 - 打包**必须用项目 .venv**：`./.venv/Scripts/python.exe -m PyInstaller happycrate.spec --noconfirm`。
   全局 python（3.14，无 pywebview）打出来是空壳：`import webview` 变成命名空间包，
   启动即 `no attribute 'create_window'`，且不报构建错误。
+
 - 程序从 `dist/happycrate/happycrate.exe` 运行，根目录不再放 exe 和 `_internal/`。
   别把它们同步回根目录——那样很容易留下过期的旧副本（体积一模一样，看不出来）。
+
 - `build/` 是打包中间产物，每次打包自动生成，可随时删。
+
 - 打包会删 `dist/happycrate/` 重建（166+ 文件），可能触发沙箱的批量删除阈值。
   真拦了就先手工 `rmSync('dist/happycrate')` 再跑打包。
+
 - 源码外置靠 `happycrate.spec` 里的 `a.pure` 过滤（`m[0] != "app" and not m[0].startswith("app.")`）。
   升级 PyInstaller 后若失效，表现是「改了代码重启不生效」—— 很好发现，重新确认这行即可。
 
 - mock 的 startSearch 按源逐个投放（约 2.3s），E2E/探针等搜索完成必须等
   `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
+
 - `.rows` 是列向 flex 容器，行高会被压缩塞满视口；行高调节（.roomy）靠
   `flex:none` 才能生效。
+
 - `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（520 行，CDP 协议驱动），
   能自动跑完搜索/框选/全选/弹窗/主题切换等 30+ 项。它每次运行会在 `.ai/tmp`
   生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.ai/tmp`**。

@@ -84,7 +84,7 @@
   var mockSettings = {
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
-    ui_font_size: 18, selbar: false, theme: "light"
+    ui_font_size: 18, selbar: false, theme: "light", auto_files: true
   };
 
   window.__onProbeDone = function(){
@@ -253,7 +253,8 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.22", dataDir:"(mock 模式)", mode:"mock"});
+      return Promise.resolve({version:"1.0.22", dataDir:"(mock 模式)", mode:"mock",
+                              proxy:"跟随系统 127.0.0.1:7890"});
     },
 
     onSearch: function(hooks){ sHooks = hooks || {}; },

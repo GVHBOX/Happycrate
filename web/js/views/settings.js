@@ -16,6 +16,7 @@
   var dlKey = "";
   var selbarOn = true;
   var themeOn = false;
+  var autoFilesOn = true;
 
   var STEP_BTN = {
     minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
@@ -94,6 +95,7 @@
     out.default_downloader = dlKey;
     out.selbar = selbarOn;
     out.theme = themeOn ? "dark" : "light";
+    out.auto_files = autoFilesOn;
     return out;
   }
 
@@ -118,6 +120,8 @@
             '<button type="button" class="sw" id="s_selbar" style="margin-top:8px"></button></div>' +
           '<div class="field"><label>暗夜主题</label>' +
             '<button type="button" class="sw" id="s_theme" style="margin-top:8px"></button></div>' +
+          '<div class="field"><label>文件命中时自动展开</label>' +
+            '<button type="button" class="sw" id="s_autofiles" style="margin-top:8px"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -154,6 +158,9 @@
         themeOn = settings.theme === "dark";
         var th = root.querySelector("#s_theme");
         if (th) th.classList.toggle("off", !themeOn);
+        autoFilesOn = settings.auto_files !== false;
+        var af = root.querySelector("#s_autofiles");
+        if (af) af.classList.toggle("off", !autoFilesOn);
 
         var lines = [
           ["版本", info.version],
@@ -161,6 +168,7 @@
           ["运行模式", info.mode],
           ["日志", info.logFile]
         ];
+        if (info.proxy) lines.push(["网络出口", info.proxy]);
         if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom]);
 
         root.querySelector("#about").innerHTML = lines.map(function(p){
@@ -191,6 +199,11 @@
       this.classList.toggle("off", !selbarOn);
     };
 
+    root.querySelector("#s_autofiles").onclick = function(){
+      autoFilesOn = !autoFilesOn;
+      this.classList.toggle("off", !autoFilesOn);
+    };
+
     root.querySelector("#s_theme").onclick = function(){
       themeOn = !themeOn;
       this.classList.toggle("off", !themeOn);
@@ -216,11 +229,12 @@
       HC.api.saveSettings({
         min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
         default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: false, theme: "light"
+        ui_font_size: 18, selbar: false, theme: "light", auto_files: true
       }).then(function(){
         dlKey = "";
         selbarOn = false;
         themeOn = false;
+        autoFilesOn = true;
         if (HC.applyTheme) HC.applyTheme("light");
         applyFont(18);
         mountEl.innerHTML = "";

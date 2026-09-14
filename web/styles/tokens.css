@@ -119,9 +119,9 @@
   --cw-check:calc(44px*var(--frc));
   --cw-health:calc(92px*var(--frc));
   --cw-ops:calc(76px*var(--frc));
-  --cw-idx:calc(56px*var(--frc));
-  --cw-size:calc(92px*var(--frc));
-  --cw-time:calc(104px*var(--frc));
+  --cw-idx:calc(40px*var(--frc));
+  --cw-size:calc(76px*var(--frc));
+  --cw-time:calc(88px*var(--frc));
   --cw-seed:calc(72px*var(--frc));
   --cw-src:calc(88px*var(--frc));
   --w-modal:calc(520px*var(--fr));

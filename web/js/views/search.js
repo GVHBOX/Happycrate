@@ -2,7 +2,6 @@
   var HC = window.HC || (window.HC = {});
   HC.views = HC.views || {};
 
-  var GRID = "var(--cw-idx) var(--cw-size) var(--cw-time) var(--cw-seed) minmax(0,1fr) var(--cw-src)";
   var SORTS = {size:"体积", added:"时间", seeders:"做种"};
 
   var ICONS = {
@@ -828,7 +827,7 @@
         '<div class="progress" id="prog"><div class="fill"></div></div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
         '<div class="div"></div>' +
-        '<div class="shead" id="shead" style="grid-template-columns:' + GRID + '">' + headHtml() + '</div>' +
+        '<div class="shead" id="shead">' + headHtml() + '</div>' +
         '<div class="rows" id="rows"></div>' +
       '</div>';
 

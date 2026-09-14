@@ -9,7 +9,7 @@
   --d-release:180ms;
   --d-state:200ms;
   --d-spring:340ms;
-  --d-ripple:620ms;
+  --d-ripple:460ms;
 }
 
 @keyframes cardIn{from{opacity:0; transform:translateY(18px) scale(.988)} to{opacity:1; transform:none}}

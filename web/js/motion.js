@@ -19,7 +19,7 @@
     dot.style.left = (e.clientX - r.left - d / 2) + "px";
     dot.style.top = (e.clientY - r.top - d / 2) + "px";
     b.appendChild(dot);
-    setTimeout(function(){ dot.remove(); }, 620);
+    setTimeout(function(){ dot.remove(); }, 480);
   });
 
   function toast(msg, kind){

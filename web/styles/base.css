@@ -735,6 +735,12 @@ input, textarea{
 .shead{height:var(--h-thead); background:var(--head)}
 .shead span{font:500 var(--fs-xs)/1 var(--font); color:var(--t3)}
 .shead .r{text-align:center}
+.shead .r:nth-child(5){text-align:left}
+
+@media (max-width:899px){
+  .shead,.srow{grid-template-columns:var(--cw-idx) var(--cw-size) var(--cw-seed) minmax(0,1fr) var(--cw-src)}
+  .shead span:nth-child(3),.srow .c-time{display:none}
+}
 .srow{
   height:calc(40px*var(--frs)); background:var(--panel); position:relative;
   border-bottom:1px solid var(--rowline);
@@ -757,7 +763,7 @@ input, textarea{
   position:relative;
   font:400 var(--fs-sm)/1.2 var(--font); color:var(--t1);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  text-align:center; padding-right:18px;
+  text-align:left; padding-right:18px;
 }
 .srow .c-title mark.hl{
   background:var(--brand-soft); color:var(--brand);

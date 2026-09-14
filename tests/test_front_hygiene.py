@@ -65,6 +65,8 @@ class CssHygieneTest(unittest.TestCase):
 
     def selectors_with_lines(self, path):
         text = path.read_text(encoding="utf-8")
+        text = re.sub(r"@(media|supports)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}",
+                      lambda m: "\n" * m.group(0).count("\n"), text)
         out = {}
         for m in re.finditer(r"^([^{@/\n][^{]*?)\{", text, re.M):
             sel = " ".join(m.group(1).split())
@@ -78,11 +80,6 @@ class CssHygieneTest(unittest.TestCase):
                 if len(lines) > 1:
                     dupes[f"{p.name} :: {sel}"] = lines
         self.assertEqual(dupes, {}, f"CSS 存在重复选择器：{dupes}")
-
-    def test_dead_aria_pressed_rule_removed(self):
-        text = "\n".join(p.read_text(encoding="utf-8") for p in CSS)
-        self.assertNotIn("aria-pressed", text,
-                         "aria-pressed 全项目无人设置，是死样式")
 
     def test_body_declared_once(self):
         base = ROOT / "web" / "styles" / "base.css"

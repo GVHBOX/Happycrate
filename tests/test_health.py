@@ -232,6 +232,72 @@ class DiagnosticsRootCauseTest(DataDirCase):
         self.assertIn("ms", text)
 
 
+class SourceIssuesTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def feed(self, key, marks):
+        for mark in marks:
+            if mark == "ok":
+                self.api._mark(key, True, 5, 100, "")
+            elif mark == "empty":
+                self.api._mark(key, True, 0, 100, "")
+            else:
+                self.api._mark(key, False, 0, 100, "HTTP 500")
+
+    def test_clean_sources_yield_no_issues(self):
+        self.feed("nyaa", ["ok", "ok"])
+        self.assertEqual(self.api.source_issues(), [])
+
+    def test_failing_source_is_reported_without_internals(self):
+        self.feed("bitsearch", ["err"] * 3)
+        row = [i for i in self.api.source_issues() if i["key"] == "bitsearch"][0]
+        self.assertEqual(row["kind"], "fail")
+        self.assertTrue(row["action"])
+        blob = json.dumps(row, ensure_ascii=False)
+        for leak in (".py", "app/", "http5xx", "outcome", "round"):
+            self.assertNotIn(leak, blob,
+                             f"给界面看的字段不该出现内部细节：{leak}")
+
+    def test_issue_rows_carry_label_and_addr(self):
+        self.feed("mikan", ["empty"] * 5)
+        row = [i for i in self.api.source_issues() if i["key"] == "mikan"][0]
+        self.assertEqual(row["label"], "蜜柑计划")
+        self.assertTrue(row["addr"].startswith("http"))
+
+    def test_empty_and_fail_are_distinguishable(self):
+        self.feed("eztv", ["empty"] * 5)
+        self.feed("dmhy", ["err"] * 3)
+        kinds = {i["key"]: i["kind"] for i in self.api.source_issues()}
+        self.assertEqual(kinds.get("eztv"), "empty")
+        self.assertEqual(kinds.get("dmhy"), "fail")
+
+    def test_peer_comparison_drives_advice(self):
+        for _ in range(5):
+            self.api._mark("nyaa", True, 0, 100, "", round_id="77")
+            self.api._mark("apibay", True, 4, 100, "", round_id="77")
+        row = [i for i in self.api.source_issues() if i["key"] == "nyaa"][0]
+        self.assertIn("其他源", row["action"],
+                      "同批有源出结果时，建议应指向本站收录或解析")
+
+    def test_lonely_empty_points_at_keyword(self):
+        for _ in range(5):
+            self.api._mark("nyaa", True, 0, 100, "", round_id="88")
+            self.api._mark("apibay", True, 0, 100, "", round_id="88")
+        row = [i for i in self.api.source_issues() if i["key"] == "nyaa"][0]
+        self.assertIn("冷门", row["action"],
+                      "同批都没结果时，不该让用户去怀疑源坏了")
+
+    def test_diagnostics_still_available_for_agent(self):
+        self.feed("bitsearch", ["err"] * 3)
+        text = self.api.diagnostics()
+        self.assertIn("app/sources.py :: _search_bitsearch", text,
+                      "面向 AI 的详细诊断必须保留")
+
+
 class OutcomeClassificationTest(unittest.TestCase):
 
     def check(self, ok, count, err, ms=0):

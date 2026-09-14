@@ -272,6 +272,23 @@
       return Promise.resolve(out.join("\n"));
     },
 
+    sourceIssues: function(){
+      if (live()) return window.pywebview.api.source_issues();
+      var list = seed().filter(function(s){
+        return s.health.state === "err" || s.health.empty;
+      });
+      return Promise.resolve(list.map(function(s){
+        return {
+          key: s.key, label: s.label, addr: s.addr,
+          kind: s.health.state === "err" ? "fail" : "empty",
+          reason: s.health.state === "err" ? (s.health.err || "请求失败") : "最近几次都没结果",
+          action: s.health.state === "err"
+            ? "站点暂时不可用，稍后重试；长期如此换个可用地址"
+            : "换个关键字试试；一直搜不到则需要更新适配"
+        };
+      }));
+    },
+
     selftest: function(){
       if (live()) return window.pywebview.api.selftest();
       return Promise.resolve({ok:true, missing:[]});

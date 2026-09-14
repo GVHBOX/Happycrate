@@ -93,7 +93,6 @@ class CssHygieneTest(unittest.TestCase):
     def test_state_class_does_not_clash_with_layout_class(self):
         base = ROOT / "web" / "styles" / "base.css"
         sels = self.selectors_with_lines(base)
-        bare = {s for s in sels if s and not s[0].isupper()}
         for state in ("empty", "ok", "warn", "err", "na"):
             with self.subTest(state=state):
                 owners = [s for s in sels if s == f".{state}"]
@@ -103,6 +102,17 @@ class CssHygieneTest(unittest.TestCase):
                     f"（健康度圆点曾被 .empty 的 padding 撑成椭圆）；"
                     f"布局样式请收窄作用域，例如 .rows > .{state}",
                 )
+
+    def test_issue_modal_has_no_internal_detail(self):
+        src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
+        start = src.find("function showBadModal()")
+        end = src.find("\n  }", start)
+        body = src[start:end]
+        self.assertNotIn('class="term"', body,
+                         "异常详情是给用户看的，不能直接把面向 AI 的诊断原文摊出来")
+        self.assertNotIn("adapterLocation", body,
+                         "代码路径不该出现在用户界面里")
+        self.assertIn("issue", body, "应改用结构化的问题列表")
 
     def test_health_dot_has_fixed_size(self):
         base = ROOT / "web" / "styles" / "base.css"

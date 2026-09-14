@@ -288,14 +288,28 @@
   }
 
   function showBadModal(){
-    api.diagnostics([]).then(function(text){
-      if (!text){ M.toast("没有异常源"); return; }
+    Promise.all([api.sourceIssues(), api.diagnostics([])]).then(function(res){
+      var issues = res[0] || [];
+      var detail = res[1] || "";
+      if (!issues.length && !detail){ M.toast("没有异常源"); return; }
+
+      var body = issues.map(function(it){
+        var tone = it.kind === "err" || it.kind === "fail" ? "err" : "empty";
+        return '<div class="issue"><span class="ib ' + tone + '"></span>' +
+          '<div class="ibody"><div class="ihead">' + esc(it.label) +
+            '<span class="iaddr">' + esc(it.addr) + '</span></div>' +
+          '<div class="iline">' + esc(it.reason) + '</div>' +
+          '<div class="iact">' + esc(it.action) + '</div></div></div>';
+      }).join("");
+
       var m = openModal(
         '<div class="dhead"><div class="tile">' + ICON.info + '</div>' +
         '<div class="dtitle">异常详情</div><div class="spacer"></div>' +
         '<button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
-        '<div class="mbody"><pre class="term">' + esc(text) + '</pre></div>' +
+        '<div class="mbody"><div class="issues">' +
+          (body || '<div class="iline">证书校验已临时放宽，没有其他异常</div>') +
+        '</div></div>' +
         '<div class="mfoot"><div class="spacer"></div>' +
           '<button class="btn btn-ghost" data-close>关闭</button>' +
           '<button class="btn btn-brand" id="mCopy">' + ICON.copy + '复制诊断信息</button></div>',
@@ -303,7 +317,7 @@
       );
       m.querySelector("#mCopy").onclick = function(){
         var btn = this;
-        M.copy(text).then(function(ok){
+        M.copy(detail).then(function(ok){
           if (ok) M.morph(btn, "已复制");
           else M.toast("复制失败", "err");
         });

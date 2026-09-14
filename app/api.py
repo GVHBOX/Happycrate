@@ -489,6 +489,8 @@ class Api:
         try:
             rows = sources.torrent_meta(url, timeout,
                                         referer=f"{host.scheme}://{host.netloc}/")
+        except sources.TooLarge:
+            return {"ok": False, "files": [], "error": "种子文件过大，已拒绝读取"}
         except Exception as exc:
             return {"ok": False, "files": [],
                     "error": f"{type(exc).__name__}: {exc}"[:180]}

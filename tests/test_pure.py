@@ -9,6 +9,22 @@ if str(ROOT) not in sys.path:
 from app import config, core, sources
 
 
+def bencode(obj) -> bytes:
+    if isinstance(obj, bool):
+        return b"i%de" % int(obj)
+    if isinstance(obj, int):
+        return b"i%de" % obj
+    if isinstance(obj, str):
+        obj = obj.encode()
+    if isinstance(obj, bytes):
+        return b"%d:%s" % (len(obj), obj)
+    if isinstance(obj, (list, tuple)):
+        return b"l" + b"".join(bencode(x) for x in obj) + b"e"
+    if isinstance(obj, dict):
+        return b"d" + b"".join(bencode(k) + bencode(v) for k, v in obj.items()) + b"e"
+    raise TypeError(obj)
+
+
 class ParseSizeTest(unittest.TestCase):
 
     def test_gigabyte(self):
@@ -221,6 +237,73 @@ class ImportFromTest(unittest.TestCase):
         self.assertIsNone(result)
 
 
+class TorrentDecodeTest(unittest.TestCase):
+
+    def test_single_file(self):
+        blob = bencode({"info": {"length": 1024, "name": "a.mp4"}})
+        self.assertEqual(sources.decode_torrent_files(blob),
+                         [{"n": "a.mp4", "b": 1024}])
+
+    def test_multi_file_paths_joined(self):
+        blob = bencode({"info": {"files": [
+            {"length": 1, "path": ["a", "b"]},
+            {"length": 2, "path": ["c"]},
+        ]}})
+        self.assertEqual(sources.decode_torrent_files(blob),
+                         [{"n": "a/b", "b": 1}, {"n": "c", "b": 2}])
+
+    def test_garbage_returns_empty(self):
+        self.assertEqual(sources.decode_torrent_files(b"not bencode at all"), [])
+        self.assertEqual(sources.decode_torrent_files(b""), [])
+
+    def test_missing_info_returns_empty(self):
+        self.assertEqual(sources.decode_torrent_files(bencode({"x": 1})), [])
+
+    def test_deep_nesting_rejected_without_recursion_error(self):
+        blob = b"d4:infod5:files" + b"l" * 4000 + b"e" * 4000 + b"ee"
+        self.assertEqual(sources.decode_torrent_files(blob), [])
+
+    def test_declared_length_beyond_buffer_rejected(self):
+        blob = b"d4:infod6:lengthi1e4:name999999:" + b"abce"
+        self.assertEqual(sources.decode_torrent_files(blob), [])
+
+    def test_negative_length_rejected(self):
+        blob = b"d4:infod6:lengthi1e4:namei-5e:abce" + b"e"
+        self.assertEqual(sources.decode_torrent_files(blob), [])
+
+
+class TorrentCapTest(unittest.TestCase):
+
+    def test_read_capped_rejects_oversize(self):
+        class Resp:
+            def __init__(self, blob):
+                self.blob = blob
+                self.pos = 0
+
+            def read(self, n=-1):
+                if n is None or n < 0:
+                    n = len(self.blob) - self.pos
+                chunk = self.blob[self.pos:self.pos + n]
+                self.pos += len(chunk)
+                return chunk
+
+        resp = Resp(b"x" * 1000)
+        self.assertEqual(len(sources._read_capped(resp, 5000)), 1000)
+        with self.assertRaises(sources.TooLarge):
+            sources._read_capped(Resp(b"x" * 1000), 100)
+
+    def test_read_capped_unlimited_passes_through(self):
+        class Resp:
+            def read(self, n=-1):
+                return b"y" * 10
+
+        self.assertEqual(sources._read_capped(Resp(), None), b"y" * 10)
+
+    def test_cap_is_sane(self):
+        self.assertLessEqual(sources.MAX_TORRENT_BYTES, 32 * 1024 * 1024,
+                             "上限太大就失去了意义")
+
+
 class SslLaxMemoryTest(unittest.TestCase):
 
     def setUp(self):
@@ -233,22 +316,36 @@ class SslLaxMemoryTest(unittest.TestCase):
         self.assertFalse(sources.ssl_known_lax("https://example.org/a/b"))
 
     def test_recorded_host_is_lax(self):
-        sources._LAX_HOSTS.add("example.org")
+        sources.ssl_mark_lax("https://example.org/a/b")
         self.assertTrue(sources.ssl_known_lax("https://example.org/a/b"))
         self.assertFalse(sources.ssl_known_lax("https://other.org/x"))
 
     def test_port_and_path_ignored(self):
-        sources._LAX_HOSTS.add("example.org")
+        sources.ssl_mark_lax("https://example.org/a/b")
         self.assertTrue(sources.ssl_known_lax("https://example.org:8443/x?y=1"))
 
     def test_lax_hosts_sorted(self):
-        sources._LAX_HOSTS.update(["b.org", "a.org"])
+        sources.ssl_mark_lax("https://b.org/")
+        sources.ssl_mark_lax("https://a.org/")
         self.assertEqual(sources.ssl_lax_hosts(), ["a.org", "b.org"])
 
     def test_reset_clears(self):
-        sources._LAX_HOSTS.add("example.org")
+        sources.ssl_mark_lax("https://example.org/")
         sources.reset_ssl_lax()
         self.assertEqual(sources.ssl_lax_hosts(), [])
+
+    def test_downgrade_expires(self):
+        sources.ssl_mark_lax("https://example.org/")
+        self.assertTrue(sources.ssl_known_lax("https://example.org/x"))
+        sources._LAX_HOSTS["example.org"] = 0.0
+        self.assertFalse(sources.ssl_known_lax("https://example.org/x"),
+                         "降级必须有有效期，不能整个进程生命周期永久记忆")
+        self.assertEqual(sources.ssl_lax_hosts(), [])
+
+    def test_lax_hosts_capped(self):
+        for i in range(sources._LAX_LIMIT + 10):
+            sources.ssl_mark_lax(f"https://h{i}.org/")
+        self.assertLessEqual(len(sources.ssl_lax_hosts()), sources._LAX_LIMIT)
 
 
 if __name__ == "__main__":

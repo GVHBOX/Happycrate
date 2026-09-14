@@ -34,16 +34,34 @@ _LAX = ssl.create_default_context()
 _LAX.check_hostname = False
 _LAX.verify_mode = ssl.CERT_NONE
 
-_LAX_HOSTS: set[str] = set()
+_LAX_TTL = 600.0
+_LAX_LIMIT = 32
+
+_LAX_HOSTS: dict[str, float] = {}
 
 def ssl_lax_hosts() -> list[str]:
+    _expire_lax()
     return sorted(_LAX_HOSTS)
 
 def ssl_known_lax(url: str) -> bool:
+    _expire_lax()
     return (urllib.parse.urlsplit(url).hostname or "") in _LAX_HOSTS
+
+def ssl_mark_lax(url: str) -> None:
+    host = urllib.parse.urlsplit(url).hostname or url
+    now = time.monotonic()
+    _LAX_HOSTS[host] = now + _LAX_TTL
+    if len(_LAX_HOSTS) > _LAX_LIMIT:
+        for stale in sorted(_LAX_HOSTS, key=_LAX_HOSTS.get)[:len(_LAX_HOSTS) - _LAX_LIMIT]:
+            _LAX_HOSTS.pop(stale, None)
 
 def reset_ssl_lax() -> None:
     _LAX_HOSTS.clear()
+
+def _expire_lax() -> None:
+    now = time.monotonic()
+    for host in [h for h, until in _LAX_HOSTS.items() if until <= now]:
+        _LAX_HOSTS.pop(host, None)
 
 _SIZE_RE = re.compile(r"(-?\d{1,12}(?:\.\d{1,4})?)\s*([KMGTP]?)i?[Bb](?![A-Za-z0-9])")
 _SIZE_SCAN_LIMIT = 200
@@ -160,12 +178,33 @@ def _looks_like_proxy_failure(exc: BaseException) -> bool:
             return True
     return False
 
+MAX_TORRENT_BYTES = 8 * 1024 * 1024
+
+class TooLarge(Exception):
+    pass
+
+def _read_capped(resp, limit: int | None) -> bytes:
+    if not limit:
+        return resp.read()
+    chunks = []
+    got = 0
+    while True:
+        chunk = resp.read(min(65536, limit - got + 1))
+        if not chunk:
+            break
+        got += len(chunk)
+        if got > limit:
+            raise TooLarge(f"响应超过 {limit} 字节上限")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
 def http_get(url: str, timeout: int = 15, referer: str = "",
              data: bytes | None = None,
              headers: dict | None = None,
              retries: int | None = None,
              batch: int | None = None,
-             binary: bool = False) -> str:
+             binary: bool = False,
+             limit: int | None = None) -> bytes | str:
     if retries is None:
         retries = _retries()
 
@@ -192,14 +231,17 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             opener = _opener(url, use_lax)
             if opener is not None:
                 with opener.open(req, timeout=timeout) as resp:
-                    raw = resp.read()
+                    raw = _read_capped(resp, limit)
             else:
                 kwargs = {"timeout": timeout}
                 if url.lower().startswith("https"):
                     kwargs["context"] = _LAX if use_lax else _STRICT
                 with urllib.request.urlopen(req, **kwargs) as resp:
-                    raw = resp.read()
+                    raw = _read_capped(resp, limit)
             return raw if binary else _decode(raw)
+
+        except TooLarge:
+            raise
 
         except urllib.error.HTTPError as exc:
             last_exc = exc
@@ -214,8 +256,9 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
         except ssl.SSLError as exc:
             last_exc = exc
             if not use_lax:
-                logger.warning("SSL 严格校验失败，降级到 lax：%s (%s)", url, exc)
-                _LAX_HOSTS.add(urllib.parse.urlsplit(url).hostname or url)
+                logger.warning("SSL 严格校验失败，临时降级 %ds：%s (%s)",
+                               int(_LAX_TTL), url, exc)
+                ssl_mark_lax(url)
                 use_lax = True
                 attempt -= 1
                 continue
@@ -690,21 +733,25 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
 
 _BTDIG_SIZE_RE = re.compile(r"([\d.]+)\s*(B|KB|MB|GB|TB)", re.I)
 
-def _bencode_dec(buf: bytes, i: int):
+_BENCODE_MAX_DEPTH = 32
+
+def _bencode_dec(buf: bytes, i: int, depth: int = 0):
+    if depth > _BENCODE_MAX_DEPTH:
+        raise ValueError("bencode 嵌套过深")
     c = buf[i:i+1]
     if c == b"d":
         i += 1
         out = {}
         while buf[i:i+1] != b"e":
-            k, i = _bencode_dec(buf, i)
-            v, i = _bencode_dec(buf, i)
+            k, i = _bencode_dec(buf, i, depth + 1)
+            v, i = _bencode_dec(buf, i, depth + 1)
             out[k] = v
         return out, i + 1
     if c == b"l":
         i += 1
         out = []
         while buf[i:i+1] != b"e":
-            v, i = _bencode_dec(buf, i)
+            v, i = _bencode_dec(buf, i, depth + 1)
             out.append(v)
         return out, i + 1
     if c == b"i":
@@ -712,12 +759,14 @@ def _bencode_dec(buf: bytes, i: int):
         return int(buf[i + 1:j]), j + 1
     j = buf.index(b":", i)
     n = int(buf[i:j])
+    if n < 0 or j + 1 + n > len(buf):
+        raise ValueError("bencode 字符串长度越界")
     return buf[j + 1:j + 1 + n], j + 1 + n
 
 def decode_torrent_files(data: bytes) -> list[dict]:
     try:
         d, _ = _bencode_dec(data, 0)
-    except (ValueError, IndexError, TypeError):
+    except (ValueError, IndexError, TypeError, RecursionError):
         return []
     info = d.get(b"info") if isinstance(d, dict) else None
     if not isinstance(info, dict):
@@ -738,13 +787,15 @@ def decode_torrent_files(data: bytes) -> list[dict]:
 
 def torrent_meta(url: str, timeout: int = 15, referer: str = "") -> list[dict]:
     if not url.lower().endswith(".torrent"):
-        page = http_get(url, timeout=timeout, referer=referer)
-        m = re.search(r'href="(//[^"]+\.torrent)"', page)
+        page = http_get(url, timeout=timeout, referer=referer,
+                        limit=MAX_TORRENT_BYTES, binary=True)
+        m = re.search(rb'href="(//[^"]+\.torrent)"', page)
         if not m:
             return []
-        link = m.group(1)
+        link = m.group(1).decode("latin-1")
         url = "https:" + link if link.startswith("//") else link
-    data = http_get(url, timeout=timeout, referer=referer, binary=True, retries=0)
+    data = http_get(url, timeout=timeout, referer=referer, binary=True,
+                    retries=0, limit=MAX_TORRENT_BYTES)
     return decode_torrent_files(data)
 
 _BTDIG_SIZE_MUL = {"B": 1, "KB": 1024, "MB": 1024 ** 2,

@@ -10,4 +10,10 @@ if /i "%~1"=="web" (
   start "" http://127.0.0.1:8123/index.html
   goto :eof
 )
-start "" "%~dp0happycrate.exe"
+if not exist "%~dp0dist\happycrate\happycrate.exe" (
+  echo 找不到 dist\happycrate\happycrate.exe
+  echo 请先打包：.venv\Scripts\python.exe -m PyInstaller happycrate.spec --noconfirm
+  pause
+  goto :eof
+)
+start "" "%~dp0dist\happycrate\happycrate.exe"

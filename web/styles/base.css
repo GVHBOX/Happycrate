@@ -752,23 +752,25 @@ input, textarea{
 .srow{
   height:calc(40px*var(--frs)); background:var(--panel); position:relative;
   border-bottom:1px solid var(--rowline);
-  transition:background var(--d-hover) var(--e), transform var(--d-push) var(--spring);
+  transition:background var(--d-hover) var(--e);
 }
 .srow.alt{background:var(--row-alt, #F7F8FA)}
-.srow:hover{background:var(--hover); transform:translateX(calc(10px*var(--frs)))}
-.srow:hover .c-size,.srow:hover .c-seed{transform:translateY(calc(-3px*var(--frs)))}
-.srow .c-size,.srow .c-seed{transition:transform var(--d-push) var(--spring)}
+.srow:hover{background:var(--hover)}
+.srow > span{transition:transform var(--d-push) var(--spring)}
+.srow:hover > span{transform:translateX(calc(10px*var(--frs)))}
+.srow:hover > .c-size,.srow:hover > .c-seed{
+  transform:translateX(calc(10px*var(--frs))) translateY(calc(-3px*var(--frs)));
+}
 .srow:active{background:var(--pressed)}
-.rows.mq-ing .srow{transform:none; transition:background var(--d-hover) var(--e)}
-.rows.mq-ing .srow .c-size,.rows.mq-ing .srow .c-seed{transform:none; transition:none}
+.rows.mq-ing .srow > span{transform:none; transition:none}
 .srow:last-child{border-bottom:0}
 .srow.sel{background:var(--brand-soft)}
 .srow.sel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
   background:var(--brand);animation:barSlide var(--d-state) var(--e-out) both}
 .srow .c-idx{font:500 var(--fs-xs)/1 var(--font-num); color:var(--t5); text-align:center}
 .srow .c-size{font:500 var(--fs-xs)/1 var(--font-num); color:var(--t2); text-align:center}
-.srow .c-time{font:400 var(--fs-xs)/1 var(--font-num); color:var(--t4); text-align:center}
-.srow .c-seed{font:500 var(--fs-xs)/1 var(--font-num); text-align:center; color:var(--t4)}
+.srow .c-time{font:400 var(--fs-xs)/1 var(--font-num); color:var(--t3); text-align:center}
+.srow .c-seed{font:500 var(--fs-xs)/1 var(--font-num); text-align:center; color:var(--t3)}
 .srow .c-seed.mid{color:var(--t2)}
 .srow .c-seed.hi{color:var(--ok)}
 .srow .c-title{
@@ -840,10 +842,10 @@ input, textarea{
 .hero-search svg{width:18px; height:18px; color:var(--t4); flex:none}
 .hero-search input{
   flex:1; min-width:0; border:0; outline:0; background:transparent;
-  font:400 16px/1 var(--font); color:var(--t1);
+  font:400 calc(16px*var(--fr))/1 var(--font); color:var(--t1);
 }
 .hero-search input::placeholder{color:var(--t5)}
-.hero-search .gobtn{height:calc(40px*var(--frs)); padding:0 22px; border-radius:var(--r-menu); font-size:14px}
+.hero-search .gobtn{height:calc(40px*var(--frs)); padding:0 22px; border-radius:var(--r-menu); font-size:calc(14px*var(--fr))}
 .hero-srcs{display:flex; align-items:center; gap:var(--sp-2); flex-wrap:wrap; justify-content:center}
 .srcdot{
   height:calc(24px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);

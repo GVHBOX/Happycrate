@@ -214,6 +214,9 @@ input, textarea{
   transition:background var(--d-hover) var(--e);
 }
 .row:hover{background:var(--hover)}
+.row > span{transition:transform var(--d-push) var(--spring)}
+.row:hover > span{transform:translateX(calc(10px*var(--frs)))}
+.row.dragging > span{transform:none; transition:none}
 .row:active{background:var(--pressed)}
 .row:last-child{border-bottom:0}
 .row.off .name,.row.off .addr{color:var(--t5)}
@@ -407,6 +410,7 @@ input, textarea{
   display:flex; flex-direction:column; gap:var(--sp-5);
 }
 .field label{display:block; font:500 var(--fc-md)/1 var(--font); color:var(--t1)}
+.field > .input,.field > .stepper,.field > .seg,.field > .sw{margin-top:var(--sp-3)}
 .input{
   width:100%; height:var(--h-ctrl);
   border-radius:var(--r-ctrl);
@@ -501,7 +505,7 @@ input, textarea{
   height:calc(32px*var(--frs)); border-radius:var(--r-tile);
   padding:0 10px;
   font:400 var(--fc-xs)/1 var(--font-mono);
-  margin:0;
+  margin:var(--sp-3) 0 0;
 }
 .idchip{
   display:inline-flex; align-items:center;
@@ -530,7 +534,7 @@ input, textarea{
 .toast.err svg{color:var(--inv-err)}
 
 .rows > .empty{
-  padding:44px var(--sp-6);
+  padding:calc(44px*var(--frs)) var(--sp-6);
   text-align:center;
   font:400 var(--fs-sm)/1.6 var(--font);
   color:var(--t5);
@@ -755,6 +759,7 @@ input, textarea{
   transition:background var(--d-hover) var(--e);
 }
 .srow.alt{background:var(--row-alt, #F7F8FA)}
+.srow.alt:hover{background:var(--hover-alt)}
 .srow:hover{background:var(--hover)}
 .srow > span{transition:transform var(--d-push) var(--spring)}
 .srow:hover > span{transform:translateX(calc(10px*var(--frs)))}
@@ -884,8 +889,6 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 }
 .stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}
 .stile.pending .sdot{animation:breathe 1.6s var(--e) infinite}
-.stile.busy{color:var(--brand); border-color:var(--brand-line); background:var(--brand-soft)}
-.stile.busy .sdot{background:var(--brand); animation:breathe 1s var(--e) infinite}
 .stile.ok .sdot{background:var(--ok)}
 .stile.ok b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.err{color:var(--err); border-color:var(--danger-line); background:var(--danger-soft)}

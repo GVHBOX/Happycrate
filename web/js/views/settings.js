@@ -37,10 +37,10 @@
       return '<div class="field"><label>' + esc(f.label) + '</label>' +
         '<input class="input' + (f.ph ? "" : " mono") + '" id="s_' + f.key +
         '" value="' + esc(v) + '" placeholder="' + esc(f.ph || "") +
-        '" style="margin-top:8px"></div>';
+        '"></div>';
     }
     return '<div class="field"><label>' + esc(f.label) + (f.unit ? "（" + f.unit + "）" : "") + '</label>' +
-      '<div class="stepper numfield" data-field="' + f.key + '" style="margin-top:8px">' +
+      '<div class="stepper numfield" data-field="' + f.key + '">' +
         '<button type="button" data-step="-1">' + STEP_BTN.minus + '</button>' +
         '<input class="val mono" id="s_' + f.key + '" inputmode="numeric" value="' + esc(v) + '">' +
         (f.unit ? '<span class="unit">' + f.unit + '</span>' : '') +
@@ -132,15 +132,15 @@
         '<div class="mbody">' +
           '<div class="mapgrid" id="fields"></div>' +
           '<div class="field"><label>默认下载工具</label>' +
-            '<div class="seg" id="s_dl" style="margin-top:8px"></div></div>' +
+            '<div class="seg" id="s_dl"></div></div>' +
           '<div class="field"><label>浮动选择条</label>' +
-            '<button type="button" class="sw" id="s_selbar" style="margin-top:8px"></button></div>' +
+            '<button type="button" class="sw" id="s_selbar"></button></div>' +
           '<div class="field"><label>暗夜主题</label>' +
-            '<button type="button" class="sw" id="s_theme" style="margin-top:8px"></button></div>' +
+            '<button type="button" class="sw" id="s_theme"></button></div>' +
           '<div class="field"><label>主题色</label>' +
-            '<div class="seg" id="s_brand" style="margin-top:8px"></div></div>' +
+            '<div class="seg" id="s_brand"></div></div>' +
           '<div class="field"><label>文件命中时自动展开</label>' +
-            '<button type="button" class="sw" id="s_autofiles" style="margin-top:8px"></button></div>' +
+            '<button type="button" class="sw" id="s_autofiles"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +

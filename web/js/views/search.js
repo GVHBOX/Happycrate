@@ -425,8 +425,12 @@
   }
 
   function skelHtml(){
+    var left = st.srcList.length - (st.done || 0);
+    var n = left > 0 ? Math.max(3, Math.min(8, left)) : 6;
     var sk = '<div class="skel"><div class="col"><i></i><i></i></div></div>';
-    return sk + sk + sk + sk + sk + sk;
+    var out = "";
+    for (var i = 0; i < n; i++) out += sk;
+    return out;
   }
 
   var EMPTY_IC = '<svg viewBox="0 0 34 34" fill="none">' +

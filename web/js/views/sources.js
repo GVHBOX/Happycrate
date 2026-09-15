@@ -122,13 +122,13 @@
         '<div class="div"></div>' +
         '<div class="mbody">' +
           '<div style="display:flex;align-items:center;gap:8px">' +
-            '<span style="font:500 13px/1 inherit">标识</span>' +
+            '<span style="font:500 var(--fs-md)/1 inherit">标识</span>' +
             '<span class="idchip">' + esc(newKey) + '</span></div>' +
           '<div class="field"><label>名称</label>' +
             '<input class="input" id="fLabel" value="' + esc(d.label) + '" placeholder="我的源"></div>' +
           (isBuiltin ? "" :
             '<div class="field"><label>类型</label>' +
-            '<div class="seg" id="fType" style="margin-top:8px">' +
+            '<div class="seg" id="fType">' +
               types.map(function(t){
                 return '<button data-t="' + t + '" class="' + (d.type === t ? "on" : "") + '">' + TYPE_LABEL[t] + '</button>';
               }).join("") +
@@ -151,7 +151,7 @@
           '<div class="field" id="wPatS"><label>体积正则</label>' +
             '<input class="input mono" id="fSizePat" value="' + esc(d.sizePattern) + '" placeholder="&gt;([\\d.]+\\s*[KMGT]i?B)\\s*&lt;"></div>' +
           '<div class="field"><label>超时（秒）</label>' +
-            '<div class="stepper" style="margin-top:8px">' +
+            '<div class="stepper">' +
               '<button data-step="-1">' + STEP_BTN.minus + '</button>' +
               '<span class="val" id="fTo">' + d.timeout + '</span>' +
               '<button data-step="1">' + STEP_BTN.plus + '</button>' +
@@ -237,7 +237,7 @@
           btn.classList.remove("busy");
           if (!r.ok){ showErr(m, (r.errors && r.errors[0]) || "测试失败"); return; }
           if (r.count === 0){
-            showErr(m, "返回 0 条 —— 关键词可能真无结果，也可能是站点结构或字段映射对不上");
+            showErr(m, "返回 0 条");
             return;
           }
           showErr(m, "", "测试通过 · 返回 " + r.count + " 条结果");

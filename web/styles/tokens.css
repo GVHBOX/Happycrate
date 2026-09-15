@@ -16,6 +16,7 @@
   --border:#E2E5EC;
   --line:var(--border);
   --hover:#F4F6FB;
+  --hover-alt:#E8EBF4;
   --pressed:#E9ECF4;
   --row-alt:#F7F8FA;
 
@@ -147,6 +148,7 @@ body.dark{
   --border:#34364A;
   --line:var(--divider);
   --hover:#232637;
+  --hover-alt:#2A2E42;
   --pressed:#2A2E42;
   --row-alt:#1E202A;
 

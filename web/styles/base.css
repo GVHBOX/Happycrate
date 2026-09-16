@@ -766,7 +766,7 @@ input, textarea{
 .srow > span{transition:transform var(--d-push) var(--spring)}
 .srow:hover > span{transform:translateX(calc(10px*var(--frs)))}
 .srow:hover > .c-idx,.srow:hover > .c-size,.srow:hover > .c-time,.srow:hover > .c-seed{
-  transform:translateX(calc(10px*var(--frs))) translateY(calc(-3px*var(--frs)));
+  transform:translateX(calc(14px*var(--frs)));
 }
 .srow:active{background:var(--pressed)}
 .rows.mq-ing .srow > span{transform:none; transition:none}

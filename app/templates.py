@@ -135,7 +135,11 @@ def _make_json(entry: dict):
 
         url = render_url(url_tpl, query, page)
         text = src.http_get(url, timeout=timeout, batch=batch)
-        data = json.loads(text)
+        try:
+            data = json.loads(text)
+        except (TypeError, ValueError):
+            logger.warning("自定义 JSON 源返回的不是 JSON：%s", str(text)[:120])
+            return []
 
         rows = _dig(data, list_path) if list_path else data
         if isinstance(rows, dict):

@@ -35,7 +35,14 @@ def should_check_single_instance() -> bool:
         return False
     return is_inner_process()
 
+_kernel32 = None
+
+
 def _get_kernel32():
+    global _kernel32
+    if _kernel32 is not None:
+        return _kernel32
+
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 
     CreateMutexW = kernel32.CreateMutexW
@@ -46,7 +53,8 @@ def _get_kernel32():
     CloseHandle.argtypes = [ctypes.c_void_p]
     CloseHandle.restype = ctypes.c_int
 
-    return CreateMutexW, CloseHandle
+    _kernel32 = (CreateMutexW, CloseHandle)
+    return _kernel32
 
 def acquire(name: str = MUTEX_NAME) -> bool:
     global _handle

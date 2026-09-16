@@ -155,17 +155,15 @@
         b.onclick = function(){
           input.value = clamp(parseInt(input.value, 10) + parseInt(b.dataset.step, 10) * step, min, max);
           sync();
-          input.dispatchEvent(new Event("input"));
+          input.dispatchEvent(new Event("input", {bubbles: true}));
         };
       });
       input.addEventListener("input", function(){
         sync();
-        onEdit();
       });
       input.addEventListener("change", function(){
         input.value = clamp(input.value, min, max);
         sync();
-        onEdit();
       });
       input.addEventListener("blur", function(){
         input.value = clamp(input.value, min, max);

@@ -241,16 +241,21 @@
             return;
           }
           showErr(m, "", "测试通过 · 返回 " + r.count + " 条结果");
+        }).catch(function(e){
+          btn.classList.remove("busy");
+          showErr(m, String(e && e.message ? e.message : e));
         });
       };
 
       m.querySelector("#mSave").onclick = function(){
         var entry = collect();
         api.saveSource(entry).then(function(r){
-          if (!r.ok){ showErr(m, r.errors[0]); return; }
+          if (!r.ok){ showErr(m, (r.errors && r.errors[0]) || "保存失败"); return; }
           closeModal();
           reload();
           M.toast("已保存 " + entry.label, "ok");
+        }).catch(function(e){
+          showErr(m, String(e && e.message ? e.message : e));
         });
       };
     });
@@ -318,6 +323,8 @@
           else M.toast("复制失败", "err");
         });
       };
+    }).catch(function(e){
+      M.toast(String(e && e.message ? e.message : e), "err");
     });
   }
 
@@ -481,13 +488,16 @@
         (api.mode() === "mock" ? "原型模式（mock 数据）" : "数据目录 " + info.dataDir);
       autoOrder = info.autoOrder !== false;
       paintAuto();
+    }).catch(function(e){
+      root.querySelector("#caption").textContent =
+        "版本信息读取失败 · " + String(e && e.message ? e.message : e);
     });
 
     api.selftest().then(function(r){
       if (!r.ok && r.missing && r.missing.length){
         M.toast("后端返回结构不匹配 · 缺少 " + r.missing.join("、"), "long");
       }
-    });
+    }).catch(function(){});
 
     root.querySelector("#search").addEventListener("input", function(){
       store.set({filter: this.value});
@@ -540,6 +550,7 @@
       var sw = e.target.closest("[data-sw]");
       if (sw){
         var key = sw.dataset.sw, s = store.byKey(key);
+        if (!s) return;
         s.enabled = !s.enabled;
         sw.classList.toggle("off", !s.enabled);
         sw.closest(".row").classList.toggle("off", !s.enabled);

@@ -573,7 +573,6 @@ class Api:
             if outcome in (OUTCOME_OK, OUTCOME_SLOW):
                 h["lastOk"] = int(time.time())
                 h["lastCount"] = int(count or 0)
-            h["lastCount"] = int(count or 0)
             h["err"] = outcome_text(outcome, code)
             h["state"] = _state_of(h["outcomes"], h.get("ms", 0))
             return dict(h)
@@ -759,7 +758,7 @@ class Api:
         key = entry.get("key", "")
         outcomes = [o for o in (h.get("outcomes") or []) if o and o != OUTCOME_CANCEL]
         events = list(h.get("events") or [])[-HEALTH_WINDOW:]
-        peers, hits = self._peer_stats(key, outcomes)
+        peers, hits = self._peer_stats(key)
         return {
             "key": key,
             "label": entry.get("label", key),
@@ -781,7 +780,7 @@ class Api:
             "adapter": sources.adapter_location(key, entry.get("type", "builtin")),
         }
 
-    def _peer_stats(self, key: str, outcomes: list[str]) -> tuple[int, int]:
+    def _peer_stats(self, key: str) -> tuple[int, int]:
         events = [e for e in ((self._health_store.get(key) or {}).get("events") or [])
                   if e.get("outcome") == OUTCOME_EMPTY and e.get("round")]
         if not events:

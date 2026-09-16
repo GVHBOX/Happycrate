@@ -76,7 +76,8 @@ SETTING_SPECS = {
 
 INTERNAL_SETTING_KEYS = frozenset({"migrated_from"})
 
-SETTING_LABELS = {    "min_query_len": "最短关键词",
+SETTING_LABELS = {
+    "min_query_len": "最短关键词",
     "max_workers": "并发数",
     "timeout": "投递/清单超时",
     "default_downloader": "默认下载工具",
@@ -260,6 +261,24 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
                     errs.append("字段映射至少要配一个标题字段")
 
     return errs
+
+def _incoming_problem(src: dict) -> str:
+    url = str(src.get("url") or "").strip()
+    if url and (not url.lower().startswith(("http://", "https://"))
+                or "{query}" not in url):
+        return "URL 模板必须以 http:// 或 https:// 开头并含 {query}"
+    for field, label in (("hash_pattern", "哈希"),
+                         ("title_pattern", "标题"),
+                         ("size_pattern", "体积")):
+        value = str(src.get(field) or "").strip()
+        if not value:
+            continue
+        try:
+            re.compile(value)
+        except re.error as exc:
+            return f"{label}正则无效：{exc}"
+    return ""
+
 
 class Config:
 
@@ -474,6 +493,10 @@ class Config:
                 continue
 
             if cur is not None:
+                bad = _incoming_problem(src)
+                if bad:
+                    skipped.append(f"{key} ({bad})")
+                    continue
                 for field, value in src.items():
                     if field in ("key", "health"):
                         continue

@@ -290,6 +290,38 @@ class ImportFromTest(unittest.TestCase):
                                    "timeout": 99999})
         self.assertIsNone(result)
 
+    def test_custom_bad_url_is_skipped(self):
+        keep = "https://example.org/?q={query}"
+        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
+                                 "url": keep, "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myrss", "url": "not-a-url"})
+        self.assertEqual(src["url"], keep, "坏 URL 不能盖掉已有配置")
+
+    def test_custom_url_without_query_placeholder_is_skipped(self):
+        keep = "https://example.org/?q={query}"
+        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
+                                 "url": keep, "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myrss", "url": "https://example.org/s"})
+        self.assertEqual(src["url"], keep)
+
+    def test_custom_bad_regex_is_skipped(self):
+        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
+                                 "url": "https://example.org/?q={query}",
+                                 "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myhtml", "hash_pattern": "([0-9"})
+        self.assertNotEqual(src.get("hash_pattern"), "([0-9",
+                            "坏正则不能写进配置")
+
+    def test_custom_good_fields_still_apply(self):
+        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
+                                 "url": "https://example.org/?q={query}",
+                                 "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myhtml",
+                                "url": "https://example.org/s?k={query}",
+                                "hash_pattern": "([0-9a-f]{40})"})
+        self.assertEqual(src["url"], "https://example.org/s?k={query}")
+        self.assertEqual(src["hash_pattern"], "([0-9a-f]{40})")
+
 
 class TorrentDecodeTest(unittest.TestCase):
 

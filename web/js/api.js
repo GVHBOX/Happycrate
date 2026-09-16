@@ -345,6 +345,9 @@
       var list = mockItems(query);
       var errs = mockErrors(query);
       var keys = seed().filter(function(s){ return s.enabled; }).map(function(s){ return s.key; });
+      if (!keys.length){
+        return Promise.resolve({ok:false, token:0, total:0, error:"没有启用的数据源"});
+      }
       var token = Date.now();
       mockToken = token;
       keys.forEach(function(key, i){

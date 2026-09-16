@@ -84,12 +84,15 @@
 
   var TONE = {light: "#FFFFFF", dark: "#131419"};
   var DIMMED = {light: "#A3A3AA", dark: "#6D6D70"};
+  var lastTone = "";
 
   function syncWindowTone(){
     var dark = document.body.classList.contains("dark");
     var dim = !!document.querySelector(".backdrop");
-    HC.api.setWindowTone(dim ? DIMMED[dark ? "dark" : "light"]
-                             : TONE[dark ? "dark" : "light"]);
+    var c = dim ? DIMMED[dark ? "dark" : "light"] : TONE[dark ? "dark" : "light"];
+    if (c === lastTone) return;
+    lastTone = c;
+    HC.api.setWindowTone(c);
   }
   HC.syncWindowTone = syncWindowTone;
 

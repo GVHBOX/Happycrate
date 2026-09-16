@@ -6,7 +6,6 @@ import sys
 import threading
 import time
 import webview
-import winreg
 from pathlib import Path
 
 from . import APP_TITLE, APP_TITLE_FULL, __version__, api, log, single, store
@@ -38,6 +37,7 @@ def index_url() -> str:
 def has_webview2() -> bool:
     if sys.platform != "win32":
         return True
+    import winreg
     subs = (
         "SOFTWARE\\Microsoft\\EdgeUpdate\\Clients\\" + WEBVIEW2_GUID,
         "SOFTWARE\\WOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\" + WEBVIEW2_GUID,

@@ -739,7 +739,7 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
         if not isinstance(row, dict):
             continue
         h = _text(row.get("infohash")).strip().lower()
-        if not _HASH_HEX_RE.match(h):
+        if not _HASH_HEX_RE.fullmatch(h):
             continue
         items.append(_mk(
             title=_text(row.get("title")),

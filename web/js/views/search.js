@@ -52,6 +52,7 @@
   var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
   var marquee = null;
   var justMarqueed = false;
+  var nohashSeq = 0;
 
   var esc = HC.esc;
 
@@ -642,6 +643,7 @@
     st.done = 0;
     st.total = 0;
     st.searched = false;
+    nohashSeq = 0;
     renderTip();
   }
 
@@ -877,7 +879,8 @@
         if (!st.busy || d.token !== st.token) return;
         var fresh = 0, touched = false;
         d.items.forEach(function(it){
-          var pos = it.hash ? indexOfHash(it.hash) : -1;
+          if (!it.hash) it.hash = "nohash-" + (++nohashSeq);
+          var pos = indexOfHash(it.hash);
           if (pos >= 0){
             st.items[pos] = it;
             touched = true;
@@ -1214,7 +1217,11 @@
       root.style.setProperty("--sbw", sbw + "px");
     }
     syncScrollbar();
-    if (window.ResizeObserver) new ResizeObserver(syncScrollbar).observe(rowsBox);
+    if (mount._ro) mount._ro.disconnect();
+    if (window.ResizeObserver){
+      mount._ro = new ResizeObserver(syncScrollbar);
+      mount._ro.observe(rowsBox);
+    }
 
     selbarEl = document.createElement("div");
     selbarEl.id = "selbar";

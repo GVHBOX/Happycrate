@@ -29,6 +29,7 @@ OUTCOME_429 = "http429"
 OUTCOME_5XX = "http5xx"
 OUTCOME_4XX = "http4xx"
 OUTCOME_CANCEL = "cancel"
+OUTCOME_PARSE = "parse"
 
 OUTCOME_STATE = {
     OUTCOME_OK: "ok",
@@ -41,6 +42,7 @@ OUTCOME_STATE = {
     OUTCOME_429: "warn",
     OUTCOME_4XX: "warn",
     OUTCOME_CANCEL: "na",
+    OUTCOME_PARSE: "warn",
 }
 
 OUTCOME_TEXT = {
@@ -54,6 +56,7 @@ OUTCOME_TEXT = {
     OUTCOME_5XX: "服务异常",
     OUTCOME_4XX: "请求被拒",
     OUTCOME_CANCEL: "",
+    OUTCOME_PARSE: "解析失败",
 }
 
 FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
@@ -61,6 +64,10 @@ FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
 
 _HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+)?\b([45]\d{2})\b")
 _HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+_PARSE_SIGNS = ("jsondecodeerror", "expecting value", "unexpected token",
+                "valueerror", "keyerror", "indexerror", "attributeerror",
+                "typeerror", "not subscriptable", "has no attribute",
+                "cannot unpack", "unsupported operand")
 
 
 def _addr_of(entry: dict) -> str:
@@ -146,6 +153,11 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
         return OUTCOME_5XX, code
     if "timed out" in low or "timeout" in low or "timeouterror" in low:
         return OUTCOME_TIMEOUT, 0
+
+    for sign in _PARSE_SIGNS:
+        if sign in low:
+            return OUTCOME_PARSE, 0
+
     return OUTCOME_NET, 0
 
 
@@ -169,7 +181,7 @@ def _state_of(outcomes: list[str], ms: int = 0) -> str:
         return "err"
     if last == OUTCOME_EMPTY:
         return "empty"
-    if last in (OUTCOME_SLOW, OUTCOME_429, OUTCOME_4XX):
+    if last in (OUTCOME_SLOW, OUTCOME_429, OUTCOME_4XX, OUTCOME_PARSE):
         return "warn"
     if last == OUTCOME_OK:
         if ms and ms >= SLOW_MS:

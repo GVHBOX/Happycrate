@@ -50,10 +50,15 @@ def dedupe(items: list[dict]) -> list[dict]:
 
         richer = it if _richness(it) > _richness(cur) else cur
         poorer = cur if richer is it else it
+        for key, value in poorer.items():
+            if key == "sources":
+                continue
+            if value and not cur.get(key):
+                cur[key] = value
         for key, value in richer.items():
             if key == "sources":
                 continue
-            if value or key not in poorer:
+            if value:
                 cur[key] = value
 
     return out

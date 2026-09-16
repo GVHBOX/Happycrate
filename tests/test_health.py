@@ -354,6 +354,30 @@ class OutcomeClassificationTest(unittest.TestCase):
     def test_cancelled_search_is_flagged(self):
         self.assertEqual(self.check(False, 0, "已停止"), ("cancel", 0))
 
+    def test_parse_failure_is_not_network(self):
+        msg = "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+        self.assertEqual(self.check(False, 0, msg), ("parse", 0),
+                         "源站改版是解析问题，报成网络故障会把用户引去查代理")
+        self.assertEqual(self.check(False, 0, "ValueError: 无法解析 RSS"),
+                         ("parse", 0))
+
+    def test_parse_outcome_is_warn_not_error(self):
+        self.assertEqual(api_mod.OUTCOME_STATE["parse"], "warn")
+        self.assertEqual(api_mod.outcome_text("parse", 0), "解析失败")
+        self.assertNotIn("parse", api_mod.FATAL_OUTCOMES,
+                         "解析失败不该参与自动降级，降级解决不了改版")
+
+    def test_network_failures_stay_network(self):
+        self.assertEqual(self.check(False, 0, "URLError: getaddrinfo failed"),
+                         ("net", 0))
+        self.assertEqual(
+            self.check(False, 0, "URLError: [WinError 10061] 目标计算机积极拒绝，无法连接。"),
+            ("net", 0))
+        self.assertEqual(
+            self.check(False, 0, "URLError: <urlopen error Tunnel connection failed: 502 Bad Gateway>"),
+            ("net", 0),
+            "代理层 502 必须仍是 net，不能被 parse 分支截胡")
+
 
 class OutcomeStateTest(unittest.TestCase):
 

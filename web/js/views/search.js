@@ -512,11 +512,15 @@
     var html = order.map(function(k){
       var ss = st.strip[k] || {state:"pending"};
       if (ss.state === "ok" || ss.state === "err" ||
-          ss.state === "empty" || ss.state === "cancel") done++;
+          ss.state === "empty" || ss.state === "cancel" ||
+          ss.state === "warn") done++;
       var label =
         ss.state === "ok" ? "<b>" + ss.count + "</b> 条" :
         ss.state === "empty" ? "无结果" :
         ss.state === "err" ? esc(ss.err || "失败") :
+        ss.state === "warn" ? (ss.count
+          ? "<b>" + ss.count + "</b> 条 · " + esc(ss.err || "慢")
+          : esc(ss.err || "提示")) :
         ss.state === "cancel" ? "已取消" : "等待";
       var name = st.names[k] || k;
       return '<span class="stile ' + ss.state + '"><i class="sdot"></i>' + esc(name) + ' · ' + label + '</span>';
@@ -856,6 +860,11 @@
           st.lines.push({text: name + "：无结果", bad: false});
           setChip(name + " 无结果", "");
           st.strip[d.key] = {state:"empty"};
+        } else if (ss === "warn"){
+          var why = d.err || "慢";
+          st.lines.push({text: name + "：" + why, bad: false});
+          setChip(name + " " + why, "warn");
+          st.strip[d.key] = {state:"warn", err:d.err, count:d.count};
         } else {
           st.lines.push({text: name + "：" + d.count + " 条", bad: false});
           setChip(name + " " + d.count + " 条", "busy");

@@ -192,6 +192,39 @@ class DedupeTest(unittest.TestCase):
         core.dedupe(items)
         self.assertEqual(items, snapshot)
 
+    def test_keeps_poorer_side_extra_fields(self):
+        rich = {"info_hash": "e" * 40, "title": "x" * 20, "size": 1024,
+                "seeders": 5, "added": 111, "source": "nyaa"}
+        poor = {"info_hash": "e" * 40, "title": "short", "source": "btdig",
+                "files": [{"n": "a.mp4", "s": "1 MB"}],
+                "fetch": {"url": "https://x/a.torrent"}}
+        for order in ([rich, poor], [poor, rich]):
+            out = core.dedupe([dict(i) for i in order])
+            self.assertEqual(len(out), 1)
+            self.assertEqual(out[0]["files"], [{"n": "a.mp4", "s": "1 MB"}])
+            self.assertEqual(out[0]["fetch"], {"url": "https://x/a.torrent"})
+            self.assertIn("nyaa", out[0]["sources"])
+            self.assertIn("btdig", out[0]["sources"])
+
+    def test_fills_empty_field_from_other_side(self):
+        dense = {"info_hash": "f" * 40, "title": "x" * 20, "seeders": 5,
+                 "added": 10, "size": 0, "source": "nyaa"}
+        sparse = {"info_hash": "f" * 40, "title": "y", "size": 2048,
+                  "source": "dmhy"}
+        out = core.dedupe([dense, sparse])
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0]["size"], 2048)
+
+    def test_richer_side_wins_on_conflict(self):
+        rich = {"info_hash": "1" * 40, "title": "长标题占位内容足够长", "size": 4096,
+                "seeders": 99, "added": 100, "source": "nyaa"}
+        poor = {"info_hash": "1" * 40, "title": "短", "size": 8,
+                "seeders": 1, "source": "dmhy"}
+        out = core.dedupe([poor, rich])
+        self.assertEqual(out[0]["size"], 4096)
+        self.assertEqual(out[0]["seeders"], 99)
+        self.assertEqual(out[0]["title"], "长标题占位内容足够长")
+
 
 class ImportFromTest(unittest.TestCase):
 

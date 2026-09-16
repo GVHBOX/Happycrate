@@ -41,6 +41,7 @@
 
   --ok-soft:#E8F7EE;
   --warn-soft:#FBF3DC;
+  --warn-line:#EFDFAE;
   --ok-strong:#166534;
   --warn-strong:#854D0E;
   --err-strong:var(--err);
@@ -169,6 +170,7 @@ body.dark{
 
   --ok-soft:rgba(22,163,74,.16);
   --warn-soft:rgba(202,138,4,.18);
+  --warn-line:rgba(202,138,4,.42);
   --ok-strong:#4ADE80;
   --warn-strong:#FCD34D;
   --err-strong:#F87171;

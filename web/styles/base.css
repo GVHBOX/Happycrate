@@ -895,6 +895,9 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .stile.ok b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.err{color:var(--err); border-color:var(--danger-line); background:var(--danger-soft)}
 .stile.err .sdot{background:var(--err)}
+.stile.warn{color:var(--warn-strong); border-color:var(--warn-line); background:var(--warn-soft)}
+.stile.warn .sdot{background:var(--warn)}
+.stile.warn b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.empty{color:var(--empty)}
 .stile.empty .sdot{background:var(--empty)}
 .stile.cancel{color:var(--t5)}

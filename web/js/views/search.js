@@ -44,7 +44,7 @@
     token: 0, done: 0, total: 0,
     errors: {}, names: {},
     enabledCount: 0, totalSources: 0,
-    lines: [], flash: false, flashT: null,
+    lines: [],
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null,
     open: {}, userShut: {},
@@ -164,7 +164,6 @@
   var popT = null;
 
   function paintBadge(still){
-    if (st.flash) return;
     var t = badgeHtml();
     if (badgeEl.innerHTML === t) return;
     badgeEl.className = "badge";
@@ -178,14 +177,7 @@
   }
 
   function flash(text, kind){
-    badgeEl.textContent = text;
-    badgeEl.className = "badge " + (kind || "");
-    st.flash = true;
-    clearTimeout(st.flashT);
-    st.flashT = setTimeout(function(){
-      st.flash = false;
-      paintBadge();
-    }, 2500);
+    HC.motion.toast(text, kind);
   }
 
   function setChip(text, kind){

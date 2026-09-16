@@ -515,9 +515,13 @@ input, textarea{
   font:500 var(--fs-xs)/1 var(--font-mono);
 }
 
+.toasts{
+  position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  z-index:var(--z-toast); pointer-events:none; max-width:560px;
+}
 .toast{
-  position:fixed; left:50%; bottom:30px;
-  transform:translate(-50%,12px) scale(.94);
+  transform:translateY(12px) scale(.94);
   background:var(--inv-bg); color:var(--inv-fg);
   font:400 var(--fs-sm)/1 var(--font);
   padding:11px var(--sp-5);
@@ -526,10 +530,8 @@ input, textarea{
   box-shadow:var(--sh-toast);
   opacity:0; pointer-events:none;
   transition:transform .38s var(--spring), opacity .2s var(--e);
-  z-index:var(--z-toast);
-  max-width:560px;
 }
-.toast.show{opacity:1; transform:translate(-50%,0) scale(1)}
+.toast.show{opacity:1; transform:none}
 .toast svg{color:var(--inv-ok)}
 .toast.err svg{color:var(--inv-err)}
 
@@ -763,7 +765,7 @@ input, textarea{
 .srow:hover{background:var(--hover)}
 .srow > span{transition:transform var(--d-push) var(--spring)}
 .srow:hover > span{transform:translateX(calc(10px*var(--frs)))}
-.srow:hover > .c-size,.srow:hover > .c-seed{
+.srow:hover > .c-idx,.srow:hover > .c-size,.srow:hover > .c-time,.srow:hover > .c-seed{
   transform:translateX(calc(10px*var(--frs))) translateY(calc(-3px*var(--frs)));
 }
 .srow:active{background:var(--pressed)}

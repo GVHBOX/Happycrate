@@ -434,82 +434,58 @@ class SslLaxMemoryTest(unittest.TestCase):
         self.assertLessEqual(len(sources.ssl_lax_hosts()), sources._LAX_LIMIT)
 
 
-class EztvSearchParseTest(unittest.TestCase):
+class EztvApiTest(unittest.TestCase):
 
-    SEARCH_HTML = """
-    <table>
-    <tr><td class="forum_thread_post">
-      <a href="/ep/2771457/one-championship-one-friday-fights-123-webrip-h264-tj-tjet/?d="
-         title="One Championship ONE Friday Fights 123 WEBRip h264-TJ [TJET] (1.80 GB)"
-         class="epinfo">One Championship ONE Friday Fights 123 WEBRip h264-TJ [TJET]</a>
-    </td></tr>
-    <tr><td class="forum_thread_post">
-      <a href="/ep/1814786/another-story-s01e08-the-crash-of-jal-flight-123-1080p-hevc-x265-megusta/"
-         title="x">Another Story S01E08 The Crash of JAL Flight 123 1080p HEVC x265-MeGusta [eztv]</a>
-    </td></tr>
-    <tr><td><a href="/ep/2771457/duplicate/?d=">dup</a></td></tr>
-    <tr><td><a href="/shows/1911/other-tv-shows/">not an episode link</a></td></tr>
-    </table>
-    """
+    def run_pages(self, payload):
+        import json
+        calls = []
 
-    DETAIL_HTML = """
-    <div><b>Torrent Hash:</b> 2743C8E23F20BA1AB716AD5FCF323AC851774B58</div>
-    <div><b>Filesize:</b> 1.80 GB</div>
-    <div>Seeds: 1<br>Peers: 2</div>
-    """
+        def fake_get(url, **kwargs):
+            page = int(str(url).rsplit("page=", 1)[-1])
+            calls.append(page)
+            return json.dumps(payload.get(page, {"torrents": []}))
 
-    def episodes(self, html):
-        found = []
-        seen = set()
-        for m in sources._EZT_EP_RE.finditer(html):
-            eid = m.group(2)
-            if eid in seen:
-                continue
-            seen.add(eid)
-            title = sources._unescape(sources._EZT_STRIP_RE.sub("", m.group(4))).strip()
-            title = sources.re.sub(r"\s+", " ", title)
-            if not title:
-                title = m.group(3).replace("-", " ").strip()
-            if not title:
-                continue
-            found.append((eid, m.group(3), title))
-        return found
+        from unittest import mock
+        with mock.patch.object(sources, "http_get", fake_get):
+            return sources._search_eztv("123", timeout=5), calls
 
-    def test_extracts_episode_rows(self):
-        rows = self.episodes(self.SEARCH_HTML)
-        self.assertEqual(len(rows), 2, "同一集的重复链接要合并，非 /ep/ 链接要排除")
-        self.assertEqual(rows[0][0], "2771457")
-        self.assertIn("123", rows[0][2])
+    def test_matches_title_keyword_only(self):
+        payload = {1: {"torrents": [
+            {"title": "Foo 123 Bar", "hash": "a" * 40, "seeds": 3, "peers": 1,
+             "size_bytes": "1024", "date_released_unix": 1700000000},
+            {"title": "Nothing relevant", "hash": "b" * 40},
+        ]}}
+        items, _calls = self.run_pages(payload)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["info_hash"], "a" * 40)
+        self.assertEqual(items[0]["title"], "Foo 123 Bar")
 
-    def test_dedups_by_episode_id(self):
-        ids = [r[0] for r in self.episodes(self.SEARCH_HTML)]
-        self.assertEqual(len(ids), len(set(ids)))
+    def test_stops_when_page_not_full(self):
+        payload = {1: {"torrents": [{"title": "123", "hash": "c" * 40}]}}
+        _items, calls = self.run_pages(payload)
+        self.assertEqual(calls, [1], "页没满就说明到底了，不该继续翻")
 
-    def test_slug_stops_at_query_marker(self):
-        rows = self.episodes(self.SEARCH_HTML)
-        self.assertNotIn("?", rows[0][1])
-        self.assertFalse(rows[0][1].startswith("dup"))
+    def test_dedups_by_hash_across_pages(self):
+        row = {"title": "123 dup", "hash": "d" * 40}
+        payload = {1: {"torrents": [row] * 100},
+                   2: {"torrents": [row] * 3}}
+        items, _calls = self.run_pages(payload)
+        self.assertEqual(len(items), 1)
 
-    def test_detail_extracts_hash_and_stats(self):
-        found = {}
-        for name, pattern in sources._EZT_DETAIL_PATTERNS.items():
-            m = pattern.search(self.DETAIL_HTML)
-            found[name] = m.group(1) if m else ""
-        self.assertEqual(found["hash"], "2743C8E23F20BA1AB716AD5FCF323AC851774B58")
-        self.assertEqual(found["size"], "1.80 GB")
-        self.assertEqual(found["seeds"], "1")
-        self.assertEqual(found["leech"], "2")
-
-    def test_detail_without_hash_yields_nothing(self):
-        found = {}
-        for name, pattern in sources._EZT_DETAIL_PATTERNS.items():
-            m = pattern.search("<div>没有信息</div>")
-            found[name] = m.group(1) if m else ""
-        self.assertEqual(found["hash"], "", "没有 hash 的条目必须被丢掉，否则做不出磁力")
+    def test_non_json_returns_empty_without_raising(self):
+        from unittest import mock
+        with mock.patch.object(sources, "http_get", lambda url, **kw: "<html>nope</html>"):
+            self.assertEqual(sources._search_eztv("123", timeout=5), [])
 
     def test_empty_query_short_circuits(self):
         self.assertEqual(sources._search_eztv("", timeout=1), [])
         self.assertEqual(sources._search_eztv("   ", timeout=1), [])
+
+    def test_page_constants_within_api_limits(self):
+        self.assertLessEqual(sources.EZTV_PAGE_SIZE, 100,
+                             "官方文档：limit 上限 100")
+        self.assertLessEqual(sources.EZTV_PAGES, 100,
+                             "官方文档：page 上限 100")
 
 
 if __name__ == "__main__":

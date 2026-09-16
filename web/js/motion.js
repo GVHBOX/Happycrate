@@ -21,6 +21,14 @@
     setTimeout(function(){ dot.remove(); }, 480);
   });
 
+  function dismissToast(el){
+    if (el.dataset.gone) return;
+    el.dataset.gone = "1";
+    clearTimeout(el._t);
+    el.classList.remove("show");
+    setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 300);
+  }
+
   function toast(msg, kind){
     var box = document.getElementById("toasts");
     if (!box){
@@ -36,10 +44,9 @@
     el.innerHTML = (kind === "ok" ? ICON_CHECK : kind === "err" ? ICON_CROSS : "") + "<span>" + esc(msg) + "</span>";
     box.appendChild(el);
     requestAnimationFrame(function(){ el.classList.add("show"); });
-    setTimeout(function(){
-      el.classList.remove("show");
-      setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 300);
-    }, kind === "long" ? 2600 : 1900);
+    el._t = setTimeout(function(){ dismissToast(el); }, kind === "long" ? 2600 : 1900);
+    var live = [].slice.call(box.children).filter(function(x){ return !x.dataset.gone; });
+    if (live.length > 3) dismissToast(live[0]);
   }
 
   var ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';

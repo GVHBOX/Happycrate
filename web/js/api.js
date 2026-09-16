@@ -107,6 +107,7 @@
     default_downloader: "", proxy: "", user_agent: "",
     ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true
   };
+  var mockDefaults = Object.assign({}, mockSettings);
 
   window.__onProbeDone = function(){
     if (probeDone) probeDone();
@@ -302,9 +303,15 @@
       return Promise.resolve({ok:true, missing:[]});
     },
 
+    defaultSettings: function(){
+      if (live()) return window.pywebview.api.default_settings();
+      return Promise.resolve(mockDefaults);
+    },
+
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
       return Promise.resolve({version:"1.0.23", dataDir:"(mock 模式)", mode:"mock",
+                              logFile:"(mock 模式)",
                               proxy:"跟随系统 127.0.0.1:7890"});
     },
 

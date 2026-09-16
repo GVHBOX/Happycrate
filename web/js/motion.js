@@ -57,6 +57,20 @@
       .filter(function(x){ return x.offsetParent !== null; });
   }
 
+  function confirm(question, okLabel, onOk){
+    var m = openModal(
+      '<div class="dhead"><div class="dtitle">' + esc(question) + '</div></div>' +
+      '<div class="div"></div>' +
+      '<div class="mfoot"><div class="spacer"></div>' +
+        '<button class="btn btn-ghost" data-close>取消</button>' +
+        '<button class="btn btn-danger" id="mOk">' + esc(okLabel) + '</button></div>'
+    );
+    m.querySelector("#mOk").onclick = function(){
+      closeModal();
+      onOk();
+    };
+  }
+
   function openModal(html, wide){
     closeModal();
     var bd = document.createElement("div");
@@ -206,6 +220,7 @@
     morph: morph,
     dragRows: dragRows,
     openModal: openModal,
-    closeModal: closeModal
+    closeModal: closeModal,
+    confirm: confirm
   };
 })();

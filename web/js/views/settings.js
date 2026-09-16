@@ -3,13 +3,13 @@
   HC.views = HC.views || {};
 
   var FIELDS = [
-    {key:"min_query_len", label:"最短关键词", min:1, max:20, step:1},
-    {key:"max_workers", label:"并发数", min:1, max:32, step:1},
-    {key:"timeout", label:"投递/清单超时", min:1, max:120, step:1, unit:"秒"},
-    {key:"retries", label:"重试次数", min:0, max:5, step:1},
-    {key:"proxy", label:"代理", ph:"http://127.0.0.1:7890"},
-    {key:"user_agent", label:"User-Agent", ph:"留空用内置"},
-    {key:"ui_font_size", label:"界面字号", min:12, max:24, step:1, unit:"px"}
+    {key:"min_query_len", label:"最短关键词", group:"检索", min:1, max:20, step:1},
+    {key:"max_workers", label:"并发数", group:"检索", min:1, max:32, step:1},
+    {key:"timeout", label:"投递/清单超时", group:"检索", min:1, max:120, step:1, unit:"秒"},
+    {key:"retries", label:"重试次数", group:"检索", min:0, max:5, step:1},
+    {key:"proxy", label:"代理", group:"网络", ph:"http://127.0.0.1:7890"},
+    {key:"user_agent", label:"User-Agent", group:"网络", ph:"留空用内置"},
+    {key:"ui_font_size", label:"界面字号", group:"外观", min:12, max:24, step:1, unit:"px"}
   ];
 
   var root = null;
@@ -33,40 +33,87 @@
   }
 
   function fieldHtml(f, v){
+    var id = "s_" + f.key;
     if (f.min === undefined){
-      return '<div class="field"><label>' + esc(f.label) + '</label>' +
-        '<input class="input' + (f.ph ? "" : " mono") + '" id="s_' + f.key +
+      return '<div class="field wide"><label for="' + id + '">' + esc(f.label) + '</label>' +
+        '<input class="input' + (f.ph ? "" : " mono") + '" id="' + id +
         '" value="' + esc(v) + '" placeholder="' + esc(f.ph || "") +
         '"></div>';
     }
-    return '<div class="field"><label>' + esc(f.label) + (f.unit ? "（" + f.unit + "）" : "") + '</label>' +
+    return '<div class="field"><label for="' + id + '">' + esc(f.label) + '</label>' +
       '<div class="stepper numfield" data-field="' + f.key + '">' +
         '<button type="button" data-step="-1">' + STEP_BTN.minus + '</button>' +
-        '<input class="val mono" id="s_' + f.key + '" inputmode="numeric" value="' + esc(v) + '">' +
+        '<input class="val mono" id="' + id + '" inputmode="numeric" value="' + esc(v) + '">' +
         (f.unit ? '<span class="unit">' + f.unit + '</span>' : '') +
         '<button type="button" data-step="1">' + STEP_BTN.plus + '</button>' +
       '</div></div>';
   }
 
+  function fieldsHtml(settings){
+    var order = [];
+    FIELDS.forEach(function(f){ if (order.indexOf(f.group) < 0) order.push(f.group); });
+    return order.map(function(g){
+      return '<div class="sgroup"><div class="sgroup-t">' + esc(g) + '</div>' +
+        '<div class="mapgrid">' +
+        FIELDS.filter(function(f){ return f.group === g; }).map(function(f){
+          return fieldHtml(f, settings[f.key]);
+        }).join("") + '</div></div>';
+    }).join("");
+  }
+
   function wireSteppers(){
     root.querySelectorAll(".numfield").forEach(function(box){
       var input = box.querySelector("input");
-      var min = 1, max = 100, step = 1;
+      var min = 1, max = 100, step = 1, key = box.dataset.field;
       FIELDS.forEach(function(f){
-        if (f.key === box.dataset.field){ min = f.min; max = f.max; step = f.step || 1; }
+        if (f.key === key){ min = f.min; max = f.max; step = f.step || 1; }
       });
-      box.querySelectorAll("[data-step]").forEach(function(b){
+      var btns = box.querySelectorAll("[data-step]");
+      function sync(){
+        var v = clamp(input.value, min, max);
+        btns[0].disabled = v - step < min;
+        btns[1].disabled = v + step > max;
+        return v;
+      }
+      btns.forEach(function(b){
         b.onclick = function(){
           input.value = clamp(parseInt(input.value, 10) + parseInt(b.dataset.step, 10) * step, min, max);
+          sync();
           input.dispatchEvent(new Event("input"));
         };
       });
+      input.addEventListener("input", function(){
+        var v = sync();
+        if (key === "ui_font_size") applyFont(v);
+        onEdit();
+      });
       input.addEventListener("change", function(){
         input.value = clamp(input.value, min, max);
+        sync();
+        onEdit();
       });
       input.addEventListener("blur", function(){
         input.value = clamp(input.value, min, max);
+        sync();
       });
+      sync();
+    });
+  }
+
+  function segHtml(opts, current, attr){
+    return opts.map(function(o){
+      var on = o.key === current;
+      return '<button type="button" data-' + attr + '="' + esc(o.key) +
+        '" class="' + (on ? "on" : "") + '" aria-pressed="' + (on ? "true" : "false") +
+        '">' + esc(o.label) + '</button>';
+    }).join("");
+  }
+
+  function syncSeg(box, attr, current){
+    [].slice.call(box.querySelectorAll("button")).forEach(function(x){
+      var on = x.dataset[attr] === current;
+      x.classList.toggle("on", on);
+      x.setAttribute("aria-pressed", String(on));
     });
   }
 
@@ -76,10 +123,7 @@
     var opts = [{key:"", label:"自动"}].concat((list || []).map(function(d){
       return {key:d.key, label:d.label};
     }));
-    box.innerHTML = opts.map(function(o){
-      return '<button data-dl="' + esc(o.key) + '" class="' +
-        (o.key === current ? "on" : "") + '">' + esc(o.label) + '</button>';
-    }).join("");
+    box.innerHTML = segHtml(opts, current, "dl");
   }
 
   var BRAND_OPTS = [
@@ -91,10 +135,7 @@
   function paintBrand(current){
     var box = root.querySelector("#s_brand");
     if (!box) return;
-    box.innerHTML = BRAND_OPTS.map(function(o){
-      return '<button type="button" data-brand="' + o.key + '" class="' +
-        (o.key === current ? "on" : "") + '">' + o.label + '</button>';
-    }).join("");
+    box.innerHTML = segHtml(BRAND_OPTS, current, "brand");
   }
 
   function readFields(){
@@ -118,6 +159,46 @@
 
   var applyFont = function(v){ if (HC.applyFont) HC.applyFont(v); };
 
+  var baseline = "";
+
+  function snapshot(){
+    return JSON.stringify(readFields());
+  }
+
+  function onEdit(){
+    var dirty = snapshot() !== baseline;
+    var st = root.querySelector("#st");
+    if (st){
+      st.textContent = dirty ? "未保存" : "";
+      st.className = "status" + (dirty ? " dirty" : "");
+    }
+    var sv = root.querySelector("#btnSave");
+    if (sv) sv.className = dirty ? "btn btn-brand" : "btn btn-ghost";
+  }
+
+  function setSw(sel, on){
+    var el = root.querySelector(sel);
+    if (!el) return;
+    el.classList.toggle("off", !on);
+    el.setAttribute("aria-pressed", String(on));
+  }
+
+  function markErrors(errors){
+    root.querySelectorAll(".input.err,.val.err").forEach(function(el){
+      el.classList.remove("err");
+    });
+    (errors || []).forEach(function(msg){
+      FIELDS.forEach(function(f){
+        if (msg.indexOf(f.label) === 0){
+          var el = root.querySelector("#s_" + f.key);
+          if (el) el.classList.add("err");
+        }
+      });
+    });
+    var first = root.querySelector(".input.err,.val.err");
+    if (first) first.focus();
+  }
+
   function mount(mountEl){
     root = document.createElement("div");
     root.className = "app settings";
@@ -130,17 +211,17 @@
               'stroke-width="1.5" stroke-linecap="round"/></svg></button></div>' +
         '<div class="div"></div>' +
         '<div class="mbody">' +
-          '<div class="mapgrid" id="fields"></div>' +
-          '<div class="field"><label>默认下载工具</label>' +
-            '<div class="seg" id="s_dl"></div></div>' +
-          '<div class="field"><label>浮动选择条</label>' +
-            '<button type="button" class="sw" id="s_selbar"></button></div>' +
-          '<div class="field"><label>暗夜主题</label>' +
-            '<button type="button" class="sw" id="s_theme"></button></div>' +
-          '<div class="field"><label>主题色</label>' +
-            '<div class="seg" id="s_brand"></div></div>' +
-          '<div class="field"><label>文件命中时自动展开</label>' +
-            '<button type="button" class="sw" id="s_autofiles"></button></div>' +
+          '<div id="fields"></div>' +
+          '<div class="field inline"><span class="lbl" id="lb_dl">默认下载工具</span>' +
+            '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl"></div></div>' +
+          '<div class="field inline"><label for="s_selbar">浮动选择条</label>' +
+            '<button type="button" class="sw" id="s_selbar" role="switch"></button></div>' +
+          '<div class="field inline"><label for="s_theme">暗夜主题</label>' +
+            '<button type="button" class="sw" id="s_theme" role="switch"></button></div>' +
+          '<div class="field inline"><span class="lbl" id="lb_brand">主题色</span>' +
+            '<div class="seg" id="s_brand" role="group" aria-labelledby="lb_brand"></div></div>' +
+          '<div class="field inline"><label for="s_autofiles">文件命中时自动展开</label>' +
+            '<button type="button" class="sw" id="s_autofiles" role="switch"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -157,46 +238,47 @@
 
     mountEl.appendChild(root);
 
+    function fill(settings, list){
+      root.querySelector("#fields").innerHTML = fieldsHtml(settings);
+      wireSteppers();
+      applyFont(settings.ui_font_size);
+
+      dlKey = settings.default_downloader || "";
+      paintDl(list, dlKey);
+      selbarOn = settings.selbar !== false;
+      setSw("#s_selbar", selbarOn);
+      themeOn = settings.theme === "dark";
+      setSw("#s_theme", themeOn);
+      autoFilesOn = settings.auto_files !== false;
+      setSw("#s_autofiles", autoFilesOn);
+      brandKey = settings.brand || "";
+      paintBrand(brandKey);
+      if (HC.applyTheme) HC.applyTheme(settings.theme || "light");
+      if (HC.applyBrand) HC.applyBrand(brandKey);
+      baseline = snapshot();
+      onEdit();
+    }
+
+    root.addEventListener("input", onEdit);
+
     Promise.all([HC.api.getSettings(), HC.api.downloaders(), HC.api.appInfo()])
       .then(function(res){
-        var settings = res[0] || {};
-        var list = res[1] || [];
+        fill(res[0] || {}, res[1] || []);
         var info = res[2] || {};
 
-        root.querySelector("#fields").innerHTML = FIELDS.map(function(f){
-          return fieldHtml(f, settings[f.key]);
-        }).join("");
-        wireSteppers();
-        applyFont(settings.ui_font_size);
-
-        dlKey = settings.default_downloader || "";
-        paintDl(list, dlKey);
-        selbarOn = settings.selbar !== false;
-        var sb = root.querySelector("#s_selbar");
-        if (sb){ sb.classList.toggle("off", !selbarOn); sb.setAttribute("aria-pressed", String(selbarOn)); }
-        themeOn = settings.theme === "dark";
-        var th = root.querySelector("#s_theme");
-        if (th){ th.classList.toggle("off", !themeOn); th.setAttribute("aria-pressed", String(themeOn)); }
-        autoFilesOn = settings.auto_files !== false;
-        var af = root.querySelector("#s_autofiles");
-        if (af){ af.classList.toggle("off", !autoFilesOn); af.setAttribute("aria-pressed", String(autoFilesOn)); }
-
-        brandKey = settings.brand || "";
-        paintBrand(brandKey);
-
         var lines = [
-          ["版本", info.version],
-          ["数据目录", info.dataDir],
-          ["运行模式", info.mode],
-          ["日志", info.logFile]
+          ["版本", info.version, false],
+          ["数据目录", info.dataDir, true],
+          ["运行模式", info.mode, false],
+          ["日志", info.logFile, true]
         ];
-        if (info.proxy) lines.push(["网络出口", info.proxy]);
-        if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom]);
+        if (info.proxy) lines.push(["网络出口", info.proxy, true]);
+        if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom, true]);
 
         root.querySelector("#about").innerHTML = lines.map(function(p){
-          return '<div style="display:flex;gap:12px;padding:5px 0">' +
-            '<span style="width:72px;flex:none;color:var(--t3)">' + esc(p[0]) + '</span>' +
-            '<span class="mono" style="flex:1;word-break:break-all">' + esc(p[1]) + '</span>' +
+          return '<div class="kv"><span class="k">' + esc(p[0]) + '</span>' +
+            '<span class="v mono">' + esc(p[1] || "") + '</span>' +
+            (p[2] ? '<button type="button" class="cp" data-cp="' + esc(p[1] || "") + '">复制</button>' : '') +
             '</div>';
         }).join("");
       })
@@ -210,77 +292,94 @@
       var b = e.target.closest("[data-dl]");
       if (!b) return;
       dlKey = b.dataset.dl;
-      var cur = root.querySelector("#s_dl");
-      [].slice.call(cur.querySelectorAll("button")).forEach(function(x){
-        x.classList.toggle("on", x.dataset.dl === dlKey);
-      });
+      syncSeg(root.querySelector("#s_dl"), "dl", dlKey);
+      onEdit();
     });
 
     root.querySelector("#s_brand").addEventListener("click", function(e){
       var b = e.target.closest("[data-brand]");
       if (!b) return;
       brandKey = b.dataset.brand;
-      paintBrand(brandKey);
+      syncSeg(root.querySelector("#s_brand"), "brand", brandKey);
       if (HC.applyBrand) HC.applyBrand(brandKey);
+      onEdit();
+    });
+
+    root.querySelector("#about").addEventListener("click", function(e){
+      var b = e.target.closest("[data-cp]");
+      if (!b) return;
+      HC.motion.copy(b.dataset.cp).then(function(ok){
+        HC.motion.toast(ok ? "已复制" : "复制失败", ok ? "ok" : "err");
+      });
     });
 
     root.querySelector("#s_selbar").onclick = function(){
       selbarOn = !selbarOn;
-      this.classList.toggle("off", !selbarOn);
-      this.setAttribute("aria-pressed", String(selbarOn));
+      setSw("#s_selbar", selbarOn);
+      onEdit();
     };
 
     root.querySelector("#s_autofiles").onclick = function(){
       autoFilesOn = !autoFilesOn;
-      this.classList.toggle("off", !autoFilesOn);
-      this.setAttribute("aria-pressed", String(autoFilesOn));
+      setSw("#s_autofiles", autoFilesOn);
+      onEdit();
     };
 
     root.querySelector("#s_theme").onclick = function(){
       themeOn = !themeOn;
-      this.classList.toggle("off", !themeOn);
-      this.setAttribute("aria-pressed", String(themeOn));
+      setSw("#s_theme", themeOn);
       if (HC.applyTheme) HC.applyTheme(themeOn ? "dark" : "light");
+      onEdit();
     };
 
     root.querySelector("#btnSave").onclick = function(){
-      var st = root.querySelector("#st");
+      var btn = this;
+      btn.disabled = true;
       HC.api.saveSettings(readFields()).then(function(r){
+        btn.disabled = false;
         if (r && r.ok){
-          st.textContent = "已保存";
-          applyFont(root.querySelector("#s_ui_font_size").value);
-          HC.motion.toast("设置已保存");
+          baseline = snapshot();
+          onEdit();
+          HC.motion.toast("设置已保存", "ok");
         } else {
-          var first = ((r && r.errors) || [])[0] || "有设置项不合法";
-          st.textContent = first;
-          HC.motion.toast(first, "err");
+          var errors = (r && r.errors) || [];
+          markErrors(errors);
+          HC.motion.toast(errors[0] || "有设置项不合法", "err");
         }
+      }).catch(function(e){
+        btn.disabled = false;
+        HC.motion.toast(String(e && e.message ? e.message : e), "err");
       });
     };
 
     root.querySelector("#btnReset").onclick = function(){
-      HC.api.saveSettings({
-        min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
-        default_downloader: "", proxy: "", user_agent: "",
-        ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true
-      }).then(function(){
-        dlKey = "";
-        selbarOn = false;
-        themeOn = false;
-        autoFilesOn = true;
-        brandKey = "";
-        if (HC.applyTheme) HC.applyTheme("light");
-        if (HC.applyBrand) HC.applyBrand("");
-        applyFont(18);
-        mountEl.innerHTML = "";
-        mount(mountEl);
-        HC.motion.toast("已恢复默认设置");
+      HC.motion.confirm("恢复默认设置", "恢复默认", function(){
+        HC.api.defaultSettings().then(function(d){
+          return HC.api.saveSettings(d);
+        }).then(function(){
+          return Promise.all([HC.api.getSettings(), HC.api.downloaders()]);
+        }).then(function(res){
+          fill(res[0] || {}, res[1] || []);
+          HC.motion.toast("已恢复默认设置", "ok");
+        }).catch(function(e){
+          HC.motion.toast(String(e && e.message ? e.message : e), "err");
+        });
       });
     };
 
-    root.querySelector("#btnClose").onclick = function(){
+    function leave(){
       location.hash = "search";
-    };
+    }
+
+    function tryClose(){
+      if (snapshot() !== baseline){
+        HC.motion.confirm("有未保存的改动", "放弃并关闭", leave);
+        return;
+      }
+      leave();
+    }
+
+    root.querySelector("#btnClose").onclick = tryClose;
 
     if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
     mount._docKey = function(e){
@@ -289,7 +388,7 @@
       if (document.querySelector(".backdrop")) return;
       var tag = (e.target && e.target.tagName) || "";
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      location.hash = "search";
+      tryClose();
     };
     document.addEventListener("keydown", mount._docKey);
 

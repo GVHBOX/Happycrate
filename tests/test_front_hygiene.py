@@ -285,8 +285,11 @@ class A11yTest(unittest.TestCase):
         self.assertRegex(body, r'class="sw [\s\S]{0,120}aria-pressed=',
                          "源启停开关缺状态语义")
         settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertRegex(settings, r'function setSw\([\s\S]{0,260}aria-pressed',
+                         "setSw 必须同步 aria-pressed")
         for sid in ("s_selbar", "s_theme", "s_autofiles"):
-            self.assertRegex(settings, r'#' + sid + r'"\)\.onclick[\s\S]{0,220}aria-pressed',
+            self.assertRegex(settings,
+                             r'#' + sid + r'"\)\.onclick[\s\S]{0,220}(setSw\(|aria-pressed)',
                              f"设置页开关 {sid} 的点击处理必须同步 aria-pressed")
 
 

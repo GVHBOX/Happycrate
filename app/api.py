@@ -835,6 +835,9 @@ class Api:
         data = self._settings.data or {}
         return {k: data.get(k) for k in config.SETTING_SPECS if k in data}
 
+    def default_settings(self) -> dict:
+        return {k: config.DEFAULT_SETTINGS.get(k) for k in config.SETTING_SPECS}
+
     def save_settings(self, fields: dict) -> dict:
         proxy = str((fields or {}).get("proxy") or "").strip()
         if proxy and not proxy.lower().startswith(("http://", "https://")):

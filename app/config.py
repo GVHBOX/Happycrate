@@ -67,7 +67,7 @@ SETTING_SPECS = {
     "retries": {"type": int, "min": 0, "max": 5},
     "user_agent": {"type": str},
     "proxy": {"type": str},
-    "ui_font_size": {"type": int, "min": 12, "max": 24},
+    "ui_font_size": {"type": int, "min": 12, "max": 24, "choices": [14, 18, 22]},
     "selbar": {"type": bool},
     "theme": {"type": str},
     "brand": {"type": str},
@@ -546,6 +546,8 @@ class Settings:
                 return None
             if "max" in spec and v > spec["max"]:
                 return None
+            if "choices" in spec:
+                v = min(spec["choices"], key=lambda c: (abs(c - v), -c))
         return v
 
     def save(self) -> bool:

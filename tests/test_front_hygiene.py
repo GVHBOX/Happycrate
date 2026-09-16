@@ -65,7 +65,7 @@ class CssHygieneTest(unittest.TestCase):
 
     def selectors_with_lines(self, path):
         text = path.read_text(encoding="utf-8")
-        text = re.sub(r"@(media|supports)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}",
+        text = re.sub(r"@(media|supports|container)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}",
                       lambda m: "\n" * m.group(0).count("\n"), text)
         out = {}
         for m in re.finditer(r"^([^{@/\n][^{]*?)\{", text, re.M):

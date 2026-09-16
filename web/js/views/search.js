@@ -25,9 +25,6 @@
     arw: '<svg class="arw" width="9" height="9" viewBox="0 0 10 10" fill="none">' +
       '<path d="M5 8V2M2.4 4.6L5 2l2.6 2.6" stroke="currentColor" stroke-width="1.4" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    rows: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
-      '<path d="M4 2.5v9M4 2.5L2.2 4.3M4 2.5l1.8 1.8M10 11.5v-9M10 11.5l-1.8-1.8M10 11.5l1.8-1.8" ' +
-      'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     srclist: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none">' +
       '<path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" ' +
       'stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/>' +
@@ -49,10 +46,8 @@
     query: "", qtokens: [], qphrase: "", hlRe: null,
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
-    roomy: false, selbarOn: false
+    selbarOn: false
   };
-
-  try { st.roomy = localStorage.getItem("hc-roomy") === "1"; } catch (e) {}
 
   var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
   var marquee = null;
@@ -822,7 +817,6 @@
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
           '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
-          '<button class="iconbtn" id="btnRows" title="行高">' + ICONS.rows + '</button>' +
           '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
         '</div>' +
         '<div class="progress" id="prog"><div class="fill"></div></div>' +
@@ -844,8 +838,6 @@
     progEl = root.querySelector("#prog");
     stripEl = root.querySelector("#srcstrip");
     badgeEl.innerHTML = badgeHtml();
-    root.classList.toggle("roomy", st.roomy);
-    root.querySelector("#btnRows").classList.toggle("on", st.roomy);
 
     refreshSources();
 
@@ -915,12 +907,6 @@
     };
     root.querySelector("#btnCfg").onclick = function(){
       location.hash = "settings";
-    };
-    root.querySelector("#btnRows").onclick = function(){
-      st.roomy = !st.roomy;
-      try { localStorage.setItem("hc-roomy", st.roomy ? "1" : "0"); } catch (e) {}
-      root.classList.toggle("roomy", st.roomy);
-      this.classList.toggle("on", st.roomy);
     };
     chipEl.onclick = function(){
       location.hash = "sources";

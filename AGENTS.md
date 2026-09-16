@@ -190,9 +190,6 @@ app/   Python 后端。api.py 是给 JS 的唯一门面
 - mock 的 startSearch 按源逐个投放（约 2.3s），E2E/探针等搜索完成必须等
   `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
 
-- `.rows` 是列向 flex 容器，行高会被压缩塞满视口；行高调节（.roomy）靠
-  `flex:none` 才能生效。
-
 - `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（520 行，CDP 协议驱动），
   能自动跑完搜索/框选/全选/弹窗/主题切换等 30+ 项。它每次运行会在 `.ai/tmp`
   生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.ai/tmp`**。

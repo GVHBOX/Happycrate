@@ -9,7 +9,8 @@
     {key:"retries", label:"重试次数", group:"检索", min:0, max:5, step:1},
     {key:"proxy", label:"代理", group:"网络", ph:"http://127.0.0.1:7890"},
     {key:"user_agent", label:"User-Agent", group:"网络", ph:"留空用内置"},
-    {key:"ui_font_size", label:"界面字号", group:"外观", min:12, max:24, step:1, unit:"px"}
+    {key:"ui_font_size", label:"界面字号", group:"外观",
+      seg:[{key:"14", label:"小"}, {key:"18", label:"标准"}, {key:"22", label:"大"}]}
   ];
 
   var root = null;
@@ -26,6 +27,71 @@
 
   var esc = HC.esc;
 
+  var netEl = null;
+  var netBusy = false;
+
+  function netState(data){
+    if (!data) return {busy:true, dot:"busy", note:"检测中", muted:true};
+    if (data.mode === "manual"){
+      return data.portOk
+        ? {dot:"ok", title:"手动设置", addr:data.addr || ""}
+        : {dot:"err", title:"手动设置", addr:data.addr || "", note:"代理端口无响应"};
+    }
+    if (data.mode === "system"){
+      if (!data.systemOn){
+        return {dot:"err", title:"跟随系统", addr:data.addr || "",
+                note:"系统代理已关闭", off:true};
+      }
+      return data.portOk
+        ? {dot:"ok", title:"跟随系统", addr:data.addr || ""}
+        : {dot:"err", title:"跟随系统", addr:data.addr || "", note:"代理端口无响应"};
+    }
+    return {dot:"", note:"未检测到代理", muted:true};
+  }
+
+  function netPaint(data){
+    if (!netEl) return;
+    var s = netState(data);
+    netEl.hidden = false;
+    netEl.querySelector(".netdot").className = "netdot" + (s.dot ? " " + s.dot : "");
+    netEl.querySelector(".nettitle").textContent = s.title || "";
+    var addr = netEl.querySelector(".netaddr");
+    addr.textContent = s.addr || "";
+    addr.className = "netaddr" + (s.off ? " off" : "");
+    var note = netEl.querySelector(".netnote");
+    note.textContent = s.note || "";
+    note.className = "netnote" + (s.muted ? " muted" : "");
+    netEl.querySelector("#btnNetRecheck").disabled = !!s.busy;
+  }
+
+  function netCheck(){
+    if (!netEl) return;
+    if (typeof HC.api.proxyStatus !== "function"){
+      netEl.hidden = true;
+      return;
+    }
+    if (netBusy) return;
+    netBusy = true;
+    netPaint(null);
+    HC.api.proxyStatus().then(function(d){
+      netBusy = false;
+      netPaint(d || {mode:"none"});
+    }).catch(function(){
+      netBusy = false;
+      netEl.hidden = true;
+    });
+  }
+
+  function netPlace(){
+    if (!netEl) return;
+    var host = root.querySelector('.sgroup[data-group="网络"]');
+    if (host){
+      var grid = host.querySelector(".mapgrid");
+      if (grid){ host.insertBefore(netEl, grid); return; }
+    }
+    root.querySelector("#fields").appendChild(netEl);
+  }
+
   function clamp(v, min, max){
     v = parseInt(v, 10);
     if (isNaN(v)) v = min;
@@ -34,6 +100,14 @@
 
   function fieldHtml(f, v){
     var id = "s_" + f.key;
+    if (f.seg){
+      return '<div class="field"><label for="' + id + '" id="lb_' + f.key + '">' + esc(f.label) + '</label>' +
+        '<div class="seg" id="' + id + '" role="group" aria-labelledby="lb_' + f.key + '">' +
+        f.seg.map(function(o){
+          return '<button type="button" data-font="' + o.key + '">' + esc(o.label) + '</button>';
+        }).join("") +
+        '</div></div>';
+    }
     if (f.min === undefined){
       return '<div class="field wide"><label for="' + id + '">' + esc(f.label) + '</label>' +
         '<input class="input' + (f.ph ? "" : " mono") + '" id="' + id +
@@ -53,9 +127,11 @@
     var order = [];
     FIELDS.forEach(function(f){ if (order.indexOf(f.group) < 0) order.push(f.group); });
     return order.map(function(g){
-      return '<div class="sgroup"><div class="sgroup-t">' + esc(g) + '</div>' +
+      var list = FIELDS.filter(function(f){ return f.group === g; });
+      return '<div class="sgroup g' + list.length + '" data-group="' + esc(g) + '">' +
+        '<div class="sgroup-t">' + esc(g) + '</div>' +
         '<div class="mapgrid">' +
-        FIELDS.filter(function(f){ return f.group === g; }).map(function(f){
+        list.map(function(f){
           return fieldHtml(f, settings[f.key]);
         }).join("") + '</div></div>';
     }).join("");
@@ -83,8 +159,7 @@
         };
       });
       input.addEventListener("input", function(){
-        var v = sync();
-        if (key === "ui_font_size") applyFont(v);
+        sync();
         onEdit();
       });
       input.addEventListener("change", function(){
@@ -135,12 +210,27 @@
   function paintBrand(current){
     var box = root.querySelector("#s_brand");
     if (!box) return;
-    box.innerHTML = segHtml(BRAND_OPTS, current, "brand");
+    box.innerHTML = BRAND_OPTS.map(function(o){
+      var on = o.key === current;
+      return '<button type="button" class="swatch" data-brand="' + o.key + '"' +
+        ' aria-pressed="' + (on ? "true" : "false") + '" aria-label="' + esc(o.label) + '"></button>';
+    }).join("");
+  }
+
+  var fontKey = "18";
+
+  function snapFont(v){
+    var n = parseInt(v, 10);
+    if (n === 14 || n === 18 || n === 22) return String(n);
+    if (n <= 15) return "14";
+    if (n >= 20) return "22";
+    return "18";
   }
 
   function readFields(){
     var out = {};
     FIELDS.forEach(function(f){
+      if (f.seg){ out[f.key] = parseInt(fontKey, 10); return; }
       var el = root.querySelector("#s_" + f.key);
       if (!el) return;
       if (f.min === undefined){
@@ -212,6 +302,14 @@
         '<div class="div"></div>' +
         '<div class="mbody">' +
           '<div id="fields"></div>' +
+          '<div class="netbar" id="netbar" role="status" aria-live="polite" hidden>' +
+            '<span class="netdot"></span>' +
+            '<span class="nettitle"></span>' +
+            '<span class="netaddr"></span>' +
+            '<span class="netnote muted"></span>' +
+            '<span class="spacer"></span>' +
+            '<button type="button" class="btn btn-ghost" id="btnNetRecheck">重新检测</button>' +
+          '</div>' +
           '<div class="field inline"><span class="lbl" id="lb_dl">默认下载工具</span>' +
             '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl"></div></div>' +
           '<div class="field inline"><label for="s_selbar">浮动选择条</label>' +
@@ -219,7 +317,7 @@
           '<div class="field inline"><label for="s_theme">暗夜主题</label>' +
             '<button type="button" class="sw" id="s_theme" role="switch"></button></div>' +
           '<div class="field inline"><span class="lbl" id="lb_brand">主题色</span>' +
-            '<div class="seg" id="s_brand" role="group" aria-labelledby="lb_brand"></div></div>' +
+            '<div class="swatches" id="s_brand" role="group" aria-labelledby="lb_brand"></div></div>' +
           '<div class="field inline"><label for="s_autofiles">文件命中时自动展开</label>' +
             '<button type="button" class="sw" id="s_autofiles" role="switch"></button></div>' +
         '</div>' +
@@ -238,10 +336,18 @@
 
     mountEl.appendChild(root);
 
+    netEl = root.querySelector("#netbar");
+    netBusy = false;
+    root.querySelector("#btnNetRecheck").onclick = netCheck;
+
     function fill(settings, list){
       root.querySelector("#fields").innerHTML = fieldsHtml(settings);
+      netPlace();
+      netCheck();
       wireSteppers();
-      applyFont(settings.ui_font_size);
+      fontKey = snapFont(settings.ui_font_size);
+      syncSeg(root.querySelector("#s_ui_font_size"), "font", fontKey);
+      applyFont(fontKey);
 
       dlKey = settings.default_downloader || "";
       paintDl(list, dlKey);
@@ -261,6 +367,15 @@
 
     root.addEventListener("input", onEdit);
 
+    root.querySelector("#fields").addEventListener("click", function(e){
+      var b = e.target.closest("[data-font]");
+      if (!b) return;
+      fontKey = b.dataset.font;
+      syncSeg(root.querySelector("#s_ui_font_size"), "font", fontKey);
+      applyFont(fontKey);
+      onEdit();
+    });
+
     Promise.all([HC.api.getSettings(), HC.api.downloaders(), HC.api.appInfo()])
       .then(function(res){
         fill(res[0] || {}, res[1] || []);
@@ -277,7 +392,7 @@
 
         root.querySelector("#about").innerHTML = lines.map(function(p){
           return '<div class="kv"><span class="k">' + esc(p[0]) + '</span>' +
-            '<span class="v mono">' + esc(p[1] || "") + '</span>' +
+            '<span class="v">' + esc(p[1] || "") + '</span>' +
             (p[2] ? '<button type="button" class="cp" data-cp="' + esc(p[1] || "") + '">复制</button>' : '') +
             '</div>';
         }).join("");
@@ -300,7 +415,9 @@
       var b = e.target.closest("[data-brand]");
       if (!b) return;
       brandKey = b.dataset.brand;
-      syncSeg(root.querySelector("#s_brand"), "brand", brandKey);
+      [].slice.call(this.querySelectorAll(".swatch")).forEach(function(x){
+        x.setAttribute("aria-pressed", String(x.dataset.brand === brandKey));
+      });
       if (HC.applyBrand) HC.applyBrand(brandKey);
       onEdit();
     });

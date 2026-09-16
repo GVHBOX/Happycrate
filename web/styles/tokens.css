@@ -6,6 +6,9 @@
   --brand-line:#C7CCF8;
   --brand-rgb:88,101,242;
   --brand-ring:rgba(var(--brand-rgb),.28);
+  --brand-opt-default:#5865F2;
+  --brand-opt-teal:#0D9488;
+  --brand-opt-slate:#5B6B8C;
 
   --shell:#F4F5F8;
   --shell-hover:#EEF0F3;

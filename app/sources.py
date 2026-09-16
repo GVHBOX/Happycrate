@@ -6,6 +6,7 @@ import html as _html
 import json
 import math
 import re
+import socket
 import ssl
 import time
 import urllib.error
@@ -148,13 +149,53 @@ def _manual_proxy() -> dict:
 def _opener(url: str, lax: bool = False):
     manual = _manual_proxy()
     if not manual:
-        return None
+        try:
+            manual = urllib.request.getproxies() or {}
+        except Exception:
+            manual = {}
 
     handlers = [urllib.request.ProxyHandler(manual)]
     if url.lower().startswith("https"):
         handlers.append(urllib.request.HTTPSHandler(
             context=_LAX if lax else _STRICT))
     return urllib.request.build_opener(*handlers)
+
+def _probe_port(addr: str) -> bool:
+    try:
+        parts = urllib.parse.urlsplit(addr if "//" in addr else "//" + addr)
+        host = parts.hostname or ""
+        port = parts.port
+        if not host or port is None:
+            return False
+        with socket.socket() as sock:
+            sock.settimeout(0.5)
+            return sock.connect_ex((host, port)) == 0
+    except Exception:
+        return False
+
+def proxy_status() -> dict:
+    try:
+        manual = _manual_proxy()
+        system = urllib.request.getproxies() or {}
+        if manual:
+            mode = "manual"
+            addr = manual.get("https") or manual.get("http") or ""
+        elif system:
+            mode = "system"
+            addr = system.get("https") or system.get("http") or ""
+        else:
+            mode = "none"
+            addr = ""
+        return {
+            "mode": mode,
+            "addr": addr,
+            "portOk": _probe_port(addr) if mode != "none" else False,
+            "systemOn": bool(system),
+            "checkedAt": time.time(),
+        }
+    except Exception:
+        return {"mode": "none", "addr": "", "portOk": False,
+                "systemOn": False, "checkedAt": time.time()}
 
 def proxy_info() -> dict:
     manual = _manual_proxy()
@@ -247,15 +288,8 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
         req = urllib.request.Request(url, data=data, headers=hdrs)
         try:
             opener = _opener(url, use_lax)
-            if opener is not None:
-                with opener.open(req, timeout=timeout) as resp:
-                    raw = _read_capped(resp, limit)
-            else:
-                kwargs = {"timeout": timeout}
-                if url.lower().startswith("https"):
-                    kwargs["context"] = _LAX if use_lax else _STRICT
-                with urllib.request.urlopen(req, **kwargs) as resp:
-                    raw = _read_capped(resp, limit)
+            with opener.open(req, timeout=timeout) as resp:
+                raw = _read_capped(resp, limit)
             return raw if binary else _decode(raw)
 
         except TooLarge:

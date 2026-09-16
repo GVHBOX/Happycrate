@@ -303,6 +303,11 @@
       return Promise.resolve({ok:true, missing:[]});
     },
 
+    proxyStatus: function(){
+      if (live()) return window.pywebview.api.proxy_status();
+      return Promise.resolve({mode:"system", addr:"http://127.0.0.1:7890", portOk:true, systemOn:true, checkedAt:Date.now()/1000});
+    },
+
     defaultSettings: function(){
       if (live()) return window.pywebview.api.default_settings();
       return Promise.resolve(mockDefaults);

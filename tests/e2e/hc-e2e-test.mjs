@@ -382,15 +382,6 @@ async function runOnce(exe, profileDir, pageUrl) {
     await realClick(ck.x, ck.y);
     check("select-all-toggle", allOn && (await selCount()) === 0, "on=" + allOn + " off=" + (await selCount()));
 
-    const hBefore = await evaluate("document.querySelector('#rows .srow').getBoundingClientRect().height", page);
-    await evaluate("document.getElementById('btnRows').click()", page);
-    await sleep(150);
-    const hAfter = await evaluate("document.querySelector('#rows .srow').getBoundingClientRect().height", page);
-    const roomyOn = await evaluate("document.querySelector('.app').classList.contains('roomy')", page);
-    await evaluate("document.getElementById('btnRows').click()", page);
-    await sleep(150);
-    check("density-toggle", roomyOn && hAfter > hBefore, Math.round(hBefore) + "->" + Math.round(hAfter));
-
     await metrics(1280, 430);
     await sleep(400);
     await search("ubuntu", 24);

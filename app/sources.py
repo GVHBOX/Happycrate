@@ -673,46 +673,83 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         items.append(it)
     return items
 
-EZTV_PAGES = 3
 EZTV_MAX_HITS = 80
+EZTV_DETAIL_LIMIT = 24
+EZTV_DETAIL_WORKERS = 6
+
+_EZT_EP_RE = re.compile(
+    r'<a\b[^>]*\bhref="([^"]*?/ep/(\d+)/([^"?#]+)[^"]*)"[^>]*>(.*?)</a>',
+    re.I | re.S)
+_EZT_STRIP_RE = re.compile(r"<[^>]+>")
+_EZT_DETAIL_PATTERNS = {
+    "hash": re.compile(r"Torrent\s*Hash\s*:?\s*(?:<[^>]*>\s*)*([0-9a-fA-F]{40})", re.I),
+    "size": re.compile(r"Filesize\s*:?\s*(?:<[^>]*>\s*)*([\d.]+\s*[KMGT]i?B)", re.I),
+    "seeds": re.compile(r"Seeds\s*:?\s*(?:<[^>]*>\s*)*(\d+)", re.I),
+    "leech": re.compile(r"Peers\s*:?\s*(?:<[^>]*>\s*)*(\d+)", re.I),
+}
+
+def _eztv_detail(root: str, eid: str, slug: str, timeout: int, batch) -> dict:
+    url = f"{root}/ep/{eid}/{slug}/"
+    html = http_get(url, timeout=timeout, batch=batch)
+    out = {}
+    for name, pattern in _EZT_DETAIL_PATTERNS.items():
+        m = pattern.search(html)
+        out[name] = m.group(1) if m else ""
+    return out
 
 def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["eztv"])
-    needle = (query or "").lower()
+    needle = (query or "").strip()
     if not needle:
         return []
 
-    items: list[dict] = []
+    url = f"{root}/search/{urllib.parse.quote(needle)}"
+    html = http_get(url, timeout=timeout, batch=batch)
+
+    found: list[tuple[str, str, str]] = []
     seen: set[str] = set()
-    for p in range(1, EZTV_PAGES + 1):
-        url = f"{root}/api/get-torrents?limit=100&page={p}"
-        text = http_get(url, timeout=timeout, batch=batch)
-        data = json.loads(text)
-        rows = data.get("torrents") if isinstance(data, dict) else None
-        if not isinstance(rows, list):
-            break
-        if not rows:
-            break
-        for row in rows:
-            if not isinstance(row, dict):
+    for m in _EZT_EP_RE.finditer(html):
+        eid = m.group(2)
+        if eid in seen:
+            continue
+        seen.add(eid)
+        title = _unescape(_EZT_STRIP_RE.sub("", m.group(4))).strip()
+        title = re.sub(r"\s+", " ", title)
+        if not title:
+            title = m.group(3).replace("-", " ").strip()
+        if not title:
+            continue
+        found.append((eid, m.group(3), title))
+
+    if not found:
+        return []
+
+    picks = found[:EZTV_DETAIL_LIMIT]
+    items: list[dict] = []
+    workers = max(1, min(EZTV_DETAIL_WORKERS, len(picks)))
+    with futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        jobs = [pool.submit(_eztv_detail, root, eid, slug, timeout, batch)
+                for eid, slug, _t in picks]
+        for (eid, slug, title), job in zip(picks, jobs):
+            if batch is not None and not _batch_alive(batch):
+                break
+            try:
+                detail = job.result()
+            except Exception as exc:
+                logger.debug("EZTV 详情页读取失败 %s：%s", eid, exc)
                 continue
-            title = _text(row.get("title")).strip()
-            if needle not in title.lower():
+            h = str(detail.get("hash") or "").strip().lower()
+            if not h:
                 continue
-            h = _text(row.get("hash")).strip().lower()
-            if not h or h in seen:
-                continue
-            seen.add(h)
             items.append(_mk(
                 title=title, info_hash=h,
-                size=parse_size(row.get("size_bytes") or row.get("size")),
-                seeders=_to_int(row.get("seeds")),
-                leechers=_to_int(row.get("peers")),
-                added=_to_int(row.get("date_released_unix")),
+                size=parse_size(detail.get("size")),
+                seeders=_to_int(detail.get("seeds")),
+                leechers=_to_int(detail.get("leech")),
                 source="EZTV",
             ))
-        if len(items) >= EZTV_MAX_HITS:
-            break
+            if len(items) >= EZTV_MAX_HITS:
+                break
     return items
 
 def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[dict]:

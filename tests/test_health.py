@@ -325,10 +325,14 @@ class OutcomeClassificationTest(unittest.TestCase):
         self.assertEqual(self.check(False, 0, "HTTP Error 404: Not Found"),
                          ("http4xx", 404))
 
-    def test_legal_block_is_refusal_not_generic_4xx(self):
+    def test_legal_block_is_its_own_outcome(self):
         self.assertEqual(self.check(False, 0, "HTTP Error 451: Unavailable"),
-                         ("http403", 451),
-                         "451 是站点主动拒绝，不会自愈，不能当普通 4xx")
+                         ("http451", 451),
+                         "451 是地区封锁，换线路就能解决，不能和源站 403 混为一谈")
+        self.assertEqual(api_mod.OUTCOME_STATE["http451"], "err")
+        self.assertEqual(api_mod.outcome_text("http451", 451), "451 地区受限")
+        self.assertNotIn("http451", api_mod.FATAL_OUTCOMES,
+                         "降级解决不了地区封锁，不该把一个好源排到后面")
 
     def test_proxy_tunnel_failure_is_network_not_source(self):
         msg = "URLError: <urlopen error Tunnel connection failed: 502 Bad Gateway>"

@@ -30,6 +30,7 @@ OUTCOME_5XX = "http5xx"
 OUTCOME_4XX = "http4xx"
 OUTCOME_CANCEL = "cancel"
 OUTCOME_PARSE = "parse"
+OUTCOME_451 = "http451"
 
 OUTCOME_STATE = {
     OUTCOME_OK: "ok",
@@ -43,6 +44,7 @@ OUTCOME_STATE = {
     OUTCOME_4XX: "warn",
     OUTCOME_CANCEL: "na",
     OUTCOME_PARSE: "warn",
+    OUTCOME_451: "err",
 }
 
 OUTCOME_TEXT = {
@@ -57,6 +59,7 @@ OUTCOME_TEXT = {
     OUTCOME_4XX: "请求被拒",
     OUTCOME_CANCEL: "",
     OUTCOME_PARSE: "解析失败",
+    OUTCOME_451: "451 地区受限",
 }
 
 FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
@@ -143,7 +146,9 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
         return OUTCOME_NET, 0
 
     code = _http_code(err)
-    if code in (401, 403, 451):
+    if code == 451:
+        return OUTCOME_451, code
+    if code in (401, 403):
         return OUTCOME_403, code
     if code == 429:
         return OUTCOME_429, code

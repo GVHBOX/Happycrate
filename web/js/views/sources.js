@@ -269,7 +269,8 @@
     ok: "ok", slow: "warn", http429: "warn", http4xx: "warn",
     empty: "empty", na: "na",
     timeout: "err", net: "err", http403: "err", http5xx: "err",
-    err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn"
+    err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn",
+    http451: "err"
   };
 
   function highlightJson(text){

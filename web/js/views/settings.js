@@ -15,7 +15,7 @@
 
   var root = null;
   var dlKey = "";
-  var selbarOn = true;
+  var selbarOn = false;
   var themeOn = false;
   var autoFilesOn = true;
   var brandKey = "";
@@ -359,7 +359,7 @@
 
       dlKey = settings.default_downloader || "";
       paintDl(list, dlKey);
-      selbarOn = settings.selbar !== false;
+      selbarOn = settings.selbar === true;
       setSw("#s_selbar", selbarOn);
       themeOn = settings.theme === "dark";
       setSw("#s_theme", themeOn);

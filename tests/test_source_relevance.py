@@ -341,3 +341,49 @@ class ProxyStatusTest(unittest.TestCase):
         self.assertIn("function mockProxyError", js)
         for token in ("socks", "重复", "无法识别"):
             self.assertIn(token, js, f"mock 校验要和后端一样拦下 {token}")
+
+
+class SlowHintRemovedTest(unittest.TestCase):
+
+    def test_slow_outcome_maps_to_healthy(self):
+        from app import api as api_mod
+        self.assertEqual(api_mod.OUTCOME_STATE["slow"], "ok")
+
+    def test_classify_still_records_slow_for_diagnostics(self):
+        from app import api as api_mod
+        self.assertEqual(api_mod.classify(True, 12, "", 9000)[0], "slow",
+                         "慢的事实要留给诊断，只是不再当成界面警告")
+
+    def test_frontend_has_no_slow_label(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertNotIn('"慢"', src, "逐源进度条不该再显示「慢」")
+
+    def test_frontend_semantic_map_agrees(self):
+        src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
+        block = src.split("var SEMANTIC = {", 1)[1].split("};", 1)[0]
+        self.assertRegex(block, r"slow:\s*\"ok\"")
+
+
+class SelbarDefaultTest(unittest.TestCase):
+
+    def test_backend_default_is_off(self):
+        from app import config
+        self.assertFalse(config.DEFAULT_SETTINGS["selbar"])
+
+    def test_search_view_defaults_off(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertIn("selbarOn: false", src)
+
+    def test_only_explicit_true_enables_it(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertIn("s.selbar === true", src,
+                      "旧写法 s.selbar !== false 会把任何非 false 值当成开启")
+
+    def test_settings_page_defaults_off(self):
+        src = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertIn("var selbarOn = false;", src)
+        self.assertIn("settings.selbar === true", src)
+
+    def test_mock_default_is_off(self):
+        src = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        self.assertRegex(src, r"selbar:\s*false")

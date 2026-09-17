@@ -520,7 +520,7 @@
         ss.state === "empty" ? "无结果" :
         ss.state === "err" ? esc(ss.err || "失败") :
         ss.state === "warn" ? (ss.count
-          ? "<b>" + ss.count + "</b> 条 · " + esc(ss.err || "慢")
+          ? "<b>" + ss.count + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "")
           : esc(ss.err || "提示")) :
         ss.state === "cancel" ? "已取消" : "等待";
       var name = st.names[k] || k;
@@ -798,7 +798,7 @@
   }
 
   function applySettings(s){
-    st.selbarOn = !s || s.selbar !== false;
+    st.selbarOn = !!s && s.selbar === true;
     autoFiles = !s || s.auto_files !== false;
     updateSelUI(true);
   }
@@ -863,7 +863,7 @@
           setChip(name + " 无结果", "");
           st.strip[d.key] = {state:"empty"};
         } else if (ss === "warn"){
-          var why = d.err || "慢";
+          var why = d.err || "提示";
           st.lines.push({text: name + "：" + why, bad: false});
           setChip(name + " " + why, "warn");
           st.strip[d.key] = {state:"warn", err:d.err, count:d.count};

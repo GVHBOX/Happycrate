@@ -355,6 +355,12 @@ class OutcomeClassificationTest(unittest.TestCase):
         self.assertEqual(self.check(True, 12, "", 9000), ("slow", 0))
         self.assertEqual(self.check(True, 12, "", 300), ("ok", 0))
 
+    def test_slow_source_reads_as_healthy_not_flagged(self):
+        from app import api as api_mod
+        self.assertEqual(api_mod.OUTCOME_STATE["slow"], "ok",
+                         "慢但拿到结果的源不该标成需要提醒的黄点")
+        self.assertEqual(api_mod._state_of(["ok", "ok", "slow"]), "ok")
+
     def test_cancelled_search_is_flagged(self):
         self.assertEqual(self.check(False, 0, "已停止"), ("cancel", 0))
 
@@ -385,8 +391,8 @@ class OutcomeClassificationTest(unittest.TestCase):
 
 class OutcomeStateTest(unittest.TestCase):
 
-    def state(self, outcomes, ms=0):
-        return api_mod._state_of(outcomes, ms)
+    def state(self, outcomes):
+        return api_mod._state_of(outcomes)
 
     def test_empty_is_never_red(self):
         self.assertEqual(self.state(["empty"] * 5), "empty",

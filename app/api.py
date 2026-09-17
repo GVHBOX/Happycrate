@@ -41,7 +41,7 @@ OUTCOME_BLOCKED = "blocked"
 OUTCOME_STATE = {
     OUTCOME_OK: "ok",
     OUTCOME_EMPTY: "empty",
-    OUTCOME_SLOW: "warn",
+    OUTCOME_SLOW: "ok",
     OUTCOME_TIMEOUT: "err",
     OUTCOME_NET: "err",
     OUTCOME_403: "err",
@@ -185,7 +185,7 @@ def outcome_text(outcome: str, code: int = 0) -> str:
     return OUTCOME_TEXT.get(outcome, "")
 
 
-def _state_of(outcomes: list[str], ms: int = 0) -> str:
+def _state_of(outcomes: list[str]) -> str:
     recent = [o for o in (outcomes or []) if o and o != OUTCOME_CANCEL]
     recent = recent[-HEALTH_WINDOW:]
     if not recent:
@@ -197,11 +197,9 @@ def _state_of(outcomes: list[str], ms: int = 0) -> str:
         return "err"
     if last == OUTCOME_EMPTY:
         return "empty"
-    if last in (OUTCOME_SLOW, OUTCOME_429, OUTCOME_4XX, OUTCOME_PARSE):
+    if last in (OUTCOME_429, OUTCOME_4XX, OUTCOME_PARSE):
         return "warn"
-    if last == OUTCOME_OK:
-        if ms and ms >= SLOW_MS:
-            return "warn"
+    if last in (OUTCOME_OK, OUTCOME_SLOW):
         return "warn" if _window_empty(recent) else "ok"
     return OUTCOME_STATE.get(last, "na")
 
@@ -590,7 +588,7 @@ class Api:
                 h["lastOk"] = int(time.time())
                 h["lastCount"] = int(count or 0)
             h["err"] = outcome_text(outcome, code)
-            h["state"] = _state_of(h["outcomes"], h.get("ms", 0))
+            h["state"] = _state_of(h["outcomes"])
             return dict(h)
 
     def _probe_worker(self, token: int, targets) -> None:

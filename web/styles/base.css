@@ -875,13 +875,11 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .app.card-enter > .card{animation:cardRise .34s var(--e-out) both}
 
 .srcstrip{
-  flex:none; display:flex; align-items:center; gap:var(--sp-2);
+  flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-2);
   padding:var(--sp-2) var(--sp-6); border-bottom:1px solid var(--divider);
-  background:var(--head); overflow-x:auto; scrollbar-width:thin;
+  background:var(--head);
 }
 .srcstrip[hidden]{display:none}
-.srcstrip::-webkit-scrollbar{height:4px}
-.srcstrip::-webkit-scrollbar-thumb{background:var(--ink-13); border-radius:2px}
 .stile{
   flex:none; height:calc(23px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);
   background:var(--panel); border:1px solid var(--divider);
@@ -901,7 +899,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .stile.empty{color:var(--empty)}
 .stile.empty .sdot{background:var(--empty)}
 .stile.cancel{color:var(--t5)}
-.scount{margin-left:auto; flex:none; font:500 var(--fs-2xs)/1 var(--font-num); color:var(--t4); padding-left:var(--sp-3)}
+.scount{flex:none; font:500 var(--fs-2xs)/1 var(--font-num); color:var(--t4); padding-left:var(--sp-3)}
 .scount b{color:var(--t2); font-weight:600}
 
 

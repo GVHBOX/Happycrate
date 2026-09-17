@@ -406,3 +406,33 @@ class MockHashTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SourceStripWrapTest(unittest.TestCase):
+
+    def strip_block(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".srcstrip{")
+        return src[i:src.index("}", i)]
+
+    def test_strip_wraps_instead_of_scrolling(self):
+        block = self.strip_block()
+        self.assertIn("flex-wrap:wrap", block,
+                      "逐源进度条要自动换行，不能横向滚动")
+
+    def test_strip_has_no_horizontal_overflow(self):
+        block = self.strip_block()
+        self.assertNotIn("overflow-x", block,
+                         "有 overflow-x 就会出横向滚动条，看不到的源要藏在滑块后面")
+
+    def test_no_strip_scrollbar_styling_remains(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        self.assertNotIn(".srcstrip::-webkit-scrollbar", src,
+                         "换行后不该再留滚动条样式")
+
+    def test_item_count_is_not_pushed_far_right(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".scount{")
+        block = src[i:src.index("}", i)]
+        self.assertNotIn("margin-left:auto", block,
+                         "换行后 margin-left:auto 会把完成数甩到最右，与上一行断开")

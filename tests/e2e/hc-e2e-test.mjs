@@ -276,6 +276,9 @@ async function runOnce(exe, profileDir, pageUrl) {
     check("hero-gone-after-search", !(await evaluate("!!document.querySelector('.hero')", page)));
     check("srcstrip-done", (await evaluate("!document.getElementById('srcstrip').hidden && document.querySelectorAll('#srcstrip .stile.ok').length", page)) >= 3,
       await evaluate("document.getElementById('srcstrip').textContent", page));
+    const stripGeo = await evaluate("(function(){var s=document.getElementById('srcstrip');return {ox:s.scrollWidth>s.clientWidth, w:s.scrollWidth, cw:s.clientWidth, n:s.querySelectorAll('.stile').length}})()", page);
+    check("srcstrip-no-horizontal-scroll", !stripGeo.ox,
+      "逐源条不该出现横向滚动，实际 " + JSON.stringify(stripGeo));
 
     await evaluate("document.querySelectorAll('#rows .srow')[2].click()", page);
     check("selbar-default-off", !(await evaluate("document.getElementById('selbar').classList.contains('show')", page)));

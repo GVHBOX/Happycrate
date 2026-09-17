@@ -444,16 +444,21 @@ class SourceStripWrapTest(unittest.TestCase):
         self.assertRegex(block, r"flex:1 1 ",
                          "标签要能伸展填满整行，否则末行会留缺口")
 
-    def test_tiles_have_a_max_width(self):
+    def tile_block(self):
         src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
         i = src.index(".stile{")
-        block = src[i:src.index("}", i)]
-        self.assertIn("max-width", block,
+        return src[i:src.index("}", i)]
+
+    def test_tiles_have_a_max_width(self):
+        self.assertIn("max-width", self.tile_block(),
                       "没有上限时，末行只剩一个标签会被拉成整行宽")
 
-    def test_tiles_have_a_min_width(self):
-        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
-        i = src.index(".stile{")
-        block = src[i:src.index("}", i)]
-        self.assertIn("min-width", block,
-                      "没有下限时，窗口变窄会把文字挤到截断")
+    def test_min_width_follows_the_name(self):
+        self.assertIn("max-content", self.tile_block(),
+                      "下限要用内容宽度：写死像素会把长名字裁掉")
+
+    def test_name_is_never_clipped(self):
+        self.assertNotIn("overflow:hidden", self.tile_block().replace(" ", ""),
+                         "名字被裁掉比排版不齐更糟")
+        self.assertNotIn("text-overflow", self.tile_block(),
+                         "不要用省略号藏起源名")

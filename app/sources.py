@@ -240,7 +240,9 @@ def _probe_port(addr: str) -> bool:
         return False
 
 PROBE_URL = "http://www.gstatic.com/generate_204"
-PROBE_TIMEOUT = 6
+PROBE_TIMEOUT = 1.5
+PROBE_CACHE_TTL = 15
+_probe_cache = {"key": None, "at": 0.0, "data": None}
 
 def _proxy_works(mapping: dict) -> bool:
     if not mapping:
@@ -256,7 +258,7 @@ def _proxy_works(mapping: dict) -> bool:
     except Exception:
         return False
 
-def proxy_status() -> dict:
+def proxy_status(force: bool = False) -> dict:
     try:
         manual = _manual_proxy()
         system = urllib.request.getproxies() or {}
@@ -272,14 +274,24 @@ def proxy_status() -> dict:
             mode = "none"
             addr = ""
             mapping = {}
-        return {
+        key = (mode, addr)
+        now = time.time()
+        if (not force and _probe_cache["key"] == key
+                and now - _probe_cache["at"] < PROBE_CACHE_TTL):
+            return dict(_probe_cache["data"])
+        port_ok = _probe_port(addr) if mode != "none" else False
+        data = {
             "mode": mode,
             "addr": addr,
-            "portOk": _probe_port(addr) if mode != "none" else False,
-            "works": _proxy_works(mapping) if mode != "none" else False,
+            "portOk": port_ok,
+            "works": _proxy_works(mapping) if port_ok else False,
             "systemOn": bool(system),
-            "checkedAt": time.time(),
+            "checkedAt": now,
         }
+        _probe_cache["key"] = key
+        _probe_cache["at"] = now
+        _probe_cache["data"] = dict(data)
+        return data
     except Exception:
         return {"mode": "none", "addr": "", "portOk": False, "works": False,
                 "systemOn": False, "checkedAt": time.time()}

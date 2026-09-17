@@ -321,6 +321,56 @@ class ProxyStatusTest(unittest.TestCase):
         self.assertFalse(st["works"])
         self.assertEqual(called, [], "没配代理就不该去试探")
 
+    def test_dead_port_skips_the_http_probe(self):
+        called = []
+        with mock.patch.object(sources, "_manual_proxy",
+                               lambda: {"http": "http://127.0.0.1:65530"}), \
+             mock.patch.object(sources, "_probe_port", lambda a: False), \
+             mock.patch.object(sources, "_proxy_works",
+                               lambda m: called.append(m) or False):
+            st = sources.proxy_status(force=True)
+        self.assertFalse(st["portOk"])
+        self.assertEqual(called, [],
+                         "端口都不通就不必再发 HTTP 探测，那是多等一个超时")
+
+    def test_status_is_reused_within_the_ttl(self):
+        called = []
+        with mock.patch.object(sources, "_manual_proxy",
+                               lambda: {"http": "http://127.0.0.1:65531"}), \
+             mock.patch.object(sources, "_probe_port", lambda a: True), \
+             mock.patch.object(sources, "_proxy_works",
+                               lambda m: called.append(m) or True):
+            sources.proxy_status(force=True)
+            sources.proxy_status()
+            sources.proxy_status()
+        self.assertEqual(len(called), 1,
+                         "设置页每次重绘都真探测一次会让界面冻结，结果要在 TTL 内复用")
+
+    def test_force_bypasses_the_cache(self):
+        called = []
+        with mock.patch.object(sources, "_manual_proxy",
+                               lambda: {"http": "http://127.0.0.1:65532"}), \
+             mock.patch.object(sources, "_probe_port", lambda a: True), \
+             mock.patch.object(sources, "_proxy_works",
+                               lambda m: called.append(m) or True):
+            sources.proxy_status(force=True)
+            sources.proxy_status(force=True)
+        self.assertEqual(len(called), 2, "手动点重新检测必须真的重测")
+
+    def test_probe_timeout_stays_short(self):
+        self.assertLessEqual(sources.PROBE_TIMEOUT, 2,
+                             "proxy_status 跑在界面线程上，超时放长就是卡住窗口")
+
+    def test_frontend_recheck_forces_a_fresh_probe(self):
+        js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertRegex(js, r"#btnNetRecheck\"\)\.onclick[\s\S]{0,80}netCheck\(true\)",
+                         "重新检测按钮必须绕过缓存，否则点了也没变化")
+
+    def test_first_check_waits_for_paint(self):
+        js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertRegex(js, r"setTimeout\(netCheck",
+                         "自动检测要延到首帧之后，否则设置页会白一下才出来")
+
     def test_frontend_reads_the_works_field(self):
         js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
         self.assertIn("data.works", js,
@@ -332,7 +382,7 @@ class ProxyStatusTest(unittest.TestCase):
 
     def test_mock_proxy_status_carries_works(self):
         js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
-        block = js.split("proxyStatus: function()", 1)[1].split("},", 1)[0]
+        block = js.split("proxyStatus: function", 1)[1].split("},", 1)[0]
         self.assertIn("works:", block,
                       "mock 少了 works，浏览器直开时设置页会误报代理不工作")
 

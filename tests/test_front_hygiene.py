@@ -65,12 +65,36 @@ class CssHygieneTest(unittest.TestCase):
 
     def selectors_with_lines(self, path):
         text = path.read_text(encoding="utf-8")
-        text = re.sub(r"@(media|supports|container)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}",
-                      lambda m: "\n" * m.group(0).count("\n"), text)
+        text = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"),
+                      text, flags=re.S)
         out = {}
-        for m in re.finditer(r"^([^{@/\n][^{]*?)\{", text, re.M):
-            sel = " ".join(m.group(1).split())
-            out.setdefault(sel, []).append(text[:m.start()].count("\n") + 1)
+        depth = 0
+        buf = []
+        line = 1
+        start = 1
+        for ch in text:
+            if ch == "\n":
+                line += 1
+                continue
+            if ch == "{":
+                if depth == 0:
+                    sel = " ".join("".join(buf).split())
+                    if sel and not sel.startswith("@"):
+                        out.setdefault(sel, []).append(start)
+                depth += 1
+                buf = []
+                start = line
+                continue
+            if ch == "}":
+                if depth:
+                    depth -= 1
+                buf = []
+                start = line
+                continue
+            if depth == 0:
+                if not buf:
+                    start = line
+                buf.append(ch)
         return out
 
     def test_no_duplicate_top_level_selectors(self):

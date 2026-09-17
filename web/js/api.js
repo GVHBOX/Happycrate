@@ -306,8 +306,8 @@
       return Promise.resolve({ok:true, missing:[]});
     },
 
-    proxyStatus: function(){
-      if (live()) return window.pywebview.api.proxy_status();
+    proxyStatus: function(force){
+      if (live()) return window.pywebview.api.proxy_status(!!force);
       return Promise.resolve({mode:"system", addr:"http://127.0.0.1:7890",
                               portOk:true, works:true, systemOn:true,
                               checkedAt:Date.now()/1000});

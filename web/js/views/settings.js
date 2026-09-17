@@ -74,7 +74,7 @@
     netEl.querySelector("#btnNetRecheck").disabled = !!s.busy;
   }
 
-  function netCheck(){
+  function netCheck(force){
     if (!netEl) return;
     if (typeof HC.api.proxyStatus !== "function"){
       netEl.hidden = true;
@@ -83,7 +83,7 @@
     if (netBusy) return;
     netBusy = true;
     netPaint(null);
-    HC.api.proxyStatus().then(function(d){
+    HC.api.proxyStatus(force).then(function(d){
       netBusy = false;
       netPaint(d || {mode:"none"});
     }).catch(function(){
@@ -346,12 +346,12 @@
 
     netEl = root.querySelector("#netbar");
     netBusy = false;
-    root.querySelector("#btnNetRecheck").onclick = netCheck;
+    root.querySelector("#btnNetRecheck").onclick = function(){ netCheck(true); };
 
     function fill(settings, list){
       root.querySelector("#fields").innerHTML = fieldsHtml(settings);
       netPlace();
-      netCheck();
+      setTimeout(netCheck, 60);
       wireSteppers();
       fontKey = snapFont(settings.ui_font_size);
       syncSeg(root.querySelector("#s_ui_font_size"), "font", fontKey);

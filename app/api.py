@@ -866,8 +866,8 @@ class Api:
     def default_settings(self) -> dict:
         return {k: config.DEFAULT_SETTINGS.get(k) for k in config.SETTING_SPECS}
 
-    def proxy_status(self) -> dict:
-        return sources.proxy_status()
+    def proxy_status(self, force: bool = False) -> dict:
+        return sources.proxy_status(force=bool(force))
 
     def save_settings(self, fields: dict) -> dict:
         proxy = str((fields or {}).get("proxy") or "").strip()

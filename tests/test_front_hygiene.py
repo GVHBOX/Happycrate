@@ -97,6 +97,25 @@ class CssHygieneTest(unittest.TestCase):
                 buf.append(ch)
         return out
 
+    def animation_names(self):
+        text = "\n".join(p.read_text(encoding="utf-8") for p in CSS)
+        text += "\n" + "\n".join(p.read_text(encoding="utf-8") for p in JS)
+        used = set()
+        for ref in re.findall(r"animation(?:-name)?\s*[:=]\s*[\"']?([^;}\"']+)", text):
+            for token in re.split(r"[\s,]+", ref.strip()):
+                if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]*", token):
+                    used.add(token)
+        return used
+
+    def test_no_orphan_keyframes(self):
+        dead = []
+        for p in CSS:
+            text = p.read_text(encoding="utf-8")
+            for m in re.finditer(r"@keyframes\s+([A-Za-z_][A-Za-z0-9_-]*)", text):
+                if m.group(1) not in self.animation_names():
+                    dead.append(f"{p.name} :: {m.group(1)}")
+        self.assertEqual(dead, [], "定义了却没人引用的关键帧：" + repr(dead))
+
     def test_no_duplicate_top_level_selectors(self):
         dupes = {}
         for p in CSS:
@@ -371,6 +390,17 @@ class JsonHighlightTest(unittest.TestCase):
                 self.assertEqual(m[outcome], state,
                                  f"{outcome} 的颜色必须与后端 OUTCOME_STATE 一致，"
                                  f"否则颜色就成了乱标")
+
+    def test_every_state_has_a_highlight_rule(self):
+        from app import api as api_mod
+        base = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        states = set(api_mod.OUTCOME_STATE.values()) | {"na"}
+        missing = sorted(s for s in states
+                         if not re.search(r"\.js-" + re.escape(s) + r"\s*\{", base))
+        self.assertEqual(
+            missing, [],
+            "诊断会把这些状态标成对应颜色，CSS 里却没有 .js-<状态> 规则，"
+            "结果是标签没颜色：" + repr(missing))
 
     def test_kind_values_are_mapped(self):
         m = self.semantic_map()

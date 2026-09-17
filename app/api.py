@@ -676,25 +676,25 @@ class Api:
             count = len(items or [])
             outcome, code = classify(not err, count, err, ms)
             text_err = outcome_text(outcome, code)
-            h = self._mark(key, not err, count, ms, err, round_id=str(token))
+            mark = self._mark(key, not err, count, ms, err, round_id=str(token))
             payload = json.dumps(
                 {"token": token, "key": key, "count": count, "err": text_err,
-                 "outcome": outcome, "state": h.get("state", "na")},
+                 "outcome": outcome, "state": mark.get("state", "na")},
                 ensure_ascii=False,
             )
             self._push(f"window.__onSearchSource && window.__onSearchSource({payload})")
 
             batch = []
             for it in core.dedupe(items or []):
-                h = (it.get("info_hash") or "").lower()
-                if h:
-                    pos = index_of.get(h)
+                ih = (it.get("info_hash") or "").lower()
+                if ih:
+                    pos = index_of.get(ih)
                     if pos is None:
-                        index_of[h] = len(rows)
+                        index_of[ih] = len(rows)
                         rows.append(it)
                     else:
                         rows[pos] = core.dedupe([rows[pos], it])[0]
-                batch.append(_item_view(rows[index_of[h]] if h else it))
+                batch.append(_item_view(rows[index_of[ih]] if ih else it))
             if batch:
                 payload = json.dumps(
                     {"token": token, "key": key, "items": batch},

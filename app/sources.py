@@ -1434,6 +1434,8 @@ _BUILTIN_ADAPTERS = {
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
+PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
+
 BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
 
 def adapter_location(key: str, stype: str = "builtin") -> str:
@@ -1469,6 +1471,8 @@ class Source:
         self.raw = raw or {}
 
     def search(self, query, page=1, timeout=None, batch=None):
+        if self.key in PAGELESS_KEYS:
+            page = 1
         return self.func(query, page, timeout or self.timeout, self.base,
                          batch=batch)
 

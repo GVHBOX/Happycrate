@@ -370,7 +370,6 @@ input, textarea{
   transform-origin:top right;
   animation:menuIn .26s var(--spring) both;
 }
-.menu[hidden]{display:none}
 .mi{
   display:flex; align-items:center; gap:var(--sp-3);
   padding:var(--sp-3) 10px;
@@ -386,7 +385,6 @@ input, textarea{
 }
 .mi:nth-of-type(2){animation-delay:.04s}
 .mi:nth-of-type(3){animation-delay:.08s}
-.mi:nth-of-type(4){animation-delay:.12s}
 .mi:hover{background:var(--shell)}
 .mi:active{background:var(--pressed); color:var(--t1)}
 .mi svg{color:var(--t3)}
@@ -668,11 +666,6 @@ input, textarea{
   white-space:nowrap;
   transition:background .2s var(--e), color .2s var(--e);
 }
-.badge.ok{background:var(--ok-soft); color:var(--ok-strong)}
-.badge.warn{background:var(--warn-soft); color:var(--warn-strong)}
-.badge.err{background:var(--danger-soft); color:var(--err-strong)}
-.badge.empty{background:var(--rowline); color:var(--empty)}
-.badge.busy{background:var(--brand-soft); color:var(--brand)}
 .badge.pop{animation:countPop .26s var(--spring)}
 .badge b{color:var(--brand); font-weight:600}
 
@@ -1013,7 +1006,6 @@ input, textarea{
 .tb-home:hover{background:var(--ink-8)}
 .tb-home .tb-logo{pointer-events:none}
 
-body.dark .srow.alt{background:var(--row-alt, #1E202A)}
 body.dark .selbar{
   background:var(--float-bg);
   box-shadow:var(--sh-modal), 0 0 0 1px var(--float-bd);

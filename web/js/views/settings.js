@@ -33,18 +33,28 @@
   function netState(data){
     if (!data) return {busy:true, dot:"busy", note:"检测中", muted:true};
     if (data.mode === "manual"){
-      return data.portOk
+      if (!data.portOk){
+        return {dot:"err", title:"手动设置", addr:data.addr || "",
+                note:"代理端口无响应"};
+      }
+      return data.works
         ? {dot:"ok", title:"手动设置", addr:data.addr || ""}
-        : {dot:"err", title:"手动设置", addr:data.addr || "", note:"代理端口无响应"};
+        : {dot:"err", title:"手动设置", addr:data.addr || "",
+           note:"端口能连上，但代理没有转发请求"};
     }
     if (data.mode === "system"){
       if (!data.systemOn){
         return {dot:"err", title:"跟随系统", addr:data.addr || "",
                 note:"系统代理已关闭", off:true};
       }
-      return data.portOk
+      if (!data.portOk){
+        return {dot:"err", title:"跟随系统", addr:data.addr || "",
+                note:"代理端口无响应"};
+      }
+      return data.works
         ? {dot:"ok", title:"跟随系统", addr:data.addr || ""}
-        : {dot:"err", title:"跟随系统", addr:data.addr || "", note:"代理端口无响应"};
+        : {dot:"err", title:"跟随系统", addr:data.addr || "",
+           note:"端口能连上，但代理没有转发请求"};
     }
     return {dot:"", note:"未检测到代理", muted:true};
   }

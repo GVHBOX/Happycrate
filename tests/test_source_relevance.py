@@ -185,3 +185,159 @@ class NoProxyDiagnosisTest(unittest.TestCase):
                 _res, fatal = core.search("1080p", 1, None, self.KEYS, min_len=2)
         self.assertIsNotNone(fatal, "全源超时且无代理时必须给出整体提示")
         self.assertIn("未检测到代理", fatal)
+
+
+class ProxyParseTest(unittest.TestCase):
+
+    def parse(self, raw):
+        return sources.parse_proxy(raw)
+
+    def test_empty_is_allowed(self):
+        self.assertEqual(self.parse(""), ({}, ""))
+
+    def test_single_http_applies_to_both(self):
+        m, err = self.parse("http://127.0.0.1:7890")
+        self.assertEqual(err, "")
+        self.assertEqual(m["http"], "http://127.0.0.1:7890")
+        self.assertEqual(m["https"], "http://127.0.0.1:7890")
+
+    def test_scheme_is_completed_when_missing(self):
+        m, err = self.parse("127.0.0.1:7890")
+        self.assertEqual(err, "")
+        self.assertEqual(m["http"], "http://127.0.0.1:7890")
+
+    def test_split_pair_is_kept_whole(self):
+        m, err = self.parse("http://a:7890;https://b:7891")
+        self.assertEqual(err, "")
+        self.assertEqual(m, {"http": "http://a:7890", "https": "https://b:7891"})
+
+    def test_duplicate_type_is_rejected_not_silently_overwritten(self):
+        m, err = self.parse("http://a:7890;http://b:7891")
+        self.assertEqual(m, {})
+        self.assertIn("重复", err, "旧实现会静默丢掉前一段，必须改成明确报错")
+
+    def test_socks_is_rejected_with_actionable_reason(self):
+        for raw in ("socks5://127.0.0.1:7891", "socks4://127.0.0.1:7891",
+                    "socks://127.0.0.1:7891"):
+            with self.subTest(raw=raw):
+                m, err = self.parse(raw)
+                self.assertEqual(m, {})
+                self.assertIn("HTTP", err, "要告诉用户改填 HTTP 端口")
+
+    def test_socks_inside_pair_is_also_rejected(self):
+        m, err = self.parse("http://a:7890;socks5://b:7891")
+        self.assertEqual(m, {})
+        self.assertIn("socks", err)
+
+    def test_unknown_scheme_is_rejected(self):
+        m, err = self.parse("ftp://127.0.0.1:7890")
+        self.assertEqual(m, {})
+        self.assertIn("无法识别", err)
+
+    def test_missing_host_is_rejected(self):
+        m, err = self.parse("http://")
+        self.assertEqual(m, {})
+        self.assertIn("主机名", err)
+
+    def test_trailing_semicolon_is_tolerated(self):
+        m, err = self.parse("http://127.0.0.1:7890;")
+        self.assertEqual(err, "")
+        self.assertEqual(m["http"], "http://127.0.0.1:7890")
+
+    def test_whitespace_is_trimmed(self):
+        m, err = self.parse("  http://127.0.0.1:7890  ")
+        self.assertEqual(err, "")
+        self.assertEqual(m["http"], "http://127.0.0.1:7890")
+
+    def test_manual_proxy_returns_what_parse_produced(self):
+        from app import runtime
+        runtime.replace({"proxy": "http://a:7890;https://b:7891"})
+        try:
+            self.assertEqual(sources._manual_proxy(),
+                             {"http": "http://a:7890", "https": "https://b:7891"})
+        finally:
+            runtime.replace({"proxy": ""})
+
+    def test_manual_proxy_drops_invalid_rather_than_misrouting(self):
+        from app import runtime
+        runtime.replace({"proxy": "socks5://127.0.0.1:7891"})
+        try:
+            self.assertEqual(sources._manual_proxy(), {},
+                             "解析失败时不能把坏地址当成代理用")
+        finally:
+            runtime.replace({"proxy": ""})
+
+    def test_save_settings_rejects_the_same_inputs(self):
+        from app import api as api_mod
+        api = api_mod.Api()
+        for raw in ("socks5://127.0.0.1:7891", "http://a:1;http://b:2",
+                    "ftp://x:1"):
+            with self.subTest(raw=raw):
+                res = api.save_settings({"proxy": raw})
+                self.assertFalse(res["ok"])
+                self.assertTrue(res["errors"])
+
+    def test_save_settings_accepts_valid_input(self):
+        from app import api as api_mod
+        api = api_mod.Api()
+        res = api.save_settings({"proxy": "http://127.0.0.1:7890"})
+        self.assertTrue(res["ok"], res)
+
+    def test_save_settings_accepts_empty(self):
+        from app import api as api_mod
+        api = api_mod.Api()
+        self.assertTrue(api.save_settings({"proxy": ""})["ok"])
+
+
+class ProxyStatusTest(unittest.TestCase):
+
+    def test_status_reports_whether_proxy_really_works(self):
+        with mock.patch.object(sources, "_manual_proxy", lambda: {}), \
+             mock.patch.object(sources.urllib.request, "getproxies",
+                               lambda: {"https": "http://127.0.0.1:7890"}), \
+             mock.patch.object(sources, "_probe_port", lambda a: True), \
+             mock.patch.object(sources, "_proxy_works", lambda m: False):
+            st = sources.proxy_status()
+        self.assertTrue(st["portOk"])
+        self.assertFalse(st["works"],
+                         "端口通但代理不转发请求，必须暴露出来而不是显示正常")
+
+    def test_works_true_when_proxy_actually_forwards(self):
+        with mock.patch.object(sources, "_manual_proxy",
+                               lambda: {"http": "http://x:1"}), \
+             mock.patch.object(sources, "_probe_port", lambda a: True), \
+             mock.patch.object(sources, "_proxy_works", lambda m: True):
+            st = sources.proxy_status()
+        self.assertTrue(st["works"])
+
+    def test_no_proxy_skips_the_network_probe(self):
+        called = []
+        with mock.patch.object(sources, "_manual_proxy", lambda: {}), \
+             mock.patch.object(sources.urllib.request, "getproxies", lambda: {}), \
+             mock.patch.object(sources, "_proxy_works",
+                               lambda m: called.append(m) or True):
+            st = sources.proxy_status()
+        self.assertEqual(st["mode"], "none")
+        self.assertFalse(st["works"])
+        self.assertEqual(called, [], "没配代理就不该去试探")
+
+    def test_frontend_reads_the_works_field(self):
+        js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertIn("data.works", js,
+                      "后端给了 works，前端不读就白做")
+
+    def test_frontend_has_its_own_false_positive_message(self):
+        js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertIn("没有转发请求", js)
+
+    def test_mock_proxy_status_carries_works(self):
+        js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        block = js.split("proxyStatus: function()", 1)[1].split("},", 1)[0]
+        self.assertIn("works:", block,
+                      "mock 少了 works，浏览器直开时设置页会误报代理不工作")
+
+    def test_mock_proxy_error_matches_backend_rules(self):
+        js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        self.assertIn("function mockProxyError", js)
+        for token in ("socks", "重复", "无法识别"):
+            self.assertIn(token, js, f"mock 校验要和后端一样拦下 {token}")

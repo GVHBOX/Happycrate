@@ -308,7 +308,9 @@
 
     proxyStatus: function(){
       if (live()) return window.pywebview.api.proxy_status();
-      return Promise.resolve({mode:"system", addr:"http://127.0.0.1:7890", portOk:true, systemOn:true, checkedAt:Date.now()/1000});
+      return Promise.resolve({mode:"system", addr:"http://127.0.0.1:7890",
+                              portOk:true, works:true, systemOn:true,
+                              checkedAt:Date.now()/1000});
     },
 
     defaultSettings: function(){
@@ -415,9 +417,8 @@
       if (live()) return window.pywebview.api.save_settings(fields || {});
       var f = fields || {};
       var proxy = String(f.proxy || "").trim();
-      if (proxy && !/^https?:\/\//i.test(proxy)){
-        return Promise.resolve({ok: false, errors: ["代理仅支持 http:// 或 https:// 开头"]});
-      }
+      var err = mockProxyError(proxy);
+      if (err) return Promise.resolve({ok: false, errors: [err]});
       mockSettings = Object.assign(mockSettings, f);
       return Promise.resolve({ok: true, errors: []});
     },
@@ -484,6 +485,35 @@
         + "请在设置里填写代理地址或打开系统代理后重试。";
     }
     return "";
+  }
+
+  function mockProxyError(raw){
+    var text = String(raw || "").replace(/^\s+|\s+$/g, "");
+    if (!text) return "";
+    var parts = text.split(";").map(function(s){ return s.replace(/^\s+|\s+$/g, ""); })
+      .filter(function(s){ return s; });
+    if (!parts.length) return "代理地址为空";
+    var seen = {};
+    var bad = "";
+    parts.forEach(function(p){
+      var full = p.indexOf("://") >= 0 ? p : "http://" + p;
+      var scheme = (full.split("://")[0] || "").toLowerCase();
+      if (scheme.indexOf("socks") === 0 && !bad){
+        bad = "不支持 " + scheme + " 代理，请填它的 HTTP 代理端口";
+        return;
+      }
+      if (scheme !== "http" && scheme !== "https" && !bad){
+        bad = "代理地址格式无法识别：" + p;
+        return;
+      }
+      var key = scheme === "https" ? "https" : "http";
+      if (seen[key] && !bad){
+        bad = "代理重复指定同一类型：" + p;
+        return;
+      }
+      seen[key] = 1;
+    });
+    return bad;
   }
 
   function validate(e, list){

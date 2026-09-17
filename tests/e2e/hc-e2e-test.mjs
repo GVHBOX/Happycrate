@@ -424,6 +424,13 @@ async function runOnce(exe, profileDir, pageUrl) {
     await search("空", 0);
     check("mock-empty-scenario", (await evaluate("document.querySelectorAll('#rows .srow').length", page)) === 0 && (await badge()) === "共 0 条", await badge());
 
+    await evaluate("location.hash = 'settings'", page);
+    await waitFor(async () => !!(await evaluate("document.querySelector('#netbar') && !document.querySelector('#netbar').hidden", page)), 6000, 150, "netbar");
+    const netInfo = await evaluate("(function(){var b=document.querySelector('#netbar');return {dot:b.querySelector('.netdot').className, title:b.querySelector('.nettitle').textContent, addr:b.querySelector('.netaddr').textContent, note:b.querySelector('.netnote').textContent}})()", page);
+    check("netbar-shows-system-proxy", netInfo.dot.indexOf("ok") >= 0 && netInfo.title.indexOf("跟随系统") >= 0, JSON.stringify(netInfo));
+    await evaluate("location.hash = ''", page);
+    await sleep(400);
+
     await search("断网", 0);
     const fatalTip = await evaluate("(function(){var t=document.querySelector('#tip');return t?{shown:t.classList.contains('show'),text:t.innerText}:{shown:false,text:''}})()", page);
     check("no-proxy-hint-is-visible", fatalTip.shown && fatalTip.text.indexOf("未检测到代理") >= 0, JSON.stringify(fatalTip).slice(0, 160));

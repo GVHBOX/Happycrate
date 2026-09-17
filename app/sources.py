@@ -166,25 +166,51 @@ def _retries() -> int:
     except (TypeError, ValueError):
         return 1
 
+def parse_proxy(raw: str) -> tuple[dict, str]:
+    text = (raw or "").strip()
+    if not text:
+        return {}, ""
+
+    parts = [p for p in (s.strip() for s in text.split(";")) if p]
+    if not parts:
+        return {}, "代理地址为空"
+
+    def normalize(part: str) -> str:
+        return part if "://" in part else "http://" + part
+
+    def reject(part: str) -> str:
+        scheme = part.split("://", 1)[0].lower() if "://" in part else ""
+        if scheme.startswith("socks"):
+            return f"不支持 {scheme} 代理，请填它的 HTTP 代理端口"
+        return f"代理地址格式无法识别：{part}"
+
+    if len(parts) == 1:
+        part = normalize(parts[0])
+        low = part.lower()
+        if not low.startswith(("http://", "https://")):
+            return {}, reject(parts[0])
+        if not urllib.parse.urlsplit(part).hostname:
+            return {}, f"代理地址缺少主机名：{parts[0]}"
+        return {"http": part, "https": part}, ""
+
+    out: dict = {}
+    for raw_part in parts:
+        part = normalize(raw_part)
+        low = part.lower()
+        if not low.startswith(("http://", "https://")):
+            return {}, reject(raw_part)
+        if not urllib.parse.urlsplit(part).hostname:
+            return {}, f"代理地址缺少主机名：{raw_part}"
+        key = "https" if low.startswith("https://") else "http"
+        if key in out:
+            return {}, f"代理重复指定同一类型：{raw_part}"
+        out[key] = part
+    return out, ""
+
 def _manual_proxy() -> dict:
     from . import runtime
-    raw = (runtime.get("proxy", "") or "").strip()
-    if not raw:
-        return {}
-
-    if ";" in raw:
-        out = {}
-        for part in raw.split(";"):
-            part = part.strip()
-            if not part:
-                continue
-            if part.startswith("http://"):
-                out["http"] = part
-            elif part.startswith("https://"):
-                out["https"] = part
-        return out
-
-    return {"http": raw, "https": raw}
+    mapping, _err = parse_proxy(runtime.get("proxy", "") or "")
+    return mapping
 
 def _opener(url: str, lax: bool = False):
     manual = _manual_proxy()
@@ -213,6 +239,23 @@ def _probe_port(addr: str) -> bool:
     except Exception:
         return False
 
+PROBE_URL = "http://www.gstatic.com/generate_204"
+PROBE_TIMEOUT = 6
+
+def _proxy_works(mapping: dict) -> bool:
+    if not mapping:
+        return False
+    handlers = [urllib.request.ProxyHandler(mapping)]
+    opener = urllib.request.build_opener(*handlers)
+    try:
+        req = urllib.request.Request(PROBE_URL, headers={"User-Agent": _ua()})
+        with opener.open(req, timeout=PROBE_TIMEOUT) as resp:
+            return resp.status < 400
+    except urllib.error.HTTPError as exc:
+        return exc.code < 400
+    except Exception:
+        return False
+
 def proxy_status() -> dict:
     try:
         manual = _manual_proxy()
@@ -220,21 +263,25 @@ def proxy_status() -> dict:
         if manual:
             mode = "manual"
             addr = manual.get("https") or manual.get("http") or ""
+            mapping = manual
         elif system:
             mode = "system"
             addr = system.get("https") or system.get("http") or ""
+            mapping = system
         else:
             mode = "none"
             addr = ""
+            mapping = {}
         return {
             "mode": mode,
             "addr": addr,
             "portOk": _probe_port(addr) if mode != "none" else False,
+            "works": _proxy_works(mapping) if mode != "none" else False,
             "systemOn": bool(system),
             "checkedAt": time.time(),
         }
     except Exception:
-        return {"mode": "none", "addr": "", "portOk": False,
+        return {"mode": "none", "addr": "", "portOk": False, "works": False,
                 "systemOn": False, "checkedAt": time.time()}
 
 def proxy_info() -> dict:

@@ -873,8 +873,9 @@ class Api:
 
     def save_settings(self, fields: dict) -> dict:
         proxy = str((fields or {}).get("proxy") or "").strip()
-        if proxy and not proxy.lower().startswith(("http://", "https://")):
-            return {"ok": False, "errors": ["代理仅支持 http:// 或 https:// 开头"]}
+        _mapping, proxy_err = sources.parse_proxy(proxy)
+        if proxy_err:
+            return {"ok": False, "errors": [proxy_err]}
         bad = self._settings.update(**(fields or {}))
         if bad:
             return {"ok": False, "errors": bad}

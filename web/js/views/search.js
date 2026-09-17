@@ -97,14 +97,15 @@
     return st.filesCache[it.hash] || [];
   }
 
-  function fileHit(it){
+  function fileReveals(it){
     if (!st.qtokens.length) return false;
     var files = filesOf(it);
     if (!files.length) return false;
     var fns = fileNames(it);
-    if (st.qphrase && fns.indexOf(st.qphrase) >= 0) return true;
+    var title = (it.title || "").toLowerCase();
     for (var i = 0; i < st.qtokens.length; i++){
-      if (fns.indexOf(st.qtokens[i]) >= 0) return true;
+      var tk = st.qtokens[i];
+      if (fns.indexOf(tk) >= 0 && title.indexOf(tk) < 0) return true;
     }
     return false;
   }
@@ -335,8 +336,9 @@
     visible().forEach(function(it){
       var h = it.hash;
       if (st.userShut[h]) return;
+      if (!titleMiss(it)) return;
       if (filesOf(it).length){
-        if (fileHit(it)) st.open[h] = true;
+        if (fileReveals(it)) st.open[h] = true;
         return;
       }
       if (!it.fetch || !it.fetch.url) return;
@@ -352,7 +354,7 @@
         queueLoad(h, function(){
           if (st.userShut[h] || st.open[h]) return;
           var cur = itemByHash(h);
-          if (cur && fileHit(cur)){
+          if (cur && fileReveals(cur)){
             st.open[h] = true;
             renderPanels();
           }

@@ -439,13 +439,14 @@
     if (q.indexOf("空") >= 0) return [];
     if (q.indexOf("断网") >= 0) return [];
     var tags = ["1080p", "720p", "2160p", "WEB-DL", "BluRay", "BDRip"];
+    var qFirst = q.split(/\s+/)[0] || q;
     var out = [];
     for (var i = 0; i < 24; i++){
       var gb = (0.4 + i * 0.37).toFixed(1);
       var hash = mockHash(i);
       var it = {
         hash: hash,
-        title: "[" + tags[i % tags.length] + "] " + q + " 第 " + (i + 1) + " 话 [简繁字幕]",
+        title: "[" + tags[i % tags.length] + "] " + qFirst + " 第 " + (i + 1) + " 话 [简繁字幕]",
         size: Math.round(parseFloat(gb) * 1073741824),
         sizeText: gb + " GB",
         seeders: 240 - i * 7,

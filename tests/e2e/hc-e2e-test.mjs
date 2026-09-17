@@ -258,15 +258,18 @@ async function runOnce(exe, profileDir, pageUrl) {
     check("mock-24-rows", (await evaluate("document.querySelectorAll('#rows .srow').length", page)) === 24, await badge());
     check("hl-count-24", (await evaluate("document.querySelectorAll('#rows .c-title mark.hl').length", page)) === 24, await evaluate("document.querySelectorAll('#rows .c-title mark.hl').length", page));
     check("relevance-order", (await evaluate("document.querySelectorAll('#rows .srow')[1].textContent.indexOf('第 2 话') >= 0", page)), await evaluate("document.querySelectorAll('#rows .srow')[1].textContent.slice(0, 50)", page));
-    await waitFor(async () => (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 9, 4000, 150, "auto-expand");
-    check("fpanel-auto-count", (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 9, await evaluate("document.querySelectorAll('.fpanel').length", page));
+    await sleep(600);
+    check("no-auto-expand-when-title-covers-query", (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 0,
+      "标题已含关键词时不该自动展开，实际 " + (await evaluate("document.querySelectorAll('.fpanel').length", page)));
+
+    await search("ubuntu 花絮", 24);
+    await waitFor(async () => (await evaluate("document.querySelectorAll('.fpanel').length", page)) > 0, 5000, 150, "auto-expand-reveal");
+    check("auto-expand-when-file-reveals-token", (await evaluate("document.querySelectorAll('.fpanel').length", page)) > 0,
+      "关键词只在文件里出现时应自动展开，实际 " + (await evaluate("document.querySelectorAll('.fpanel').length", page)));
     check("fpanel-auto-hl", !!(await evaluate("document.querySelector('.fpanel .fname mark.hl')", page)));
     await evaluate("document.querySelector('#rows .srow:not(.open) .fchev').click()", page);
     await sleep(350);
-    check("fpanel-manual-open", (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 10 && !!(await evaluate("document.querySelector('#rows .srow.open')", page)), await evaluate("document.querySelectorAll('.fpanel').length", page));
-    await evaluate("document.querySelector('#rows .srow.open .fchev').click()", page);
-    await sleep(350);
-    check("fpanel-manual-close", (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 9, await evaluate("document.querySelectorAll('.fpanel').length", page));
+    check("fpanel-manual-open", !!(await evaluate("document.querySelector('#rows .srow.open')", page)), await evaluate("document.querySelectorAll('.fpanel').length", page));
     await evaluate("(function(){document.querySelectorAll('#rows .srow.open .fchev').forEach(function(b){b.click()})})()", page);
     await sleep(350);
     check("fpanel-all-closed", (await evaluate("document.querySelectorAll('.fpanel').length", page)) === 0, await evaluate("document.querySelectorAll('.fpanel').length", page));

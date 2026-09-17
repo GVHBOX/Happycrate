@@ -75,3 +75,23 @@ class FrontEndSmokeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FileRevealsTest(unittest.TestCase):
+
+    def setUp(self):
+        self.node = find_node()
+        if not self.node:
+            self.skipTest("本机没有 node，跳过前端校验")
+        self.script = ROOT / "tests" / "file_reveals_check.cjs"
+
+    def test_only_revealing_tokens_trigger_auto_expand(self):
+        self.assertTrue(self.script.is_file(), f"校验脚本缺失：{self.script}")
+        proc = subprocess.run(
+            [self.node, str(self.script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        self.assertEqual(proc.returncode, 0,
+                         "自动展开的条件只能是「标题里没有、文件里有」：\n"
+                         + (proc.stdout or "") + (proc.stderr or ""))

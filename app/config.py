@@ -425,8 +425,6 @@ class Config:
             if "health" in entry:
                 entry.pop("health", None)
                 removed = True
-        if removed:
-            self.data["sources"] = self.sources
         return removed
 
     def set_order_locked(self, on: bool) -> None:

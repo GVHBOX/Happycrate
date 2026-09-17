@@ -285,13 +285,13 @@ def run() -> int:
         bridge.boot()
     except Exception as exc:
         logger.exception("启动失败")
-        alert("启动失败：%s: %s\n\n日志目录：%s" % (type(exc).__name__, exc, log.logs_dir()))
+        alert(f"启动失败：{type(exc).__name__}: {exc}\n\n日志目录：{log.logs_dir()}")
         single.release()
         return 1
 
     logger.info("%s v%s 就绪 · 界面目录 %s", APP_TITLE, __version__, web_dir())
     if not (web_dir() / "index.html").is_file():
-        alert("找不到界面文件：%s\n\n程序可能损坏，请重新下载完整压缩包。" % (web_dir() / "index.html"))
+        alert(f"找不到界面文件：{web_dir() / 'index.html'}\n\n程序可能损坏，请重新下载完整压缩包。")
         single.release()
         return 1
 

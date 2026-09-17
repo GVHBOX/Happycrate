@@ -121,6 +121,35 @@ class ContractCoverageTest(unittest.TestCase):
             with self.subTest(key=key):
                 self.assertNotIn("未知内置源", sources.adapter_location(key))
 
+    def test_frontend_adapter_map_matches_backend(self):
+        js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        block = js.split("function adapterName(key){", 1)[1].split("}", 1)[0]
+        pairs = dict(re.findall(r"([a-z0-9]+)\s*:\s*\"(_search_[A-Za-z0-9_]+)\"",
+                                block))
+        expect = sources.BUILTIN_ADAPTER_NAMES
+        self.assertEqual(sorted(pairs), sorted(expect),
+                         "前端 adapterName 与后端内置源清单不一致，"
+                         "新增内置源漏改会显示「未知内置源」")
+        for key, name in expect.items():
+            with self.subTest(key=key):
+                self.assertEqual(pairs.get(key), name,
+                                 f"{key} 的适配器函数名两边不一致")
+
+
+class DynamicDispatchTest(unittest.TestCase):
+
+    def test_titlbar_dispatch_targets_exist_on_backend(self):
+        html = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
+        names = set(re.findall(r'call\("([A-Za-z_0-9]+)"\)', html))
+        self.assertTrue(names, "标题栏按钮走 call(name) 动态派发，扫不到就没人管")
+        backend = {name for name, _ in inspect.getmembers(
+            api_mod.Api, inspect.isfunction) if not name.startswith("_")}
+        missing = sorted(names - backend)
+        self.assertEqual(
+            missing, [],
+            "标题栏按钮用 call(name) 派发，后端没有这些方法，点了没反应："
+            + repr(missing))
+
     def test_custom_type_location_points_to_template(self):
         self.assertEqual(sources.adapter_location("x", "html"),
                          "app/templates.py :: _make_html")

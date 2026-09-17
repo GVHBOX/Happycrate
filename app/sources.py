@@ -471,12 +471,12 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
     raise RuntimeError(f"请求失败：{url}")
 
 def _decode(raw: bytes) -> str:
-    for enc in ("utf-8", "gb18030", "big5", "latin-1"):
+    for enc in ("utf-8", "gb18030", "big5"):
         try:
             return raw.decode(enc)
         except (UnicodeDecodeError, LookupError):
             continue
-    return raw.decode("utf-8", errors="replace")
+    return raw.decode("latin-1")
 
 _MAX_PLAUSIBLE_BYTES = 1024 ** 6
 

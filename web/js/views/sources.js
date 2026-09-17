@@ -261,10 +261,6 @@
     });
   }
 
-  function confirmModal(question, okLabel, onOk){
-    M.confirm(question, okLabel, onOk);
-  }
-
   var SEMANTIC = {
     ok: "ok", slow: "ok", http429: "warn", http4xx: "warn",
     empty: "empty", na: "na",
@@ -576,7 +572,7 @@
       if (del && !del.disabled){
         var dk = del.dataset.del, ds = store.byKey(dk);
         var label = ds ? ds.label : dk;
-        confirmModal("删除 " + label + "？", "删除", function(){
+        M.confirm("删除 " + label + "？", "删除", function(){
           api.removeSource(dk).then(function(ok){
             if (!ok){ M.toast("删除失败"); return; }
             reload();
@@ -649,7 +645,7 @@
       if (!st.checked.length) return;
       var n = st.checked.length;
       var keys = st.checked.slice();
-      confirmModal("删除 " + n + " 个源？", "删除", function(){
+      M.confirm("删除 " + n + " 个源？", "删除", function(){
         Promise.all(keys.map(function(k){ return api.removeSource(k); })).then(function(){
           store.set({checked: []});
           anchor = -1;
@@ -662,7 +658,7 @@
     };
 
     root.querySelector("#btnReset").onclick = function(){
-      confirmModal("恢复默认会清掉自定义源？", "恢复", function(){
+      M.confirm("恢复默认会清掉自定义源？", "恢复", function(){
         api.resetSources().then(function(){
           store.set({filter: "", checked: []});
           anchor = -1;

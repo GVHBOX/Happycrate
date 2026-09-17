@@ -497,12 +497,12 @@
   }
 
   function stripLabel(ss){
-    if (ss.state === "ok") return "<b>" + ss.count + "</b> 条";
+    if (ss.state === "ok") return "<b>" + esc(ss.count) + "</b> 条";
     if (ss.state === "empty") return "无结果";
     if (ss.state === "err") return esc(ss.err || "失败");
     if (ss.state === "warn"){
       if (!ss.count) return esc(ss.err || "提示");
-      return "<b>" + ss.count + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "");
+      return "<b>" + esc(ss.count) + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "");
     }
     if (ss.state === "cancel") return "已取消";
     return "等待";
@@ -896,7 +896,13 @@
     stripEl = root.querySelector("#srcstrip");
     badgeEl.innerHTML = badgeHtml();
 
-    refreshSources();
+    var srcLoaded = false;
+    function loadSourcesOnce(){
+      if (srcLoaded) return;
+      srcLoaded = true;
+      refreshSources();
+    }
+    loadSourcesOnce();
 
     HC.api.onSearch({
       source: function(d){
@@ -1308,7 +1314,7 @@
     });
 
     HC.api.getSettings().then(applySettings);
-    HC.api.onLive(refreshSources);
+    HC.api.onLive(loadSourcesOnce);
     HC.api.onLive(function(){
       HC.api.getSettings().then(applySettings);
     });

@@ -202,8 +202,10 @@
                ms: roll === "warn" ? 4800 + Math.round(Math.random()*900)
                                    : 30 + Math.round(Math.random()*260),
                err:""};
-          s.health = {state:res.state, ms:res.ms, err:res.err, times:s.health.times,
-                      empty: s.health.state === "err" && (s.health.times || []).indexOf("empty") >= 0};
+          var times = s.health.times || [];
+          var hits = times.filter(function(t){ return t === "empty"; }).length;
+          s.health = {state:res.state, ms:res.ms, err:res.err, times:times,
+                      empty: res.state === "empty" || (hits > 0 && hits * 2 > times.length)};
           if (probeOne) probeOne(s.key, res);
           left--;
           if (!left && probeDone) probeDone();

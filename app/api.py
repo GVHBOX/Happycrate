@@ -20,7 +20,7 @@ BAD_MIN = 3
 SLOW_MS = 5000
 MAX_QUERY_LEN = 100
 
-def validate_query_length(text: str) -> bool:
+def is_query_too_long(text: str) -> bool:
     return len(text or "") > MAX_QUERY_LEN
 
 
@@ -616,7 +616,7 @@ class Api:
         if len(text) < min_len:
             return {"ok": False, "token": 0, "total": 0,
                     "error": f"关键字至少 {min_len} 个字符"}
-        if validate_query_length(text):
+        if is_query_too_long(text):
             return {"ok": False, "token": 0, "total": 0,
                     "error": f"关键字最长 {MAX_QUERY_LEN} 个字符"}
 
@@ -624,7 +624,6 @@ class Api:
         if not keys:
             return {"ok": False, "token": 0, "total": 0, "error": "没有启用的数据源"}
 
-        self._search_token = 0
         token = sources.start_batch()
         self._search_token = token
         threading.Thread(

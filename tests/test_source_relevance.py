@@ -80,14 +80,22 @@ class QueryLengthTest(unittest.TestCase):
         self.assertLessEqual(api_mod.MAX_QUERY_LEN, 500)
 
     def test_within_limit_passes(self):
-        self.assertFalse(api_mod.validate_query_length("x" * api_mod.MAX_QUERY_LEN))
+        self.assertFalse(api_mod.is_query_too_long("x" * api_mod.MAX_QUERY_LEN))
 
     def test_over_limit_is_rejected(self):
-        self.assertTrue(api_mod.validate_query_length(
+        self.assertTrue(api_mod.is_query_too_long(
             "x" * (api_mod.MAX_QUERY_LEN + 1)))
 
     def test_empty_is_not_length_error(self):
-        self.assertFalse(api_mod.validate_query_length(""))
+        self.assertFalse(api_mod.is_query_too_long(""))
+
+    def test_name_says_what_the_result_means(self):
+        self.assertFalse(hasattr(api_mod, "validate_query_length"),
+                         "旧名字读起来是「校验通过」，实际返回 True 表示超长")
+        self.assertRegex(
+            (ROOT / "app" / "api.py").read_text(encoding="utf-8"),
+            r"if is_query_too_long\(text\):",
+            "调用点要跟着改名，否则 if 的语义是反的")
 
     def test_start_search_rejects_over_long_before_hitting_sources(self):
         api = api_mod.Api()

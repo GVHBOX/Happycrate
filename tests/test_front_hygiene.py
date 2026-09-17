@@ -284,6 +284,17 @@ class CssHygieneTest(unittest.TestCase):
         )
 
 
+class DuplicateRequestTest(unittest.TestCase):
+
+    def test_mount_asks_for_sources_once(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertNotIn(
+            "onLive(refreshSources)", src,
+            "onLive 在已 live 时立即回调，mount 里的直接调用会撞成两次请求")
+        self.assertIn("onLive(loadSourcesOnce)", src,
+                      "两条路径要走同一个去重入口")
+
+
 class A11yTest(unittest.TestCase):
 
     def test_toast_is_live_region(self):

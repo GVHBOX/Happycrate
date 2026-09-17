@@ -293,6 +293,42 @@ class A11yTest(unittest.TestCase):
                              f"设置页开关 {sid} 的点击处理必须同步 aria-pressed")
 
 
+class MockSourceListTest(unittest.TestCase):
+
+    def mock_builtins(self):
+        text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        block = text.split("var MOCK = [", 1)[1].split("var db = null;", 1)[0]
+        return re.findall(r'key:"([a-z0-9]+)"[^}]*type:"builtin"', block, re.S)
+
+    def real_builtins(self):
+        from app import config
+        return [s["key"] for s in config.DEFAULT_SOURCES]
+
+    def test_mock_matches_real_builtin_sources(self):
+        self.assertEqual(sorted(self.mock_builtins()),
+                         sorted(self.real_builtins()),
+                         "mock 的内置源清单必须与后端一致，否则浏览器直开看到的"
+                         "不是成品（双模机制靠同一份前端）")
+
+    def test_mock_has_no_unknown_keys(self):
+        known = set(self.real_builtins())
+        extra = [k for k in self.mock_builtins() if k not in known]
+        self.assertEqual(extra, [],
+                         f"mock 里有后端不存在的内置源：{extra}")
+
+    def test_no_retired_source_in_mock(self):
+        from app import config
+        for key in config.RETIRED_SOURCES:
+            self.assertNotIn(key, self.mock_builtins(),
+                             f"{key} 已下线，mock 里不该还留着")
+
+    def test_mock_keeps_custom_examples(self):
+        text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        block = text.split("var MOCK = [", 1)[1].split("var db = null;", 1)[0]
+        for key in ("custom1", "custom2", "custom3"):
+            self.assertIn(key, block, "三种自定义源类型的样例要留在 mock 里")
+
+
 class JsonHighlightTest(unittest.TestCase):
 
     def semantic_map(self):

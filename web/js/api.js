@@ -18,6 +18,8 @@
      addr:"https://bitsearch.to", health:{state:"ok", ms:41, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"tpb", label:"TPB镜像", type:"builtin", enabled:true, timeout:15,
      addr:"https://thepiratebay10.org", health:{state:"ok", ms:112, err:"", times:["ok","ok","ok","ok","ok"]}},
+    {key:"xccl263", label:"小草磁力", type:"builtin", enabled:true, timeout:20,
+     addr:"https://www.xccl263.xyz", health:{state:"ok", ms:240, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"custom1", label:"我的私藏源", type:"json", enabled:true, timeout:15,
      addr:"https://e.com/api/search?q={query}&p={page}",
      listPath:"data.list",
@@ -102,6 +104,7 @@
   var probeDone = null;
   var sHooks = {};
   var mockToken = 0;
+  var MAX_QUERY_LEN = 100;
   var mockSettings = {
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
@@ -342,6 +345,16 @@
 
     startSearch: function(query){
       if (live()) return window.pywebview.api.start_search(query);
+      var text = (query || "").replace(/^\s+|\s+$/g, "");
+      var minLen = Number(mockSettings.min_query_len) || 2;
+      if (text.length < minLen){
+        return Promise.resolve({ok:false, token:0, total:0,
+                                error:"关键字至少 " + minLen + " 个字符"});
+      }
+      if (text.length > MAX_QUERY_LEN){
+        return Promise.resolve({ok:false, token:0, total:0,
+                                error:"关键字最长 " + MAX_QUERY_LEN + " 个字符"});
+      }
       var list = mockItems(query);
       var errs = mockErrors(query);
       var keys = seed().filter(function(s){ return s.enabled; }).map(function(s){ return s.key; });
@@ -350,6 +363,7 @@
       }
       var token = Date.now();
       mockToken = token;
+      var fatal = mockFatal(query);
       keys.forEach(function(key, i){
         var part = list.filter(function(it){ return it.sources.indexOf(key) >= 0; });
         setTimeout(function(){
@@ -363,7 +377,9 @@
             sHooks.batch({token:token, key:key, items:part});
           }
           if (i === keys.length - 1 && sHooks.done){
-            sHooks.done({token:token, total:list.length, errors:errs});
+            var done = Object.assign({}, errs);
+            if (fatal) done[""] = fatal;
+            sHooks.done({token:token, total:list.length, errors:done});
           }
         }, 420 + i * 380);
       });
@@ -420,6 +436,7 @@
   function mockItems(query){
     var q = query || "关键词";
     if (q.indexOf("空") >= 0) return [];
+    if (q.indexOf("断网") >= 0) return [];
     var tags = ["1080p", "720p", "2160p", "WEB-DL", "BluRay", "BDRip"];
     var out = [];
     for (var i = 0; i < 24; i++){
@@ -461,6 +478,14 @@
     return {};
   }
 
+  function mockFatal(query){
+    if ((query || "").indexOf("断网") >= 0){
+      return "未检测到代理，这些源需要代理才能访问，"
+        + "请在设置里填写代理地址或打开系统代理后重试。";
+    }
+    return "";
+  }
+
   function validate(e, list){
     var errs = [];
     if (!e.label) errs.push("名称不能为空");
@@ -480,7 +505,8 @@
     var MAP = {
       apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
       dmhy:"_search_dmhy", sukebei:"_search_sukebei", eztv:"_search_eztv",
-      bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror", btdig:"_search_btdig"
+      bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror",
+      xccl263:"_search_xccl263"
     };
     return MAP[key] || null;
   }

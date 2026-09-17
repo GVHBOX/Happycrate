@@ -195,7 +195,7 @@ class DedupeTest(unittest.TestCase):
     def test_keeps_poorer_side_extra_fields(self):
         rich = {"info_hash": "e" * 40, "title": "x" * 20, "size": 1024,
                 "seeders": 5, "added": 111, "source": "nyaa"}
-        poor = {"info_hash": "e" * 40, "title": "short", "source": "btdig",
+        poor = {"info_hash": "e" * 40, "title": "short", "source": "xccl263",
                 "files": [{"n": "a.mp4", "s": "1 MB"}],
                 "fetch": {"url": "https://x/a.torrent"}}
         for order in ([rich, poor], [poor, rich]):
@@ -204,7 +204,7 @@ class DedupeTest(unittest.TestCase):
             self.assertEqual(out[0]["files"], [{"n": "a.mp4", "s": "1 MB"}])
             self.assertEqual(out[0]["fetch"], {"url": "https://x/a.torrent"})
             self.assertIn("nyaa", out[0]["sources"])
-            self.assertIn("btdig", out[0]["sources"])
+            self.assertIn("xccl263", out[0]["sources"])
 
     def test_fills_empty_field_from_other_side(self):
         dense = {"info_hash": "f" * 40, "title": "x" * 20, "seeders": 5,

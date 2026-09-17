@@ -424,6 +424,11 @@ async function runOnce(exe, profileDir, pageUrl) {
     await search("空", 0);
     check("mock-empty-scenario", (await evaluate("document.querySelectorAll('#rows .srow').length", page)) === 0 && (await badge()) === "共 0 条", await badge());
 
+    await search("断网", 0);
+    const fatalTip = await evaluate("(function(){var t=document.querySelector('#tip');return t?{shown:t.classList.contains('show'),text:t.innerText}:{shown:false,text:''}})()", page);
+    check("no-proxy-hint-is-visible", fatalTip.shown && fatalTip.text.indexOf("未检测到代理") >= 0, JSON.stringify(fatalTip).slice(0, 160));
+    check("no-proxy-hint-not-counted-as-source", (await evaluate("document.querySelector('#chip').textContent", page)).indexOf("个源失败") < 0, await evaluate("document.querySelector('#chip').textContent", page));
+
     await evaluate("location.hash = 'sources'", page);
     await waitFor(async () => (await evaluate("document.querySelectorAll('#rows .row').length", page)) >= 10, 6000, 150, "sources-mount");
     const srcCount = await evaluate("document.querySelectorAll('#rows .row').length", page);

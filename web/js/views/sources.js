@@ -270,7 +270,7 @@
     empty: "empty", na: "na",
     timeout: "err", net: "err", http403: "err", http5xx: "err",
     err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn",
-    http451: "err"
+    http451: "err", blocked: "err"
   };
 
   function highlightJson(text){

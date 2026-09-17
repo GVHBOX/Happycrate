@@ -18,6 +18,11 @@ EVENT_WINDOW = config.EVENT_WINDOW
 FILES_CAP = 200
 BAD_MIN = 3
 SLOW_MS = 5000
+MAX_QUERY_LEN = 100
+
+def validate_query_length(text: str) -> bool:
+    return len(text or "") > MAX_QUERY_LEN
+
 
 OUTCOME_OK = "ok"
 OUTCOME_EMPTY = "empty"
@@ -31,6 +36,7 @@ OUTCOME_4XX = "http4xx"
 OUTCOME_CANCEL = "cancel"
 OUTCOME_PARSE = "parse"
 OUTCOME_451 = "http451"
+OUTCOME_BLOCKED = "blocked"
 
 OUTCOME_STATE = {
     OUTCOME_OK: "ok",
@@ -45,6 +51,7 @@ OUTCOME_STATE = {
     OUTCOME_CANCEL: "na",
     OUTCOME_PARSE: "warn",
     OUTCOME_451: "err",
+    OUTCOME_BLOCKED: "err",
 }
 
 OUTCOME_TEXT = {
@@ -60,10 +67,11 @@ OUTCOME_TEXT = {
     OUTCOME_CANCEL: "",
     OUTCOME_PARSE: "解析失败",
     OUTCOME_451: "451 地区受限",
+    OUTCOME_BLOCKED: sources.BLOCKED_TEXT,
 }
 
 FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
-                            OUTCOME_403, OUTCOME_5XX})
+                            OUTCOME_403, OUTCOME_5XX, OUTCOME_BLOCKED})
 
 _HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+)?\b([45]\d{2})\b")
 _HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
@@ -141,6 +149,9 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
     low = (err or "").lower()
     if "已停止" in (err or "") or "cancelled" in low:
         return OUTCOME_CANCEL, 0
+
+    if sources.BLOCKED_TEXT in (err or ""):
+        return OUTCOME_BLOCKED, 0
 
     if "tunnel" in low or "proxy" in low:
         return OUTCOME_NET, 0
@@ -607,6 +618,9 @@ class Api:
         if len(text) < min_len:
             return {"ok": False, "token": 0, "total": 0,
                     "error": f"关键字至少 {min_len} 个字符"}
+        if validate_query_length(text):
+            return {"ok": False, "token": 0, "total": 0,
+                    "error": f"关键字最长 {MAX_QUERY_LEN} 个字符"}
 
         keys = sources.enabled_keys()
         if not keys:

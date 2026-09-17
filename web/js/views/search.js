@@ -734,7 +734,7 @@
     goBtn.classList.remove("stop");
     stopProgress();
     st.errors = st.errors || {};
-    var fails = Object.keys(st.errors).length;
+    var fails = Object.keys(st.errors).filter(function(k){ return k; }).length;
     var total = st.items.length;
     if (fails) setChip(total + " 条 · " + fails + " 个源失败", "warn");
     else if (!total) setChip("没有找到结果", "");
@@ -901,6 +901,12 @@
       done: function(d){
         if (!st.busy || d.token !== st.token) return;
         st.errors = d.errors || {};
+        var fatal = st.errors[""];
+        if (fatal){
+          st.lines.unshift({text: fatal, bad: true});
+          renderTip();
+          tipEl.classList.add("show");
+        }
         searchDone();
       }
     });

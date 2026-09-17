@@ -12,7 +12,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import log
 
@@ -95,6 +95,46 @@ class ProxyUnreachable(Exception):
 
 class SearchCancelled(Exception):
     pass
+
+class Blocked(Exception):
+    pass
+
+BLOCKED_TEXT = "人机验证拦截"
+
+_CAPTCHA_SIGNS = (b"one more step", b"please complete the security check",
+                  b"captcha", b"cf-browser-verification", b"just a moment",
+                  b"enable javascript and cookies")
+
+def _captcha_text(text: str) -> bool:
+    low = (text or "")[:4096].lower()
+    if "<html" not in low and "<!doctype" not in low:
+        return False
+    return any(sign.decode() in low for sign in _CAPTCHA_SIGNS)
+
+def _is_timeout(exc: BaseException) -> bool:
+    if isinstance(exc, TimeoutError):
+        return True
+    reason = getattr(exc, "reason", None)
+    if isinstance(reason, TimeoutError):
+        return True
+    text = _error_text(exc).lower()
+    return "timed out" in text or "timeouterror" in text
+
+_CAPTCHA_SCAN_BYTES = 8192
+
+def _http_error_body(exc) -> bytes:
+    try:
+        return exc.read(_CAPTCHA_SCAN_BYTES) or b""
+    except Exception:
+        return b""
+
+def _captcha_wall(exc) -> bool:
+    if not isinstance(exc, urllib.error.HTTPError):
+        return False
+    if exc.code not in (403, 429):
+        return False
+    body = _http_error_body(exc).lower()
+    return any(sign in body for sign in _CAPTCHA_SIGNS)
 
 _cancel_epoch = 0
 
@@ -215,6 +255,34 @@ def _max_workers(len_sources: int) -> int:
     configured = max(1, configured)
     return max(1, min(configured, len_sources))
 
+_OVERSEAS_KEYS = frozenset({
+    "nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb",
+})
+
+def _is_timeout_text(err: str) -> bool:
+    low = (err or "").lower()
+    return "timed out" in low or "timeout" in low or "超时" in (err or "")
+
+def proxy_hint_for(errors: dict) -> str:
+    p = proxy_info()
+    if p:
+        addr = p.get("https") or p.get("http") or ""
+        return (f"系统代理 {addr} 连不上。若使用 Clash / v2ray 等，"
+                f"请确认已启动；或在系统设置里关闭代理后重试。")
+
+    keys = [k for k, v in (errors or {}).items() if k]
+    if not keys:
+        return "网络请求失败，请检查网络连接。"
+
+    timed = [k for k in keys if _is_timeout_text((errors or {}).get(k, ""))]
+    overseas = [k for k in timed if k in _OVERSEAS_KEYS]
+    if len(overseas) >= 2 and len(overseas) * 2 >= len(keys):
+        return ("未检测到代理，这些源需要代理才能访问，"
+                "请在设置里填写代理地址或打开系统代理后重试。")
+    if timed:
+        return "网络请求超时，请检查网络连接。"
+    return "网络请求失败，请检查网络连接。"
+
 def proxy_hint() -> str:
     p = proxy_info()
     if not p:
@@ -290,13 +358,22 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             opener = _opener(url, use_lax)
             with opener.open(req, timeout=timeout) as resp:
                 raw = _read_capped(resp, limit)
-            return raw if binary else _decode(raw)
+            if not binary:
+                text = _decode(raw)
+                if _captcha_text(text):
+                    logger.warning("返回验证码页：%s", url)
+                    raise Blocked(BLOCKED_TEXT)
+                return text
+            return raw
 
         except TooLarge:
             raise
 
         except urllib.error.HTTPError as exc:
             last_exc = exc
+            if exc.code in (403, 429) and _captcha_wall(exc):
+                logger.warning("被验证码拦截：%s", url)
+                raise Blocked(BLOCKED_TEXT) from exc
             if exc.code in _RETRY_STATUS and attempt <= retries:
                 time.sleep(1.0 * attempt)
                 logger.debug("HTTP %s：%s，%d/%d 次重试",
@@ -320,6 +397,9 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             if _looks_like_proxy_failure(exc):
                 logger.warning("代理不可达（%s）：%s", urllib.parse.urlparse(url).netloc, exc)
                 raise ProxyUnreachable(proxy_hint()) from exc
+            if _is_timeout(exc):
+                logger.debug("请求超时：%s（%ds，不重试）", url, timeout)
+                raise
             if attempt <= retries:
                 time.sleep(1.5 * attempt)
                 logger.debug("请求失败：%s，%d/%d 次重试", url, attempt, retries)
@@ -474,6 +554,20 @@ def _ts_from_iso(text: str) -> float | None:
     except ValueError:
         return None
 
+CN_TZ = timezone(timedelta(hours=8))
+
+def _ts_from_naive_cn(text: str) -> float | None:
+    if not text:
+        return None
+    raw = str(text).strip()
+    if raw.endswith("Z") or re.search(r"[+-]\d{2}:?\d{2}$", raw):
+        return None
+    try:
+        dt = datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+    return dt.replace(tzinfo=CN_TZ).timestamp()
+
 def _unescape(text: str) -> str:
     if not text:
         return ""
@@ -541,7 +635,7 @@ DEFAULT_BASES = {
     "eztv": "https://eztvx.to",
     "bitsearch": "https://bitsearch.to",
     "tpb": "https://thepiratebay10.org",
-    "btdig": "https://btdig.com",
+    "xccl263": "https://www.xccl263.xyz",
 }
 
 def base_of(entry_key: str, base: str = "") -> str:
@@ -549,6 +643,23 @@ def base_of(entry_key: str, base: str = "") -> str:
 
 def _base_of(base: str, default: str) -> str:
     return (base or default).rstrip("/")
+
+_APIBAY_TOKEN_RE = re.compile(r"[\s\-_.:+/|,]+")
+
+def _apibay_relevant(items: list[dict], query: str) -> bool:
+    needle = (query or "").lower().strip()
+    if not needle:
+        return False
+    if not any(ch.isalnum() for ch in needle):
+        return False
+    tokens = [t for t in _APIBAY_TOKEN_RE.split(needle) if len(t) >= 2]
+    for it in items:
+        title = (it.get("title") or "").lower()
+        if needle in title:
+            return True
+        if any(tok in title for tok in tokens):
+            return True
+    return False
 
 def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["apibay"])
@@ -577,6 +688,10 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
             added=_to_int(row.get("added")),
             source="TPB",
         ))
+
+    if items and not _apibay_relevant(items, query):
+        logger.info("apibay 忽略了关键词 %r，返回的是热门兜底列表，按无结果处理", query)
+        return []
     return items
 
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
@@ -634,13 +749,139 @@ def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         items.append(_mk(
             title=title, info_hash=h,
             size=parse_size(_tags(chunk, "contentLength")[0]),
-            added=_ts_from_rfc(_tags(chunk, "pubDate")[0]),
+            added=_ts_from_naive_cn(_tags(chunk, "pubDate")[0])
+            or _ts_from_iso(_tags(chunk, "pubDate")[0]),
             source="Mikan",
         ))
     return items
 
+DMHY_PAGES = 6
+DMHY_MAX_HITS = 500
+DMHY_WORKERS = 6
+
+_DMHY_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.I | re.S)
+_DMHY_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
+_DMHY_HASH_RE = re.compile(r"btih:([0-9a-fA-F]{40})", re.I)
+_DMHY_HASH_B32_RE = re.compile(r"btih:([A-Za-z2-7]{32})")
+_DMHY_TAG_RE = re.compile(r"<[^>]+>")
+_DMHY_HIDDEN_DATE_RE = re.compile(
+    r'<span[^>]*style="display:\s*none;?"[^>]*>\s*(\d{4}/\d{2}/\d{2} \d{2}:\d{2})', re.I)
+
+def _dmhy_cell_text(cell: str) -> str:
+    return re.sub(r"\s+", " ", _DMHY_TAG_RE.sub("", cell)).strip()
+
+def _dmhy_pub_date(row: str) -> float | None:
+    m = _DMHY_HIDDEN_DATE_RE.search(row)
+    if not m:
+        return None
+    try:
+        dt = datetime.strptime(m.group(1), "%Y/%m/%d %H:%M")
+    except ValueError:
+        return None
+    return dt.replace(tzinfo=CN_TZ).timestamp()
+
+def _dmhy_size(cell: str) -> int:
+    text = _dmhy_cell_text(cell)
+    if not text or text in ("-", "&nbsp;"):
+        return 0
+    return parse_size(text)
+
+def _dmhy_count(cell: str) -> int | None:
+    text = _dmhy_cell_text(cell)
+    return int(text) if text.isdigit() else None
+
+def _parse_dmhy_list(page_text: str, root: str) -> tuple[list[dict], int, bool]:
+    start = page_text.find('id="topic_list"')
+    if start < 0:
+        return [], 0, False
+    body = page_text[start:]
+    tbody = body.find("<tbody")
+    if tbody < 0:
+        return [], 0, False
+    rows = _DMHY_ROW_RE.findall(body[tbody:])
+
+    items: list[dict] = []
+    seen: set[str] = set()
+    for row in rows:
+        mag = _DMHY_HASH_RE.search(row)
+        if mag:
+            h = mag.group(1).lower()
+        else:
+            m32 = _DMHY_HASH_B32_RE.search(row)
+            if not m32:
+                continue
+            try:
+                h = base64.b32decode(m32.group(1).upper()).hex()
+            except Exception:
+                continue
+        if h in seen:
+            continue
+
+        cells = _DMHY_CELL_RE.findall(row)
+        if len(cells) < 6:
+            continue
+        seen.add(h)
+
+        link = re.search(r'href="(/topics/view/[^"]+)"[^>]*>(.*?)</a>',
+                         cells[2], re.I | re.S)
+        title = _unescape(_DMHY_TAG_RE.sub("", link.group(2))) if link else ""
+
+        it = _mk(
+            title=title, info_hash=h,
+            size=_dmhy_size(cells[4]),
+            seeders=_dmhy_count(cells[5]),
+            added=_dmhy_pub_date(row),
+            source="DMHY",
+        )
+        if link:
+            it["fetch"] = {"url": root + link.group(1)}
+        items.append(it)
+    return items, len(rows), True
+
+def _dmhy_page(root: str, p: int, needle: str, timeout: int, batch):
+    url = f"{root}/topics/list/page/{p}?keyword={needle}"
+    return _parse_dmhy_list(http_get(url, timeout=timeout, batch=batch), root)
+
+def _merge_dmhy(items: list[dict], seen: set[str]) -> list[dict]:
+    fresh: list[dict] = []
+    for it in items:
+        h = it["info_hash"]
+        if h in seen:
+            continue
+        seen.add(h)
+        fresh.append(it)
+    return fresh
+
 def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["dmhy"])
+    needle = urllib.parse.quote(query)
+    seen: set[str] = set()
+    items: list[dict] = []
+    pages: dict[int, tuple[list[dict], int, bool]] = {}
+    pool = futures.ThreadPoolExecutor(max_workers=DMHY_WORKERS)
+    try:
+        jobs = {pool.submit(_dmhy_page, root, p, needle, timeout, batch): p
+                for p in range(1, DMHY_PAGES + 1)}
+        for job in futures.as_completed(jobs):
+            try:
+                pages[jobs[job]] = job.result()
+            except Exception as exc:
+                logger.debug("DMHY 第 %d 页失败：%s", jobs[job], exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    for p in sorted(pages):
+        items.extend(_merge_dmhy(pages[p][0], seen))
+        if len(items) >= DMHY_MAX_HITS:
+            break
+
+    if items:
+        return items[:DMHY_MAX_HITS]
+    if pages.get(1, ([], 0, False))[2]:
+        return []
+    return _search_dmhy_rss(query, timeout, root, batch)
+
+def _search_dmhy_rss(query, timeout, root, batch) -> list[dict]:
     url = f"{root}/topics/rss/rss.xml?keyword={urllib.parse.quote(query)}"
     text = http_get(url, timeout=timeout, batch=batch)
 
@@ -673,9 +914,40 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         items.append(it)
     return items
 
-EZTV_PAGES = 10
+EZTV_PAGES = 6
 EZTV_MAX_HITS = 200
 EZTV_PAGE_SIZE = 100
+EZTV_WORKERS = 6
+
+def _eztv_page(root: str, p: int, timeout: int, batch) -> list[dict]:
+    url = f"{root}/api/get-torrents?limit={EZTV_PAGE_SIZE}&page={p}"
+    text = http_get(url, timeout=timeout, batch=batch)
+    try:
+        data = json.loads(text)
+    except (TypeError, ValueError):
+        logger.warning("EZTV 接口返回的不是 JSON：%s", str(text)[:120])
+        return []
+    rows = data.get("torrents") if isinstance(data, dict) else None
+    if not isinstance(rows, list):
+        return []
+
+    out: list[dict] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        title = _text(row.get("title")).strip()
+        h = _text(row.get("hash")).strip().lower()
+        if not h or not _HASH_HEX_RE.fullmatch(h):
+            continue
+        out.append(_mk(
+            title=title, info_hash=h,
+            size=parse_size(row.get("size_bytes") or row.get("size")),
+            seeders=_to_int(row.get("seeds")),
+            leechers=_to_int(row.get("peers")),
+            added=_to_int(row.get("date_released_unix")),
+            source="EZTV",
+        ))
+    return out
 
 def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["eztv"])
@@ -683,52 +955,50 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     if not needle:
         return []
 
+    first = _eztv_page(root, 1, timeout, batch)
+    pages: dict[int, list[dict]] = {1: first}
+
+    if len(first) >= EZTV_PAGE_SIZE:
+        rest = list(range(2, EZTV_PAGES + 1))
+        pool = futures.ThreadPoolExecutor(max_workers=min(EZTV_WORKERS, len(rest)))
+        try:
+            jobs = {pool.submit(_eztv_page, root, p, timeout, batch): p
+                    for p in rest}
+            for job in futures.as_completed(jobs):
+                p = jobs[job]
+                try:
+                    pages[p] = job.result()
+                except Exception as exc:
+                    logger.debug("EZTV 第 %d 页失败：%s", p, exc)
+                    pages[p] = []
+        finally:
+            pool.shutdown(wait=False, cancel_futures=True)
+
     items: list[dict] = []
     seen: set[str] = set()
-    for p in range(1, EZTV_PAGES + 1):
-        if batch is not None and not _batch_alive(batch):
-            break
-        url = f"{root}/api/get-torrents?limit={EZTV_PAGE_SIZE}&page={p}"
-        text = http_get(url, timeout=timeout, batch=batch)
-        try:
-            data = json.loads(text)
-        except (TypeError, ValueError):
-            logger.warning("EZTV 接口返回的不是 JSON：%s", str(text)[:120])
-            break
-        rows = data.get("torrents") if isinstance(data, dict) else None
-        if not isinstance(rows, list) or not rows:
-            break
-        for row in rows:
-            if not isinstance(row, dict):
+    for p in sorted(pages):
+        for it in pages[p]:
+            if needle not in it["title"].lower():
                 continue
-            title = _text(row.get("title")).strip()
-            if needle not in title.lower():
-                continue
-            h = _text(row.get("hash")).strip().lower()
-            if not h or h in seen:
+            h = it["info_hash"]
+            if h in seen:
                 continue
             seen.add(h)
-            items.append(_mk(
-                title=title, info_hash=h,
-                size=parse_size(row.get("size_bytes") or row.get("size")),
-                seeders=_to_int(row.get("seeds")),
-                leechers=_to_int(row.get("peers")),
-                added=_to_int(row.get("date_released_unix")),
-                source="EZTV",
-            ))
-        if len(items) >= EZTV_MAX_HITS:
-            break
-        if len(rows) < EZTV_PAGE_SIZE:
-            break
+            items.append(it)
+            if len(items) >= EZTV_MAX_HITS:
+                return items
     return items
 
-def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["bitsearch"])
+BITSEARCH_PAGES = 2
+BITSEARCH_PAGE_SIZE = 100
+BITSEARCH_MAX_HITS = 200
+BITSEARCH_WORKERS = 2
+
+def _bitsearch_page(root: str, p: int, query: str, timeout: int, batch) -> list[dict]:
     url = (f"{root}/api/v1/search?q={urllib.parse.quote(query)}"
-           f"&sort=seeders&page={max(1, int(page))}")
+           f"&sort=seeders&page={p}&limit={BITSEARCH_PAGE_SIZE}")
     text = http_get(url, timeout=timeout, batch=batch,
                     headers={"Accept": "application/json"})
-
     try:
         payload = json.loads(text)
     except (TypeError, ValueError):
@@ -741,14 +1011,14 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
     if not isinstance(rows, list):
         return []
 
-    items: list[dict] = []
+    out: list[dict] = []
     for row in rows:
         if not isinstance(row, dict):
             continue
         h = _text(row.get("infohash")).strip().lower()
         if not _HASH_HEX_RE.fullmatch(h):
             continue
-        items.append(_mk(
+        out.append(_mk(
             title=_text(row.get("title")),
             info_hash=h,
             size=_to_int(row.get("size")) or 0,
@@ -757,14 +1027,102 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
             added=_ts_from_iso(_text(row.get("updatedAt"))),
             source="BitSearch",
         ))
+    return out
+
+def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["bitsearch"])
+    first_page = max(1, int(page))
+    seen: set[str] = set()
+    items: list[dict] = []
+    ok_pages = 0
+    last_exc: Exception | None = None
+
+    targets = list(range(first_page, first_page + BITSEARCH_PAGES))
+    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), BITSEARCH_WORKERS))
+    try:
+        jobs = {pool.submit(_bitsearch_page, root, p, query, timeout, batch): p
+                for p in targets}
+        pages: dict[int, list[dict]] = {}
+        for job in futures.as_completed(jobs):
+            p = jobs[job]
+            try:
+                pages[p] = job.result()
+            except Exception as exc:
+                last_exc = exc
+                logger.debug("BitSearch 第 %d 页失败：%s", p, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    for p in sorted(pages):
+        ok_pages += 1
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= BITSEARCH_MAX_HITS:
+                return items
+
+    if not ok_pages and last_exc is not None:
+        raise last_exc
     return items
 
-def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["tpb"])
-    url = f"{root}/search/{urllib.parse.quote(query)}/{int(page)}/99/0"
-    text = http_get(url, timeout=timeout, batch=batch)
+_TPB_MONTH_DAY_RE = re.compile(r"^(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})$")
+_TPB_TODAY_RE = re.compile(r"^today\s+(\d{1,2}):(\d{2})$", re.I)
+_TPB_YDAY_RE = re.compile(r"^y-?day\s+(\d{1,2}):(\d{2})$", re.I)
+_TPB_TAG_RE = re.compile(r"<[^>]+>")
 
+def _tpb_cell_text(cell: str) -> str:
+    return re.sub(r"\s+", " ", _unescape(_TPB_TAG_RE.sub("", cell))).strip()
+
+def _tpb_added(text: str) -> float | None:
+    raw = (text or "").strip()
+    if not raw:
+        return None
+    now = datetime.now().astimezone()
+
+    m = _TPB_TODAY_RE.match(raw)
+    if m:
+        dt = now.replace(hour=int(m.group(1)), minute=int(m.group(2)),
+                         second=0, microsecond=0)
+        return dt.timestamp()
+
+    m = _TPB_YDAY_RE.match(raw)
+    if m:
+        dt = (now.replace(hour=int(m.group(1)), minute=int(m.group(2)),
+                          second=0, microsecond=0)
+              - timedelta(days=1))
+        return dt.timestamp()
+
+    m = _TPB_MONTH_DAY_RE.match(raw)
+    if not m:
+        return None
+    month, day, hour, minute = (int(g) for g in m.groups())
+    try:
+        dt = now.replace(month=month, day=day, hour=hour, minute=minute,
+                         second=0, microsecond=0)
+    except ValueError:
+        return None
+    if dt.timestamp() > now.timestamp() + 86400:
+        try:
+            dt = dt.replace(year=dt.year - 1)
+        except ValueError:
+            return None
+    return dt.timestamp()
+
+TPB_MIRRORS = (
+    "https://thepiratebay10.org",
+    "https://thepiratebay10.xyz",
+    "https://tpb.party",
+    "https://piratebayproxy.live",
+)
+
+_TPB_RESULT_MARK = 'id="searchResult"'
+
+def _tpb_parse(text: str) -> list[dict]:
     re_row = re.compile(r"<tr[^>]*>.*?</tr>", re.I | re.S)
+    re_cell = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
     re_magnet = re.compile(r'href="(magnet:\?xt=urn:btih:[0-9a-fA-F]{40})',
                            re.I)
     re_title = re.compile(r'href="[^"]*/torrent/\d+/([^"]+)"[^>]*>(.*?)</a>',
@@ -783,10 +1141,63 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
         seen.add(h)
         t = re_title.search(row)
         title = _unescape(re_tag.sub("", t.group(2))) if t else ""
-        items.append(_mk(title=title, info_hash=h, source="TPB镜像"))
+
+        cells = [_tpb_cell_text(c) for c in re_cell.findall(row)]
+        size = parse_size(cells[4]) if len(cells) > 4 else 0
+        seeders = _to_int(cells[5]) if len(cells) > 5 else None
+        leechers = _to_int(cells[6]) if len(cells) > 6 else None
+        added = _tpb_added(cells[2]) if len(cells) > 2 else None
+
+        items.append(_mk(
+            title=title, info_hash=h, size=size,
+            seeders=seeders, leechers=leechers, added=added,
+            source="TPB镜像",
+        ))
     return items
 
-_BTDIG_SIZE_RE = re.compile(r"([\d.]+)\s*(B|KB|MB|GB|TB)", re.I)
+def _tpb_fetch(root: str, query: str, page: int, timeout: int, batch,
+               retries: int = 0):
+    url = f"{root}/search/{urllib.parse.quote(query)}/{int(page)}/99/0"
+    return http_get(url, timeout=timeout, retries=retries, batch=batch)
+
+def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    if base:
+        roots = [base.rstrip("/")]
+    else:
+        roots = list(TPB_MIRRORS)
+
+    budget = max(1, int(timeout))
+    deadline = time.monotonic() + budget
+    per_try = max(3, budget // 2)
+    last_exc: Exception | None = None
+
+    for root in roots:
+        left = int(deadline - time.monotonic())
+        if left < 1:
+            logger.debug("TPB 镜像轮换时间用尽，跳过 %s", root)
+            break
+        try:
+            text = _tpb_fetch(root, query, page, min(left, per_try), batch)
+        except Exception as exc:
+            last_exc = exc
+            logger.debug("TPB 镜像 %s 请求失败：%s", root, exc)
+            continue
+
+        if _TPB_RESULT_MARK not in text:
+            last_exc = RuntimeError(f"TPB 镜像 {root} 返回的不是搜索结果页")
+            logger.debug("%s", last_exc)
+            continue
+
+        items = _tpb_parse(text)
+        if items:
+            return items
+        if re.search(r"no hits|nothing found", text, re.I):
+            return []
+        logger.debug("TPB 镜像 %s 结果页没有条目，换下一个", root)
+
+    if last_exc is not None:
+        raise last_exc
+    return []
 
 _BENCODE_MAX_DEPTH = 32
 
@@ -853,105 +1264,101 @@ def torrent_meta(url: str, timeout: int = 15, referer: str = "") -> list[dict]:
                     retries=0, limit=MAX_TORRENT_BYTES)
     return decode_torrent_files(data)
 
-_BTDIG_SIZE_MUL = {"B": 1, "KB": 1024, "MB": 1024 ** 2,
-                   "GB": 1024 ** 3, "TB": 1024 ** 4}
-_BTDIG_AGE_RE = re.compile(
-    r"(\d+)\s*(year|month|day|hour|minute|年|个月|天|小时|分钟)", re.I)
-_BTDIG_AGE_MUL = {
-    "year": 365 * 86400, "month": 30 * 86400, "day": 86400,
-    "hour": 3600, "minute": 60,
-    "年": 365 * 86400, "个月": 30 * 86400, "天": 86400,
-    "小时": 3600, "分钟": 60,
-}
+XCCL_PAGES = 2
+XCCL_MAX_HITS = 100
+XCCL_WORKERS = 2
 
-def _btdig_size(text: str) -> int:
-    m = _BTDIG_SIZE_RE.search(text.strip())
-    if not m:
-        return 0
-    try:
-        return int(float(m.group(1)) * _BTDIG_SIZE_MUL[m.group(2).upper()])
-    except (TypeError, ValueError, OverflowError, KeyError):
-        return 0
+_XCCL_ITEM_SPLIT_RE = re.compile(
+    r'<div class="search-item[^"]*">(.*?)(?=<div class="search-item|</body>)',
+    re.I | re.S)
+_XCCL_HASH_RE = re.compile(r'href="/hash/([0-9a-fA-F]{40})\.html"', re.I)
+_XCCL_TITLE_RE = re.compile(r'<a title="([^"]*)"', re.I)
+_XCCL_SIZE_RE = re.compile(r"文件大小:\s*<b[^>]*>([^<]+)</b>", re.I)
+_XCCL_DATE_RE = re.compile(r"创建时间:[^<]*<b>([^<]+)</b>", re.I)
+_XCCL_HEAT_RE = re.compile(r"下载热度:[^<]*<b>([^<]+)</b>", re.I)
+_XCCL_DATE_FMT = "%Y-%m-%d"
 
-def _btdig_age(text: str) -> float | None:
-    m = _BTDIG_AGE_RE.search(text.strip())
-    if not m:
+def _xccl_added(text: str) -> float | None:
+    raw = (text or "").strip()
+    if not raw:
         return None
     try:
-        return max(0.0, time.time() - int(m.group(1)) * _BTDIG_AGE_MUL[m.group(2).lower()])
-    except (TypeError, ValueError, OverflowError, KeyError):
+        dt = datetime.strptime(raw[:10], _XCCL_DATE_FMT)
+    except ValueError:
         return None
+    return dt.replace(tzinfo=CN_TZ).timestamp()
 
-def _btdig_files(block: str) -> list[dict]:
-    re_pair = re.compile(
-        r'class="file[_-]name"[^>]*>(.*?)</[^>]+>'
-        r'(?:(?!file[_-]name).)*?class="file[_-]size"[^>]*>(.*?)<',
-        re.I | re.S)
-    re_loose = re.compile(
-        r'>\s*([^<>]{2,160}?)\s*</[^>]+>\s*(?:<[^>]+>\s*)*'
-        r'<span[^>]*class="file[_-]size"[^>]*>\s*([^<]{2,20}?)\s*<',
-        re.I | re.S)
-    re_tag = re.compile(r"<[^>]+>")
-    out: list[dict] = []
-    seen: set[str] = set()
-    for m in re_pair.findall(block) or re_loose.findall(block):
-        name = _unescape(re_tag.sub("", m[0])).strip()
-        size = _unescape(re_tag.sub("", m[1])).strip()
-        if not name or name in seen:
-            continue
-        if re.search(r"隐藏|hidden|个文件|files? found", name, re.I):
-            continue
-        seen.add(name)
-        out.append({"n": name, "s": size})
-        if len(out) >= 8:
-            break
-    return out
-
-def _search_btdig(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["btdig"])
-    url = (f"{root}/search?q={urllib.parse.quote(query)}"
-           f"&p={max(0, int(page) - 1)}&order=0")
-    text = http_get(url, timeout=timeout, batch=batch, headers={
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": root + "/",
-    })
-
-    re_row = re.compile(
-        r'<div class="one_result".*?(?=<div class="one_result"|$)', re.I | re.S)
-    re_magnet = re.compile(r'href="(magnet:\?xt=urn:btih:[0-9a-fA-F]{40})', re.I)
-    re_title = re.compile(
-        r'<div class="torrent_name".*?><a[^>]*>(.*?)</a>', re.I | re.S)
-    re_size = re.compile(
-        r'<span class="torrent_size"[^>]*>(.*?)</span>', re.I | re.S)
-    re_age = re.compile(
-        r'<span class="torrent_age"[^>]*>(.*?)</span>', re.I | re.S)
-    re_tag = re.compile(r"<[^>]+>")
-
+def _parse_xccl263(text: str) -> list[dict]:
     items: list[dict] = []
     seen: set[str] = set()
-    for row in re_row.findall(text):
-        mag = re_magnet.search(row)
+
+    for block in _XCCL_ITEM_SPLIT_RE.findall(text):
+        mag = _XCCL_HASH_RE.search(block)
         if not mag:
             continue
-        h = hash_from_magnet(mag.group(1))
-        if not h or h in seen:
+        h = mag.group(1).lower()
+        if h in seen:
             continue
         seen.add(h)
-        t = re_title.search(row)
-        title = _unescape(re_tag.sub("", t.group(1))) if t else ""
-        s = re_size.search(row)
-        a = re_age.search(row)
+
+        title = _XCCL_TITLE_RE.search(block)
+        size = _XCCL_SIZE_RE.search(block)
+        date = _XCCL_DATE_RE.search(block)
+        heat = _XCCL_HEAT_RE.search(block)
+
         items.append(_mk(
-            title=title,
+            title=_unescape(title.group(1)) if title else "",
             info_hash=h,
-            size=_btdig_size(_unescape(re_tag.sub("", s.group(1)))) if s else 0,
-            seeders=None,
-            leechers=None,
-            added=_btdig_age(_unescape(re_tag.sub("", a.group(1)))) if a else None,
-            source="BTDigg",
-            files=_btdig_files(row),
+            size=parse_size(size.group(1)) if size else 0,
+            seeders=_to_int(heat.group(1)) if heat else None,
+            added=_xccl_added(date.group(1)) if date else None,
+            source="小草磁力",
         ))
+    return items
+
+def _xccl263_page(root: str, p: int, query: str, timeout: int, batch):
+    url = f"{root}/search/kw-{urllib.parse.quote(query)}-{p}.html"
+    return _parse_xccl263(http_get(url, timeout=timeout, batch=batch, headers={
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "Referer": root + "/",
+    }))
+
+def _search_xccl263(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["xccl263"])
+    first = max(1, int(page))
+    last_exc: Exception | None = None
+    pages: dict[int, list[dict]] = {}
+
+    targets = list(range(first, first + XCCL_PAGES))
+    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), XCCL_WORKERS))
+    try:
+        jobs = {pool.submit(_xccl263_page, root, p, query, timeout, batch): p
+                for p in targets}
+        for job in futures.as_completed(jobs):
+            p = jobs[job]
+            try:
+                pages[p] = job.result()
+            except Exception as exc:
+                last_exc = exc
+                logger.debug("小草磁力第 %d 页失败：%s", p, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    if not pages and last_exc is not None:
+        raise last_exc
+
+    seen: set[str] = set()
+    items: list[dict] = []
+    for p in sorted(pages):
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= XCCL_MAX_HITS:
+                return items
     return items
 
 _BUILTIN_ADAPTERS = {
@@ -963,7 +1370,7 @@ _BUILTIN_ADAPTERS = {
     "eztv": ("EZTV", _search_eztv),
     "bitsearch": ("BitSearch", _search_bitsearch),
     "tpb": ("TPB镜像", _search_tpb_mirror),
-    "btdig": ("BTDigg", _search_btdig),
+    "xccl263": ("小草磁力", _search_xccl263),
 }
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
@@ -1015,6 +1422,9 @@ class Source:
             ms = int((time.monotonic() - t0) * 1000)
             return True, ms, len(items or []), ""
         except ProxyUnreachable as exc:
+            ms = int((time.monotonic() - t0) * 1000)
+            return False, ms, 0, str(exc)
+        except Blocked as exc:
             ms = int((time.monotonic() - t0) * 1000)
             return False, ms, 0, str(exc)
         except Exception as exc:
@@ -1106,6 +1516,10 @@ def search_one(source: Source, query: str, page: int = 1,
     except ProxyUnreachable as exc:
         ms = int((time.monotonic() - t0) * 1000)
         logger.warning("源 %s：代理不可用", source.key)
+        return source.key, [], str(exc), ms
+    except Blocked as exc:
+        ms = int((time.monotonic() - t0) * 1000)
+        logger.warning("源 %s：人机验证拦截", source.key)
         return source.key, [], str(exc), ms
     except urllib.error.HTTPError as exc:
         ms = int((time.monotonic() - t0) * 1000)

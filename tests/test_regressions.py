@@ -178,27 +178,6 @@ class PerSourceTimeoutTest(unittest.TestCase):
         self.assertEqual(seen["timeout"], 12, "显式超时仍应能覆盖源级值")
 
 
-class BtdigAgeTest(unittest.TestCase):
-
-    def test_lowercase_units(self):
-        self.assertIsNotNone(sources._btdig_age("3 days ago"))
-
-    def test_capitalized_units(self):
-        for text in ("3 Days ago", "2 Months ago", "1 Year ago", "5 HOURS ago"):
-            with self.subTest(text=text):
-                self.assertIsNotNone(sources._btdig_age(text),
-                                     "带 re.I 的正则必须配大小写无关的查表")
-
-    def test_case_agrees_with_lowercase(self):
-        upper = sources._btdig_age("2 Months ago")
-        lower = sources._btdig_age("2 months ago")
-        self.assertAlmostEqual(upper, lower, delta=5)
-
-    def test_chinese_units_unaffected(self):
-        self.assertIsNotNone(sources._btdig_age("3天前"))
-        self.assertIsNotNone(sources._btdig_age("2个月前"))
-
-
 class JsonAddedValueTest(unittest.TestCase):
 
     def test_unix_int_is_kept(self):

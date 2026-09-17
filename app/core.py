@@ -171,6 +171,7 @@ def search(query: str, page: int, timeout: int | None, enabled,
         from . import sources as _s
         if all(_s.proxy_hint() in (e or "") for e in result.errors.values()):
             return result, _s.proxy_hint()
+        return result, _s.proxy_hint_for(result.errors)
 
     return result, None
 

@@ -20,7 +20,7 @@ ALL_TYPES = ("builtin", *CUSTOM_TYPES)
 
 URL_PLACEHOLDERS = ("{query}", "{page}")
 
-RETIRED_SOURCES = frozenset()
+RETIRED_SOURCES = frozenset({"btdig"})
 
 DEFAULT_SOURCES = [
     {"key": "apibay", "label": "海盗湾", "type": "builtin",
@@ -39,8 +39,8 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 6},
     {"key": "tpb", "label": "TPB镜像", "type": "builtin",
      "enabled": True, "timeout": 15, "base": "", "order": 7},
-    {"key": "btdig", "label": "BTDigg", "type": "builtin",
-     "enabled": True, "timeout": 15, "base": "", "order": 8},
+    {"key": "xccl263", "label": "小草磁力", "type": "builtin",
+     "enabled": True, "timeout": 20, "base": "", "order": 8},
 ]
 
 DEFAULT_SETTINGS = {
@@ -340,6 +340,15 @@ class Config:
             except (TypeError, ValueError, OverflowError):
                 entry["order"] = 0
             cleaned.append(entry)
+
+        for default in DEFAULT_SOURCES:
+            key = default.get("key", "")
+            if key and key not in seen_keys:
+                seen_keys.add(key)
+                fresh = dict(default)
+                fresh["order"] = len(cleaned)
+                cleaned.append(fresh)
+                logger.info("数据源 %s 为新增内置源，已加入配置", key)
 
         cleaned.sort(key=lambda e: e.get("order", 0))
         for i, entry in enumerate(cleaned):

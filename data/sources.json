@@ -74,11 +74,11 @@
       "order": 7
     },
     {
-      "key": "btdig",
-      "label": "BTDigg",
+      "key": "xccl263",
+      "label": "小草磁力",
       "type": "builtin",
       "enabled": true,
-      "timeout": 15,
+      "timeout": 20,
       "base": "",
       "order": 8
     }

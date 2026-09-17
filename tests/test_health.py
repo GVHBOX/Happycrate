@@ -190,8 +190,8 @@ class DiagnosticsRootCauseTest(DataDirCase):
         self.assertGreaterEqual(row["outcomes"].count("empty"), 4)
 
     def test_empty_mixed_with_conn_error_keeps_both_facts(self):
-        self.feed("btdig", ["err", "empty", "err", "empty", "empty"])
-        row = self.row_for("btdig")
+        self.feed("eztv", ["err", "empty", "err", "empty", "empty"])
+        row = self.row_for("eztv")
         self.assertEqual(row["kind"], "empty")
         self.assertEqual(sum(1 for o in row["outcomes"] if o in api_mod.FATAL_OUTCOMES), 2,
                          "窗口里混着的连接失败次数必须如实带出，供 agent 判断")

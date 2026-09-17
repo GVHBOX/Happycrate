@@ -5,24 +5,24 @@
   var SORTS = {size:"体积", added:"时间", seeders:"做种"};
 
   var ICONS = {
-    search: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+    search: '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
       '<circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.4"/>' +
       '<path d="M9.6 9.6L12.6 12.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-    gear: '<svg width="15" height="15" viewBox="0 0 14 14" fill="none">' +
+    gear: '<svg width="15" height="15" viewBox="-1 -1 16 16" fill="none">' +
       '<path d="M8.37 12.94L5.63 12.94L5.44 11.06A4.35 4.35 0 0 1 4.26 10.38L2.54 11.16L1.17 8.78L2.7 7.68A4.35 4.35 0 0 1 2.7 6.32L1.17 5.22L2.54 2.84L4.26 3.62A4.35 4.35 0 0 1 5.44 2.94L5.63 1.06L8.37 1.06L8.56 2.94A4.35 4.35 0 0 1 9.74 3.62L11.46 2.84L12.83 5.22L11.3 6.32A4.35 4.35 0 0 1 11.3 7.68L12.83 8.78L11.46 11.16L9.74 10.38A4.35 4.35 0 0 1 8.56 11.06Z" ' +
       'stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
       '<circle cx="7" cy="7" r="1.9" stroke="currentColor" stroke-width="1.3"/></svg>',
-    check: '<svg width="10" height="10" viewBox="0 0 14 14" fill="none">' +
+    check: '<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none">' +
       '<path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    copy: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+    copy: '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
       '<rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/>' +
       '<path d="M9.4 2.6H3.4A1.4 1.4 0 0 0 2 4v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    dl: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+    dl: '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
       '<path d="M7 2.4v6.4M4.4 6.4L7 9l2.6-2.6" stroke="currentColor" stroke-width="1.3" ' +
       'stroke-linecap="round" stroke-linejoin="round"/>' +
       '<path d="M2.6 11.4h8.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    arw: '<svg class="arw" width="9" height="9" viewBox="0 0 10 10" fill="none">' +
+    arw: '<svg class="arw" width="9" height="9" viewBox="-3 -3 16 16" fill="none">' +
       '<path d="M5 8V2M2.4 4.6L5 2l2.6 2.6" stroke="currentColor" stroke-width="1.4" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
     srclist: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none">' +
@@ -244,7 +244,7 @@
     return escaped.replace(st.hlRe, '<mark class="hl">$&</mark>');
   }
 
-  var FCHEV = '<svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var FCHEV = '<svg width="10" height="10" viewBox="-3 -3 16 16"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function itemByHash(h){
     var out = null;
@@ -508,14 +508,23 @@
     return "等待";
   }
 
+  var DONE_STATE = {ok:1, err:1, empty:1, cancel:1, warn:1};
+
   function tileFor(k){
     var el = stripEl.querySelector('.stile[data-key="' + k + '"]');
     if (el) return el;
     el = document.createElement("span");
     el.dataset.key = k;
     el.innerHTML = '<i class="sdot"></i><span class="stitle"></span>' +
-      '<span class="track"><span class="fill"></span></span>';
+      '<span class="track"><span class="fill"></span></span><span class="wipe"></span>';
     return el;
+  }
+
+  function flashTile(el){
+    el.classList.remove("flash");
+    void el.offsetWidth;
+    el.classList.add("flash");
+    setTimeout(function(){ el.classList.remove("flash"); }, 440);
   }
 
   function paintStrip(){
@@ -536,21 +545,22 @@
 
     var done = 0;
     var seen = {};
-    order.forEach(function(k){
+    order.forEach(function(k, i){
       var ss = st.strip[k] || {state:"pending"};
-      if (ss.state === "ok" || ss.state === "err" ||
-          ss.state === "empty" || ss.state === "cancel" ||
-          ss.state === "warn") done++;
+      if (DONE_STATE[ss.state]) done++;
       seen[k] = 1;
 
       var el = tileFor(k);
-      var want = "stile " + ss.state;
-      if (el.className !== want) el.className = want;
+      var prev = el.dataset.st || "";
+      if (prev !== ss.state) el.className = "stile " + ss.state;
+      if (DONE_STATE[ss.state] && !DONE_STATE[prev]) flashTile(el);
+      el.dataset.st = ss.state;
       var name = st.names[k] || k;
       var text = esc(name) + " · " + stripLabel(ss);
       var title = el.querySelector(".stitle");
       if (title.innerHTML !== text) title.innerHTML = text;
-      stripEl.appendChild(el);
+      var at = stripEl.children[i];
+      if (at !== el) stripEl.insertBefore(el, at || null);
     });
 
     [].slice.call(stripEl.querySelectorAll(".stile")).forEach(function(el){
@@ -566,7 +576,6 @@
     }
     var ctext = "<b>" + done + "</b> / " + total + " 完成";
     if (cnt.innerHTML !== ctext) cnt.innerHTML = ctext;
-    stripEl.appendChild(cnt);
   }
 
   function headHtml(){
@@ -848,20 +857,24 @@
     root.innerHTML =
       '<div class="card">' +
         '<div class="bar">' +
-          '<button class="cb" id="ckAll"></button>' +
-          '<span class="allabel">全选</span>' +
-          '<span class="badge" id="badge" style="margin-left:10px">共 0 条</span>' +
-          '<div class="chipwrap" style="margin-left:6px">' +
-            '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
-            '<div class="chiptip" id="tip"></div>' +
+          '<div class="group">' +
+            '<button class="cb" id="ckAll"></button>' +
+            '<span class="allabel">全选</span>' +
+            '<span class="badge" id="badge">共 0 条</span>' +
+            '<div class="chipwrap">' +
+              '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
+              '<div class="chiptip" id="tip"></div>' +
+            '</div>' +
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
             '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
-          '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
-          '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
+          '<div class="group">' +
+            '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
+            '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
+          '</div>' +
         '</div>' +
         '<div class="progress" id="prog"><div class="fill"></div></div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
@@ -1278,7 +1291,7 @@
       '<button class="sbtn primary" data-s="dl">发送下载</button>' +
       '<span class="ssp"></span>' +
       '<button class="sclose" data-s="close">' +
-        '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+        '<svg width="12" height="12" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
       '</button>';
     root.appendChild(selbarEl);
     selbarEl.addEventListener("click", function(e){

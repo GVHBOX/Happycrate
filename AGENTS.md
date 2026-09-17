@@ -3,7 +3,7 @@
 磁力搜索聚合与下载投递工具。Python 3.11+ / pywebview，Windows 便携应用。
 人看的项目说明在 `README.md`，本文件只讲 agent 该遵守的作业规矩。
 
-## 三条铁律
+## 4条铁律
 
 ### 1. 代码零注释
 
@@ -36,10 +36,10 @@
 
 正确做法是**分两层**：
 
-| 面向 | 内容 | 出口 |
-| --- | --- | --- |
-| 用户 | 名称 + 具体原因（`HTTP 500`、`最近 5 次请求均为 0 条`） | `Api.source_issues()` → 弹窗 |
-| AI | 全量结构化数据（events / outcomes / peers / adapter） | `Api.diagnostics()` → 复制按钮 |
+| 面向  | 内容                                           | 出口                         |
+| --- | -------------------------------------------- | -------------------------- |
+| 用户  | 名称 + 具体原因（`HTTP 500`、`最近 5 次请求均为 0 条`）       | `Api.source_issues()` → 弹窗 |
+| AI  | 全量结构化数据（events / outcomes / peers / adapter） | `Api.diagnostics()` → 复制按钮 |
 
 给 AI 的那份用 JSON 而非中文标签，字段名就是 `key` / `count` / `ms` / `adapter`。
 `tests/test_front_hygiene.py` 有护栏禁止引导语回流。
@@ -54,90 +54,7 @@
 `.ai/` 整体不进版本库，`.ai/reports/` 的成品报告也不例外，交付时用原生
 Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路径。
 
-## 产品边界
-
-只做四件事：**源 / 查询 / 结果 / 投递**。
-
-明确不做：搜索历史、收藏夹、资源库、账号与同步、分享链接、订阅与关键词监控、
-内置播放器与下载管理、多语言、前端框架。
-
-不做前端框架是为了保住「双击 index.html 就能看到成品」的双模机制，不要引入构建步骤。
-
-## 架构分层
-
-```
-web/   界面。HTML/CSS/JS，不含业务规则
-app/   Python 后端。api.py 是给 JS 的唯一门面
-```
-
-两层之间只有一条 JSON 通道。Python 不持有任何界面状态，前端不持有任何业务规则。
-
-`web/js/api.js` 检测 `window.pywebview`：存在走真机，不存在走 mock。
-**同一份前端，两种跑法**——浏览器直接打开 index.html 就是可玩原型。
-
-## 结果条目字段
-
-后端给前端的每条结果是**已经格式化好的**，前端不要再算一遍：
-
-`hash / title / size / sizeText / seeders / leechers / added / addedText / magnet / sources[]`
-
-## 源健康度
-
-一次请求只会落一个 **outcome**，判定集中在 `app/api.py :: classify`：
-
-`ok / empty / slow / http429 / http4xx / timeout / net / http403 / http5xx / cancel`
-
-`ok` 与 `empty` 的分界是 count，不是错误：**连上了只是没内容不算故障**。
-代理层返回的错误（含 Tunnel 502）一律归 `net`，不要当成源站挂了。
-
-### 颜色语义（界面一律按这个来）
-
-| 颜色  | 含义       | 对应的 state                        |
-| --- | -------- | -------------------------------- |
-| 绿   | 正常       | `ok`                             |
-| 黄   | 提示、会自愈   | `warn`（慢 / 429 / 4xx / 时有时无）     |
-| 灰   | 未知、不存在   | `empty` / `na`                   |
-| 红   | 故障、超时、被拒 | `err`（timeout / net / 403 / 5xx） |
-
-**返回 0 条永远不许标红。** 冷门关键字搜不到是正常结果，不是源坏了。
-
-### 判定要横向比，不要绝对比
-
-同一个关键字下，8 个源全空 和 只有 1 个源空，含义完全不同。
-事件里带 `round`（同一次搜索的标识），诊断时用 `_peer_stats` 比同伴表现：
-多数源有结果 → 指向本源；多数源也没结果 → 关键字太冷门。
-
-### 数据
-
-`events` 存最近 20 次的 `outcome / code / count / ms / round`，给 agent 判断用；
-`outcomes` 是最近 5 条，只用于算颜色；`lastOk` 记最后一次真正拿到结果的时间。
-
-健康度不后台轮询，搜索和手动探测时顺带记录。连续 5 次真故障才自动排到最后，
-**不禁用，仍然会试**；`empty` 和 429 不参与降级。
-
-自动降级只在不处于「手动排序」时生效。手动拖过顺序（或在数据源页关掉
-「自动排序」）后 `orderLocked` 置位，降级停止；界面上的「自动排序」按钮就是解锁入口，
-调 `Api.set_auto_order(on)`，当前状态由 `app_info().autoOrder` 给出。
-
-### 状态类名不许与布局类名撞车
-
-`web/styles/base.css` 里的 `.empty` 是给「没有结果」占位符用的（带 padding、居中），
-而健康状态也有一档叫 `empty`。两者同名会把 7px 圆点撑成 40×68 的椭圆、
-把文字挤到折行——这个 bug 真出过。所以：
-
-- 布局类收窄作用域写（`.rows > .empty`），不写裸 `.empty`
-- 状态类一律带前缀（`.hd.empty` / `.ms.empty` / `.stile.empty`）
-- `tests/test_front_hygiene.py` 有护栏测试盯着，别绕过
-
-## 超时分两层
-
-- **源级 `timeout`**：数据源各自配，搜索时就用它。某个源慢就单独调它。
-- **全局 `timeout`**：设置页显示为「投递/清单超时」，只管种子清单抓取和迅雷投递。
-
-搜索**不要**再把全局值传给 `search_many`——那样源级配置永远不生效。
-`search_many` 的 `timeout` 默认 `None` 就是为让源级值接上而留的。
-
-## 网络与代理
+## 4.网络与代理
 
 程序走不走代理由 `app/sources.py :: _opener` 决定：设置里填了 `proxy` 就用它，
 没填则 `urlopen` 走 `urllib.request.getproxies()`（Windows 读系统/IE 代理，**PAC 脚本读不到**）。

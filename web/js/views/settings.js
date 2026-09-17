@@ -21,8 +21,8 @@
   var brandKey = "";
 
   var STEP_BTN = {
-    minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    minus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
   };
 
   var esc = HC.esc;
@@ -304,7 +304,7 @@
       '<div class="card">' +
         '<div class="dhead"><span class="dtitle">设置</span><div class="spacer"></div>' +
           '<button class="iconbtn" id="btnClose" title="关闭">' +
-            '<svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+            '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
               '<path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" ' +
               'stroke-width="1.5" stroke-linecap="round"/></svg></button></div>' +
         '<div class="div"></div>' +

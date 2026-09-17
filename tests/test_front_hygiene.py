@@ -175,8 +175,8 @@ class CssHygieneTest(unittest.TestCase):
 
     def test_progress_not_fake(self):
         base = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
-        m = re.search(r"\.progress\.on\s+\.fill\{([^}]*)\}", base)
-        self.assertIsNotNone(m, "找不到 .progress.on .fill 规则")
+        m = re.search(r"\.progress\s+\.fill\{([^}]*)\}", base)
+        self.assertIsNotNone(m, "找不到 .progress .fill 规则")
         self.assertIn("var(--p", m.group(1),
                       "进度条必须跟真实进度走。一次填满后静止等于告诉用户"
                       "「已完成但仍无结果」，是用动效掩盖状态")
@@ -504,3 +504,74 @@ class SourceStripWrapTest(unittest.TestCase):
         block = src[i:src.index("}", i)]
         self.assertNotIn("animation", block,
                          "等待态底轨应是静态的，不循环")
+
+
+class StripCompletionMotionTest(unittest.TestCase):
+
+    def css(self):
+        return (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+
+    def rule(self, selector):
+        src = self.css()
+        i = src.index(selector)
+        return src[i:src.index("}", i)]
+
+    def paint_block(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        i = src.index("function paintStrip(")
+        return src[i:src.index("function headHtml(", i)]
+
+    def test_completion_flash_paints_each_state_in_its_own_color(self):
+        want = {
+            "ok": "var(--ok)",
+            "empty": "var(--empty)",
+            "warn": "var(--warn)",
+            "err": "var(--err)",
+        }
+        for state, color in want.items():
+            block = self.rule(".stile.flash." + state + " .wipe{")
+            self.assertIn("background:" + color, block.replace(" ", ""),
+                          f"{state} 完成时铺色要用它自己的颜色，实际 {block!r}")
+
+    def test_zero_results_flashes_grey_not_red(self):
+        block = self.rule(".stile.flash.empty .wipe{")
+        self.assertNotIn("--err", block,
+                         "返回 0 条不是故障，铺色不能是红的")
+
+    def test_wipe_is_a_one_shot_animation(self):
+        block = self.rule(".stile.flash .wipe{")
+        self.assertRegex(block, r"animation:srcWipe \d+ms [^;]*both",
+                         "铺色只播一次（both），不能 infinite 循环")
+
+    def test_progress_slot_stays_visible(self):
+        block = self.rule(".progress{")
+        self.assertIn("background:var(--track)", block,
+                      "顶部进度条要有常驻深色进度槽，搜索结束后也能看总进度")
+
+    def tile_block(self):
+        src = self.css()
+        i = src.index(".stile{")
+        return src[i:src.index("}", i)]
+
+    def test_tile_hover_lifts_like_the_brandmark(self):
+        block = self.rule(".stile:hover{")
+        self.assertIn("transform:translateY", block.replace(" ", ""),
+                      "源标签悬停要有和大标题一样的抬升")
+
+    def test_tile_hover_uses_project_motion_tokens(self):
+        block = self.tile_block().replace(" ", "")
+        self.assertIn("transformvar(--d-push)var(--spring)", block,
+                      "抬升要跟大标题同一套令牌（--d-push / --spring），别自己写时长")
+
+    def test_tile_hover_keeps_state_colors(self):
+        block = self.rule(".stile:hover{").replace(" ", "")
+        self.assertNotIn("color:var(", block,
+                         "悬停不许改写状态色：绿/黄/红/灰是健康度语义")
+
+    def test_repaint_does_not_move_tiles(self):
+        block = self.paint_block()
+        self.assertNotIn("stripEl.appendChild(el)", block,
+                         "每次重绘都 appendChild 会把节点摘下重插，"
+                         "CSS 动画从头重启，扫光相位会乱跳")
+        self.assertIn("insertBefore", block,
+                      "已就位的标签不要动，缺的才插入")

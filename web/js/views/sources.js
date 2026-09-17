@@ -6,22 +6,22 @@
   var esc = M.esc;
 
   var ICON = {
-    drag:'<svg width="12" height="16" viewBox="0 0 12 16" fill="none"><circle cx="3" cy="3" r="1.2" fill="currentColor"/><circle cx="9" cy="3" r="1.2" fill="currentColor"/><circle cx="3" cy="8" r="1.2" fill="currentColor"/><circle cx="9" cy="8" r="1.2" fill="currentColor"/><circle cx="3" cy="13" r="1.2" fill="currentColor"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/></svg>',
-    edit:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.6 2.1l2.2 2.2L5.2 10.9H3V8.7l6.6-6.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
-    trash:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 4h9M5.4 4V2.8h3.2V4M3.6 4l.6 7.2h5.6L10.4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    check:'<svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    info:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.3v3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="4.3" r=".8" fill="currentColor"/></svg>',
-    refresh:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.4 6.2a4.6 4.6 0 1 1 1.3 4.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M1.6 2.6v3.9h3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    bolt:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7.7 1.4L3.1 7.8h3.2l-.5 4.8 4.9-6.6H7.4l.3-4.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
-    load:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="25 8" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.6v8.8M2.6 7h8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    close:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    drag:'<svg width="12" height="16" viewBox="-2 0 16 16" fill="none"><circle cx="3" cy="3" r="1.2" fill="currentColor"/><circle cx="9" cy="3" r="1.2" fill="currentColor"/><circle cx="3" cy="8" r="1.2" fill="currentColor"/><circle cx="9" cy="8" r="1.2" fill="currentColor"/><circle cx="3" cy="13" r="1.2" fill="currentColor"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/></svg>',
+    edit:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M9.6 2.1l2.2 2.2L5.2 10.9H3V8.7l6.6-6.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+    trash:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.5 4h9M5.4 4V2.8h3.2V4M3.6 4l.6 7.2h5.6L10.4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    check:'<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    info:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.3v3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="4.3" r=".8" fill="currentColor"/></svg>',
+    refresh:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.4 6.2a4.6 4.6 0 1 1 1.3 4.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M1.6 2.6v3.9h3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    bolt:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7.7 1.4L3.1 7.8h3.2l-.5 4.8 4.9-6.6H7.4l.3-4.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+    load:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="25 8" stroke-linecap="round"/></svg>',
+    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 2.6v8.8M2.6 7h8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    close:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     list:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/><circle cx="2.3" cy="8" r="1" fill="currentColor"/><circle cx="2.3" cy="11.6" r="1" fill="currentColor"/></svg>',
-    export:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 9.4V2.4M4.2 5.2L7 2.4l2.8 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-    import:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.4v7M4.2 6.6L7 9.4l2.8-2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-    copy:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M9.4 4.6V3.6a1 1 0 0 0-1-1H3.6a1 1 0 0 0-1 1v4.8a1 1 0 0 0 1 1h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    save:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    chev:'<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5 L5 6.5 L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    export:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 9.4V2.4M4.2 5.2L7 2.4l2.8 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+    import:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 2.4v7M4.2 6.6L7 9.4l2.8-2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+    copy:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M9.4 4.6V3.6a1 1 0 0 0-1-1H3.6a1 1 0 0 0-1 1v4.8a1 1 0 0 0 1 1h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+    save:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    chev:'<svg width="10" height="10" viewBox="-3 -3 16 16" fill="none"><path d="M2 3.5 L5 6.5 L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   function healthClass(s){
@@ -80,8 +80,8 @@
   }
 
   var STEP_BTN = {
-    minus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    minus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
   };
 
   function showErr(m, msg, okMsg){
@@ -460,7 +460,7 @@
             '<span class="status" id="batchInfo">已选 0 项</span>' +
           '</div>' +
           '<div class="spacer"></div>' +
-          '<div class="search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+          '<div class="search"><svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
             '<circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.4"/>' +
             '<path d="M9.6 9.6L12.6 12.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' +
             '<input id="search" placeholder="搜索源名称或地址" autocomplete="off"></div>' +

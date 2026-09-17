@@ -496,6 +496,28 @@
     if (st.cursor >= 0 && rows[st.cursor]) rows[st.cursor].scrollIntoView({block:"nearest"});
   }
 
+  function stripLabel(ss){
+    if (ss.state === "ok") return "<b>" + ss.count + "</b> 条";
+    if (ss.state === "empty") return "无结果";
+    if (ss.state === "err") return esc(ss.err || "失败");
+    if (ss.state === "warn"){
+      if (!ss.count) return esc(ss.err || "提示");
+      return "<b>" + ss.count + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "");
+    }
+    if (ss.state === "cancel") return "已取消";
+    return "等待";
+  }
+
+  function tileFor(k){
+    var el = stripEl.querySelector('.stile[data-key="' + k + '"]');
+    if (el) return el;
+    el = document.createElement("span");
+    el.dataset.key = k;
+    el.innerHTML = '<i class="sdot"></i><span class="stitle"></span>' +
+      '<span class="track"><span class="fill"></span></span>';
+    return el;
+  }
+
   function paintStrip(){
     if (!stripEl) return;
     if (!st.busy && !st.searched){
@@ -511,26 +533,40 @@
       return;
     }
     stripEl.hidden = false;
+
     var done = 0;
-    var html = order.map(function(k){
+    var seen = {};
+    order.forEach(function(k){
       var ss = st.strip[k] || {state:"pending"};
       if (ss.state === "ok" || ss.state === "err" ||
           ss.state === "empty" || ss.state === "cancel" ||
           ss.state === "warn") done++;
-      var label =
-        ss.state === "ok" ? "<b>" + ss.count + "</b> 条" :
-        ss.state === "empty" ? "无结果" :
-        ss.state === "err" ? esc(ss.err || "失败") :
-        ss.state === "warn" ? (ss.count
-          ? "<b>" + ss.count + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "")
-          : esc(ss.err || "提示")) :
-        ss.state === "cancel" ? "已取消" : "等待";
+      seen[k] = 1;
+
+      var el = tileFor(k);
+      var want = "stile " + ss.state;
+      if (el.className !== want) el.className = want;
       var name = st.names[k] || k;
-      return '<span class="stile ' + ss.state + '"><i class="sdot"></i>' + esc(name) + ' · ' + label + '</span>';
-    }).join("");
+      var text = esc(name) + " · " + stripLabel(ss);
+      var title = el.querySelector(".stitle");
+      if (title.innerHTML !== text) title.innerHTML = text;
+      stripEl.appendChild(el);
+    });
+
+    [].slice.call(stripEl.querySelectorAll(".stile")).forEach(function(el){
+      if (!seen[el.dataset.key]) el.remove();
+    });
+
     var total = st.total || order.length;
-    html += '<span class="scount"><b>' + done + '</b> / ' + total + ' 完成</span>';
-    stripEl.innerHTML = html;
+    var cnt = stripEl.querySelector(".scount");
+    if (!cnt){
+      cnt = document.createElement("span");
+      cnt.className = "scount";
+      stripEl.appendChild(cnt);
+    }
+    var ctext = "<b>" + done + "</b> / " + total + " 完成";
+    if (cnt.innerHTML !== ctext) cnt.innerHTML = ctext;
+    stripEl.appendChild(cnt);
   }
 
   function headHtml(){

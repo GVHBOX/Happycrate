@@ -627,9 +627,10 @@ input, textarea{
 
 .progress{flex:none;height:2px;overflow:hidden;--p:0}
 .progress .fill{height:100%;background:var(--brand);transform-origin:left center;
-  transform:scaleX(0);opacity:0;
-  transition:transform .34s var(--e-out),opacity .2s linear}
-.progress.on .fill{opacity:1;transform:scaleX(var(--p,0))}
+  transform:scaleX(0);
+  transition:transform .34s var(--e-out)}
+.progress.on{background:var(--track)}
+.progress.on .fill{transform:scaleX(var(--p,0))}
 .progress.on.wait .fill{width:40%;transform:none;animation:indet 1.1s var(--e) infinite}
 
 .skel{display:flex;align-items:center;gap:var(--sp-4);
@@ -881,6 +882,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 }
 .srcstrip[hidden]{display:none}
 .stile{
+  position:relative; overflow:hidden;
   flex:1 1 auto;
   min-width:max-content;
   max-width:calc(230px*var(--frs));
@@ -890,6 +892,33 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
   font:500 var(--fs-2xs)/1 var(--font); color:var(--t3); white-space:nowrap;
   transition:color var(--d-state) var(--e), border-color var(--d-state) var(--e), background var(--d-state) var(--e);
 }
+.stile .stitle{min-width:0}
+.stile .track{
+  position:absolute; left:0; right:0; bottom:0; height:2px;
+  overflow:hidden; opacity:0;
+  transition:opacity var(--d-state) var(--e);
+}
+.stile .track::before{
+  content:""; position:absolute; inset:0; background:var(--track);
+}
+.stile .track .fill{
+  position:absolute; inset:0; display:block;
+  background:var(--brand); transform-origin:left center; transform:scaleX(0);
+  transition:transform 340ms var(--e-out);
+}
+.stile.pending .track{opacity:1}
+.stile.ok .track,
+.stile.empty .track,
+.stile.warn .track,
+.stile.err .track{opacity:0; transition:opacity 260ms var(--e) 420ms}
+.stile.ok .track .fill,
+.stile.empty .track .fill,
+.stile.warn .track .fill,
+.stile.err .track .fill{transform:scaleX(1)}
+.stile.ok .track .fill{background:var(--ok)}
+.stile.empty .track .fill{background:var(--empty)}
+.stile.warn .track .fill{background:var(--warn)}
+.stile.err .track .fill{background:var(--err)}
 .stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}
 .stile.pending .sdot{animation:breathe 1.6s var(--e) infinite}
 .stile.ok .sdot{background:var(--ok)}

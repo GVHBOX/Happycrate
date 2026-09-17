@@ -425,6 +425,16 @@ class SourceStripWrapTest(unittest.TestCase):
         self.assertNotIn("overflow-x", block,
                          "有 overflow-x 就会出横向滚动条，看不到的源要藏在滑块后面")
 
+    def test_strip_updates_in_place_not_by_innerHTML(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        i = src.index("function paintStrip(")
+        block = src[i:src.index("function headHtml(", i)]
+        self.assertNotIn("stripEl.innerHTML =", block,
+                         "整块重建会让每个标签的 CSS 过渡重启，状态切换会闪；"
+                         "要按 key 原地更新")
+        self.assertIn("dataset.key", block,
+                      "原地更新要靠 key 找回已有节点")
+
     def test_no_strip_scrollbar_styling_remains(self):
         src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
         self.assertNotIn(".srcstrip::-webkit-scrollbar", src,
@@ -467,7 +477,30 @@ class SourceStripWrapTest(unittest.TestCase):
         self.assertRegex(value, r"^calc\(", f"上限应是普通长度，实际 {value!r}")
 
     def test_name_is_never_clipped(self):
-        self.assertNotIn("overflow:hidden", self.tile_block().replace(" ", ""),
-                         "名字被裁掉比排版不齐更糟")
         self.assertNotIn("text-overflow", self.tile_block(),
                          "不要用省略号藏起源名")
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile .stitle")
+        self.assertIn("min-width:0", src[i:src.index("}", i)].replace(" ", ""),
+                      "名字要能撑开标签（min-width:0 + max-content 下限），"
+                      "否则会被父级的 overflow:hidden 裁掉")
+
+    def test_tile_clips_only_the_track(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        block = self.tile_block().replace(" ", "")
+        self.assertIn("overflow:hidden", block,
+                      "标签要裁掉底部进度条超出圆角的部分")
+
+    def test_track_bar_clips_its_own_overflow(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile .track{")
+        block = src[i:src.index("}", i)]
+        self.assertIn("overflow:hidden", block.replace(" ", ""),
+                      "进度条要自己裁溢出，别让父级替它裁")
+
+    def test_track_is_static_not_looping(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile .track{")
+        block = src[i:src.index("}", i)]
+        self.assertNotIn("animation", block,
+                         "等待态底轨应是静态的，不循环")

@@ -30,6 +30,7 @@
   --t5:#9AA1B5;
   --t-disabled:#C4C7D0;
   --track-off:#D3D7E0;
+  --track:rgba(13,13,31,.10);
 
   --ok:#16A34A;
   --warn:#CA8A04;
@@ -163,6 +164,7 @@ body.dark{
   --t5:#5C6074;
   --t-disabled:#4B4F60;
   --track-off:#3A3D4C;
+  --track:rgba(255,255,255,.10);
   --empty:#71758A;
 
   --danger-soft:rgba(239,68,68,.15);

@@ -436,3 +436,24 @@ class SourceStripWrapTest(unittest.TestCase):
         block = src[i:src.index("}", i)]
         self.assertNotIn("margin-left:auto", block,
                          "换行后 margin-left:auto 会把完成数甩到最右，与上一行断开")
+
+    def test_tiles_grow_to_fill_the_row(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile{")
+        block = src[i:src.index("}", i)]
+        self.assertRegex(block, r"flex:1 1 ",
+                         "标签要能伸展填满整行，否则末行会留缺口")
+
+    def test_tiles_have_a_max_width(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile{")
+        block = src[i:src.index("}", i)]
+        self.assertIn("max-width", block,
+                      "没有上限时，末行只剩一个标签会被拉成整行宽")
+
+    def test_tiles_have_a_min_width(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        i = src.index(".stile{")
+        block = src[i:src.index("}", i)]
+        self.assertIn("min-width", block,
+                      "没有下限时，窗口变窄会把文字挤到截断")

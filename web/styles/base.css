@@ -876,15 +876,17 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 
 .srcstrip{
   flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-2);
-  padding:var(--sp-2) var(--sp-6); border-bottom:1px solid var(--divider);
+  padding:var(--sp-2) var(--sp-4); border-bottom:1px solid var(--divider);
   background:var(--head);
 }
 .srcstrip[hidden]{display:none}
 .stile{
-  flex:none; height:calc(23px*var(--frs)); padding:0 10px; border-radius:var(--r-chip);
+  flex:1 1 auto; min-width:calc(112px*var(--frs)); max-width:calc(230px*var(--frs));
+  height:calc(23px*var(--frs)); padding:0 8px; border-radius:var(--r-chip);
   background:var(--panel); border:1px solid var(--divider);
-  display:inline-flex; align-items:center; gap:6px;
+  display:inline-flex; align-items:center; justify-content:center; gap:5px;
   font:500 var(--fs-2xs)/1 var(--font); color:var(--t3); white-space:nowrap;
+  overflow:hidden;
   transition:color var(--d-state) var(--e), border-color var(--d-state) var(--e), background var(--d-state) var(--e);
 }
 .stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}

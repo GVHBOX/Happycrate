@@ -883,7 +883,7 @@ body.dark .srcdot:hover{box-shadow:0 7px 16px rgba(0,0,0,.55)}
 .stile{
   flex:1 1 auto;
   min-width:max-content;
-  max-width:max(calc(230px*var(--frs)), max-content);
+  max-width:calc(230px*var(--frs));
   height:calc(23px*var(--frs)); padding:0 8px; border-radius:var(--r-chip);
   background:var(--panel); border:1px solid var(--divider);
   display:inline-flex; align-items:center; justify-content:center; gap:5px;

@@ -454,8 +454,17 @@ class SourceStripWrapTest(unittest.TestCase):
                       "没有上限时，末行只剩一个标签会被拉成整行宽")
 
     def test_min_width_follows_the_name(self):
-        self.assertIn("max-content", self.tile_block(),
+        self.assertIn("min-width:max-content", self.tile_block().replace(" ", ""),
                       "下限要用内容宽度：写死像素会把长名字裁掉")
+
+    def test_max_width_is_a_plain_length(self):
+        block = self.tile_block()
+        i = block.index("max-width:")
+        value = block[i + len("max-width:"):].split(";")[0].strip()
+        self.assertNotIn("max-content", value,
+                         "max-width 里混 max()/clamp() 与 max-content 会整条失效"
+                         "（浏览器解析为 none，上限形同不存在）")
+        self.assertRegex(value, r"^calc\(", f"上限应是普通长度，实际 {value!r}")
 
     def test_name_is_never_clipped(self):
         self.assertNotIn("overflow:hidden", self.tile_block().replace(" ", ""),

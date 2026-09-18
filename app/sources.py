@@ -329,7 +329,7 @@ def proxy_hint_for(errors: dict) -> str:
         return (f"系统代理 {addr} 连不上。若使用 Clash / v2ray 等，"
                 f"请确认已启动；或在系统设置里关闭代理后重试。")
 
-    keys = [k for k, v in (errors or {}).items() if k]
+    keys = [k for k in (errors or {}) if k]
     if not keys:
         return "网络请求失败，请检查网络连接。"
 

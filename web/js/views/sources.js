@@ -227,7 +227,7 @@
         var btn = this;
         btn.classList.add("busy");
         var entry = collect();
-        var hard = HC.validateSource(entry, []);
+        var hard = HC.validateSource(entry);
         if (hard.length){
           btn.classList.remove("busy");
           showErr(m, hard[0]);

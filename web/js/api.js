@@ -152,7 +152,7 @@
     saveSource: function(entry){
       if (live()) return window.pywebview.api.save_source(entry);
       var list = seed();
-      var errors = validate(entry, list);
+      var errors = validate(entry);
       if (errors.length) return Promise.resolve({ok:false, errors:errors});
       var hit = list.filter(function(s){ return s.key === entry.key; })[0];
       if (hit){
@@ -216,7 +216,7 @@
 
     testSource: function(entry){
       if (live()) return window.pywebview.api.test_source(entry);
-      var errors = validate(entry, []);
+      var errors = validate(entry);
       if (errors.length) return Promise.resolve({ok:false, count:0, ms:0, errors:errors});
       return new Promise(function(res){
         setTimeout(function(){
@@ -519,7 +519,7 @@
     return bad;
   }
 
-  function validate(e, list){
+  function validate(e){
     var errs = [];
     if (!e.label) errs.push("名称不能为空");
     var url = String(e.addr || "");

@@ -7,6 +7,8 @@ import json
 import math
 import re
 import socket
+import subprocess
+import sys
 import ssl
 import time
 import urllib.error
@@ -258,6 +260,34 @@ def _proxy_works(mapping: dict) -> bool:
     except Exception:
         return False
 
+_TUN_WORDS = ("clash", "mihomo", "wintun", "sing-box", "singbox", "v2ray",
+              "tap-windows", "tun")
+
+
+def tun_adapter() -> str:
+    if sys.platform != "win32":
+        return ""
+    try:
+        out = subprocess.run(
+            ["ipconfig"], capture_output=True, text=True,
+            errors="replace", timeout=4,
+        ).stdout
+    except Exception:
+        return ""
+    for line in out.splitlines():
+        if "适配器" not in line and "adapter" not in line.lower():
+            continue
+        low = line.lower()
+        if any(w in low for w in _TUN_WORDS):
+            head = line.split(":", 1)[0]
+            m = re.search(r"适配器\s*(.+)$", head) or \
+                re.search(r"adapter\s*(.+)$", head, re.I)
+            name = (m.group(1) if m else head).strip(" .:")
+            if name:
+                return name
+    return ""
+
+
 def proxy_status(force: bool = False) -> dict:
     try:
         manual = _manual_proxy()
@@ -286,6 +316,7 @@ def proxy_status(force: bool = False) -> dict:
             "portOk": port_ok,
             "works": _proxy_works(mapping) if port_ok else False,
             "systemOn": bool(system),
+            "tun": tun_adapter() if mode == "none" else "",
             "checkedAt": now,
         }
         _probe_cache["key"] = key
@@ -336,6 +367,8 @@ def proxy_hint_for(errors: dict) -> str:
     timed = [k for k in keys if _is_timeout_text((errors or {}).get(k, ""))]
     overseas = [k for k in timed if k in _OVERSEAS_KEYS]
     if len(overseas) >= 2 and len(overseas) * 2 >= len(keys):
+        if tun_adapter():
+            return "TUN 模式已接管网络，这些源仍超时：可能被墙或站点故障。"
         return ("未检测到代理，这些源需要代理才能访问，"
                 "请在设置里填写代理地址或打开系统代理后重试。")
     if timed:

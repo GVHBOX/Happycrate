@@ -59,6 +59,9 @@
         : {dot:"err", title:"跟随系统", addr:data.addr || "",
            note:"端口能连上，但代理没有转发请求"};
     }
+    if (data.tun){
+      return {dot:"ok", title:"直连 · TUN", addr:"TUN 网卡 " + data.tun};
+    }
     return {dot:"", note:"未检测到代理", muted:true};
   }
 
@@ -481,13 +484,13 @@
       onEdit();
     };
 
-    [].slice.call(root.querySelectorAll("#s_progstyle button")).forEach(function(b){
-      b.onclick = function(){
-        progStyleKey = b.dataset.ps;
-        syncSeg(root.querySelector("#s_progstyle"), "ps", progStyleKey);
-        onEdit();
-      };
-    });
+    root.querySelector("#s_progstyle").onclick = function(e){
+      var b = e.target.closest("button[data-ps]");
+      if (!b) return;
+      progStyleKey = b.dataset.ps;
+      syncSeg(root.querySelector("#s_progstyle"), "ps", progStyleKey);
+      onEdit();
+    };
 
     root.querySelector("#s_theme").onclick = function(){
       themeOn = !themeOn;

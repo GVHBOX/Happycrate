@@ -838,6 +838,7 @@
   function recedeProg(){
     if (!progEl) return;
     if (dlRaf){ cancelAnimationFrame(dlRaf); dlRaf = 0; }
+    var gen = st.progGen;
     var dl = progEl.querySelector(".deadline");
     if (dl) dl.classList.remove("show", "passed");
     var isSeg = st.progStyle !== "flow";
@@ -845,12 +846,15 @@
     if (isSeg){
       var lit = [].slice.call(progEl.querySelectorAll(".seg.on, .seg.warned, .seg.err")).reverse();
       lit.forEach(function(seg, i){
-        setTimeout(function(){ seg.className = "seg"; }, i * 40);
+        setTimeout(function(){
+          if (gen !== st.progGen) return;
+          seg.className = "seg";
+        }, i * 40);
       });
     }
     var p = progEl;
     setTimeout(function(){
-      if (p !== progEl) return;
+      if (p !== progEl || gen !== st.progGen) return;
       progEl.classList.remove("receding");
       buildProg();
       progEl.style.setProperty("--p", "0");
@@ -926,6 +930,7 @@
     if (!st.segOrder.length) st.segOrder = Object.keys(st.strip);
     st.t0 = performance.now();
     st.deadline = (HC.settings && parseInt(HC.settings.soft_deadline_ms, 10)) || 3000;
+    st.progGen = (st.progGen || 0) + 1;
     buildProg();
     progEl.classList.add("on", "wait");
     progEl.style.setProperty("--p", "0");

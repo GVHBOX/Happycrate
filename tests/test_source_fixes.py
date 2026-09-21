@@ -429,3 +429,57 @@ class ConcurrentPageTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TunAdapterTest(unittest.TestCase):
+
+    def test_detects_clash_adapter(self):
+        out = ("Windows IP Configuration\r\n"
+               "\r\n"
+               "以太网适配器 以太网:\r\n"
+               "\r\n"
+               "   媒体状态 . . . . . . . . . . . . : 媒体已断开连接\r\n"
+               "未知适配器 Clash:/r/n"
+               "\r\n"
+               "   IPv4 地址 . . . . . . . . . . . . : 198.18.0.1\r\n")
+
+        class R:
+            stdout = out
+
+        with mock.patch.object(sources.subprocess, "run", return_value=R()):
+            self.assertEqual(sources.tun_adapter(), "Clash")
+
+    def test_ignores_plain_adapters(self):
+        out = ("Windows IP Configuration\r\n"
+               "\r\n"
+               "以太网适配器 以太网:\r\n"
+               "\r\n"
+               "   IPv4 地址 . . . . . . . . . . . . : 192.168.1.2\r\n")
+
+        class R:
+            stdout = out
+
+        with mock.patch.object(sources.subprocess, "run", return_value=R()):
+            self.assertEqual(sources.tun_adapter(), "")
+
+    def test_status_reports_tun_when_no_proxy(self):
+        out = ("Windows IP Configuration\r\n"
+               "\r\n"
+               "未知适配器 Mihomo:/r/n"
+               "\r\n"
+               "   IPv4 地址 . . . . . . . . . . . . : 198.18.0.1\r\n")
+
+        class R:
+            stdout = out
+
+        with mock.patch.object(sources.subprocess, "run", return_value=R()), \
+             mock.patch.object(sources, "_manual_proxy", return_value={}), \
+             mock.patch.object(sources.urllib.request, "getproxies",
+                               return_value={}):
+            data = sources.proxy_status(force=True)
+        self.assertEqual(data["mode"], "none")
+        self.assertEqual(data["tun"], "Mihomo")
+
+
+if __name__ == "__main__":
+    unittest.main()

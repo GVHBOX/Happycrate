@@ -108,7 +108,8 @@
   var mockSettings = {
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
-    ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true
+    ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true,
+    soft_deadline_ms: 3000, keep_duplicates: false, progress_style: "segment"
   };
   var mockDefaults = Object.assign({}, mockSettings);
 
@@ -119,6 +120,7 @@
   window.__onSearchBatch = function(d){ if (sHooks.batch && d) sHooks.batch(d); };
   window.__onSearchSource = function(d){ if (sHooks.source && d) sHooks.source(d); };
   window.__onSearchDone = function(d){ if (sHooks.done && d) sHooks.done(d); };
+  window.__onSearchSettled = function(d){ if (sHooks.settled && d) sHooks.settled(d); };
 
   var api = {
     mode: function(){ return live() ? "live" : "mock"; },
@@ -387,7 +389,15 @@
           }
         }, 420 + i * 380);
       });
-      return Promise.resolve({ok:true, token:token, total:keys.length, error:""});
+      var toks = text.toLowerCase().split(/\s+/).filter(Boolean);
+      var parsed = {
+        raw: text, text: text.toLowerCase(), tokens: toks,
+        subject: toks.slice(), bigrams: [],
+        mods: [], soft: [], season: null, year: null,
+        browse: toks.length === 0
+      };
+      return Promise.resolve({ok:true, token:token, total:keys.length,
+                              error:"", query:parsed});
     },
 
     cancelSearch: function(token){
@@ -414,6 +424,7 @@
     },
 
     onLive: onLive,
+    isLive: live,
 
     saveSettings: function(fields){
       if (live()) return window.pywebview.api.save_settings(fields || {});

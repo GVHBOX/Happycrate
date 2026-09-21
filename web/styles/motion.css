@@ -6,7 +6,7 @@
 
   --d-hover:160ms;
   --d-press:90ms;
-  --d-release:180ms;
+  --d-release:160ms;
   --d-state:200ms;
   --d-spring:340ms;
   --d-push:240ms;
@@ -37,4 +37,3 @@
 html.static *{animation:none !important; transition:none !important}
 @keyframes heroOut{to{opacity:0; transform:translateY(-18px) scale(.985)}}
 @keyframes cardRise{from{opacity:0; transform:translateY(10px)}}
-@keyframes indet{from{transform:translateX(-100%)} to{transform:translateX(250%)}}

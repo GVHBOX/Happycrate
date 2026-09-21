@@ -21,6 +21,7 @@ function el(tag) {
     appendChild(c) { this.children.push(c); return c; },
     insertBefore(c) { return c; },
     removeChild(c) { return c; },
+    replaceChild(c) { return c; },
     remove() {},
     focus() {}, select() {}, blur() {}, click() {},
     setPointerCapture() {}, releasePointerCapture() {},
@@ -188,9 +189,41 @@ console.log("== 6. 加载顺序与 index.html 一致 ==");
   report("冒烟列表 == index.html 脚本顺序", !orderErr, orderErr);
 }
 
-console.log("");
-console.log(failures === 0
-  ? "RESULT: PASS  (" + checks + " 项)"
-  : "RESULT: FAIL  " + failures + "/" + checks + " 项未通过");
+console.log("== 7. 桥接就绪前刷的 mock 源列表，必须在 live 后被真实数据替换 ==");
+{
+  const box = makeSandbox();
+  for (const f of FRONTEND) load(box, f);
+  box.HC.views.search.mount(el("div"));
+  setTimeout(function(){
+    const before = box.HC.views.search.st.srcList.map(s => s.key);
+    report("桥接前是 mock 源（含 custom1）", before.indexOf("custom1") >= 0,
+           JSON.stringify(before));
+    box.window.pywebview = { api: {
+      start_search: function(){
+        return Promise.resolve({ok:true, token:0, total:0, error:"",
+                                query:{subject:[],browse:true}});
+      },
+      get_settings: function(){ return Promise.resolve({}); },
+      list_sources: function(){
+        return Promise.resolve([
+          {key:"nyaa", label:"Nyaa", type:"builtin", enabled:true, timeout:15,
+           health:{state:"ok", ms:30, err:"", times:["ok"], outcomes:["ok"]}}
+        ]);
+      }
+    }};
+    setTimeout(function(){
+      const after = box.HC.views.search.st.srcList.map(s => s.key);
+      report("live 后 custom1 被替换", after.indexOf("custom1") < 0,
+             JSON.stringify(after));
+      report("live 后源列表来自后端", after.indexOf("nyaa") >= 0,
+             JSON.stringify(after));
+      report("live 后不残留 mock 源", after.length === 1, "数量 " + after.length);
 
-process.exit(failures === 0 ? 0 : 1);
+      console.log("");
+      console.log(failures === 0
+        ? "RESULT: PASS  (" + checks + " 项)"
+        : "RESULT: FAIL  " + failures + "/" + checks + " 项未通过");
+      process.exit(failures === 0 ? 0 : 1);
+    }, 600);
+  }, 60);
+}

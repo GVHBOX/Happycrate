@@ -108,6 +108,7 @@
   function loadSettings(){
     return HC.api.getSettings().then(function(s){
       if (!s) return;
+      HC.settings = s;
       applyFont(s.ui_font_size);
       HC.applyTheme(s.theme);
       HC.applyBrand(s.brand);
@@ -126,6 +127,7 @@
   loadInfo().catch(function(err){ console.warn("appInfo failed", err); });
   HC.api.onLive(function(){
     loadSettings().catch(function(err){ console.warn("getSettings failed", err); });
+    HC.api.onLive(function(){ loadSettings().catch(function(){}); });
     loadInfo().catch(function(){});
   });
 })();

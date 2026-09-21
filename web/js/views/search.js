@@ -37,19 +37,22 @@
   var st = {
     items: [], sel: {}, anchor: "",
     field: "", desc: false,
-    busy: false, searched: false, hero: true,
+    busy: false, settled: false, searched: false, hero: true,
     token: 0, done: 0, total: 0,
     errors: {}, names: {},
+    rawTotal: 0, dupCount: 0,
     enabledCount: 0, totalSources: 0,
     lines: [],
     srcList: [], strip: {}, cursor: -1,
-    query: "", qtokens: [], qphrase: "", hlRe: null,
+    query: "", qtokens: [], qphrase: "", hlRe: null, parsed: null,
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
-    selbarOn: false
+    selbarOn: false, progStyle: "segment",
+    segOrder: [], t0: 0, deadline: 3000
   };
 
   var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
+  var dlRaf = 0;
   var marquee = null;
   var justMarqueed = false;
   var nohashSeq = 0;
@@ -57,6 +60,7 @@
   var esc = HC.esc;
 
   function fmtCount(n){
+    if (n === null || n === undefined) return "—";
     n = Number(n) || 0;
     if (n < 1000) return String(n);
     if (n < 1000000) return (n / 1000).toFixed(1).replace(".0", "") + "k";
@@ -64,6 +68,7 @@
   }
 
   function tier(n){
+    if (n === null || n === undefined) return "na";
     n = Number(n) || 0;
     return n >= 1000 ? "hi" : (n >= 100 ? "mid" : "lo");
   }
@@ -72,21 +77,131 @@
     return (i + 1 < 10 ? "0" : "") + (i + 1);
   }
 
+  function normText(s){
+    return String(s || "").normalize("NFKC").toLowerCase()
+      .replace(/[_+,/|]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function bigramsOf(s){
+    var t = String(s || "").replace(/\s+/g, "");
+    if (t.length < 2) return t ? [t] : [];
+    var out = [], i, g;
+    for (i = 0; i < t.length - 1; i++){
+      g = t.substr(i, 2);
+      if (out.indexOf(g) < 0) out.push(g);
+    }
+    return out;
+  }
+
+  var CJK_RE = /[\u3400-\u9fff\uf900-\ufaff]/;
+
+  function hasWordEdge(text, word){
+    var i = text.indexOf(word);
+    if (i < 0) return false;
+    var before = i > 0 ? text.charAt(i - 1) : " ";
+    var after = text.charAt(i + word.length) || " ";
+    return !/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after);
+  }
+
+  function formsHit(forms, title, files){
+    for (var i = 0; i < forms.length; i++){
+      var f = forms[i];
+      if (!f) continue;
+      if (hasWordEdge(title, f)) return true;
+      if (files && files.indexOf(f) >= 0) return true;
+    }
+    return false;
+  }
+
+  function tokenHit(tk, title, files){
+    if (!tk) return 0;
+    if (title.indexOf(tk) >= 0) return 1;
+    if (files && files.indexOf(tk) >= 0) return 0.8;
+    if (!CJK_RE.test(tk)) return 0;
+    var grams = bigramsOf(tk);
+    if (!grams.length) return 0;
+    var hit = 0;
+    for (var i = 0; i < grams.length; i++){
+      if (title.indexOf(grams[i]) >= 0) hit++;
+      else if (files && files.indexOf(grams[i]) >= 0) hit += 0.5;
+    }
+    return hit / grams.length;
+  }
+
+  function neutralSeed(){
+    var nums = [], i, s;
+    for (i = 0; i < st.items.length; i++){
+      s = st.items[i].seeders;
+      if (typeof s === "number") nums.push(s);
+    }
+    if (!nums.length) return 0;
+    nums.sort(function(a, b){ return a - b; });
+    return nums[Math.floor(nums.length / 2)];
+  }
+
+  function heatOf(it, neutral){
+    var s = typeof it.seeders === "number" ? it.seeders : neutral;
+    var l = typeof it.leechers === "number" ? it.leechers : 0;
+    return Math.min(Math.log(s + 1) * 6, 40) + Math.min(Math.log(l + 1) * 2, 10);
+  }
+
+  var MOD_WEIGHT = {QUALITY: 0.35, CODEC: 0.25, YEAR: 0.15, SEASON: 0.45};
+  var SOFT_WEIGHT = 0.2;
+
+  function relevance(it, neutral){
+    var title = normText(it.title);
+    var files = normText(fileNames(it));
+    var heat = heatOf(it, neutral);
+    var p = st.parsed;
+
+    if (!p) return heat;
+
+    var rel = 0, i, sum;
+
+    if (p.subject.length){
+      sum = 0;
+      for (i = 0; i < p.subject.length; i++){
+        sum += tokenHit(p.subject[i], title, files);
+      }
+      rel += sum / p.subject.length;
+    }
+
+    for (i = 0; i < p.mods.length; i++){
+      var mod = p.mods[i];
+      if (formsHit(mod.forms || [], title, files)){
+        rel += MOD_WEIGHT[mod.role] || 0.25;
+      }
+    }
+
+    for (i = 0; i < p.soft.length; i++){
+      if (formsHit(p.soft[i].forms || [], title, files)) rel += SOFT_WEIGHT;
+    }
+
+    var relMax = 1 + (p.mods.length ? 1.2 : 0) + p.soft.length * SOFT_WEIGHT;
+    var relPart = relMax ? rel / relMax : 0;
+
+    return p.browse ? 50 * relPart + 50 * (heat / 50)
+                    : 70 * relPart + 30 * (heat / 50);
+  }
+
   function visible(){
     if (marquee && marquee.active && marquee.visList) return marquee.visList;
     if (!st.field){
-      if (st.busy || !st.qtokens.length) return st.items;
-      var scored = st.items.map(function(it){ return { it: it, r: relevance(it) }; });
+      if ((st.busy && !st.settled) || !st.qtokens.length) return st.items;
+      var neutral = neutralSeed();
+      var scored = st.items.map(function(it){
+        return { it: it, r: relevance(it, neutral) };
+      });
       scored.sort(function(a, b){ return b.r - a.r; });
       return scored.map(function(s){ return s.it; });
     }
+    var neutral = neutralSeed();
     return st.items.slice().sort(function(a, b){
-      var x = Number(a[st.field]) || 0, y = Number(b[st.field]) || 0;
+      var x = typeof a[st.field] === "number" ? a[st.field] : neutral;
+      var y = typeof b[st.field] === "number" ? b[st.field] : neutral;
       return st.desc ? y - x : x - y;
     });
   }
-
-  var WORD_EDGE = /[\s\[\]()（）·\-_.【】,，、:：;；!！?？'"\/\\|]/;
 
   function fileNames(it){
     return (filesOf(it) || []).map(function(f){ return (f.n || "").toLowerCase(); }).join("\n");
@@ -110,42 +225,6 @@
     return false;
   }
 
-  function hasTok(text, tk){
-    return text && text.indexOf(tk) >= 0;
-  }
-
-  function relevance(it){
-    var tokens = st.qtokens;
-    if (!tokens.length) return 0;
-    var title = (it.title || "").toLowerCase();
-    var fns = fileNames(it);
-    var hit = 0, score = 0;
-
-    for (var i = 0; i < tokens.length; i++){
-      var tk = tokens[i];
-      var pos = title.indexOf(tk);
-      if (pos >= 0){
-        hit++;
-        score += pos === 0 || WORD_EDGE.test(title[pos - 1]) ? 12 : 6;
-      } else if (hasTok(fns, tk)){
-        hit++;
-        score += 4;
-      }
-    }
-
-    var miss = tokens.length - hit;
-    if (miss === 0) score += 1000;
-    else if (miss === 1) score += 500;
-    else if (miss === 2) score += 200;
-    else score += 50;
-
-    if (st.qphrase && title.indexOf(st.qphrase) >= 0) score += 300;
-    else if (hasTok(fns, st.qphrase)) score += 60;
-
-    score += Math.min(Math.log((Number(it.seeders) || 0) + 1) * 6, 40);
-    return score;
-  }
-
   function selList(){
     return visible().filter(function(it){ return st.sel[it.hash]; });
   }
@@ -154,8 +233,11 @@
 
   function badgeHtml(){
     var n = selCount(), total = st.items.length;
-    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条'
-             : '共 ' + total + ' 条';
+    var merged = st.rawTotal && st.dupCount
+      ? '（<b>' + st.rawTotal + '</b> 条合并 <b>' + st.dupCount + '</b>）'
+      : (st.dupKept ? "（重复已保留）" : "");
+    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged
+             : '共 ' + total + ' 条' + merged;
   }
 
   var popT = null;
@@ -431,7 +513,7 @@
   function renderRows(){
     var list = visible();
     if (!list.length){
-      if (st.busy){
+      if (st.busy && !st.settled){
         rowsEl.innerHTML = skelHtml();
       } else {
         rowsEl.innerHTML = '<div class="empty">' + EMPTY_IC +
@@ -442,7 +524,7 @@
     }
     rowsEl.innerHTML = list.map(function(it, i){
       return rowHtml(it, i, false);
-    }).join("") + (st.busy ? skelHtml() : "");
+    }).join("") + (st.busy && !st.settled ? skelHtml() : "");
     paintCursor();
     renderPanels();
   }
@@ -455,7 +537,7 @@
     frag.innerHTML = list.slice(start).map(function(it, i){
       return rowHtml(it, start + i, true);
     }).join("");
-    if (st.busy){
+    if (st.busy && !st.settled){
       var tmp = document.createElement("div");
       tmp.innerHTML = skelHtml();
       while (tmp.firstChild) frag.appendChild(tmp.firstChild);
@@ -468,6 +550,25 @@
     [].slice.call(rowsEl.querySelectorAll(".srow .c-idx")).forEach(function(el, i){
       el.textContent = pad(i);
     });
+  }
+
+  function refreshRows(bumped){
+    if (!rowsEl || !rowsEl.isConnected) return;
+    var list = visible();
+    var posOf = {};
+    list.forEach(function(it, i){ posOf[it.hash] = i; });
+    [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
+      var pos = posOf[row.dataset.hash];
+      if (!bumped[row.dataset.hash] || pos === undefined || !row.parentNode) return;
+      var box = document.createElement("div");
+      box.innerHTML = rowHtml(list[pos], pos, false);
+      var made = box.firstChild;
+      if (made) row.parentNode.replaceChild(made, row);
+    });
+    renumber();
+    updateSelUI();
+    renderPanels();
+    paintCursor();
   }
 
   function updateSelUI(still){
@@ -497,7 +598,9 @@
   }
 
   function stripLabel(ss){
-    if (ss.state === "ok") return "<b>" + esc(ss.count) + "</b> 条";
+    if (ss.state === "ok") return "<b>" + esc(ss.count) + "</b> 条" +
+      (ss.fuzzy ? " · 未使用关键词" : "") +
+      (ss.cached ? " · 缓存" : "");
     if (ss.state === "empty") return "无结果";
     if (ss.state === "err") return esc(ss.err || "失败");
     if (ss.state === "warn"){
@@ -687,8 +790,13 @@
     st.lines = [];
     st.strip = {};
     st.cursor = -1;
+    st.parsed = null;
     st.done = 0;
     st.total = 0;
+    st.rawTotal = 0;
+    st.dupCount = 0;
+    st.relaxed = "";
+    st.settled = false;
     st.searched = false;
     nohashSeq = 0;
     renderTip();
@@ -699,10 +807,86 @@
     progEl.style.setProperty("--p", String(Math.min(1, st.done / st.total)));
   }
 
+  function styleClass(){
+    return st.progStyle === "flow" ? "style-flow" : "style-seg";
+  }
+
+  function buildProg(){
+    if (!progEl) return;
+    progEl.className = "progress " + styleClass();
+    progEl.innerHTML = "";
+    if (st.progStyle !== "flow"){
+      var order = st.segOrder && st.segOrder.length ? st.segOrder : [];
+      order.forEach(function(key, i){
+        var seg = document.createElement("div");
+        seg.className = "seg";
+        seg.dataset.key = key;
+        seg.style.animationDelay = (i * 0.08) + "s";
+        progEl.appendChild(seg);
+      });
+      var dl = document.createElement("div");
+      dl.className = "deadline";
+      progEl.appendChild(dl);
+    } else {
+      var fill = document.createElement("div");
+      fill.className = "fill";
+      fill.innerHTML = '<div class="tex"></div>';
+      progEl.appendChild(fill);
+    }
+  }
+
+  function recedeProg(){
+    if (!progEl) return;
+    if (dlRaf){ cancelAnimationFrame(dlRaf); dlRaf = 0; }
+    var dl = progEl.querySelector(".deadline");
+    if (dl) dl.classList.remove("show", "passed");
+    var isSeg = st.progStyle !== "flow";
+    progEl.classList.add("receding");
+    if (isSeg){
+      var lit = [].slice.call(progEl.querySelectorAll(".seg.on, .seg.warned, .seg.err")).reverse();
+      lit.forEach(function(seg, i){
+        setTimeout(function(){ seg.className = "seg"; }, i * 40);
+      });
+    }
+    var p = progEl;
+    setTimeout(function(){
+      if (p !== progEl) return;
+      progEl.classList.remove("receding");
+      buildProg();
+      progEl.style.setProperty("--p", "0");
+    }, 480);
+  }
+
+  function dlLoop(){
+    if (!st.busy || !progEl){ dlRaf = 0; return; }
+    var elapsed = (performance.now() - st.t0) / 1000;
+    var dl = st.progStyle === "segment" ? progEl.querySelector(".deadline") : null;
+    if (dl){
+      var ratio = Math.min(1, elapsed / (st.deadline / 1000));
+      dl.style.left = (ratio * 100) + "%";
+      dl.classList.add("show");
+      dl.classList.toggle("passed", ratio >= 1);
+      if (ratio >= 1){
+        [].slice.call(progEl.querySelectorAll(".seg")).forEach(function(seg){
+          var one = st.strip[seg.dataset.key];
+          if (one && one.state === "pending" &&
+              seg.className.indexOf("warned") < 0 && seg.className.indexOf("err") < 0){
+            seg.className = "seg warned";
+          }
+        });
+      }
+    }
+    if (st.progStyle === "flow"){
+      progEl.classList.toggle("slow", elapsed > st.deadline / 1000 && st.done < st.total);
+    }
+    dlRaf = requestAnimationFrame(dlLoop);
+  }
+
   function stopProgress(){
     if (!progEl) return;
     progEl.classList.remove("on");
     progEl.classList.remove("wait");
+    recedeProg();
   }
 
   function go(){
@@ -738,6 +922,14 @@
       : null;
     reset();
     st.srcList.forEach(function(s){ st.strip[s.key] = {state:"pending"}; });
+    st.segOrder = st.srcList.map(function(s){ return s.key; });
+    if (!st.segOrder.length) st.segOrder = Object.keys(st.strip);
+    st.t0 = performance.now();
+    st.deadline = (HC.settings && parseInt(HC.settings.soft_deadline_ms, 10)) || 3000;
+    buildProg();
+    progEl.classList.add("on", "wait");
+    progEl.style.setProperty("--p", "0");
+    if (!dlRaf) dlRaf = requestAnimationFrame(dlLoop);
     st.busy = true;
     renderRows();
     paintStrip();
@@ -745,8 +937,6 @@
     setChip("搜索中…", "busy");
     goBtn.textContent = "停止";
     goBtn.classList.add("stop");
-    progEl.classList.add("on", "wait");
-    progEl.style.setProperty("--p", "0");
     HC.api.startSearch(q).then(function(res){
       if (!res || !res.ok){
         st.busy = false;
@@ -760,7 +950,7 @@
       }
       st.token = res.token;
       st.total = res.total;
-      progEl.classList.remove("wait");
+      st.parsed = res.query || null;
       setProgress();
       setChip("搜索中 0/" + res.total + "…", "busy");
     }).catch(function(err){
@@ -783,9 +973,10 @@
     st.errors = st.errors || {};
     var fails = Object.keys(st.errors).filter(function(k){ return k; }).length;
     var total = st.items.length;
-    if (fails) setChip(total + " 条 · " + fails + " 个源失败", "warn");
-    else if (!total) setChip("没有找到结果", "");
-    else setChip("搜索完成 · " + total + " 条", "ok");
+    var relaxed = st.relaxed ? " · 已放宽：去掉 " + st.relaxed : "";
+    if (fails) setChip(total + " 条 · " + fails + " 个源失败" + relaxed, "warn");
+    else if (!total) setChip("没有找到结果" + relaxed, "");
+    else setChip("搜索完成 · " + total + " 条" + relaxed, "ok");
     Object.keys(st.strip).forEach(function(k){
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
     });
@@ -847,6 +1038,11 @@
   function applySettings(s){
     st.selbarOn = !!s && s.selbar === true;
     autoFiles = !s || s.auto_files !== false;
+    var style = s && s.progress_style === "flow" ? "flow" : "segment";
+    if (st.progStyle !== style){
+      st.progStyle = style;
+      buildProg();
+    }
     updateSelUI(true);
   }
 
@@ -899,7 +1095,7 @@
     var srcLoaded = false;
     function loadSourcesOnce(){
       if (srcLoaded) return;
-      srcLoaded = true;
+      srcLoaded = HC.api.isLive();
       refreshSources();
     }
     loadSourcesOnce();
@@ -908,6 +1104,9 @@
       source: function(d){
         if (!st.busy || d.token !== st.token) return;
         st.done += 1;
+        if (progEl) progEl.classList.remove("wait");
+        var seg = progEl && progEl.querySelector('.seg[data-key="' + d.key + '"]');
+        if (seg) seg.className = "seg" + (d.err ? " err" : " on");
         setProgress();
         var name = st.names[d.key] || d.key;
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
@@ -925,32 +1124,47 @@
           setChip(name + " " + why, "warn");
           st.strip[d.key] = {state:"warn", err:d.err, count:d.count};
         } else {
-          st.lines.push({text: name + "：" + d.count + " 条", bad: false});
+          st.lines.push({text: name + "：" + d.count + " 条" +
+                         (d.fuzzy ? "（未使用关键词）" : ""), bad: false});
           setChip(name + " " + d.count + " 条", "busy");
-          st.strip[d.key] = {state:"ok", count:d.count};
+          st.strip[d.key] = {state:"ok", count:d.count, fuzzy:!!d.fuzzy,
+                             cached:!!d.cached};
         }
         renderTip();
         paintStrip();
       },
+      settled: function(d){
+        if (!st.busy || d.token !== st.token) return;
+        st.settled = true;
+        renderRows();
+        paintBadge();
+        paintStrip();
+        var left = st.srcList.filter(function(s){
+          var one = st.strip[s.key];
+          return !one || one.state === "pending";
+        }).length;
+        if (left > 0) setChip(st.items.length + " 条 · " + left + " 个源仍在返回", "busy");
+      },
       batch: function(d){
         if (!st.busy || d.token !== st.token) return;
-        var fresh = 0, touched = false;
+        var fresh = 0, bumped = null;
         d.items.forEach(function(it){
           if (!it.hash) it.hash = "nohash-" + (++nohashSeq);
           var pos = indexOfHash(it.hash);
           if (pos >= 0){
             st.items[pos] = it;
-            touched = true;
+            (bumped || (bumped = {}))[it.hash] = true;
           } else {
             st.items.push(it);
             fresh++;
           }
         });
-        if (st.field || touched){
+        if (st.field){
           renderRows();
           updateSelUI();
         } else {
-          appendRows(fresh);
+          if (bumped) refreshRows(bumped);
+          if (fresh) appendRows(fresh);
         }
         paintBadge();
         autoExpand(AUTO_EARLY, false);
@@ -958,6 +1172,10 @@
       done: function(d){
         if (!st.busy || d.token !== st.token) return;
         st.errors = d.errors || {};
+        st.rawTotal = Number(d.raw) || 0;
+        st.dupCount = Number(d.dup) || 0;
+        st.relaxed = d.relaxed || "";
+        st.dupKept = d.kept === true;
         var fatal = st.errors[""];
         if (fatal){
           st.lines.unshift({text: fatal, bad: true});

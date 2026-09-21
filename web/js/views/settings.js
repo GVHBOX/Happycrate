@@ -6,6 +6,7 @@
     {key:"min_query_len", label:"最短关键词", group:"检索", min:1, max:20, step:1},
     {key:"max_workers", label:"并发数", group:"检索", min:1, max:32, step:1},
     {key:"timeout", label:"投递/清单超时", group:"检索", min:1, max:120, step:1, unit:"秒"},
+    {key:"soft_deadline_ms", label:"软截止", group:"检索", min:0, max:60000, step:500, unit:"毫秒"},
     {key:"retries", label:"重试次数", group:"检索", min:0, max:5, step:1},
     {key:"proxy", label:"代理", group:"网络", ph:"http://127.0.0.1:7890"},
     {key:"user_agent", label:"User-Agent", group:"网络", ph:"留空用内置"},
@@ -18,6 +19,8 @@
   var selbarOn = false;
   var themeOn = false;
   var autoFilesOn = true;
+  var keepDupOn = false;
+  var progStyleKey = "segment";
   var brandKey = "";
 
   var STEP_BTN = {
@@ -209,6 +212,18 @@
     box.innerHTML = segHtml(opts, current, "dl");
   }
 
+  var PROG_OPTS = [
+    {key:"segment", label:"分段 · 警戒线"},
+    {key:"flow", label:"连续斜纹"}
+  ];
+
+  function paintProg(current){
+    var box = root.querySelector("#s_progstyle");
+    if (!box) return;
+    box.innerHTML = segHtml(PROG_OPTS, current, "ps");
+    syncSeg(box, "ps", current);
+  }
+
   var BRAND_OPTS = [
     {key:"", label:"默认"},
     {key:"teal", label:"青碧"},
@@ -252,6 +267,8 @@
     out.theme = themeOn ? "dark" : "light";
     out.brand = brandKey;
     out.auto_files = autoFilesOn;
+    out.progress_style = progStyleKey;
+    out.keep_duplicates = keepDupOn;
     return out;
   }
 
@@ -328,6 +345,10 @@
             '<div class="swatches" id="s_brand" role="group" aria-labelledby="lb_brand"></div></div>' +
           '<div class="field inline"><label for="s_autofiles">文件命中时自动展开</label>' +
             '<button type="button" class="sw" id="s_autofiles" role="switch"></button></div>' +
+          '<div class="field inline"><label for="s_keepdup">保留重复项</label>' +
+            '<button type="button" class="sw" id="s_keepdup" role="switch"></button></div>' +
+          '<div class="field inline"><span class="lbl" id="lb_prog">进度条</span>' +
+            '<div class="seg" id="s_progstyle" role="group" aria-labelledby="lb_prog"></div></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -365,6 +386,10 @@
       setSw("#s_theme", themeOn);
       autoFilesOn = settings.auto_files !== false;
       setSw("#s_autofiles", autoFilesOn);
+      keepDupOn = settings.keep_duplicates === true;
+      setSw("#s_keepdup", keepDupOn);
+      progStyleKey = settings.progress_style === "flow" ? "flow" : "segment";
+      paintProg(progStyleKey);
       brandKey = settings.brand || "";
       paintBrand(brandKey);
       if (HC.applyTheme) HC.applyTheme(settings.theme || "light");
@@ -449,6 +474,20 @@
       setSw("#s_autofiles", autoFilesOn);
       onEdit();
     };
+
+    root.querySelector("#s_keepdup").onclick = function(){
+      keepDupOn = !keepDupOn;
+      setSw("#s_keepdup", keepDupOn);
+      onEdit();
+    };
+
+    [].slice.call(root.querySelectorAll("#s_progstyle button")).forEach(function(b){
+      b.onclick = function(){
+        progStyleKey = b.dataset.ps;
+        syncSeg(root.querySelector("#s_progstyle"), "ps", progStyleKey);
+        onEdit();
+      };
+    });
 
     root.querySelector("#s_theme").onclick = function(){
       themeOn = !themeOn;

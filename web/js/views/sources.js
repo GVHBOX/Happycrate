@@ -691,6 +691,7 @@
     };
 
     store.subscribe(render);
+    api.onLive(reload);
     reload();
   }
 

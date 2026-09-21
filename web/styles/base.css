@@ -630,11 +630,43 @@ input, textarea{
 .marquee{position:absolute; z-index:var(--z-marquee); pointer-events:none; border-radius:2px;
   background:rgba(var(--brand-rgb),.12); border:1px solid rgba(var(--brand-rgb),.55)}
 
-.progress{flex:none;height:2px;overflow:hidden;--p:0;background:var(--track)}
-.progress .fill{height:100%;background:var(--brand);transform-origin:left center;
-  transform:scaleX(var(--p,0));
-  transition:transform .34s var(--e-out)}
-.progress.on.wait .fill{width:40%;transform:none;animation:indet 1.1s var(--e) infinite}
+.progress{flex:none;height:10px;position:relative;display:flex;gap:4px;--p:0;
+  background:var(--track)}
+.progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden}
+.progress .seg{flex:1;transform:skewX(-16deg);border-radius:2.5px;background:var(--rowline);
+  position:relative;overflow:hidden;transition:background .18s,opacity .25s}
+.progress .seg::after{content:"";position:absolute;inset:0;opacity:0}
+.progress .seg.on{background:var(--brand)}
+.progress .seg.on::after{opacity:1;
+  background:repeating-linear-gradient(-55deg,rgba(255,255,255,.16) 0 4px,transparent 4px 9px);
+  animation:segflow .7s linear infinite}
+.progress .seg.warned{background:var(--warn)}
+.progress .seg.warned::after{opacity:1;
+  background:repeating-linear-gradient(-55deg,rgba(0,0,0,.28) 0 4px,transparent 4px 9px);
+  animation:segflow .7s linear infinite}
+.progress .seg.err{background:var(--err-bar)}
+.progress.style-flow{display:block;background:var(--track);border-radius:2.5px;overflow:hidden}
+.progress.style-flow .fill{height:100%;width:calc(var(--p)*100%);position:relative;
+  overflow:hidden;transition:width .25s var(--e-out)}
+.progress.style-flow .fill .tex{position:absolute;inset:-14px -20px;
+  background:repeating-linear-gradient(-55deg,var(--brand) 0 11px,#3A36B8 11px 16px);
+  animation:segflow .8s linear infinite}
+.progress.style-flow.slow .fill .tex{
+  background:repeating-linear-gradient(-55deg,var(--warn) 0 11px,#8a6404 11px 16px)}
+.progress.on.wait .fill{width:100%;opacity:.45;animation:waitflow 1.1s var(--e) infinite}
+@keyframes waitflow{0%,100%{opacity:.45}50%{opacity:.22}}
+.progress.wait .seg{animation:segscan 1.9s linear infinite}
+.progress.receding .seg{opacity:0;transition:opacity .3s}
+.progress.style-flow.receding .fill{width:0 !important;
+  transition:width .45s cubic-bezier(.5,0,.7,.4)}
+.progress .deadline{position:absolute;top:-4px;bottom:-4px;width:2px;border-radius:2px;
+  background:var(--warn);left:0;opacity:0;pointer-events:none;
+  box-shadow:0 0 8px rgba(252,211,77,.7)}
+.progress .deadline.show{opacity:1}
+.progress .deadline.passed{animation:dlpulse .55s ease-in-out infinite alternate}
+@keyframes segflow{0%{background-position:0 0}100%{background-position:13px 0}}
+@keyframes segscan{0%,18%{background:var(--brand)}24%,100%{background:var(--track)}}
+@keyframes dlpulse{from{opacity:.55}to{opacity:1}}
 
 .skel{display:flex;align-items:center;gap:var(--sp-4);
   padding:12px var(--sp-6);border-bottom:1px solid var(--rowline)}

@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -10,7 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app import api as api_mod
-from app import config, core, sources, templates
+from app import config, core, query, sources, templates
 
 
 def _same_hash_source(key, title, **extra):
@@ -86,6 +87,283 @@ class StreamingMergeTest(unittest.TestCase):
         _rows, done = self._run(["poor", "rich"])
         self.assertEqual(done[-1]["total"], 1,
                          "total 应是结果行数，不是推送次数")
+
+    def test_conservation_adds_up(self):
+        self._wire([
+            _same_hash_source("a", "A", size=10),
+            _same_hash_source("b", "B", size=20),
+            _same_hash_source("c", "C", size=30),
+        ])
+        _rows, done = self._run(["a", "b", "c"])
+        last = done[-1]
+        self.assertEqual(last["raw"], 3, "三个源各 1 条，原始共 3 条")
+        self.assertEqual(last["total"], 1, "同一 hash 合并成 1 行")
+        self.assertEqual(last["dup"], 2, "两条是重复")
+        self.assertEqual(last["raw"] - last["dup"], last["total"])
+
+    def test_conservation_counts_new_rows(self):
+        def make(key, title, **extra):
+            def fn(query, page=1, timeout=15, base="", batch=None):
+                item = {"title": title, "info_hash": extra.pop("h", "a" * 40),
+                        "source": key}
+                item.update(extra)
+                return [item]
+            return fn
+        self._wire([
+            sources.Source("a", "A", make("a", "A", h="a" * 40), timeout=5),
+            sources.Source("b", "B", make("b", "B", h="b" * 40), timeout=5),
+            sources.Source("c", "C", make("c", "C", h="a" * 40), timeout=5),
+        ])
+        _rows, done = self._run(["a", "b", "c"])
+        last = done[-1]
+        self.assertEqual(last["raw"], 3)
+        self.assertEqual(last["total"], 2)
+        self.assertEqual(last["dup"], 1)
+        self.assertEqual(last["raw"] - last["dup"], last["total"])
+
+
+class RelaxTest(unittest.TestCase):
+
+    def test_drops_quality_first(self):
+        parsed = query.parse("沙丘 4K 2024")
+        nxt, dropped = api_mod._relaxed_query(parsed)
+        self.assertEqual(dropped, "4k")
+        self.assertEqual(nxt, "沙丘 2024")
+
+    def test_never_drops_subject(self):
+        nxt, dropped = api_mod._relaxed_query(query.parse("流浪地球"))
+        self.assertEqual((nxt, dropped), ("", ""))
+
+    def test_drops_soft_before_giving_up_subject(self):
+        parsed = query.parse("流浪地球 4K 中字")
+        nxt, dropped = api_mod._relaxed_query(parsed)
+        self.assertEqual(dropped, "4k")
+        self.assertEqual(nxt, "流浪地球 中字")
+
+    def test_browse_query_relaxes_then_stops(self):
+        parsed = query.parse("电影 4K")
+        nxt, dropped = api_mod._relaxed_query(parsed)
+        self.assertEqual(dropped, "4k")
+        self.assertEqual(api_mod._relaxed_query(query.parse(nxt)), ("", ""))
+
+    def test_relax_respects_role_priority(self):
+        parsed = query.parse("xxx 4K 中字 x265")
+        first = api_mod._relaxed_query(parsed)
+        self.assertEqual(first[1], "4k")
+
+
+class SoftDeadlineTest(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_all = sources.ALL_SOURCES
+        self.orig_by = sources.BY_KEY
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-deadline-")
+        self.api = api_mod.Api()
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
+        self.api._cfg.load()
+        self.api._settings = config.Settings(path=Path(self.tmpdir) / "settings.json")
+        self.api._settings.load()
+        self.api._health_store = config.HealthStore(
+            path=Path(self.tmpdir) / "health.json")
+        sources.reload_from_config(self.api._cfg)
+
+    def tearDown(self):
+        sources.ALL_SOURCES = self.orig_all
+        sources.BY_KEY = self.orig_by
+
+    def _wire(self, srcs):
+        sources.ALL_SOURCES = srcs
+        sources.BY_KEY = {s.key: s for s in srcs}
+
+    def test_settled_arrives_before_slow_source(self):
+        def slow(query, page=1, timeout=15, base="", batch=None):
+            time.sleep(0.8)
+            return [{"title": "slow item", "info_hash": "b" * 40, "source": "slow"}]
+
+        def fast(query, page=1, timeout=15, base="", batch=None):
+            return [{"title": "fast item", "info_hash": "a" * 40, "source": "fast"}]
+
+        self._wire([
+            sources.Source("fast", "FAST", fast, timeout=5),
+            sources.Source("slow", "SLOW", slow, timeout=5),
+        ])
+        self.api._settings.set("soft_deadline_ms", 100)
+        events = []
+        self.api._push = lambda js: events.append(js)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "item", ["fast", "slow"])
+
+        settled = [i for i, e in enumerate(events) if "__onSearchSettled" in e]
+        done = [i for i, e in enumerate(events) if "__onSearchDone" in e]
+        self.assertEqual(len(settled), 1, "软截止应推送一次 settled")
+        self.assertEqual(len(done), 1)
+        self.assertLess(settled[0], done[0], "settled 应早于 done")
+
+    def test_zero_deadline_disables_settle(self):
+        self._wire([
+            sources.Source("fast", "FAST",
+                           lambda q, **kw: [{"title": "x", "info_hash": "a" * 40,
+                                             "source": "fast"}], timeout=5),
+        ])
+        self.api._settings.set("soft_deadline_ms", 0)
+        events = []
+        self.api._push = lambda js: events.append(js)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "x", ["fast"])
+        self.assertFalse(any("__onSearchSettled" in e for e in events))
+
+    def test_no_results_triggers_relaxed_retry(self):
+        calls = []
+
+        def empty_first(query, page=1, timeout=15, base="", batch=None):
+            calls.append(query)
+            if "4k" in query:
+                return []
+            return [{"title": "found", "info_hash": "a" * 40, "source": "s"}]
+
+        self._wire([sources.Source("s", "S", empty_first, timeout=5)])
+        self.api._settings.set("soft_deadline_ms", 0)
+        events = []
+        self.api._push = lambda js: events.append(js)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "沙丘 4k", ["s"])
+
+        self.assertEqual(calls, ["沙丘 4k", "沙丘"], "应去掉 4k 重搜一次")
+        done = [e for e in events if "__onSearchDone" in e]
+        self.assertEqual(len(done), 1)
+        self.assertIn('"relaxed": "4k"', done[0])
+
+
+class SearchCacheTest(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_all = sources.ALL_SOURCES
+        self.orig_by = sources.BY_KEY
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-cache-")
+        self.api = api_mod.Api()
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
+        self.api._cfg.load()
+        self.api._settings = config.Settings(path=Path(self.tmpdir) / "settings.json")
+        self.api._settings.load()
+        self.api._health_store = config.HealthStore(
+            path=Path(self.tmpdir) / "health.json")
+        sources.reload_from_config(self.api._cfg)
+        self.api._settings.set("soft_deadline_ms", 0)
+
+    def tearDown(self):
+        sources.ALL_SOURCES = self.orig_all
+        sources.BY_KEY = self.orig_by
+
+    def _wire(self, srcs):
+        sources.ALL_SOURCES = srcs
+        sources.BY_KEY = {s.key: s for s in srcs}
+
+    def _capture(self, text, keys):
+        events = []
+        self.api._push = lambda js: events.append(js)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, text, keys)
+        return events
+
+    def _done(self, events):
+        return [e for e in events if "__onSearchDone" in e]
+
+    def test_hit_reuses_rows_and_retries_failed_only(self):
+        calls = {"a": 0, "b": 0}
+
+        def a(query, page=1, timeout=15, base="", batch=None):
+            calls["a"] += 1
+            return [{"title": "A item", "info_hash": "a" * 40, "source": "a"}]
+
+        def b(query, page=1, timeout=15, base="", batch=None):
+            calls["b"] += 1
+            if calls["b"] == 1:
+                raise RuntimeError("boom")
+            return [{"title": "B item", "info_hash": "b" * 40, "source": "b"}]
+
+        self._wire([
+            sources.Source("a", "A", a, timeout=5),
+            sources.Source("b", "B", b, timeout=5),
+        ])
+
+        first = self._capture("query", ["a", "b"])
+        self.assertEqual(calls["a"], 1)
+        self.assertEqual(calls["b"], 1)
+        self.assertIn('"total": 1', self._done(first)[0])
+        self.assertIn('"b"', self._done(first)[0], "失败源应记入 errors")
+
+        second = self._capture("query", ["a", "b"])
+        self.assertEqual(calls["a"], 1, "成功的源应走缓存，不再请求")
+        self.assertEqual(calls["b"], 2, "失败的源应重打")
+        self.assertIn('"total": 2', self._done(second)[0], "重打成功后行数增加")
+        self.assertTrue(any('"cached": true' in e for e in second),
+                        "复用源的事件应带 cached 标记")
+        last = self._done(second)[0]
+        self.assertIn('"raw": 2', last)
+        self.assertIn('"dup": 0', last)
+
+    def test_second_hit_with_no_failures_skips_network(self):
+        calls = {"a": 0}
+
+        def a(query, page=1, timeout=15, base="", batch=None):
+            calls["a"] += 1
+            return [{"title": "A item", "info_hash": "a" * 40, "source": "a"}]
+
+        self._wire([sources.Source("a", "A", a, timeout=5)])
+        self._capture("solo", ["a"])
+        second = self._capture("solo", ["a"])
+        self.assertEqual(calls["a"], 1, "全成功时第二轮不应打任何源")
+        self.assertIn('"total": 1', self._done(second)[0])
+
+    def test_expired_cache_researches_everything(self):
+        calls = {"a": 0}
+
+        def a(query, page=1, timeout=15, base="", batch=None):
+            calls["a"] += 1
+            return [{"title": "A item", "info_hash": "a" * 40, "source": "a"}]
+
+        self._wire([sources.Source("a", "A", a, timeout=5)])
+        self._capture("old", ["a"])
+        with self.api._search_cache_lock:
+            for item in self.api._search_cache.values():
+                item["ts"] -= api_mod.SEARCH_CACHE_TTL * 2
+        self._capture("old", ["a"])
+        self.assertEqual(calls["a"], 2, "过期缓存应全量重打")
+
+    def test_cache_keeps_different_queries_apart(self):
+        calls = {"a": 0}
+
+        def a(query, page=1, timeout=15, base="", batch=None):
+            calls["a"] += 1
+            return [{"title": "A " + query, "info_hash": "a" * 40, "source": "a"}]
+
+        self._wire([sources.Source("a", "A", a, timeout=5)])
+        self._capture("one", ["a"])
+        self._capture("two", ["a"])
+        self.assertEqual(calls["a"], 2, "不同关键词不共用缓存")
+
+    def test_cache_snapshot_isolated_from_merge(self):
+        def a(query, page=1, timeout=15, base="", batch=None):
+            return [{"title": "A item", "info_hash": "a" * 40, "source": "a"}]
+
+        def b(query, page=1, timeout=15, base="", batch=None):
+            return [{"title": "A item updated", "info_hash": "a" * 40,
+                     "seeders": 99, "source": "b"}]
+
+        self._wire([
+            sources.Source("a", "A", a, timeout=5),
+            sources.Source("b", "B", b, timeout=5),
+        ])
+        self._capture("merge", ["a"])
+        self._capture("merge", ["a", "b"])
+        with self.api._search_cache_lock:
+            cached = [v for v in self.api._search_cache.values()]
+        row = cached[-1]["rows"][0]
+        self.assertIsInstance(row["sources"], list)
 
 
 class ProxyFatalTest(unittest.TestCase):

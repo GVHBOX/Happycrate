@@ -705,6 +705,25 @@ def _base_of(base: str, default: str) -> str:
 
 _APIBAY_TOKEN_RE = re.compile(r"[\s\-_.:+/|,]+")
 
+KEYWORD_SAMPLE = 12
+FUZZY_RATE = 0.2
+
+
+def keyword_hit_rate(items: list[dict], needles, sample: int = KEYWORD_SAMPLE) -> float:
+    wanted = [str(n).strip().lower() for n in (needles or []) if str(n).strip()]
+    if not wanted:
+        return 1.0
+    pool = [it for it in (items or [])[:sample] if isinstance(it, dict)]
+    if not pool:
+        return 1.0
+    hit = 0
+    for it in pool:
+        title = (it.get("title") or "").lower()
+        if any(w in title for w in wanted):
+            hit += 1
+    return hit / len(pool)
+
+
 def _apibay_relevant(items: list[dict], query: str) -> bool:
     needle = (query or "").lower().strip()
     if not needle:
@@ -712,13 +731,9 @@ def _apibay_relevant(items: list[dict], query: str) -> bool:
     if not any(ch.isalnum() for ch in needle):
         return False
     tokens = [t for t in _APIBAY_TOKEN_RE.split(needle) if len(t) >= 2]
-    for it in items:
-        title = (it.get("title") or "").lower()
-        if needle in title:
-            return True
-        if any(tok in title for tok in tokens):
-            return True
-    return False
+    if keyword_hit_rate(items, [needle]) > 0:
+        return True
+    return keyword_hit_rate(items, tokens) > 0
 
 def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["apibay"])
@@ -749,8 +764,7 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
         ))
 
     if items and not _apibay_relevant(items, query):
-        logger.info("apibay 忽略了关键词 %r，返回的是热门兜底列表，按无结果处理", query)
-        return []
+        logger.info("apibay 未使用关键词 %r，返回的是兜底列表", query)
     return items
 
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:

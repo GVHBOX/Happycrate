@@ -9,7 +9,7 @@ import time
 import urllib.parse
 
 from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
-               paths, runtime, sources, store, templates)
+               paths, query, runtime, sources, store, templates)
 
 logger = log.get_logger(__name__)
 
@@ -19,6 +19,16 @@ FILES_CAP = 200
 BAD_MIN = 3
 SLOW_MS = 5000
 MAX_QUERY_LEN = 100
+SEARCH_CACHE_TTL = 60.0
+SEARCH_CACHE_MAX = 8
+
+
+def _snapshot_row(row: dict) -> dict:
+    snap = dict(row)
+    src = snap.get("sources")
+    if isinstance(src, list):
+        snap["sources"] = list(src)
+    return snap
 
 def is_query_too_long(text: str) -> bool:
     return len(text or "") > MAX_QUERY_LEN
@@ -248,6 +258,45 @@ def _draft(item: dict) -> dict:
     }
 
 
+_RELAX_RANK = {
+    "QUALITY": 0, "CODEC": 1, "YEAR": 2, "MISC": 3,
+    "AUDIO": 4, "LANG": 5, "TYPE": 6, "GENRE": 7,
+}
+
+MAX_RELAX_ROUNDS = 2
+
+
+def _relaxed_query(parsed: dict) -> tuple[str, str]:
+    tokens = list(parsed.get("tokens") or [])
+    subject = set(parsed.get("subject") or [])
+    if len(tokens) <= 1:
+        return "", ""
+
+    droppable = []
+    for m in parsed.get("mods") or []:
+        droppable.append((_RELAX_RANK.get(m.get("role"), 99), m.get("text")))
+    for s in parsed.get("soft") or []:
+        droppable.append((_RELAX_RANK.get(s.get("kind"), 99), s.get("text")))
+    droppable.sort(key=lambda pair: pair[0])
+
+    for _rank, text in droppable:
+        if text not in tokens or text in subject:
+            continue
+        rest = [t for t in tokens if t != text]
+        if rest:
+            return " ".join(rest), text
+    return "", ""
+
+
+def _opt_int(value):
+    if value is None or value == "":
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
 def _item_view(item: dict) -> dict:
     size = item.get("size")
     added = item.get("added")
@@ -271,8 +320,8 @@ def _item_view(item: dict) -> dict:
         "title": item.get("title") or "",
         "size": int(size or 0),
         "sizeText": core.format_size(size),
-        "seeders": int(item.get("seeders") or 0),
-        "leechers": int(item.get("leechers") or 0),
+        "seeders": _opt_int(item.get("seeders")),
+        "leechers": _opt_int(item.get("leechers")),
         "added": int(added or 0),
         "addedText": core.format_time_relative(added),
         "magnet": core.magnet_of(item),
@@ -326,6 +375,8 @@ class Api:
         self._search_token = 0
         self._migration: dict = {}
         self._maxed = False
+        self._search_cache: dict[str, dict] = {}
+        self._search_cache_lock = threading.Lock()
 
     def boot(self) -> None:
         paths.ensure_dirs()
@@ -610,8 +661,26 @@ class Api:
         self._persist_health()
         self._push("window.__onProbeDone && window.__onProbeDone()")
 
-    def start_search(self, query: str) -> dict:
-        text = (query or "").strip()
+    def _cache_take(self, ckey: str) -> dict | None:
+        with self._search_cache_lock:
+            item = self._search_cache.get(ckey)
+            if item is None:
+                return None
+            if time.time() - item["ts"] > SEARCH_CACHE_TTL:
+                self._search_cache.pop(ckey, None)
+                return None
+            return item
+
+    def _cache_put(self, ckey: str, item: dict) -> None:
+        with self._search_cache_lock:
+            self._search_cache[ckey] = item
+            while len(self._search_cache) > SEARCH_CACHE_MAX:
+                oldest = min(self._search_cache,
+                             key=lambda k: self._search_cache[k]["ts"])
+                self._search_cache.pop(oldest, None)
+
+    def start_search(self, text: str) -> dict:
+        text = (text or "").strip()
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         if len(text) < min_len:
             return {"ok": False, "token": 0, "total": 0,
@@ -624,12 +693,14 @@ class Api:
         if not keys:
             return {"ok": False, "token": 0, "total": 0, "error": "没有启用的数据源"}
 
+        parsed = query.parse(text)
         token = sources.start_batch()
         self._search_token = token
         threading.Thread(
             target=self._search_worker, args=(token, text, keys), daemon=True
         ).start()
-        return {"ok": True, "token": token, "total": len(keys), "error": ""}
+        return {"ok": True, "token": token, "total": len(keys), "error": "",
+                "query": parsed}
 
     def cancel_search(self, token=0) -> bool:
         try:
@@ -668,32 +739,101 @@ class Api:
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         rows: list[dict] = []
         index_of: dict[str, int] = {}
+        tally = {"raw": 0, "dup": 0}
+        parsed = query.parse(text)
+        subject = parsed.get("subject") or []
+        fuzzy_keys = set()
+        keep_dup = self._settings.get("keep_duplicates", False) is True
+        errors: dict[str, str] = {}
+        ok_keys: set[str] = set()
+        source_counts: dict[str, int] = {}
+        relaxed_used: list[str] = []
+        settled_evt = threading.Event()
+
+        all_keys = keys
+        ckey = ((parsed.get("text") or text) + "|" + ",".join(sorted(all_keys))
+                + "|" + ("k" if keep_dup else ""))
+        cached = self._cache_take(ckey)
+        retry_keys = list(all_keys)
+
+        if cached:
+            rows = [_snapshot_row(r) for r in cached["rows"]]
+            for i, row in enumerate(rows):
+                ih = (row.get("info_hash") or "").lower()
+                if ih and ih not in index_of:
+                    index_of[ih] = i
+            tally["raw"] = cached["raw"]
+            tally["dup"] = cached["dup"]
+            ok_keys = set(cached["ok"])
+            fuzzy_keys = set(cached["fuzzy"])
+            errors = dict(cached["errors"])
+            source_counts = dict(cached["source_counts"])
+            retry_keys = [k for k in all_keys if k in cached["errors"]]
+
+            batch = [_item_view(r) for r in rows]
+            if batch:
+                payload = json.dumps(
+                    {"token": token, "key": "", "items": batch},
+                    ensure_ascii=False,
+                )
+                self._push(f"window.__onSearchBatch && window.__onSearchBatch({payload})")
+            for key in all_keys:
+                if key in retry_keys:
+                    continue
+                count = source_counts.get(key, 0)
+                fuzzy = key in fuzzy_keys
+                payload = json.dumps(
+                    {"token": token, "key": key, "count": count, "err": "",
+                     "outcome": "ok", "state": "ok", "fuzzy": fuzzy,
+                     "cached": True},
+                    ensure_ascii=False,
+                )
+                self._push(f"window.__onSearchSource && window.__onSearchSource({payload})")
+            logger.info("命中搜索缓存：%d 行复用，重打 %d 个源",
+                        len(rows), len(retry_keys))
 
         def on_source(key, items, err, ms=0):
             if token != self._search_token:
                 return
-            count = len(items or [])
+            items = items or []
+            count = len(items)
             outcome, code = classify(not err, count, err, ms)
             text_err = outcome_text(outcome, code)
             mark = self._mark(key, not err, count, ms, err, round_id=str(token))
+            fuzzy = bool(items) and subject and \
+                sources.keyword_hit_rate(items, subject) < sources.FUZZY_RATE
+            if fuzzy:
+                fuzzy_keys.add(key)
+            elif items and not err:
+                ok_keys.add(key)
+            if not err:
+                errors.pop(key, None)
+            source_counts[key] = count
             payload = json.dumps(
                 {"token": token, "key": key, "count": count, "err": text_err,
-                 "outcome": outcome, "state": mark.get("state", "na")},
+                 "outcome": outcome, "state": mark.get("state", "na"),
+                 "fuzzy": fuzzy},
                 ensure_ascii=False,
             )
             self._push(f"window.__onSearchSource && window.__onSearchSource({payload})")
 
+            merged = core.dedupe(items) if not keep_dup else list(items)
+            tally["raw"] += count
+            tally["dup"] += count - len(merged)
+
             batch = []
-            for it in core.dedupe(items or []):
+            for it in merged:
                 ih = (it.get("info_hash") or "").lower()
-                if ih:
-                    pos = index_of.get(ih)
+                ikey = (ih + "|" + key) if keep_dup and ih else ih
+                if ikey:
+                    pos = index_of.get(ikey)
                     if pos is None:
-                        index_of[ih] = len(rows)
+                        index_of[ikey] = len(rows)
                         rows.append(it)
                     else:
+                        tally["dup"] += 1
                         rows[pos] = core.dedupe([rows[pos], it])[0]
-                batch.append(_item_view(rows[index_of[ih]] if ih else it))
+                batch.append(_item_view(rows[index_of[ikey]] if ikey else it))
             if batch:
                 payload = json.dumps(
                     {"token": token, "key": key, "items": batch},
@@ -701,28 +841,75 @@ class Api:
                 )
                 self._push(f"window.__onSearchBatch && window.__onSearchBatch({payload})")
 
-        errors: dict[str, str] = {}
-        try:
-            result, fatal = core.search(
-                text, 1, None, keys, min_len=min_len,
-                on_source=on_source, batch=token, collect=False,
-            )
-            if fatal:
-                errors[""] = fatal
-            for key, msg in (result.errors or {}).items():
-                if msg and msg != "已停止":
-                    _o, code = classify(False, 0, msg)
-                    errors[key] = outcome_text(_o, code)
-        except Exception as exc:
-            logger.exception("搜索异常")
-            errors[""] = f"{type(exc).__name__}: {exc}"
+        def run_round(qtext: str, subset=None) -> None:
+            keys = subset if subset is not None else all_keys
+            try:
+                result, fatal = core.search(
+                    qtext, 1, None, keys, min_len=min_len,
+                    on_source=on_source, batch=token, collect=False,
+                )
+                if fatal and not rows and not ok_keys:
+                    errors[""] = fatal
+                for key, msg in (result.errors or {}).items():
+                    if msg and msg != "已停止":
+                        _o, code = classify(False, 0, msg)
+                        errors[key] = outcome_text(_o, code)
+            except Exception as exc:
+                logger.exception("搜索异常")
+                errors[""] = f"{type(exc).__name__}: {exc}"
+
+        def runner() -> None:
+            try:
+                run_round(text, retry_keys if cached else None)
+                rounds = 0
+                while rounds < MAX_RELAX_ROUNDS:
+                    if token != self._search_token:
+                        return
+                    exhausted = bool(ok_keys) and ok_keys <= fuzzy_keys
+                    if rows and not exhausted:
+                        return
+                    nxt, dropped = _relaxed_query(parsed)
+                    if not nxt:
+                        return
+                    rounds += 1
+                    relaxed_used.append(dropped)
+                    logger.info("放宽关键词重搜：去掉 %s", dropped)
+                    run_round(nxt)
+            finally:
+                settled_evt.set()
+
+        deadline_ms = int(self._settings.get("soft_deadline_ms", 3000) or 0)
+        worker = threading.Thread(target=runner, daemon=True)
+        worker.start()
+
+        if deadline_ms > 0:
+            settled_evt.wait(deadline_ms / 1000.0)
+            if not settled_evt.is_set() and rows and token == self._search_token:
+                self._push(
+                    "window.__onSearchSettled && window.__onSearchSettled("
+                    + json.dumps({"token": token}, ensure_ascii=False) + ")")
+
+        settled_evt.wait()
 
         if token != self._search_token:
             return
 
+        self._cache_put(ckey, {
+            "ts": time.time(),
+            "rows": [_snapshot_row(r) for r in rows],
+            "raw": tally["raw"], "dup": tally["dup"],
+            "ok": set(ok_keys), "fuzzy": set(fuzzy_keys),
+            "errors": dict(errors),
+            "source_counts": dict(source_counts),
+        })
+
         self._persist_health()
         payload = json.dumps(
-            {"token": token, "total": len(rows), "errors": errors}, ensure_ascii=False
+            {"token": token, "total": len(rows), "errors": errors,
+             "raw": tally["raw"], "dup": tally["dup"],
+             "fuzzy": sorted(fuzzy_keys),
+             "relaxed": "、".join(relaxed_used),
+             "kept": keep_dup}, ensure_ascii=False
         )
         self._push(f"window.__onSearchDone && window.__onSearchDone({payload})")
 

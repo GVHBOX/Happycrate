@@ -225,6 +225,65 @@ class DedupeTest(unittest.TestCase):
         self.assertEqual(out[0]["seeders"], 99)
         self.assertEqual(out[0]["title"], "长标题占位内容足够长")
 
+    def test_seeders_take_observed_max(self):
+        low = {"info_hash": "2" * 40, "title": "a", "seeders": 3, "source": "nyaa"}
+        high = {"info_hash": "2" * 40, "title": "b", "seeders": 41, "source": "dmhy"}
+        for order in ([low, high], [high, low]):
+            out = core.dedupe([dict(i) for i in order])
+            self.assertEqual(out[0]["seeders"], 41)
+            self.assertEqual(out[0]["leechers"], None)
+
+    def test_unknown_seeders_stay_unknown(self):
+        items = [
+            {"info_hash": "3" * 40, "title": "a", "seeders": None, "source": "mikan"},
+            {"info_hash": "3" * 40, "title": "b", "seeders": 7, "source": "nyaa"},
+        ]
+        out = core.dedupe(items)
+        self.assertEqual(out[0]["seeders"], 7)
+
+        items = [
+            {"info_hash": "4" * 40, "title": "a", "seeders": 0, "source": "nyaa"},
+            {"info_hash": "4" * 40, "title": "b", "seeders": None, "source": "mikan"},
+        ]
+        out = core.dedupe(items)
+        self.assertEqual(out[0]["seeders"], 0)
+
+    def test_added_takes_earliest(self):
+        late = {"info_hash": "5" * 40, "title": "a", "added": 900, "source": "nyaa"}
+        early = {"info_hash": "5" * 40, "title": "b", "added": 400, "source": "dmhy"}
+        out = core.dedupe([late, early])
+        self.assertEqual(out[0]["added"], 400)
+
+    def test_alt_titles_keep_every_side(self):
+        items = [
+            {"info_hash": "6" * 40, "title": "Ubuntu 简繁字幕", "source": "poor"},
+            {"info_hash": "6" * 40, "title": "Ubuntu 1080p WEB-DL", "source": "rich"},
+        ]
+        out = core.dedupe(items)
+        self.assertEqual(out[0]["title"], "Ubuntu 1080p WEB-DL")
+        self.assertIn("Ubuntu 简繁字幕", out[0]["altTitles"])
+        self.assertIn("Ubuntu 1080p WEB-DL", out[0]["altTitles"])
+
+    def test_alt_titles_dedup_and_cap(self):
+        items = [{"info_hash": "7" * 40, "title": "same", "source": "s%d" % i}
+                 for i in range(20)]
+        items += [{"info_hash": "7" * 40, "title": "other", "source": "z"}]
+        out = core.dedupe(items)
+        self.assertEqual(out[0]["altTitles"], ["same", "other"])
+
+        many = [{"info_hash": "8" * 40, "title": "t%d" % i, "source": "s%d" % i}
+                for i in range(20)]
+        out = core.dedupe(many)
+        self.assertEqual(len(out[0]["altTitles"]), core._MAX_ALT_TITLES)
+
+    def test_merge_does_not_overwrite_with_later_side(self):
+        first = {"info_hash": "9" * 40, "title": "a", "size": 500,
+                 "files": [{"n": "a.mp4", "s": "1 MB"}], "source": "nyaa"}
+        second = {"info_hash": "9" * 40, "title": "b", "size": 100, "source": "dmhy"}
+        out = core.dedupe([first, second])
+        self.assertEqual(out[0]["size"], 500)
+        self.assertEqual(out[0]["files"], [{"n": "a.mp4", "s": "1 MB"}])
+
 
 class ImportFromTest(unittest.TestCase):
 

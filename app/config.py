@@ -57,6 +57,9 @@ DEFAULT_SETTINGS = {
     "theme": "light",
     "brand": "",
     "auto_files": True,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": False,
+    "progress_style": "segment",
 }
 
 SETTING_SPECS = {
@@ -72,6 +75,9 @@ SETTING_SPECS = {
     "theme": {"type": str},
     "brand": {"type": str},
     "auto_files": {"type": bool},
+    "soft_deadline_ms": {"type": int, "min": 0, "max": 60000},
+    "keep_duplicates": {"type": bool},
+    "progress_style": {"type": str},
 }
 
 INTERNAL_SETTING_KEYS = frozenset({"migrated_from"})
@@ -89,6 +95,9 @@ SETTING_LABELS = {
     "theme": "主题",
     "brand": "主题色",
     "auto_files": "自动展开",
+    "soft_deadline_ms": "软截止（毫秒）",
+    "keep_duplicates": "保留重复项",
+    "progress_style": "进度条",
 }
 
 SOURCE_TIMEOUT_MIN = 1

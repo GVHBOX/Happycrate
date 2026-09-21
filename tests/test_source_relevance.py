@@ -43,15 +43,30 @@ class ApibayRelevanceTest(unittest.TestCase):
         self.assertEqual(len(self.search("SPIDER-MAN", REAL_TITLES)), 3)
         self.assertEqual(len(self.search("spider-man", REAL_TITLES)), 3)
 
-    def test_drops_fallback_list_when_keyword_ignored(self):
+    def test_keeps_fallback_but_flags_keyword_unused(self):
         items = self.search("流浪地球", REAL_TITLES)
-        self.assertEqual(items, [],
-                         "apibay 对中文词返回的是热门兜底列表，必须按无结果处理")
+        self.assertEqual(len(items), len(REAL_TITLES),
+                         "兜底列表不再丢弃，一条都要保留")
+        self.assertEqual(sources.keyword_hit_rate(items, ["流浪地球"]), 0,
+                         "命中率为 0，应被标记为未使用关键词")
+        self.assertLess(sources.keyword_hit_rate(items, ["流浪地球"]),
+                        sources.FUZZY_RATE)
 
-    def test_drops_fallback_for_symbols(self):
+    def test_fallback_for_symbols_is_kept_and_flagged(self):
         for q in ("...", "%", "李", "進撃の巨人"):
             with self.subTest(q=q):
-                self.assertEqual(self.search(q, REAL_TITLES), [])
+                items = self.search(q, REAL_TITLES)
+                self.assertEqual(len(items), len(REAL_TITLES))
+                self.assertLess(sources.keyword_hit_rate(items, [q]),
+                                sources.FUZZY_RATE)
+
+    def test_real_match_is_not_flagged(self):
+        items = self.search("1080p", REAL_TITLES)
+        self.assertEqual(sources.keyword_hit_rate(items, ["1080p"]), 1)
+
+    def test_hit_rate_skipped_when_no_needle(self):
+        self.assertEqual(sources.keyword_hit_rate([], []), 1)
+        self.assertEqual(sources.keyword_hit_rate(REAL_TITLES and [], ["x"]), 1)
 
     def test_token_match_accepts_partial_words(self):
         self.assertEqual(len(self.search("Spider-Man", REAL_TITLES)), 3)

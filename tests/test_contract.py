@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -197,6 +198,28 @@ class SafeCallSmokeTest(unittest.TestCase):
     def test_save_settings_rejects_out_of_range(self):
         result = self.api.save_settings({"timeout": 9999})
         self.assertFalse(result.get("ok"))
+
+    def test_new_settings_roundtrip(self):
+        for key, value in (("soft_deadline_ms", 4000),
+                           ("keep_duplicates", True),
+                           ("progress_style", "flow")):
+            with self.subTest(key=key):
+                saved = self.api.save_settings({key: value})
+                self.assertTrue(saved.get("ok"), f"{key} 应能保存")
+                self.assertEqual(self.api.get_settings().get(key), value,
+                                 f"{key} 应能读回")
+
+    def test_start_search_success_path_returns_parsed_query(self):
+        self.api._settings.set("soft_deadline_ms", 0)
+        with mock.patch.object(sources, "search_many", lambda *a, **k: {}):
+            res = self.api.start_search("ubuntu")
+        self.assertTrue(res.get("ok"),
+                        "成功路径不能抛异常——参数名遮蔽过 query 模块")
+        self.assertIn("query", res)
+        self.assertEqual(res["query"].get("subject"), ["ubuntu"])
+        self.assertEqual(res["query"].get("browse"), False)
+        self.assertIn("token", res)
+        self.assertIn("total", res)
 
 
 class MutatingCallSmokeTest(unittest.TestCase):

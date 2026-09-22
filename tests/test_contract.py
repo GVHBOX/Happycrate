@@ -136,6 +136,74 @@ class CredentialHygieneTest(unittest.TestCase):
                          "保存后配置里的地址必须还是完整的")
 
 
+import re
+import unittest
+
+from app import api as api_mod
+
+
+class CacheInvalidationContractTest(unittest.TestCase):
+
+    CONFIG_MUTATORS = (
+        "toggle_source", "save_source", "remove_source",
+        "reset_sources", "import_sources", "save_settings",
+    )
+
+    ORDER_ONLY = ("reorder_sources", "set_auto_order")
+
+    def method_body(self, name: str) -> str:
+        src = Path(api_mod.__file__).read_text(encoding="utf-8")
+        i = src.index(f"def {name}(")
+        j = src.index("\n    def ", i + 10)
+        return src[i:j]
+
+    def test_config_mutators_clear_the_search_cache(self):
+        missing = []
+        for name in self.CONFIG_MUTATORS:
+            body = self.method_body(name)
+            if "sources.reload_from_config" in body and "_cache_clear()" not in body:
+                missing.append(name)
+        self.assertEqual(
+            missing, [],
+            "这些方法会改源配置（地址/超时/启停）却不清搜索缓存，"
+            "用户改了镜像地址后会继续命中旧结果，看起来像「设置没生效」："
+            + repr(missing))
+
+    def test_order_only_mutators_need_no_cache_reset(self):
+        for name in self.ORDER_ONLY:
+            with self.subTest(method=name):
+                body = self.method_body(name)
+                self.assertNotIn(
+                    "url", body,
+                    f"{name} 若开始改地址，就必须同步清缓存")
+
+    def test_cache_key_includes_source_fingerprint(self):
+        src = Path(api_mod.__file__).read_text(encoding="utf-8")
+        i = src.index("ckey = (")
+        block = src[i:i + 320]
+        self.assertIn(
+            "_source_stamp", block,
+            "缓存键要带源指纹，否则改地址、改超时都不会让旧缓存失效")
+
+    def test_stamp_changes_when_source_config_changes(self):
+        import tempfile
+        from pathlib import Path
+        from app import config
+        tmp = tempfile.mkdtemp(prefix="hc-stamp-")
+        api = api_mod.Api()
+        api._cfg = config.Config(path=Path(tmp) / "sources.json")
+        api._cfg.load()
+        before = api._source_stamp()
+        api._cfg.update("apibay", base="https://mirror.test")
+        self.assertNotEqual(before, api._source_stamp(),
+                            "改了镜像地址，指纹必须变")
+        mid = api._source_stamp()
+        api._cfg.set_enabled("apibay", False)
+        self.assertNotEqual(mid, api._source_stamp(),
+                            "停用源后指纹必须变（它不该再参与缓存身份）")
+
+
+
 class ContractCoverageTest(unittest.TestCase):
 
     def test_every_frontend_call_exists_on_backend(self):

@@ -1001,6 +1001,7 @@ class Api:
         if ok:
             self._cfg.save()
             sources.reload_from_config(self._cfg)
+            self._cache_clear()
             return {"ok": True, "added": added, "updated": updated, "message": msg}
         return {"ok": False, "error": msg}
 

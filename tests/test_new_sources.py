@@ -403,6 +403,29 @@ class SukebeiSearchTest(unittest.TestCase):
                          "RSS 满页说明还有更多，必须继续翻 HTML")
         self.assertGreater(len(items), sources.SUKEBEI_RSS_PAGE)
 
+    def test_page_budget_is_pinned_to_the_site_ceiling(self):
+        self.assertEqual(sources.SUKEBEI_PAGES, 14,
+                         "Sukebei 站点分页上限就是 14 页（实测分页条到 13/14），"
+                         "自报总量约 1000 条；翻少了会漏掉后面的大多数")
+        self.assertGreaterEqual(sources.SUKEBEI_MAX_HITS, 1000,
+                                "上限要容得下站点能给的全部条目")
+
+    def test_short_result_still_skips_all_pages(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            if "page=rss" in url:
+                return sukebei_rss_xml(
+                    [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                      "5", "1", "1") for i in range(4)])
+            self.fail("结果未满一页时不该翻 14 页，那是每次搜索白等十几秒")
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("rare", 1, timeout=5)
+        self.assertEqual(len(items), 4)
+        self.assertEqual(len(seen), 1)
+
     def test_rss_page_size_is_pinned_to_the_measured_value(self):
         self.assertEqual(sources.SUKEBEI_RSS_PAGE, 75,
                          "RSS 接口的每页条数；这个数变了短路口就会误判，"

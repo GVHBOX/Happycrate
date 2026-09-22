@@ -918,9 +918,9 @@ def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     return _parse_nyaa_rss(
         http_get(url, timeout=timeout, batch=batch), "nyaa", root)
 
-SUKEBEI_PAGES = 3
-SUKEBEI_MAX_HITS = 900
-SUKEBEI_WORKERS = 3
+SUKEBEI_PAGES = 14
+SUKEBEI_MAX_HITS = 1100
+SUKEBEI_WORKERS = 6
 SUKEBEI_RSS_PAGE = 75
 
 _SUKEBEI_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.I | re.S)
@@ -1398,10 +1398,10 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
     return items
 
 KNABEN_PAGE_SIZE = 300
-KNABEN_PAGES = 3
-KNABEN_MAX_HITS = 900
+KNABEN_PAGES = 7
+KNABEN_MAX_HITS = 2100
 KNABEN_ORDER = "seeders"
-KNABEN_WORKERS = 3
+KNABEN_WORKERS = 4
 
 def _knaben_hits(payload) -> list:
     if not isinstance(payload, dict):

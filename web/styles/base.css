@@ -632,7 +632,8 @@ input, textarea{
 
 .progress{flex:none;height:10px;position:relative;display:flex;gap:4px;--p:0;
   background:var(--track)}
-.progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden}
+.progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden;
+  transition:width .25s var(--e-out), transform .3s var(--e-out)}
 .progress .seg{flex:1;transform:skewX(-16deg);border-radius:2.5px;background:var(--rowline);
   position:relative;overflow:hidden;transition:background .2s,opacity .3s}
 .progress .seg::after{content:"";position:absolute;inset:0;opacity:0}
@@ -653,8 +654,8 @@ input, textarea{
   animation:segflow .8s linear infinite}
 .progress.style-flow.slow .fill .tex{
   background:repeating-linear-gradient(-55deg,var(--warn) 0 11px,#8a6404 11px 16px)}
-.progress.on.wait .fill{width:100%;opacity:.45;animation:waitflow 1.1s var(--e) infinite}
-@keyframes waitflow{0%,100%{opacity:.45}50%{opacity:.22}}
+.progress.on.wait .fill{width:40%;animation:indet 1.1s var(--e) infinite}
+@keyframes indet{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 .progress.wait .seg{animation:segscan 1.9s linear infinite}
 .progress.style-flow.receding .fill{width:0 !important;
   transition:width .45s cubic-bezier(.5,0,.7,.4)}

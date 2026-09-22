@@ -42,6 +42,10 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 7},
     {"key": "xccl263", "label": "小草磁力", "type": "builtin",
      "enabled": True, "timeout": 20, "base": "", "order": 8},
+    {"key": "apibay_adult", "label": "海盗湾成人", "type": "builtin",
+     "enabled": True, "timeout": 15, "base": "", "order": 9},
+    {"key": "knaben", "label": "Knaben", "type": "builtin",
+     "enabled": True, "timeout": 15, "base": "", "order": 10},
 ]
 
 DEFAULT_SETTINGS = {

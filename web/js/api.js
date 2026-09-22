@@ -20,6 +20,10 @@
      addr:"https://thepiratebay10.org", health:{state:"ok", ms:112, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"xccl263", label:"小草磁力", type:"builtin", enabled:true, timeout:20,
      addr:"https://www.xccl263.xyz", health:{state:"ok", ms:240, err:"", times:["ok","ok","ok","ok","ok"]}},
+    {key:"apibay_adult", label:"海盗湾成人", type:"builtin", enabled:true, timeout:15,
+     addr:"https://apibay.org", health:{state:"ok", ms:71, err:"", times:["ok","ok","ok","ok","ok"]}},
+    {key:"knaben", label:"Knaben", type:"builtin", enabled:true, timeout:15,
+     addr:"https://api.knaben.org/v1", health:{state:"ok", ms:356, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"custom1", label:"我的私藏源", type:"json", enabled:true, timeout:15,
      addr:"https://e.com/api/search?q={query}&p={page}",
      listPath:"data.list",
@@ -567,7 +571,8 @@
       apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
       dmhy:"_search_dmhy", sukebei:"_search_sukebei", eztv:"_search_eztv",
       bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror",
-      xccl263:"_search_xccl263"
+      xccl263:"_search_xccl263", apibay_adult:"_search_apibay_adult",
+      knaben:"_search_knaben"
     };
     return MAP[key] || null;
   }

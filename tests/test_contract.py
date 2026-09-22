@@ -341,8 +341,8 @@ class ContractCoverageTest(unittest.TestCase):
     def test_frontend_adapter_map_matches_backend(self):
         js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         block = js.split("function adapterName(key){", 1)[1].split("}", 1)[0]
-        pairs = dict(re.findall(r"([a-z0-9]+)\s*:\s*\"(_search_[A-Za-z0-9_]+)\"",
-                                block))
+        pairs = dict(re.findall(
+            r"([a-z0-9_]+)\s*:\s*\"(_search_[A-Za-z0-9_]+)\"", block))
         expect = sources.BUILTIN_ADAPTER_NAMES
         self.assertEqual(sorted(pairs), sorted(expect),
                          "前端 adapterName 与后端内置源清单不一致，"

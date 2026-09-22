@@ -51,27 +51,69 @@ def _keyword_literal(call, name):
     return None
 
 
-def _adapter_source_map() -> dict:
-    out = {}
-    for node in ast.walk(_source_module()):
-        if not isinstance(node, ast.FunctionDef):
-            continue
-        for sub in ast.walk(node):
-            if not isinstance(sub, ast.Call):
-                continue
-            if _call_name(sub) == "_mk":
+def _positional_literal(call, index):
+    if len(call.args) <= index:
+        return None
+    arg = call.args[index]
+    return arg.value if isinstance(arg, ast.Constant) else None
+
+
+_SOURCE_KEY_ARG = {
+    "_parse_nyaa_rss": 1,
+    "_apibay_rows": 1,
+}
+
+
+def _direct_source_keys(fn) -> tuple[set, set]:
+    keys: set = set()
+    called: set = set()
+    for sub in ast.walk(fn):
+        if isinstance(sub, ast.Call):
+            name = _call_name(sub)
+            if name == "_mk":
                 got = _keyword_literal(sub, "source")
                 if got is not None:
-                    out.setdefault(node.name, got)
-            elif _call_name(sub) == "_parse_nyaa_rss":
-                literals = [a.value for a in sub.args if isinstance(a, ast.Constant)]
-                if len(literals) >= 2:
-                    out.setdefault(node.name, literals[1])
+                    keys.add(got)
+                continue
+            if name in _SOURCE_KEY_ARG:
+                got = _positional_literal(sub, _SOURCE_KEY_ARG[name])
+                if got is not None:
+                    keys.add(got)
+                continue
+            if name:
+                called.add(name)
+        elif isinstance(sub, ast.Name) and isinstance(sub.ctx, ast.Load):
+            called.add(sub.id)
+    return keys, called
+
+
+def _adapter_source_map() -> dict:
+    funcs = {n.name: n for n in ast.walk(_source_module())
+             if isinstance(n, ast.FunctionDef)}
+    direct: dict = {}
+    edges: dict = {}
+    for name, fn in funcs.items():
+        direct[name], edges[name] = _direct_source_keys(fn)
+
+    out: dict = {}
+    for name in funcs:
+        seen: set = set()
+        reached: set = set()
+        stack = [name]
+        while stack:
+            cur = stack.pop()
+            if cur in seen:
+                continue
+            seen.add(cur)
+            reached |= direct.get(cur, set())
+            stack.extend(edges.get(cur, set()))
+        if reached:
+            out[name] = reached
     return out
 
 
 def _emitted_source_literals() -> set:
-    return {v for v in _adapter_source_map().values()}
+    return {v for keys in _adapter_source_map().values() for v in keys}
 
 
 class Xccl263ParseTest(unittest.TestCase):
@@ -138,14 +180,25 @@ class Xccl263ParseTest(unittest.TestCase):
     def test_each_adapter_emits_its_own_key(self):
         by_name = _adapter_source_map()
         wrong = []
+        unresolved = []
         for key, (_label, fn) in sources._BUILTIN_ADAPTERS.items():
             emitted = by_name.get(fn.__name__)
-            if emitted is not None and emitted != key:
-                wrong.append((key, fn.__name__, emitted))
+            if not emitted:
+                unresolved.append((key, fn.__name__))
+            elif emitted != {key}:
+                wrong.append((key, fn.__name__, sorted(emitted)))
         self.assertEqual(
             wrong, [],
             "适配器写出的 source 与自己的 key 不一致（key, 函数, 实际写出）："
-            + repr(wrong))
+            + repr(wrong)
+            + "。一个适配器只能写自己的 key，写中文名或写别的源都会让"
+            "「来源」列显示成另一回事")
+        self.assertEqual(
+            unresolved, [],
+            "这些适配器扫不出 source key，护栏对它们等于不存在（key, 函数）："
+            + repr(unresolved)
+            + "。把 source 从字面量改成变量后必须同步 _SOURCE_KEY_ARG，"
+            "否则改名或写错 key 都不会被发现")
 
 
 class Xccl263SearchTest(unittest.TestCase):

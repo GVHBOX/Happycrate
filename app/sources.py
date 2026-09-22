@@ -774,6 +774,7 @@ def _size_or_zero(value) -> int:
 
 DEFAULT_BASES = {
     "apibay": "https://apibay.org",
+    "apibay_adult": "https://apibay.org",
     "nyaa": "https://nyaa.si",
     "mikan": "https://mikanani.me",
     "dmhy": "https://share.dmhy.org",
@@ -782,6 +783,7 @@ DEFAULT_BASES = {
     "bitsearch": "https://bitsearch.to",
     "tpb": "https://thepiratebay10.org",
     "xccl263": "https://www.xccl263.xyz",
+    "knaben": "https://api.knaben.org/v1",
 }
 
 def base_of(entry_key: str, base: str = "") -> str:
@@ -822,10 +824,9 @@ def _apibay_relevant(items: list[dict], query: str) -> bool:
         return True
     return keyword_hit_rate(items, tokens) > 0
 
-def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["apibay"])
-    url = f"{root}/q.php?q={urllib.parse.quote(query)}"
-    text = http_get(url, timeout=timeout, batch=batch)
+APIBAY_CAT_PORN = 500
+
+def _apibay_rows(text: str, source_key: str) -> list[dict]:
     rows = json.loads(text)
 
     if not isinstance(rows, list):
@@ -847,12 +848,30 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
             seeders=_to_int(row.get("seeders")),
             leechers=_to_int(row.get("leechers")),
             added=_to_int(row.get("added")),
-            source="apibay",
+            source=source_key,
         ))
+    return items
+
+def _apibay_url(query: str, root: str, cat: int = 0) -> str:
+    url = f"{root}/q.php?q={urllib.parse.quote(query)}"
+    if cat:
+        url += f"&cat={int(cat)}"
+    return url
+
+def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["apibay"])
+    url = _apibay_url(query, root)
+    items = _apibay_rows(http_get(url, timeout=timeout, batch=batch), "apibay")
 
     if items and not _apibay_relevant(items, query):
         logger.info("apibay 返回的是兜底列表（%d 条均未命中关键词）", len(items))
     return items
+
+def _search_apibay_adult(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["apibay_adult"])
+    url = _apibay_url(query, root, APIBAY_CAT_PORN)
+    return _apibay_rows(http_get(url, timeout=timeout, batch=batch),
+                        "apibay_adult")
 
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["nyaa"])
@@ -1247,6 +1266,59 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
         raise last_exc
     return items
 
+KNABEN_PAGE_SIZE = 100
+KNABEN_MAX_HITS = 200
+KNABEN_ORDER = "seeders"
+
+def _knaben_hits(payload) -> list:
+    if not isinstance(payload, dict):
+        raise ShapeError("knaben 返回的不是对象")
+    hits = payload.get("hits")
+    if not isinstance(hits, list):
+        raise ShapeError("knaben 响应缺少 hits 列表")
+    return hits
+
+def _search_knaben(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["knaben"])
+    first = (max(1, int(page)) - 1) * KNABEN_PAGE_SIZE
+    wanted = KNABEN_PAGE_SIZE
+    seen: set[str] = set()
+    items: list[dict] = []
+
+    body = json.dumps({
+        "query": query,
+        "order_by": KNABEN_ORDER,
+        "size": wanted,
+        "from": first,
+    }).encode("utf-8")
+    text = http_get(root, timeout=timeout, batch=batch, data=body, headers={
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    })
+    hits = _knaben_hits(json.loads(text))
+
+    for hit in hits:
+        if not isinstance(hit, dict):
+            continue
+        h = _text(hit.get("hash")).strip().lower()
+        if not _HASH_HEX_RE.fullmatch(h):
+            continue
+        if h in seen:
+            continue
+        seen.add(h)
+        items.append(_mk(
+            title=_text(hit.get("title")),
+            info_hash=h,
+            size=_to_int(hit.get("bytes")) or 0,
+            seeders=_to_int(hit.get("seeders")),
+            leechers=_to_int(hit.get("peers")),
+            added=_ts_from_iso(_text(hit.get("date"))),
+            source="knaben",
+        ))
+        if len(items) >= KNABEN_MAX_HITS:
+            break
+    return items
+
 _TPB_MONTH_DAY_RE = re.compile(r"^(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})$")
 _TPB_TODAY_RE = re.compile(r"^today\s+(\d{1,2}):(\d{2})$", re.I)
 _TPB_YDAY_RE = re.compile(r"^y-?day\s+(\d{1,2}):(\d{2})$", re.I)
@@ -1549,15 +1621,17 @@ _BUILTIN_ADAPTERS = {
     "mikan": ("蜜柑计划", _search_mikan),
     "dmhy": ("动漫花园", _search_dmhy),
     "sukebei": ("Sukebei", _search_sukebei),
+    "apibay_adult": ("海盗湾成人", _search_apibay_adult),
     "eztv": ("EZTV", _search_eztv),
     "bitsearch": ("BitSearch", _search_bitsearch),
+    "knaben": ("Knaben", _search_knaben),
     "tpb": ("TPB镜像", _search_tpb_mirror),
     "xccl263": ("小草磁力", _search_xccl263),
 }
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
-PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
+PAGELESS_KEYS = frozenset({"apibay", "apibay_adult", "mikan", "dmhy", "eztv"})
 
 BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
 

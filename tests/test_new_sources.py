@@ -552,6 +552,12 @@ class MikanSearchPageTest(unittest.TestCase):
                       "解析失败必须留下 warning；静默退回 RSS 会让人以为"
                       "搜索页正常，实际一直少拿九成结果")
 
+    def test_request_failure_is_not_silently_swallowed(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        self.assertIn('logger.warning("mikan 搜索页请求失败', src,
+                      "请求失败也退回 RSS，同样从 1000 条掉到 100 条，"
+                      "只写 debug 等于看不见")
+
     def test_page_size_is_pinned(self):
         self.assertEqual(sources.MIKAN_MAX_HITS, 1000,
                          "实测搜索页单页就是 1000 条（RSS 只给 100）")

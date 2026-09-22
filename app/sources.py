@@ -1125,7 +1125,7 @@ def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     except SearchCancelled:
         raise
     except Exception as exc:
-        logger.debug("mikan 搜索页请求失败，退回 RSS：%s", exc)
+        logger.warning("mikan 搜索页请求失败，退回 RSS：%s", exc)
         return _search_mikan_rss(query, timeout, root, batch)
     try:
         items = _parse_mikan_html(text, root)

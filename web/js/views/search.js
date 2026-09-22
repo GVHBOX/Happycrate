@@ -835,30 +835,48 @@
     }
   }
 
-  function recedeProg(){
+  function recedeProg(celebrate){
     if (!progEl) return;
     if (dlRaf){ cancelAnimationFrame(dlRaf); dlRaf = 0; }
     var gen = st.progGen;
-    var dl = progEl.querySelector(".deadline");
-    if (dl) dl.classList.remove("show", "passed");
     var isSeg = st.progStyle !== "flow";
-    progEl.classList.add("receding");
-    if (isSeg){
-      var lit = [].slice.call(progEl.querySelectorAll(".seg.on, .seg.warned, .seg.err")).reverse();
-      lit.forEach(function(seg, i){
-        setTimeout(function(){
-          if (gen !== st.progGen) return;
-          seg.className = "seg";
-        }, i * 40);
-      });
+    if (celebrate){
+      if (isSeg){
+        [].slice.call(progEl.querySelectorAll(".seg")).forEach(function(seg){
+          seg.className = "seg on";
+        });
+      } else {
+        progEl.classList.remove("slow");
+        progEl.style.setProperty("--p", "1");
+      }
+    } else {
+      var dlNow = progEl.querySelector(".deadline");
+      if (dlNow) dlNow.classList.remove("show", "passed");
     }
-    var p = progEl;
+    var hold = celebrate ? 420 : 60;
     setTimeout(function(){
-      if (p !== progEl || gen !== st.progGen) return;
-      progEl.classList.remove("receding");
-      buildProg();
-      progEl.style.setProperty("--p", "0");
-    }, 480);
+      if (gen !== st.progGen) return;
+      var dl = progEl.querySelector(".deadline");
+      if (dl) dl.classList.remove("show", "passed");
+      if (isSeg){
+        var lit = [].slice.call(progEl.querySelectorAll(".seg.on")).reverse();
+        lit.forEach(function(seg, i){
+          setTimeout(function(){
+            if (gen !== st.progGen) return;
+            seg.className = "seg";
+          }, i * 45);
+        });
+      } else {
+        progEl.classList.add("receding");
+      }
+      var p = progEl;
+      setTimeout(function(){
+        if (p !== progEl || gen !== st.progGen) return;
+        progEl.classList.remove("receding");
+        buildProg();
+        progEl.style.setProperty("--p", "0");
+      }, lit.length * 45 + 560);
+    }, hold);
   }
 
   function dlLoop(){
@@ -886,11 +904,11 @@
     dlRaf = requestAnimationFrame(dlLoop);
   }
 
-  function stopProgress(){
+  function stopProgress(celebrate){
     if (!progEl) return;
     progEl.classList.remove("on");
     progEl.classList.remove("wait");
-    recedeProg();
+    recedeProg(celebrate === true);
   }
 
   function go(){
@@ -974,7 +992,7 @@
     st.searched = true;
     goBtn.textContent = "搜索";
     goBtn.classList.remove("stop");
-    stopProgress();
+    stopProgress(true);
     st.errors = st.errors || {};
     var fails = Object.keys(st.errors).filter(function(k){ return k; }).length;
     var total = st.items.length;

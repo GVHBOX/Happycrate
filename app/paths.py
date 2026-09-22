@@ -41,11 +41,24 @@ def appdata_dir() -> Path | None:
         return None
     return p / APP_NAME
 
+def _created_by_us(target: Path) -> list[Path]:
+    made = []
+    cur = target
+    while not cur.exists():
+        made.append(cur)
+        parent = cur.parent
+        if parent == cur:
+            break
+        cur = parent
+    return made
+
 def is_writable(directory) -> bool:
     try:
         target = Path(directory).expanduser()
     except (TypeError, ValueError):
         return False
+
+    missing = _created_by_us(target)
     try:
         target.mkdir(parents=True, exist_ok=True)
     except OSError:
@@ -57,6 +70,12 @@ def is_writable(directory) -> bool:
         return True
     except OSError:
         return False
+    finally:
+        for path in missing:
+            try:
+                path.rmdir()
+            except OSError:
+                break
 
 def _env_dir() -> Path | None:
     raw = os.environ.get(ENV_DATA_DIR)

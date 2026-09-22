@@ -139,8 +139,31 @@ class PaginationRealityTest(unittest.TestCase):
 
     def test_app_only_ever_requests_first_page(self):
         src = (ROOT / "app" / "api.py").read_text(encoding="utf-8")
-        self.assertIn("text, 1, None, keys", src,
-                      "应用固定只搜第一页；若将来加翻页，需先确认哪些源真的支持")
+        self.assertIn("qtext, page, None, keys", src,
+                      "页码由 start_search 决定且默认第 1 页；"
+                      "若将来真加翻页，需先确认哪些源支持")
+        self.assertNotIn("qtext, 2, None, keys", src,
+                         "不要写死第 2 页这类常量")
+
+    def test_start_search_defaults_to_first_page(self):
+        import inspect
+        from app import api as api_mod
+        sig = inspect.signature(api_mod.Api.start_search)
+        self.assertEqual(sig.parameters["page"].default, 1,
+                         "start_search 必须默认第 1 页，否则现有调用会翻页")
+
+    def test_frontend_does_not_ask_for_other_pages(self):
+        js = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        self.assertNotIn("startSearch(q,", js,
+                         "前端目前不传页码；加翻页前要先确认源站支持情况")
+
+    def test_cache_key_carries_the_page(self):
+        src = (ROOT / "app" / "api.py").read_text(encoding="utf-8")
+        i = src.index("ckey = (")
+        block = src[i:i + 340]
+        self.assertIn('"|p"', block,
+                      "缓存键要含页码，否则将来看到第 2 页会命中第 1 页的缓存")
+        self.assertIn("int(page)", block, "页码要取实际值，不能写死常量")
 
     def test_nyaa_pagination_note(self):
         src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")

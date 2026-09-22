@@ -31,6 +31,16 @@ _CANCEL_POLL = 0.1
 PROBE_WORD = "test"
 PROBE_FALLBACK_WORD = "1080p"
 
+def log_url(url: str) -> str:
+    parts = urllib.parse.urlsplit(str(url or ""))
+    if not parts.query:
+        return str(url or "")
+    return urllib.parse.urlunsplit(
+        (parts.scheme, parts.netloc, parts.path, "…", parts.fragment))
+
+def log_host(url: str) -> str:
+    return urllib.parse.urlsplit(str(url or "")).netloc
+
 _RETRY_STATUS = (429, 500, 502, 503, 504)
 
 _STRICT = ssl.create_default_context()
@@ -497,7 +507,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             if not binary:
                 text = _decode(raw)
                 if _captcha_text(text):
-                    logger.warning("返回验证码页：%s", url)
+                    logger.warning("返回验证码页：%s", log_url(url))
                     raise Blocked(BLOCKED_TEXT)
                 return text
             return raw
@@ -508,14 +518,14 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
         except urllib.error.HTTPError as exc:
             last_exc = exc
             if exc.code in (403, 429) and _captcha_wall(exc):
-                logger.warning("被验证码拦截：%s", url)
+                logger.warning("被验证码拦截：%s", log_url(url))
                 raise Blocked(BLOCKED_TEXT) from exc
             if exc.code in _RETRY_STATUS and attempt <= retries:
                 time.sleep(1.0 * attempt)
                 logger.debug("HTTP %s：%s，%d/%d 次重试",
-                             exc.code, url, attempt, retries)
+                             exc.code, log_url(url), attempt, retries)
                 continue
-            logger.debug("HTTP %s：%s（不重试）", exc.code, url)
+            logger.debug("HTTP %s：%s（不重试）", exc.code, log_url(url))
             raise
 
         except SearchCancelled:
@@ -531,16 +541,16 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
                     continue
                 raise
             if _looks_like_proxy_failure(exc):
-                logger.warning("代理不可达（%s）：%s", urllib.parse.urlparse(url).netloc, exc)
+                logger.warning("代理不可达（%s）：%s", log_host(url), exc)
                 raise ProxyUnreachable(proxy_hint()) from exc
             if _is_timeout(exc):
-                logger.debug("请求超时：%s（%ds，不重试）", url, timeout)
+                logger.debug("请求超时：%s（%ds，不重试）", log_url(url), timeout)
                 raise
             if attempt <= retries:
                 time.sleep(1.5 * attempt)
-                logger.debug("请求失败：%s，%d/%d 次重试", url, attempt, retries)
+                logger.debug("请求失败：%s，%d/%d 次重试", log_url(url), attempt, retries)
                 continue
-            logger.debug("请求失败：%s (%s: %s)", url, type(exc).__name__, exc)
+            logger.debug("请求失败：%s (%s: %s)", log_url(url), type(exc).__name__, exc)
             raise
 
     if last_exc:
@@ -841,7 +851,7 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
         ))
 
     if items and not _apibay_relevant(items, query):
-        logger.info("apibay 未使用关键词 %r，返回的是兜底列表", query)
+        logger.info("apibay 返回的是兜底列表（%d 条均未命中关键词）", len(items))
     return items
 
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:

@@ -204,6 +204,100 @@ class CacheInvalidationContractTest(unittest.TestCase):
 
 
 
+import logging
+import tempfile
+import unittest
+from pathlib import Path
+
+from app import api as api_mod
+from app import paths, sources
+
+
+class NoSideEffectProbeTest(unittest.TestCase):
+
+    def test_writable_probe_leaves_no_directory_behind(self):
+        tmp = Path(tempfile.mkdtemp(prefix="hc-probe-"))
+        target = tmp / "a" / "b" / "data"
+        self.assertFalse(target.exists(), "前置条件：探测前不该存在")
+        self.assertTrue(paths.is_writable(target))
+        self.assertFalse(
+            target.exists(),
+            "探测可写性不该留下目录：放在只读位置或 Program Files 下时，"
+            "会凭空多出 data/ 甚至多层空目录")
+        self.assertFalse((tmp / "a").exists(), "中间层也要一并收回")
+
+    def test_existing_directory_is_not_removed(self):
+        tmp = Path(tempfile.mkdtemp(prefix="hc-probe-"))
+        keep = tmp / "keep"
+        keep.mkdir()
+        marker = keep / "keep.txt"
+        marker.write_text("x", encoding="utf-8")
+        self.assertTrue(paths.is_writable(keep))
+        self.assertTrue(marker.is_file(),
+                        "已存在的目录与内容不能被探测顺手删掉")
+
+
+class LogPrivacyTest(unittest.TestCase):
+
+    def test_log_url_drops_the_query(self):
+        for url in ("https://nyaa.si/?page=rss&q=%E7%A7%98%E5%AF%86&p=1",
+                    "https://apibay.org/q.php?q=secret",
+                    "https://mikanani.me/RSS/Search?searchstr=abc"):
+            with self.subTest(url=url):
+                got = sources.log_url(url)
+                self.assertNotIn("q=", got, "查询串不能进日志")
+                self.assertNotIn("secret", got)
+                self.assertNotIn("%E7", got)
+                self.assertIn("…", got, "要留个痕迹表明这里被省略了")
+
+    def test_log_url_keeps_host_and_path(self):
+        got = sources.log_url("https://nyaa.si/?page=rss&q=x")
+        self.assertIn("nyaa.si", got, "主机要保留，否则日志没法定位是哪个源")
+
+    def test_log_url_leaves_clean_urls_alone(self):
+        self.assertEqual(sources.log_url("https://example.com/path"),
+                         "https://example.com/path",
+                         "没有查询串时别乱改，免得日志不好读")
+
+    def test_no_user_query_reaches_the_log(self):
+        tmp = Path(tempfile.mkdtemp(prefix="hc-log-"))
+        (tmp / "logs").mkdir()
+        root = logging.getLogger("happycrate")
+        saved = list(root.handlers)
+        for h in list(root.handlers):
+            root.removeHandler(h)
+        fh = logging.FileHandler(tmp / "logs" / "p.log", encoding="utf-8")
+        fh.setFormatter(logging.Formatter("%(message)s"))
+        root.addHandler(fh)
+        root.setLevel(logging.DEBUG)
+        try:
+            sources.logger.debug(
+                "请求失败：%s (%s: %s)",
+                sources.log_url("https://x.com/s?q=TOP_SECRET"), "URLError", "boom")
+            sources.logger.warning(
+                "返回验证码页：%s",
+                sources.log_url("https://x.com/s?q=TOP_SECRET"))
+            fh.flush()
+            content = (tmp / "logs" / "p.log").read_text(encoding="utf-8")
+        finally:
+            root.removeHandler(fh)
+            fh.close()
+            for h in saved:
+                root.addHandler(h)
+        self.assertNotIn(
+            "TOP_SECRET", content,
+            "关键词不能进日志：README 声明「不保留查询记录」，"
+            "而 HAPPYCRATE_LOG_LEVEL=DEBUG 是公开入口，开了就会落盘")
+
+    def test_apibay_fallback_log_has_no_query(self):
+        src = Path(sources.__file__).read_text(encoding="utf-8")
+        i = src.index("apibay 返回的是兜底列表")
+        line = src[src.rindex("logger.", 0, i):i + 40]
+        self.assertNotIn("query", line,
+                         "这条是 INFO 级、默认就落盘，不能带原始关键词")
+
+
+
 class ContractCoverageTest(unittest.TestCase):
 
     def test_every_frontend_call_exists_on_backend(self):

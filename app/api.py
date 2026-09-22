@@ -743,7 +743,7 @@ class Api:
                              key=lambda k: self._search_cache[k]["ts"])
                 self._search_cache.pop(oldest, None)
 
-    def start_search(self, text: str) -> dict:
+    def start_search(self, text: str, page: int = 1) -> dict:
         text = (text or "").strip()
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         if len(text) < min_len:
@@ -757,14 +757,20 @@ class Api:
         if not keys:
             return {"ok": False, "token": 0, "total": 0, "error": "没有启用的数据源"}
 
+        try:
+            start_page = max(1, int(page or 1))
+        except (TypeError, ValueError):
+            start_page = 1
+
         parsed = query.parse(text)
         token = sources.start_batch()
         self._search_token = token
         threading.Thread(
-            target=self._search_worker, args=(token, text, keys), daemon=True
+            target=self._search_worker, args=(token, text, keys, start_page),
+            daemon=True
         ).start()
         return {"ok": True, "token": token, "total": len(keys), "error": "",
-                "query": parsed}
+                "query": parsed, "page": start_page}
 
     def cancel_search(self, token=0) -> bool:
         try:
@@ -799,7 +805,8 @@ class Api:
             return {"ok": False, "files": [], "error": "种子内没有文件清单"}
         return {"ok": True, "files": files, "error": ""}
 
-    def _search_worker(self, token: int, text: str, keys: list[str]) -> None:
+    def _search_worker(self, token: int, text: str, keys: list[str],
+                       page: int = 1) -> None:
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         rows: list[dict] = []
         index_of: dict[str, int] = {}
@@ -816,7 +823,8 @@ class Api:
 
         all_keys = keys
         ckey = ((parsed.get("text") or text) + "|" + ",".join(sorted(all_keys))
-                + "|" + ("k" if keep_dup else "") + "|p1|" + self._source_stamp())
+                + "|" + ("k" if keep_dup else "")
+                + "|p" + str(int(page) or 1) + "|" + self._source_stamp())
         cached = self._cache_take(ckey)
         retry_keys = list(all_keys)
 
@@ -910,7 +918,7 @@ class Api:
             keys = subset if subset is not None else all_keys
             try:
                 result, fatal = core.search(
-                    qtext, 1, None, keys, min_len=min_len,
+                    qtext, page, None, keys, min_len=min_len,
                     on_source=on_source, batch=token, collect=False,
                 )
                 if fatal and not rows and not ok_keys:

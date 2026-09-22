@@ -632,6 +632,12 @@ async function runOnce(exe, profileDir, pageUrl) {
 
     return { checks };
     } catch (e) {
+      if (!evaluate) {
+        console.log("[diag] error:", String((e && e.message) || e));
+        console.log("[diag] 浏览器桥接没建立起来（evaluate 未就绪），"
+          + "上面的错误来自启动阶段，不是页面问题");
+        throw e;
+      }
       const errs = await evaluate("window.__errs", page).catch(() => ["eval-failed"]);
       const state = await evaluate("JSON.stringify({busy: HC.views.search.st.busy, rows: document.querySelectorAll('#rows .srow').length, skels: document.querySelectorAll('#rows .skel').length, chip: (document.getElementById('chip')||{}).textContent, hero: !!document.querySelector('.hero'), inp: (document.getElementById('inp')||{}).value, log: window.__log || []})", page).catch((x) => "state-failed " + x.message);
       console.log("[diag] error:", String((e && e.message) || e));

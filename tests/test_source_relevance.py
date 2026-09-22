@@ -165,11 +165,21 @@ class PaginationRealityTest(unittest.TestCase):
                       "缓存键要含页码，否则将来看到第 2 页会命中第 1 页的缓存")
         self.assertIn("int(page)", block, "页码要取实际值，不能写死常量")
 
-    def test_nyaa_pagination_note(self):
-        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
-        block = src.split("def _search_nyaa", 1)[1][:400]
-        self.assertIn("p={int(page)}", block,
-                      "nyaa 的分页参数要照实传；源站当前忽略它，但不是我们的 bug")
+    def test_nyaa_passes_the_page_through_to_rss(self):
+        import urllib.parse as up
+        from unittest import mock
+        from app import sources
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            return ("<?xml version=\"1.0\"?><rss><channel></channel></rss>")
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            sources._search_nyaa("demo", 3, timeout=5)
+        self.assertTrue(seen, "至少要先发一次 RSS 请求")
+        self.assertIn("p=3", seen[0],
+                      "页码要照实传给 RSS；源站当前忽略它，但不是我们的 bug")
 
 
 

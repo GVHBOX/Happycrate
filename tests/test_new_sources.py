@@ -458,6 +458,74 @@ class SukebeiSearchTest(unittest.TestCase):
         self.assertEqual(len(items), sources.SUKEBEI_MAX_HITS)
 
 
+class NyaaFamilyTest(unittest.TestCase):
+
+    def test_nyaa_and_sukebei_share_the_html_parser(self):
+        html = sukebei_html(SUK_ROWS[:1])
+        a = sources._parse_sukebei_html(html, "", "nyaa")
+        b = sources._parse_sukebei_html(html, "", "sukebei")
+        self.assertEqual(a[0]["info_hash"], b[0]["info_hash"])
+        self.assertEqual(a[0]["source"], "nyaa",
+                         "同一套 HTML 标记，靠参数区分来源")
+        self.assertEqual(b[0]["source"], "sukebei")
+
+    def test_nyaa_pages_are_pinned_to_the_site_ceiling(self):
+        self.assertEqual(sources.NYAA_PAGES, 14,
+                         "nyaa.si 与 sukebei 同款，站点分页上限 14 页、"
+                         "自报约 1000 条；只取一页会漏掉九成以上")
+        self.assertGreaterEqual(sources.NYAA_MAX_HITS, 1000)
+
+    def test_nyaa_short_result_skips_paging(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            if "page=rss" in url:
+                return sukebei_rss_xml(
+                    [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                      "5", "1", "1") for i in range(5)])
+            self.fail("结果未满一页时不该翻 14 页")
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_nyaa("rare", 1, timeout=5)
+        self.assertEqual(len(items), 5)
+        self.assertEqual(len(seen), 1)
+
+    def test_nyaa_full_page_triggers_html_paging(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            if "page=rss" in url:
+                rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                         "5", "1", "1")
+                        for i in range(sources.SUKEBEI_RSS_PAGE)]
+                return sukebei_rss_xml(rows)
+            return sukebei_html([(f"{'d' * 8}{i:032x}", f"p{i}", "1.0 GiB",
+                                  "2026-09-20 06:16", "5", "1", "1")
+                                 for i in range(2)])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_nyaa("demo", 1, timeout=5)
+        html_calls = [u for u in seen if "page=rss" not in u]
+        self.assertEqual(len(html_calls), sources.NYAA_PAGES)
+        self.assertTrue(all(i["source"] == "nyaa" for i in items))
+        self.assertGreater(len(items), sources.SUKEBEI_RSS_PAGE)
+
+    def test_nyaa_html_failure_keeps_rss(self):
+        def fake_get(url, **kw):
+            if "page=rss" in url:
+                rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                         "5", "1", "1")
+                        for i in range(sources.SUKEBEI_RSS_PAGE)]
+                return sukebei_rss_xml(rows)
+            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_nyaa("demo", 1, timeout=5)
+        self.assertEqual(len(items), sources.SUKEBEI_RSS_PAGE)
+
+
 class KnabenRequestTest(unittest.TestCase):
 
     def _bodies(self, page=1):

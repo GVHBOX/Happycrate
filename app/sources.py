@@ -912,11 +912,15 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
             break
     return out
 
+NYAA_PAGES = 14
+NYAA_MAX_HITS = 1100
+NYAA_WORKERS = 6
+
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["nyaa"])
-    url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
-    return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "nyaa", root)
+    return _nyaa_family(
+        query, page, timeout, batch,
+        _base_of(base, DEFAULT_BASES["nyaa"]), "nyaa",
+        NYAA_PAGES, NYAA_MAX_HITS, NYAA_WORKERS)
 
 SUKEBEI_PAGES = 14
 SUKEBEI_MAX_HITS = 1100
@@ -933,7 +937,8 @@ _SUKEBEI_FETCH_RE = re.compile(r'href="(/download/\d+\.torrent)"')
 def _sukebei_cell_text(cell: str) -> str:
     return re.sub(r"\s+", " ", _SUKEBEI_TAG_RE.sub(" ", cell)).strip()
 
-def _parse_sukebei_html(page_text: str, root: str) -> list[dict]:
+def _parse_sukebei_html(page_text: str, root: str,
+                        source_key: str = "sukebei") -> list[dict]:
     items: list[dict] = []
     for row in _SUKEBEI_ROW_RE.findall(page_text):
         mag = _SUKEBEI_HASH_RE.search(row)
@@ -951,7 +956,7 @@ def _parse_sukebei_html(page_text: str, root: str) -> list[dict]:
             or _ts_from_iso(_sukebei_cell_text(cells[4])),
             seeders=_to_int(_sukebei_cell_text(cells[5])),
             leechers=_to_int(_sukebei_cell_text(cells[6])),
-            source="sukebei",
+            source=source_key,
         )
         fetch = _SUKEBEI_FETCH_RE.search(row)
         if fetch and root:
@@ -959,25 +964,27 @@ def _parse_sukebei_html(page_text: str, root: str) -> list[dict]:
         items.append(it)
     return items
 
-def _sukebei_page(root: str, p: int, needle: str, timeout: int, batch) -> list[dict]:
-    url = (f"{root}/?q={needle}&c=0_0&f=0&s=seeders&o=desc&p={p}")
-    return _parse_sukebei_html(http_get(url, timeout=timeout, batch=batch), root)
+def _nyaa_html_page(root: str, p: int, needle: str, timeout: int, batch,
+                    source_key: str) -> list[dict]:
+    url = f"{root}/?q={needle}&c=0_0&f=0&s=seeders&o=desc&p={p}"
+    return _parse_sukebei_html(
+        http_get(url, timeout=timeout, batch=batch), root, source_key)
 
-def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["sukebei"])
+def _nyaa_family(query: str, page: int, timeout: int, batch, root: str,
+                 source_key: str, pages: int, max_hits: int,
+                 workers: int) -> list[dict]:
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
     rss_failed: Exception | None = None
     try:
         rss = _parse_nyaa_rss(
-            http_get(url, timeout=timeout, batch=batch), "sukebei", root)
+            http_get(url, timeout=timeout, batch=batch), source_key, root)
     except SearchCancelled:
         raise
     except Exception as exc:
         rss_failed = exc
         rss = []
-        logger.debug("Sukebei RSS 失败，改用 HTML 页：%s", exc)
+        logger.debug("%s RSS 失败，改用 HTML 页：%s", source_key, exc)
 
-    needle = urllib.parse.quote(query)
     seen: set[str] = set()
     items: list[dict] = []
     for it in rss:
@@ -987,34 +994,41 @@ def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict
     if items and len(items) < SUKEBEI_RSS_PAGE:
         return items
 
-    pages: dict[int, list[dict]] = {}
-    workers = min(SUKEBEI_PAGES, SUKEBEI_WORKERS)
-    pool = futures.ThreadPoolExecutor(max_workers=workers)
+    needle = urllib.parse.quote(query)
+    collected: dict[int, list[dict]] = {}
+    pool = futures.ThreadPoolExecutor(max_workers=min(pages, workers))
     try:
-        jobs = {pool.submit(_sukebei_page, root, p, needle, timeout, batch): p
-                for p in range(1, SUKEBEI_PAGES + 1)}
+        jobs = {pool.submit(_nyaa_html_page, root, p, needle, timeout, batch,
+                            source_key): p
+                for p in range(1, pages + 1)}
         for job in futures.as_completed(jobs):
             p = jobs[job]
             try:
-                pages[p] = job.result()
+                collected[p] = job.result()
             except Exception as exc:
-                logger.debug("Sukebei 第 %d 页失败：%s", p, exc)
+                logger.debug("%s 第 %d 页失败：%s", source_key, p, exc)
     finally:
         pool.shutdown(wait=False, cancel_futures=True)
 
-    if not pages and not items and rss_failed is not None:
+    if not collected and not items and rss_failed is not None:
         raise rss_failed
 
-    for p in sorted(pages):
-        for it in pages[p]:
+    for p in sorted(collected):
+        for it in collected[p]:
             h = it["info_hash"]
             if h in seen:
                 continue
             seen.add(h)
             items.append(it)
-            if len(items) >= SUKEBEI_MAX_HITS:
+            if len(items) >= max_hits:
                 return items
     return items
+
+def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    return _nyaa_family(
+        query, page, timeout, batch,
+        _base_of(base, DEFAULT_BASES["sukebei"]), "sukebei",
+        SUKEBEI_PAGES, SUKEBEI_MAX_HITS, SUKEBEI_WORKERS)
 
 def _parse_nyaa_rss(text: str, source_key: str, root: str = "") -> list[dict]:
     items: list[dict] = []
@@ -1235,8 +1249,8 @@ def _search_dmhy_rss(query, timeout, root, batch) -> list[dict]:
         items.append(it)
     return items
 
-EZTV_PAGES = 6
-EZTV_MAX_HITS = 200
+EZTV_PAGES = 15
+EZTV_MAX_HITS = 400
 EZTV_PAGE_SIZE = 100
 EZTV_WORKERS = 6
 
@@ -1529,6 +1543,10 @@ TPB_MIRRORS = (
     "https://tpb.party",
     "https://piratebayproxy.live",
 )
+TPB_PAGES = 20
+TPB_MAX_HITS = 600
+TPB_WORKERS = 6
+TPB_PAGE_SIZE = 30
 
 _TPB_RESULT_MARK = 'id="searchResult"'
 
@@ -1603,7 +1621,7 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
 
         items = _tpb_parse(text)
         if items:
-            return items
+            return _tpb_more_pages(root, query, page, timeout, batch, items)
         if re.search(r"no hits|nothing found", text, re.I):
             return []
         logger.debug("TPB 镜像 %s 结果页没有条目，换下一个", root)
@@ -1613,6 +1631,47 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
     if shape_exc is not None:
         raise shape_exc
     return []
+
+def _tpb_more_pages(root: str, query: str, page: int, timeout: int, batch,
+                    first: list[dict]) -> list[dict]:
+    first_page = max(1, int(page))
+    targets = list(range(first_page + 1, first_page + TPB_PAGES))
+    seen: set[str] = set()
+    items: list[dict] = []
+    for it in first:
+        seen.add(it["info_hash"])
+        items.append(it)
+    if len(first) < TPB_PAGE_SIZE:
+        return items
+
+    pages: dict[int, list[dict]] = {}
+    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), TPB_WORKERS))
+    try:
+        jobs = {pool.submit(_tpb_fetch, root, query, p, timeout, batch): p
+                for p in targets}
+        for job in futures.as_completed(jobs):
+            p = jobs[job]
+            try:
+                text = job.result()
+            except Exception as exc:
+                logger.debug("TPB 第 %d 页失败：%s", p, exc)
+                continue
+            if _TPB_RESULT_MARK not in text:
+                continue
+            pages[p] = _tpb_parse(text)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    for p in sorted(pages):
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= TPB_MAX_HITS:
+                return items
+    return items
 
 _BENCODE_MAX_DEPTH = 32
 
@@ -1679,8 +1738,8 @@ def torrent_meta(url: str, timeout: int = 15, referer: str = "") -> list[dict]:
                     retries=0, limit=MAX_TORRENT_BYTES)
     return decode_torrent_files(data)
 
-XCCL_PAGES = 2
-XCCL_MAX_HITS = 100
+XCCL_PAGES = 4
+XCCL_MAX_HITS = 200
 XCCL_WORKERS = 2
 
 _XCCL_ITEM_SPLIT_RE = re.compile(

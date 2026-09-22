@@ -61,6 +61,8 @@ def _positional_literal(call, index):
 _SOURCE_KEY_ARG = {
     "_parse_nyaa_rss": 1,
     "_apibay_rows": 1,
+    "_nyaa_family": 5,
+    "_nyaa_html_page": 5,
 }
 
 

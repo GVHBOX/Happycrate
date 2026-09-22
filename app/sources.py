@@ -714,6 +714,23 @@ def _ts_from_naive_cn(text: str) -> float | None:
         return None
     return dt.replace(tzinfo=CN_TZ).timestamp()
 
+_CN_SLASH_FORMS = ("%Y/%m/%d %H:%M:%S", "%Y/%m/%d %H:%M", "%Y/%m/%d")
+
+def _ts_from_cn_slash(text: str) -> float | None:
+    raw = str(text or "").strip()
+    if not raw:
+        return None
+    for fmt in _CN_SLASH_FORMS:
+        try:
+            dt = datetime.strptime(raw, fmt)
+        except ValueError:
+            continue
+        return dt.replace(tzinfo=CN_TZ).timestamp()
+    return None
+
+def _cn_date(text: str) -> float | None:
+    return _ts_from_naive_cn(text) or _ts_from_cn_slash(text)
+
 def _unescape(text: str) -> str:
     if not text:
         return ""
@@ -1054,8 +1071,75 @@ def _parse_nyaa_rss(text: str, source_key: str, root: str = "") -> list[dict]:
         items.append(it)
     return items
 
+MIKAN_MAX_HITS = 1000
+MIKAN_ROW_RE = re.compile(r"<tr[^>]*js-search-results-row[^>]*>(.*?)</tr>",
+                          re.I | re.S)
+MIKAN_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
+MIKAN_MAGNET_RE = re.compile(
+    r'data-magnet="magnet:\?xt=urn:btih:([0-9a-fA-F]{40})', re.I)
+MIKAN_TAG_RE = re.compile(r"<[^>]+>")
+
+def _mikan_cell_text(cell: str) -> str:
+    return re.sub(r"\s+", " ", _unescape(MIKAN_TAG_RE.sub(" ", cell))).strip()
+
+_MIKAN_EMPTY_SIGNS = ("没有找到", "未找到", "找不到", "no results", "not found")
+
+def _mikan_empty(page_text: str) -> bool:
+    low = (page_text or "")[:200000].lower()
+    return any(sign in low for sign in _MIKAN_EMPTY_SIGNS)
+
+def _parse_mikan_html(page_text: str, root: str) -> list[dict]:
+    items: list[dict] = []
+    seen: set[str] = set()
+    for row in MIKAN_ROW_RE.findall(page_text):
+        mag = MIKAN_MAGNET_RE.search(row)
+        if not mag:
+            continue
+        h = mag.group(1).lower()
+        if h in seen:
+            continue
+        cells = MIKAN_CELL_RE.findall(row)
+        if len(cells) < 4:
+            continue
+        seen.add(h)
+        it = _mk(
+            title=_mikan_cell_text(cells[1]),
+            info_hash=h,
+            size=parse_size(_mikan_cell_text(cells[2])),
+            added=_cn_date(_mikan_cell_text(cells[3])),
+            source="mikan",
+        )
+        it["fetch"] = {"url": f"{root}/Home/Episode/{h}"}
+        items.append(it)
+        if len(items) >= MIKAN_MAX_HITS:
+            break
+    return items
+
 def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["mikan"])
+    url = (f"{root}/Home/Search?searchstr={urllib.parse.quote(query)}")
+    shape_exc: Exception | None = None
+    items: list[dict] = []
+    try:
+        text = http_get(url, timeout=timeout, batch=batch)
+    except SearchCancelled:
+        raise
+    except Exception as exc:
+        logger.debug("mikan 搜索页请求失败，退回 RSS：%s", exc)
+        return _search_mikan_rss(query, timeout, root, batch)
+    try:
+        items = _parse_mikan_html(text, root)
+    except Exception as exc:
+        shape_exc = exc
+        logger.warning("mikan 搜索页解析失败，退回 RSS：%s", exc)
+    if items:
+        return items
+    if shape_exc is None and not _mikan_empty(text):
+        logger.warning("mikan 搜索页结构与预期不符（没解析出条目也未见空结果提示）")
+    return _search_mikan_rss(query, timeout, root, batch)
+    return _search_mikan_rss(query, timeout, root, batch)
+
+def _search_mikan_rss(query, timeout, root, batch) -> list[dict]:
     url = f"{root}/RSS/Search?searchstr={urllib.parse.quote(query)}"
     text = http_get(url, timeout=timeout, batch=batch)
 
@@ -1098,10 +1182,7 @@ def _dmhy_pub_date(row: str) -> float | None:
     m = _DMHY_HIDDEN_DATE_RE.search(row)
     if not m:
         return None
-    try:
-        dt = datetime.strptime(m.group(1), "%Y/%m/%d %H:%M")
-    except ValueError:
-        return None
+    return _ts_from_cn_slash(m.group(1))
     return dt.replace(tzinfo=CN_TZ).timestamp()
 
 def _dmhy_size(cell: str) -> int:

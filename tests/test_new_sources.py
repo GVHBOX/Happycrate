@@ -458,6 +458,105 @@ class SukebeiSearchTest(unittest.TestCase):
         self.assertEqual(len(items), sources.SUKEBEI_MAX_HITS)
 
 
+def mikan_html(rows):
+    body = []
+    for h, title, size, date in rows:
+        body.append(
+            '<tr class="js-search-results-row" data-itemindex="0">'
+            '<td><input type="checkbox" class="js-episode-select" '
+            f'data-magnet="magnet:?xt=urn:btih:{h}&amp;tr=udp%3A%2F%2Fx" /></td>'
+            f'<td><a href="/Home/Episode/{h}">{title}</a></td>'
+            f'<td class="text-center">{size}</td>'
+            f'<td class="text-center">{date}</td>'
+            '<td></td><td></td></tr>')
+    return ('<html><body><table><thead><tr><th></th><th>番组名</th>'
+            '<th>大小</th><th>更新时间</th><th>下载</th><th>播放</th>'
+            '</tr></thead><tbody>' + "".join(body) + "</tbody></table></body></html>")
+
+
+MIKAN_ROWS = [
+    ("a" * 40, "[字幕组] 番剧名 S01 01-12 [简繁字幕] 1080p", "3.6GB",
+     "2026/08/11 18:47"),
+    ("b" * 40, "[另一组] 番剧名 第02集 1080p", "1.2GB", "2026/08/10 09:00"),
+]
+
+
+class MikanSearchPageTest(unittest.TestCase):
+
+    def test_parses_the_measured_row_shape(self):
+        items = sources._parse_mikan_html(mikan_html(MIKAN_ROWS), "")
+        self.assertEqual(len(items), 2)
+        it = items[0]
+        self.assertEqual(it["info_hash"], "a" * 40)
+        self.assertIn("1080p", it["title"])
+        self.assertEqual(it["size"], sources.parse_size("3.6GB"))
+        self.assertIsNotNone(it["added"])
+        self.assertEqual(it["source"], "mikan")
+        self.assertTrue(it["magnet"].startswith("magnet:?xt=urn:btih:"))
+
+    def test_decodes_html_entities_in_titles(self):
+        html = mikan_html([("c" * 40, "A &amp; B &#x5267;&#x573A;&#x7248;",
+                            "1GB", "2026/08/11 18:47")])
+        items = sources._parse_mikan_html(html, "")
+        self.assertIn("&", items[0]["title"])
+        self.assertNotIn("&#x", items[0]["title"])
+
+    def test_duplicate_hashes_collapse(self):
+        html = mikan_html([MIKAN_ROWS[0], MIKAN_ROWS[0]])
+        items = sources._parse_mikan_html(html, "")
+        self.assertEqual(len(items), 1)
+
+    def test_rows_without_a_magnet_are_skipped(self):
+        html = mikan_html(MIKAN_ROWS[:1]).replace("data-magnet=", "data-x=")
+        self.assertEqual(sources._parse_mikan_html(html, ""), [])
+
+    def test_fetch_link_points_at_the_episode(self):
+        items = sources._parse_mikan_html(
+            mikan_html(MIKAN_ROWS[:1]), "https://mikanani.me")
+        self.assertEqual(items[0]["fetch"]["url"],
+                         "https://mikanani.me/Home/Episode/" + "a" * 40)
+
+    def test_search_page_is_the_primary_path(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            return mikan_html(MIKAN_ROWS)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_mikan("番剧名", 1, timeout=5)
+        self.assertEqual(len(items), 2)
+        self.assertIn("/Home/Search", seen[0],
+                      "搜索页单页能给上千条，RSS 只有 100 条，要走搜索页")
+        self.assertEqual(len(seen), 1, "搜索页有结果时不该再打 RSS")
+
+    def test_falls_back_to_rss_when_search_page_has_nothing(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            if "/Home/Search" in url:
+                return "<html><body>没有找到相关内容</body></html>"
+            return sukebei_rss_xml([("d" * 40, "番剧名 1080p", "1.0 GiB",
+                                     "2026-09-20 06:16", "5", "1", "1")])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_mikan("番剧名", 1, timeout=5)
+        self.assertEqual(len(items), 1)
+        self.assertTrue(any("/RSS/Search" in u for u in seen),
+                        "搜索页没结果时要退回 RSS 兜底")
+
+    def test_parse_error_is_not_silently_swallowed(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        self.assertIn("mikan 搜索页解析失败", src,
+                      "解析失败必须留下 warning；静默退回 RSS 会让人以为"
+                      "搜索页正常，实际一直少拿九成结果")
+
+    def test_page_size_is_pinned(self):
+        self.assertEqual(sources.MIKAN_MAX_HITS, 1000,
+                         "实测搜索页单页就是 1000 条（RSS 只给 100）")
+
+
 class NyaaFamilyTest(unittest.TestCase):
 
     def test_nyaa_and_sukebei_share_the_html_parser(self):

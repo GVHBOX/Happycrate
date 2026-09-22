@@ -1137,7 +1137,6 @@ def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     if shape_exc is None and not _mikan_empty(text):
         logger.warning("mikan 搜索页结构与预期不符（没解析出条目也未见空结果提示）")
     return _search_mikan_rss(query, timeout, root, batch)
-    return _search_mikan_rss(query, timeout, root, batch)
 
 def _search_mikan_rss(query, timeout, root, batch) -> list[dict]:
     url = f"{root}/RSS/Search?searchstr={urllib.parse.quote(query)}"
@@ -1183,7 +1182,6 @@ def _dmhy_pub_date(row: str) -> float | None:
     if not m:
         return None
     return _ts_from_cn_slash(m.group(1))
-    return dt.replace(tzinfo=CN_TZ).timestamp()
 
 def _dmhy_size(cell: str) -> int:
     text = _dmhy_cell_text(cell)

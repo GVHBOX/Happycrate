@@ -1,3 +1,4 @@
+import ast
 import inspect
 import re
 import sys
@@ -478,6 +479,34 @@ class MutatingCallSmokeTest(unittest.TestCase):
     def test_reorder_locks_manual_order(self):
         self.api.reorder_sources(["nyaa", "apibay"])
         self.assertTrue(self.api._cfg.order_locked())
+
+
+TERMINAL_STMTS = (ast.Return, ast.Raise, ast.Continue, ast.Break)
+
+
+def unreachable_statements(path: Path):
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        for field in ("body", "orelse", "finalbody"):
+            block = getattr(node, field, None)
+            if not isinstance(block, list):
+                continue
+            for i, stmt in enumerate(block[:-1]):
+                if isinstance(stmt, TERMINAL_STMTS):
+                    yield block[i + 1]
+
+
+class UnreachableCodeTest(unittest.TestCase):
+
+    def test_no_statement_after_terminal_jump(self):
+        found = []
+        for path in sorted(ROOT.glob("app/*.py")):
+            for stmt in unreachable_statements(path):
+                found.append(f"{path.name}:{stmt.lineno} {ast.unparse(stmt)[:60]}")
+        self.assertEqual(
+            found, [],
+            "return/raise 之后还有语句，永远不会执行："
+            + repr(found))
 
 
 if __name__ == "__main__":

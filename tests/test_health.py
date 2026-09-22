@@ -203,8 +203,8 @@ class DiagnosticsRootCauseTest(DataDirCase):
                         "5 次里 4 次解析 0 条，1 次成功不足以洗白，仍应按改版报")
 
     def test_window_empty_cleared_when_success_dominates(self):
-        self.feed("bitsearch", ["empty", "empty", "ok", "ok", "ok"])
-        row = [r for r in self.api.list_sources() if r["key"] == "bitsearch"][0]
+        self.feed("tpb", ["empty", "empty", "ok", "ok", "ok"])
+        row = [r for r in self.api.list_sources() if r["key"] == "tpb"][0]
         self.assertFalse(row["health"]["empty"],
                          "成功占多数后不该再判改版")
 
@@ -268,8 +268,8 @@ class SourceIssuesTest(DataDirCase):
         self.assertEqual(self.api.source_issues(), [])
 
     def test_failing_source_is_reported_without_internals(self):
-        self.feed("bitsearch", ["err"] * 3)
-        row = [i for i in self.api.source_issues() if i["key"] == "bitsearch"][0]
+        self.feed("tpb", ["err"] * 3)
+        row = [i for i in self.api.source_issues() if i["key"] == "tpb"][0]
         self.assertEqual(row["kind"], "fail")
         self.assertTrue(row["detail"])
         blob = json.dumps(row, ensure_ascii=False)
@@ -291,7 +291,7 @@ class SourceIssuesTest(DataDirCase):
         self.assertEqual(kinds.get("dmhy"), "fail")
 
     def test_issue_detail_has_no_advice_text(self):
-        self.feed("bitsearch", ["err"] * 3)
+        self.feed("tpb", ["err"] * 3)
         self.feed("mikan", ["empty"] * 5)
         for row in self.api.source_issues():
             blob = json.dumps(row, ensure_ascii=False)
@@ -300,9 +300,9 @@ class SourceIssuesTest(DataDirCase):
                                  f"界面只写事实与原因，不写怎么用/怎么修：{banned}")
 
     def test_diagnostics_still_available_for_agent(self):
-        self.feed("bitsearch", ["err"] * 3)
+        self.feed("tpb", ["err"] * 3)
         text = self.api.diagnostics()
-        self.assertIn("app/sources.py :: _search_bitsearch", text,
+        self.assertIn("app/sources.py :: _search_tpb_mirror", text,
                       "面向 AI 的详细诊断必须保留")
 
 

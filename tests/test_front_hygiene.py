@@ -473,6 +473,52 @@ class ReadmeDirTableTest(unittest.TestCase):
             "README 目录表漏了这些一级目录，读者按表找会找不到：" + repr(missing))
 
 
+class ReadmeSourceListTest(unittest.TestCase):
+
+    def readme_sources_line(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for line in readme.splitlines():
+            if line.startswith("- **内置源**"):
+                return line
+        self.fail("README 里找不到内置源那一行")
+
+    def real_labels(self):
+        from app import config
+        return [s["label"] for s in config.DEFAULT_SOURCES]
+
+    def test_readme_lists_every_builtin_source(self):
+        line = self.readme_sources_line()
+        missing = [label for label in self.real_labels() if label not in line]
+        self.assertEqual(
+            missing, [],
+            "README 的内置源清单漏了这些源，读者按文档找会对不上：" + repr(missing))
+
+    def test_readme_has_no_retired_source(self):
+        from app import config
+        from app import sources
+        line = self.readme_sources_line().lower()
+        retired_names = set()
+        for key in config.RETIRED_SOURCES:
+            retired_names.add(key.lower())
+        for key in config.RETIRED_SOURCES:
+            pair = sources._BUILTIN_ADAPTERS.get(key)
+            if pair:
+                retired_names.add(pair[0].lower())
+        stale = sorted(n for n in retired_names if n and n in line)
+        self.assertEqual(
+            stale, [],
+            "README 里还写着已经下线的源（比对不区分大小写，"
+            "BitSearch / BTDigg 这类混合大小写的名字也算）：" + repr(stale))
+
+    def test_readme_count_matches_the_list(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        m = re.search(r"同时检索 (\d+) 个公开磁力索引站", readme)
+        self.assertIsNotNone(m, "README 首段的源数量写法变了，护栏要跟着改")
+        self.assertEqual(
+            int(m.group(1)), len(self.real_labels()),
+            "README 首段的源数量与内置源清单对不上")
+
+
 class ProgressLineWiringTest(unittest.TestCase):
 
     def build_prog_block(self):

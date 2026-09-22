@@ -176,7 +176,7 @@ class PaginationRealityTest(unittest.TestCase):
 class NoProxyDiagnosisTest(unittest.TestCase):
 
     KEYS = ["nyaa", "apibay", "mikan", "dmhy", "sukebei",
-            "eztv", "bitsearch", "tpb", "xccl263"]
+            "eztv", "tpb", "xccl263"]
 
     def hint(self, errors, proxy, tun=""):
         with mock.patch.object(sources, "proxy_info", lambda: proxy),              mock.patch.object(sources, "tun_adapter", lambda *a, **k: tun):
@@ -212,7 +212,7 @@ class NoProxyDiagnosisTest(unittest.TestCase):
         self.assertEqual(self.hint({}, {}), sources.NET_FAIL_TEXT)
 
     def test_overseas_set_covers_the_known_walled_sources(self):
-        for key in ("nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb"):
+        for key in ("nyaa", "sukebei", "mikan", "dmhy", "eztv", "tpb"):
             self.assertIn(key, sources._OVERSEAS_KEYS)
 
     def test_search_surfaces_the_hint_as_fatal(self):

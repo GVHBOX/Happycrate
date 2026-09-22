@@ -21,7 +21,7 @@ ALL_TYPES = ("builtin", *CUSTOM_TYPES)
 
 URL_PLACEHOLDERS = ("{query}", "{page}")
 
-RETIRED_SOURCES = frozenset({"btdig", "apibay_adult"})
+RETIRED_SOURCES = frozenset({"btdig", "apibay_adult", "bitsearch"})
 
 DEFAULT_SOURCES = [
     {"key": "apibay", "label": "海盗湾", "type": "builtin",
@@ -36,8 +36,6 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 4},
     {"key": "eztv", "label": "EZTV", "type": "builtin",
      "enabled": True, "timeout": 15, "base": "", "order": 5},
-    {"key": "bitsearch", "label": "BitSearch", "type": "builtin",
-     "enabled": True, "timeout": 15, "base": "", "order": 6},
     {"key": "tpb", "label": "TPB镜像", "type": "builtin",
      "enabled": True, "timeout": 15, "base": "", "order": 7},
     {"key": "xccl263", "label": "小草磁力", "type": "builtin",

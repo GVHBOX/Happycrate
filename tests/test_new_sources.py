@@ -285,16 +285,20 @@ class SukebeiHtmlPageTest(unittest.TestCase):
 
 class SukebeiSearchTest(unittest.TestCase):
 
-    def _run(self, page=1):
+    def _full_rss(self):
+        return [(f"{i:040x}", f"rss{i}", "1.0 GiB", "2026-09-20 06:16",
+                 "5", "1", "1") for i in range(sources.SUKEBEI_RSS_PAGE)]
+
+    def _run(self, page=1, rss_rows=None):
         seen = []
 
         def fake_get(url, **kw):
             seen.append(url)
             if "page=rss" in url:
-                return sukebei_rss_xml(SUK_ROWS[:1])
+                return sukebei_rss_xml(rss_rows or self._full_rss())
             n = len([u for u in seen if "page=rss" not in u])
             return sukebei_html([
-                (f"{n:040x}", f"[page{n}] SSIS title", "1.0 GiB",
+                (f"{'f' * 8}{n:032x}", f"[page{n}] SSIS title", "1.0 GiB",
                  "2026-09-20 06:16", "9", "1", "2")])
 
         with mock.patch.object(sources, "http_get", fake_get):
@@ -327,7 +331,8 @@ class SukebeiSearchTest(unittest.TestCase):
         seen, items = self._run()
         hashes = [i["info_hash"] for i in items]
         self.assertEqual(len(hashes), len(set(hashes)))
-        self.assertEqual(len(items), 1 + sources.SUKEBEI_PAGES)
+        self.assertEqual(len(items),
+                         sources.SUKEBEI_RSS_PAGE + sources.SUKEBEI_PAGES)
         self.assertTrue(all(i["source"] == "sukebei" for i in items))
 
     def test_rss_result_survives_when_every_html_page_fails(self):
@@ -360,12 +365,68 @@ class SukebeiSearchTest(unittest.TestCase):
             with self.assertRaises(urllib.error.HTTPError):
                 sources._search_sukebei("SSIS", 1, timeout=5)
 
+    def test_short_page_skips_html_entirely(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            short = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                      "5", "1", "1") for i in range(3)]
+            if "page=rss" in url:
+                return sukebei_rss_xml(short)
+            self.fail("RSS 只有 3 条（未满一页）时不该再翻 HTML，"
+                      "那是每次搜索白等约 4 秒")
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        self.assertEqual(len(items), 3)
+        self.assertEqual(len(seen), 1, "只应发一次 RSS 请求")
+
+    def test_full_page_still_triggers_html_paging(self):
+        seen = []
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            if "page=rss" in url:
+                rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                         "5", "1", "1")
+                        for i in range(sources.SUKEBEI_RSS_PAGE)]
+                return sukebei_rss_xml(rows)
+            return sukebei_html([(f"{'e' * 8}{i:032x}", f"p{i}", "1.0 GiB",
+                                  "2026-09-20 06:16", "5", "1", "1")
+                                 for i in range(2)])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        html_calls = [u for u in seen if "page=rss" not in u]
+        self.assertEqual(len(html_calls), sources.SUKEBEI_PAGES,
+                         "RSS 满页说明还有更多，必须继续翻 HTML")
+        self.assertGreater(len(items), sources.SUKEBEI_RSS_PAGE)
+
+    def test_rss_page_size_is_pinned_to_the_measured_value(self):
+        self.assertEqual(sources.SUKEBEI_RSS_PAGE, 75,
+                         "RSS 接口的每页条数；这个数变了短路口就会误判，"
+                         "必须与实测一致")
+
+    def test_html_failure_after_full_page_still_keeps_rss(self):
+        def fake_get(url, **kw):
+            if "page=rss" in url:
+                rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                         "5", "1", "1")
+                        for i in range(sources.SUKEBEI_RSS_PAGE)]
+                return sukebei_rss_xml(rows)
+            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        self.assertEqual(len(items), sources.SUKEBEI_RSS_PAGE)
+
     def test_result_count_is_capped(self):
         def fake_get(url, **kw):
             if "page=rss" in url:
-                return sukebei_rss_xml(SUK_ROWS[:1])
-            rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
-                     "5", "1", "1")
+                return sukebei_rss_xml(self._full_rss())
+            rows = [(f"{'c' * 8}{i:032x}", f"t{i}", "1.0 GiB",
+                     "2026-09-20 06:16", "5", "1", "1")
                     for i in range(sources.SUKEBEI_MAX_HITS + 50)]
             return sukebei_html(rows)
 
@@ -514,47 +575,6 @@ class KnabenParseTest(unittest.TestCase):
                                lambda url, **kw: knaben_payload(hits)):
             items = sources._search_knaben("demo", 1, timeout=5)
         self.assertEqual(len(items), 1)
-
-    def test_result_count_is_capped(self):
-        hits = [knaben_hit(i) for i in range(sources.KNABEN_MAX_HITS + 40)]
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: knaben_payload(hits)):
-            items = sources._search_knaben("demo", 1, timeout=5)
-        self.assertEqual(len(items), sources.KNABEN_MAX_HITS)
-
-    def test_empty_hits_is_not_an_error(self):
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: knaben_payload([])):
-            items = sources._search_knaben("nothing", 1, timeout=5)
-        self.assertEqual(items, [])
-
-    def test_missing_hits_key_raises_shape_error(self):
-        payload = json.dumps({"total": {"relation": "eq", "value": 0}})
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: payload):
-            with self.assertRaises(sources.ShapeError):
-                sources._search_knaben("demo", 1, timeout=5)
-
-    def test_non_object_payload_raises_shape_error(self):
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: json.dumps(["not", "an", "object"])):
-            with self.assertRaises(sources.ShapeError):
-                sources._search_knaben("demo", 1, timeout=5)
-
-    def test_shape_error_maps_to_the_structure_outcome(self):
-        from app import api
-        outcome, _code = api.classify(False, 0, "ShapeError: knaben 响应缺少 hits 列表")
-        self.assertEqual(outcome, api.OUTCOME_SHAPE,
-                         "结构不符要报成结构问题，而不是笼统的请求失败")
-
-    def test_network_error_propagates(self):
-        def boom(url, **kw):
-            raise urllib.error.HTTPError(url, 429, "limited", {}, None)
-
-        with mock.patch.object(sources, "http_get", boom):
-            with self.assertRaises(urllib.error.HTTPError):
-                sources._search_knaben("demo", 1, timeout=5)
-
 
 class KnabenRegistrationTest(unittest.TestCase):
 

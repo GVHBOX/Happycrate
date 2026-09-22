@@ -402,29 +402,23 @@ class ConcurrentPageTest(unittest.TestCase):
         self.assertEqual(calls, [1],
                          "首页不满即到底，不该再多打请求")
 
-    def test_bitsearch_reads_full_pages(self):
-        def fake_get(url, **kw):
-            page = int(str(url).split("page=", 1)[1].split("&", 1)[0])
-            return json.dumps({"results": [
-                {"infohash": f"{page:02x}{i:04x}" + "a" * 34,
-                 "title": f"row {page}.{i}", "size": 10,
-                 "seeders": 1, "leechers": 1,
-                 "updatedAt": "2026-09-16T14:30:11.397Z"}
-                for i in range(sources.BITSEARCH_PAGE_SIZE)]})
+    def test_bitsearch_is_retired(self):
+        from app import config
+        self.assertIn("bitsearch", config.RETIRED_SOURCES)
+        self.assertNotIn("bitsearch", sources.BUILTIN_KEYS,
+                         "源站长期返回 429，已下线；留着会让每次搜索白等一轮")
+        self.assertNotIn("bitsearch", sources.DEFAULT_BASES)
+        self.assertNotIn("bitsearch",
+                         [s["key"] for s in config.DEFAULT_SOURCES])
 
-        with mock.patch.object(sources, "http_get", fake_get):
-            items = sources._search_bitsearch("demo", 1, timeout=5)
-        self.assertEqual(len(items), sources.BITSEARCH_MAX_HITS)
-        self.assertEqual(sources.BITSEARCH_PAGE_SIZE, 100,
-                         "官方接口默认只给 20 条，必须显式传 limit")
+    def test_retired_source_leaves_no_dead_code(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        self.assertNotIn("_search_bitsearch", src)
+        self.assertNotIn("BITSEARCH", src)
 
-    def test_bitsearch_raises_when_every_page_fails(self):
-        def boom(url, **kw):
-            raise urllib.error.HTTPError(url, 500, "boom", {}, _Reader(b""))
-
-        with mock.patch.object(sources, "http_get", boom):
-            with self.assertRaises(urllib.error.HTTPError):
-                sources._search_bitsearch("demo", 1, timeout=5)
+    def test_knaben_replaces_bitsearch_as_the_meta_source(self):
+        self.assertIn("knaben", sources.BUILTIN_KEYS,
+                      "Knaben 顶上 BitSearch 留下的位置")
 
 
 if __name__ == "__main__":

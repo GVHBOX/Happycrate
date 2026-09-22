@@ -21,7 +21,7 @@ ALL_TYPES = ("builtin", *CUSTOM_TYPES)
 
 URL_PLACEHOLDERS = ("{query}", "{page}")
 
-RETIRED_SOURCES = frozenset({"btdig"})
+RETIRED_SOURCES = frozenset({"btdig", "apibay_adult"})
 
 DEFAULT_SOURCES = [
     {"key": "apibay", "label": "海盗湾", "type": "builtin",
@@ -42,10 +42,8 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 7},
     {"key": "xccl263", "label": "小草磁力", "type": "builtin",
      "enabled": True, "timeout": 20, "base": "", "order": 8},
-    {"key": "apibay_adult", "label": "海盗湾成人", "type": "builtin",
-     "enabled": True, "timeout": 15, "base": "", "order": 9},
     {"key": "knaben", "label": "Knaben", "type": "builtin",
-     "enabled": True, "timeout": 15, "base": "", "order": 10},
+     "enabled": True, "timeout": 15, "base": "", "order": 9},
 ]
 
 DEFAULT_SETTINGS = {

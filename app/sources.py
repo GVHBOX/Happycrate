@@ -774,7 +774,6 @@ def _size_or_zero(value) -> int:
 
 DEFAULT_BASES = {
     "apibay": "https://apibay.org",
-    "apibay_adult": "https://apibay.org",
     "nyaa": "https://nyaa.si",
     "mikan": "https://mikanani.me",
     "dmhy": "https://share.dmhy.org",
@@ -824,7 +823,9 @@ def _apibay_relevant(items: list[dict], query: str) -> bool:
         return True
     return keyword_hit_rate(items, tokens) > 0
 
-APIBAY_CAT_PORN = 500
+APIBAY_CATS = (100, 200, 300, 400, 500, 600)
+APIBAY_MAX_HITS = 600
+APIBAY_WORKERS = 6
 
 def _apibay_rows(text: str, source_key: str) -> list[dict]:
     rows = json.loads(text)
@@ -858,20 +859,58 @@ def _apibay_url(query: str, root: str, cat: int = 0) -> str:
         url += f"&cat={int(cat)}"
     return url
 
+def _apibay_uncategorised(query: str, root: str, timeout: int,
+                          batch) -> list[dict]:
+    url = _apibay_url(query, root)
+    return _apibay_rows(http_get(url, timeout=timeout, batch=batch), "apibay")
+
+def _apibay_one_cat(root: str, cat: int, query: str, timeout: int,
+                    batch) -> list[dict]:
+    url = _apibay_url(query, root, cat)
+    text = http_get(url, timeout=timeout, batch=batch)
+    return _apibay_rows(text, "apibay")
+
+def _apibay_by_cat(query: str, root: str, timeout: int, batch) -> list[dict]:
+    pool = futures.ThreadPoolExecutor(
+        max_workers=min(len(APIBAY_CATS), APIBAY_WORKERS))
+    merged: list[dict] = []
+    try:
+        jobs = {pool.submit(_apibay_one_cat, root, c, query, timeout, batch): c
+                for c in APIBAY_CATS}
+        pages: dict[int, list[dict]] = {}
+        for job in futures.as_completed(jobs):
+            cat = jobs[job]
+            try:
+                pages[cat] = job.result()
+            except Exception as exc:
+                logger.debug("apibay 分类 %d 失败：%s", cat, exc)
+        for cat in sorted(pages):
+            merged.extend(pages[cat])
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+    return merged
+
 def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["apibay"])
-    url = _apibay_url(query, root)
-    items = _apibay_rows(http_get(url, timeout=timeout, batch=batch), "apibay")
+    items = _apibay_uncategorised(query, root, timeout, batch)
 
-    if items and not _apibay_relevant(items, query):
+    if not items:
+        return []
+    if not _apibay_relevant(items, query):
         logger.info("apibay 返回的是兜底列表（%d 条均未命中关键词）", len(items))
-    return items
+        return items
 
-def _search_apibay_adult(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["apibay_adult"])
-    url = _apibay_url(query, root, APIBAY_CAT_PORN)
-    return _apibay_rows(http_get(url, timeout=timeout, batch=batch),
-                        "apibay_adult")
+    seen: set[str] = set()
+    out: list[dict] = []
+    for it in items + _apibay_by_cat(query, root, timeout, batch):
+        h = it["info_hash"]
+        if h in seen:
+            continue
+        seen.add(h)
+        out.append(it)
+        if len(out) >= APIBAY_MAX_HITS:
+            break
+    return out
 
 def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["nyaa"])
@@ -1621,7 +1660,6 @@ _BUILTIN_ADAPTERS = {
     "mikan": ("蜜柑计划", _search_mikan),
     "dmhy": ("动漫花园", _search_dmhy),
     "sukebei": ("Sukebei", _search_sukebei),
-    "apibay_adult": ("海盗湾成人", _search_apibay_adult),
     "eztv": ("EZTV", _search_eztv),
     "bitsearch": ("BitSearch", _search_bitsearch),
     "knaben": ("Knaben", _search_knaben),
@@ -1631,7 +1669,7 @@ _BUILTIN_ADAPTERS = {
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
-PAGELESS_KEYS = frozenset({"apibay", "apibay_adult", "mikan", "dmhy", "eztv"})
+PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
 
 BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
 

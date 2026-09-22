@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import unittest
 import urllib.error
@@ -55,24 +56,9 @@ def knaben_payload(hits):
                        "total": {"relation": "eq", "value": len(hits)}})
 
 
-class ApibayAdultTest(unittest.TestCase):
+class ApibayCategorySpanTest(unittest.TestCase):
 
-    def test_request_carries_the_adult_category(self):
-        seen = []
-
-        def fake_get(url, **kw):
-            seen.append(url)
-            return json.dumps([adult_row(1)])
-
-        with mock.patch.object(sources, "http_get", fake_get):
-            items = sources._search_apibay_adult("demo", 1, timeout=5)
-
-        self.assertEqual(len(items), 1)
-        self.assertIn(f"cat={sources.APIBAY_CAT_PORN}", seen[0],
-                      "成人源必须带上分类参数，否则拿到的是全站混排结果")
-        self.assertEqual(sources.APIBAY_CAT_PORN, 500)
-
-    def test_plain_apibay_does_not_send_a_category(self):
+    def test_first_request_is_uncategorised(self):
         seen = []
 
         def fake_get(url, **kw):
@@ -81,63 +67,132 @@ class ApibayAdultTest(unittest.TestCase):
 
         with mock.patch.object(sources, "http_get", fake_get):
             sources._search_apibay("demo", 1, timeout=5)
-
         self.assertNotIn("cat=", seen[0],
-                         "普通海盗湾源不该带分类，那会改变它的结果集")
+                         "先打一次不带分类的，用它判断关键词到底有没有命中")
 
-    def test_items_tag_the_adult_source_key(self):
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: json.dumps([adult_row(3)])):
-            items = sources._search_apibay_adult("demo", 1, timeout=5)
-        self.assertEqual(items[0]["source"], "apibay_adult",
-                         "来源标识要能和普通海盗湾区分开")
-        self.assertTrue(items[0]["magnet"].startswith("magnet:?xt=urn:btih:"))
+    def test_relevant_query_also_pulls_every_category(self):
+        seen = []
 
-    def test_empty_sentinel_row_is_dropped(self):
+        def fake_get(url, **kw):
+            seen.append(url)
+            n = len(seen)
+            return json.dumps([adult_row(n), dict(adult_row(n), name="demo item")])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+
+        cats = sorted(int(m.group(1)) for m in
+                      (re.search(r"cat=(\d+)", u) for u in seen) if m)
+        self.assertEqual(cats, sorted(sources.APIBAY_CATS),
+                         "关键词命中时要铺满所有顶层分类，否则单次 100 条上限"
+                         "会把结果按分类切碎")
+        self.assertEqual(len(sources.APIBAY_CATS), 6)
+        self.assertEqual(sources.APIBAY_CATS,
+                         (100, 200, 300, 400, 500, 600))
+        self.assertGreater(len(items), 1)
+
+    def test_fallback_query_is_not_expanded(self):
+        seen = []
+        payload = [{"id": "77", "name": "something unrelated",
+                    "info_hash": "a" * 40, "leechers": "1", "seeders": "2",
+                    "size": "10", "added": "1", "category": "207"}]
+
+        def fake_get(url, **kw):
+            seen.append(url)
+            return json.dumps(payload)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("完全无关的关键词", 1, timeout=5)
+
+        self.assertEqual(len(seen), 1,
+                         "关键词没命中时返回的是兜底列表，再铺六个分类只会"
+                         "把噪声放大六倍")
+        self.assertEqual(len(items), 1)
+
+    def test_empty_answer_is_not_expanded(self):
+        seen = []
         sentinel = json.dumps([{
-            "id": "0", "name": "No results returned",
-            "info_hash": "0" * 40, "leechers": "0", "seeders": "0",
-            "size": "0", "added": "0", "category": "0",
-        }])
-        with mock.patch.object(sources, "http_get", lambda url, **kw: sentinel):
-            items = sources._search_apibay_adult("nothing", 1, timeout=5)
-        self.assertEqual(items, [],
-                         "空结果是哨兵行，不能当成一条真结果展示")
+            "id": "0", "name": "No results returned", "info_hash": "0" * 40,
+            "leechers": "0", "seeders": "0", "size": "0", "added": "0",
+            "category": "0"}])
 
-    def test_rows_without_a_valid_hash_are_skipped(self):
-        rows = [
-            adult_row(1),
-            {"name": "no hash at all", "info_hash": "", "seeders": "1",
-             "leechers": "0", "size": "10", "added": "1", "category": "505"},
-            {"name": "short hash", "info_hash": "abc", "seeders": "1",
-             "leechers": "0", "size": "10", "added": "1", "category": "505"},
-        ]
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: json.dumps(rows)):
-            items = sources._search_apibay_adult("demo", 1, timeout=5)
-        self.assertEqual(len(items), 1, "哈希不合格的行必须丢掉")
+        def fake_get(url, **kw):
+            seen.append(url)
+            return sentinel
 
-    def test_network_error_propagates(self):
-        def boom(url, **kw):
-            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+        self.assertEqual(items, [])
+        self.assertEqual(len(seen), 1, "空结果没必要再铺分类")
 
-        with mock.patch.object(sources, "http_get", boom):
-            with self.assertRaises(urllib.error.HTTPError):
-                sources._search_apibay_adult("demo", 1, timeout=5)
+    def test_merged_rows_are_deduped_and_tagged_apibay(self):
+        counter = {"n": 0}
 
-    def test_relevance_guard_is_not_applied_to_the_adult_source(self):
-        rows = [adult_row(i) for i in range(1, 4)]
-        with mock.patch.object(sources, "http_get",
-                               lambda url, **kw: json.dumps(rows)):
-            items = sources._search_apibay_adult("完全无关的词", 1, timeout=5)
-        self.assertEqual(len(items), 3,
-                         "成人词表与通用词表不同，不该套用通用相关性判断丢弃结果")
+        def fake_get(url, **kw):
+            counter["n"] += 1
+            return json.dumps([adult_row(1), dict(adult_row(1), name="demo x")])
 
-    def test_shared_row_parser_is_reused(self):
-        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
-        self.assertIn("def _apibay_rows", src)
-        self.assertEqual(src.count("def _apibay_rows"), 1,
-                         "两个海盗湾源必须共用同一个行解析器，避免规则漂移")
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+
+        hashes = [i["info_hash"] for i in items]
+        self.assertEqual(len(hashes), len(set(hashes)), "分类之间会有重复，必须去重")
+        self.assertTrue(all(i["source"] == "apibay" for i in items),
+                        "跨分类取回的行仍然属于海盗湾这一个源")
+
+    def test_result_count_is_capped(self):
+        def fake_get(url, **kw):
+            return json.dumps([dict(adult_row(i), name=f"demo {i}")
+                               for i in range(1, 200)])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+        self.assertLessEqual(len(items), sources.APIBAY_MAX_HITS)
+
+    def test_a_failing_category_does_not_lose_the_rest(self):
+        def fake_get(url, **kw):
+            if "cat=300" in url:
+                raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+            return json.dumps([dict(adult_row(9), name="demo nine")])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+        self.assertTrue(items, "个别分类失败时，其余分类的结果必须保留")
+
+    def test_all_categories_failing_still_returns_the_first_page(self):
+        def fake_get(url, **kw):
+            if "cat=" in url:
+                raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+            return json.dumps([dict(adult_row(9), name="demo nine")])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_apibay("demo", 1, timeout=5)
+        self.assertEqual(len(items), 1,
+                         "分类全挂也要保住已经拿到的那一页")
+
+    def test_adult_key_is_retired(self):
+        from app import config
+        self.assertIn("apibay_adult", config.RETIRED_SOURCES)
+        self.assertNotIn("apibay_adult", sources.BUILTIN_KEYS)
+        self.assertNotIn("apibay_adult",
+                         [s["key"] for s in config.DEFAULT_SOURCES])
+
+    def test_old_config_drops_the_retired_key(self):
+        from app import config as cfgmod
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            old = {"version": 1, "sources": [
+                {"key": "apibay", "label": "海盗湾", "type": "builtin",
+                 "enabled": True, "timeout": 15, "base": "", "order": 0},
+                {"key": "apibay_adult", "label": "海盗湾成人", "type": "builtin",
+                 "enabled": True, "timeout": 15, "base": "", "order": 1},
+            ]}
+            path.write_text(json.dumps(old), encoding="utf-8")
+            cfg = cfgmod.Config(str(path)).load()
+            self.assertNotIn("apibay_adult", cfg.all_keys(),
+                             "已经并入主源的旧配置项必须自动移除，否则界面上"
+                             "会留下一个名字重复的源")
 
 
 class KnabenRequestTest(unittest.TestCase):
@@ -306,55 +361,44 @@ class KnabenParseTest(unittest.TestCase):
                 sources._search_knaben("demo", 1, timeout=5)
 
 
-class NewSourceRegistrationTest(unittest.TestCase):
+class KnabenRegistrationTest(unittest.TestCase):
 
-    def test_both_keys_are_builtin(self):
-        self.assertIn("apibay_adult", sources.BUILTIN_KEYS)
+    def test_knaben_is_builtin(self):
         self.assertIn("knaben", sources.BUILTIN_KEYS)
 
-    def test_both_have_default_bases(self):
-        self.assertEqual(sources.DEFAULT_BASES["apibay_adult"],
-                         "https://apibay.org")
+    def test_knaben_has_a_default_base(self):
         self.assertEqual(sources.DEFAULT_BASES["knaben"],
                          "https://api.knaben.org/v1")
 
-    def test_adult_shares_the_apibay_host(self):
-        self.assertEqual(sources.DEFAULT_BASES["apibay_adult"],
-                         sources.DEFAULT_BASES["apibay"],
-                         "两个源同站不同分类，地址必须一致")
-
-    def test_adult_is_pageless_and_knaben_is_not(self):
-        self.assertIn("apibay_adult", sources.PAGELESS_KEYS,
-                      "官方接口不收页码参数")
+    def test_knaben_supports_paging(self):
         self.assertNotIn("knaben", sources.PAGELESS_KEYS,
                          "knaben 支持通过 from 翻页")
 
-    def test_labels_match_config(self):
+    def test_adult_split_source_is_gone(self):
+        self.assertNotIn("apibay_adult", sources.BUILTIN_KEYS)
+        self.assertNotIn("apibay_adult", sources.DEFAULT_BASES)
+        self.assertNotIn("apibay_adult", sources.PAGELESS_KEYS)
+
+    def test_label_matches_config(self):
         want = {s["key"]: s["label"] for s in config.DEFAULT_SOURCES}
-        for key in ("apibay_adult", "knaben"):
-            with self.subTest(key=key):
-                self.assertEqual(sources._BUILTIN_ADAPTERS[key][0], want[key])
+        self.assertEqual(sources._BUILTIN_ADAPTERS["knaben"][0],
+                         want["knaben"])
 
-    def test_builtin_labels_are_clean_of_guidance(self):
-        for key in ("apibay_adult", "knaben"):
-            with self.subTest(key=key):
-                label = sources._BUILTIN_ADAPTERS[key][0]
-                self.assertLessEqual(len(label), 6,
-                                     "源名是字段名，不是一句说明")
+    def test_builtin_label_is_clean_of_guidance(self):
+        label = sources._BUILTIN_ADAPTERS["knaben"][0]
+        self.assertLessEqual(len(label), 6, "源名是字段名，不是一句说明")
 
-    def test_adapter_names_track_the_functions(self):
-        self.assertEqual(sources.BUILTIN_ADAPTER_NAMES["apibay_adult"],
-                         "_search_apibay_adult")
+    def test_adapter_name_tracks_the_function(self):
         self.assertEqual(sources.BUILTIN_ADAPTER_NAMES["knaben"],
                          "_search_knaben")
 
     def test_base_override_is_honoured(self):
         self.assertEqual(sources.base_of("knaben", "https://mirror.example"),
                          "https://mirror.example")
-        self.assertEqual(sources.base_of("apibay_adult", ""),
-                         "https://apibay.org")
+        self.assertEqual(sources.base_of("knaben", ""),
+                         "https://api.knaben.org/v1")
 
-    def test_new_sources_reach_the_existing_config_file(self):
+    def test_knaben_reaches_the_existing_config_file(self):
         from app import config as cfgmod
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
@@ -365,30 +409,32 @@ class NewSourceRegistrationTest(unittest.TestCase):
             ]}
             path.write_text(json.dumps(old), encoding="utf-8")
             cfg = cfgmod.Config(str(path)).load()
-            keys = cfg.all_keys()
-            self.assertIn("apibay_adult", keys,
+            self.assertIn("knaben", cfg.all_keys(),
                           "老配置启动时要自动补上新增的内置源")
-            self.assertIn("knaben", keys)
 
 
 class NewSourceParityTest(unittest.TestCase):
 
-    def test_frontend_adapter_map_lists_both(self):
+    def test_frontend_adapter_map_lists_knaben(self):
         js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         block = js.split("function adapterName(key){", 1)[1].split("}", 1)[0]
-        self.assertIn("apibay_adult", block)
         self.assertIn("knaben", block)
+        self.assertNotIn("apibay_adult", block,
+                         "已并入主源的键不该留在前端映射里")
 
-    def test_frontend_mock_lists_both_sources(self):
+    def test_frontend_mock_lists_knaben(self):
         js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         head = js.split("var MOCK = [", 1)[1].split("];", 1)[0]
-        self.assertIn('key:"apibay_adult"', head,
+        self.assertIn('key:"knaben"', head,
                       "浏览器直开时源列表要和后端一致")
-        self.assertIn('key:"knaben"', head)
+        self.assertNotIn('key:"apibay_adult"', head)
 
-    def test_adult_label_is_not_explicit_vulgar(self):
-        label = sources._BUILTIN_ADAPTERS["apibay_adult"][0]
-        self.assertIn("成人", label)
+    def test_committed_config_has_no_retired_key(self):
+        raw = json.loads((ROOT / "data" / "sources.json").read_text(
+            encoding="utf-8"))
+        keys = [s["key"] for s in raw["sources"]]
+        self.assertNotIn("apibay_adult", keys)
+        self.assertIn("knaben", keys)
 
 
 if __name__ == "__main__":

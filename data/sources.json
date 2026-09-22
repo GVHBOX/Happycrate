@@ -83,22 +83,13 @@
       "order": 8
     },
     {
-      "key": "apibay_adult",
-      "label": "海盗湾成人",
-      "type": "builtin",
-      "enabled": true,
-      "timeout": 15,
-      "base": "",
-      "order": 9
-    },
-    {
       "key": "knaben",
       "label": "Knaben",
       "type": "builtin",
       "enabled": true,
       "timeout": 15,
       "base": "",
-      "order": 10
+      "order": 9
     }
   ]
 }

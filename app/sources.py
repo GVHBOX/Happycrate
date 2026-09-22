@@ -388,7 +388,7 @@ def _max_workers(len_sources: int) -> int:
     return max(1, min(configured, len_sources))
 
 _OVERSEAS_KEYS = frozenset({
-    "nyaa", "sukebei", "mikan", "dmhy", "eztv", "tpb",
+    "nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb",
 })
 
 def _is_timeout_text(err: str) -> bool:
@@ -779,6 +779,7 @@ DEFAULT_BASES = {
     "dmhy": "https://share.dmhy.org",
     "sukebei": "https://sukebei.nyaa.si",
     "eztv": "https://eztvx.to",
+    "bitsearch": "https://bitsearch.to",
     "tpb": "https://thepiratebay10.org",
     "xccl263": "https://www.xccl263.xyz",
     "knaben": "https://api.knaben.org/v1",
@@ -1317,6 +1318,85 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
                        len(failed), sorted(failed))
     return items
 
+BITSEARCH_PAGES = 2
+BITSEARCH_PAGE_SIZE = 100
+BITSEARCH_MAX_HITS = 200
+BITSEARCH_WORKERS = 2
+
+def _bitsearch_page(root: str, p: int, query: str, timeout: int, batch) -> list[dict]:
+    url = (f"{root}/api/v1/search?q={urllib.parse.quote(query)}"
+           f"&sort=seeders&page={p}&limit={BITSEARCH_PAGE_SIZE}")
+    text = http_get(url, timeout=timeout, batch=batch,
+                    headers={"Accept": "application/json"})
+    try:
+        payload = json.loads(text)
+    except (TypeError, ValueError):
+        logger.warning("BitSearch 返回的不是 JSON：%s", text[:120])
+        return []
+    if not isinstance(payload, dict):
+        return []
+
+    rows = payload.get("results")
+    if not isinstance(rows, list):
+        return []
+
+    out: list[dict] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        h = _text(row.get("infohash")).strip().lower()
+        if not _HASH_HEX_RE.fullmatch(h):
+            continue
+        out.append(_mk(
+            title=_text(row.get("title")),
+            info_hash=h,
+            size=_to_int(row.get("size")) or 0,
+            seeders=_to_int(row.get("seeders")),
+            leechers=_to_int(row.get("leechers")),
+            added=_ts_from_iso(_text(row.get("updatedAt"))),
+            source="bitsearch",
+        ))
+    return out
+
+def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["bitsearch"])
+    first_page = max(1, int(page))
+    seen: set[str] = set()
+    items: list[dict] = []
+    ok_pages = 0
+    last_exc: Exception | None = None
+
+    targets = list(range(first_page, first_page + BITSEARCH_PAGES))
+    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), BITSEARCH_WORKERS))
+    try:
+        jobs = {pool.submit(_bitsearch_page, root, p, query, timeout, batch): p
+                for p in targets}
+        pages: dict[int, list[dict]] = {}
+        for job in futures.as_completed(jobs):
+            p = jobs[job]
+            try:
+                pages[p] = job.result()
+            except Exception as exc:
+                last_exc = exc
+                logger.debug("BitSearch 第 %d 页失败：%s", p, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    for p in sorted(pages):
+        ok_pages += 1
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= BITSEARCH_MAX_HITS:
+                return items
+
+    if not ok_pages and last_exc is not None:
+        raise last_exc
+    return items
+
 KNABEN_PAGE_SIZE = 300
 KNABEN_PAGES = 3
 KNABEN_MAX_HITS = 900
@@ -1703,6 +1783,7 @@ _BUILTIN_ADAPTERS = {
     "dmhy": ("动漫花园", _search_dmhy),
     "sukebei": ("Sukebei", _search_sukebei),
     "eztv": ("EZTV", _search_eztv),
+    "bitsearch": ("BitSearch", _search_bitsearch),
     "knaben": ("Knaben", _search_knaben),
     "tpb": ("TPB镜像", _search_tpb_mirror),
     "xccl263": ("小草磁力", _search_xccl263),

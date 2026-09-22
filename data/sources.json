@@ -56,13 +56,22 @@
       "order": 5
     },
     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+    },
+    {
       "key": "tpb",
       "label": "TPB镜像",
       "type": "builtin",
       "enabled": true,
       "timeout": 15,
       "base": "",
-      "order": 6
+      "order": 7
     },
     {
       "key": "xccl263",
@@ -71,7 +80,7 @@
       "enabled": true,
       "timeout": 20,
       "base": "",
-      "order": 7
+      "order": 8
     },
     {
       "key": "knaben",
@@ -80,7 +89,7 @@
       "enabled": true,
       "timeout": 15,
       "base": "",
-      "order": 8
+      "order": 9
     }
   ]
 }

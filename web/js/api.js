@@ -14,6 +14,8 @@
      addr:"https://sukebei.nyaa.si", health:{state:"ok", ms:183, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"eztv", label:"EZTV", type:"builtin", enabled:true, timeout:15,
      addr:"https://eztvx.to", health:{state:"empty", ms:94, err:"无结果", times:["ok","empty","empty","empty","empty"], empty:true}},
+    {key:"bitsearch", label:"BitSearch", type:"builtin", enabled:true, timeout:15,
+     addr:"https://bitsearch.to", health:{state:"ok", ms:41, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"tpb", label:"TPB镜像", type:"builtin", enabled:true, timeout:15,
      addr:"https://thepiratebay10.org", health:{state:"ok", ms:112, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"xccl263", label:"小草磁力", type:"builtin", enabled:true, timeout:20,
@@ -566,7 +568,7 @@
     var MAP = {
       apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
       dmhy:"_search_dmhy", sukebei:"_search_sukebei", eztv:"_search_eztv",
-      tpb:"_search_tpb_mirror",
+      bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror",
       xccl263:"_search_xccl263", knaben:"_search_knaben"
     };
     return MAP[key] || null;

@@ -266,7 +266,7 @@
     empty: "empty", na: "na",
     timeout: "err", net: "err", http403: "err", http5xx: "err",
     err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn",
-    http451: "err", blocked: "err"
+    http451: "err", blocked: "err", shape: "warn", unknown: "warn"
   };
 
   function highlightJson(text){
@@ -600,6 +600,8 @@
         next.splice(to, 0, item);
         store.set({sources: next});
         api.reorderSources(next.map(function(s){ return s.key; }));
+        autoOrder = false;
+        paintAuto();
         M.toast("已调整顺序", "ok");
       }
     });

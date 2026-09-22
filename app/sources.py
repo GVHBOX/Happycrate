@@ -402,7 +402,10 @@ MAX_TORRENT_BYTES = 8 * 1024 * 1024
 class TooLarge(Exception):
     pass
 
-def _read_capped(resp, limit: int | None) -> bytes:
+class ShapeError(Exception):
+    pass
+
+def _read_capped(resp, limit: int | None, strict: bool = True) -> bytes:
     if not limit:
         return resp.read()
     chunks = []
@@ -412,9 +415,11 @@ def _read_capped(resp, limit: int | None) -> bytes:
         if not chunk:
             break
         got += len(chunk)
-        if got > limit:
+        if got > limit and strict:
             raise TooLarge(f"响应超过 {limit} 字节上限")
         chunks.append(chunk)
+        if got > limit:
+            break
     return b"".join(chunks)
 
 def http_get(url: str, timeout: int = 15, referer: str = "",
@@ -423,7 +428,8 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
              retries: int | None = None,
              batch: int | None = None,
              binary: bool = False,
-             limit: int | None = None) -> bytes | str:
+             limit: int | None = None,
+             strict: bool = True) -> bytes | str:
     if retries is None:
         retries = _retries()
 
@@ -449,7 +455,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
         try:
             opener = _opener(url, use_lax)
             with opener.open(req, timeout=timeout) as resp:
-                raw = _read_capped(resp, limit)
+                raw = _read_capped(resp, limit, strict)
             if not binary:
                 text = _decode(raw)
                 if _captcha_text(text):
@@ -1290,7 +1296,7 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
             continue
 
         if _TPB_RESULT_MARK not in text:
-            last_exc = RuntimeError(f"TPB 镜像 {root} 返回的不是搜索结果页")
+            last_exc = ShapeError(f"TPB 镜像 {root} 返回的不是搜索结果页")
             logger.debug("%s", last_exc)
             continue
 

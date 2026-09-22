@@ -382,6 +382,48 @@ class ImportFromTest(unittest.TestCase):
         self.assertEqual(src["hash_pattern"], "([0-9a-f]{40})")
 
 
+class RemoveBuiltinTest(unittest.TestCase):
+
+    def setUp(self):
+        import tempfile
+        self.path = tempfile.mktemp(suffix=".json")
+        self.cfg = config.Config(path=self.path)
+        self.cfg.load()
+
+    def reload(self):
+        fresh = config.Config(path=self.path)
+        fresh.load()
+        return fresh
+
+    def test_removed_builtin_stays_removed(self):
+        self.assertTrue(self.cfg.remove_source("nyaa"))
+        self.cfg.save()
+        self.assertNotIn("nyaa", [e["key"] for e in self.reload().sources],
+                         "删掉的内置源不能被自动补回来")
+
+    def test_reset_defaults_brings_it_back(self):
+        self.cfg.remove_source("nyaa")
+        self.cfg.save()
+        self.cfg.reset_defaults()
+        self.cfg.save()
+        self.assertIn("nyaa", [e["key"] for e in self.reload().sources],
+                      "恢复默认要连删掉的内置源一起恢复")
+
+    def test_retired_list_survives_reload(self):
+        self.cfg.remove_source("nyaa")
+        self.cfg.remove_source("tpb")
+        self.cfg.save()
+        self.assertEqual(self.reload().retired_keys(), {"nyaa", "tpb"})
+
+    def test_removing_custom_source_does_not_touch_retired(self):
+        self.cfg.add_source({"key": "mine", "label": "M", "type": "json",
+                             "url": "https://example.org/?q={query}",
+                             "list_path": "data", "map": {"title": "t"}})
+        self.cfg.remove_source("mine")
+        self.assertEqual(self.cfg.retired_keys(), set(),
+                         "自定义源不需要留痕，它本来就不在默认列表里")
+
+
 class TorrentDecodeTest(unittest.TestCase):
 
     def test_single_file(self):

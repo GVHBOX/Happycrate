@@ -15,6 +15,9 @@ _DEFAULT_SIZE_PATTERN = r">([\d.]+\s*[KMGT]i?B)\s*<"
 
 _CONTEXT_WINDOW = 600
 
+MAX_SOURCE_TEXT = 2 * 1024 * 1024
+MAX_SOURCE_ITEMS = 300
+
 def render_url(template: str, query: str, page: int) -> str:
     if not template:
         return ""
@@ -86,10 +89,13 @@ def _make_rss(entry: dict):
         from . import sources as src
 
         url = render_url(url_tpl, query, page)
-        text = src.http_get(url, timeout=timeout, batch=batch)
+        text = src.http_get(url, timeout=timeout, batch=batch,
+                            limit=MAX_SOURCE_TEXT, strict=False)
 
         items: list[dict] = []
         for chunk in src._split_items(text):
+            if len(items) >= MAX_SOURCE_ITEMS:
+                break
             title = _unescape(src._tags(chunk, f_title)[0]) if f_title else ""
             magnet = _unescape(src._tags(chunk, f_magnet)[0]) if f_magnet else ""
             info_hash = ""
@@ -134,7 +140,8 @@ def _make_json(entry: dict):
         from . import sources as src
 
         url = render_url(url_tpl, query, page)
-        text = src.http_get(url, timeout=timeout, batch=batch)
+        text = src.http_get(url, timeout=timeout, batch=batch,
+                            limit=MAX_SOURCE_TEXT, strict=False)
         try:
             data = json.loads(text)
         except (TypeError, ValueError):
@@ -149,6 +156,8 @@ def _make_json(entry: dict):
 
         items: list[dict] = []
         for row in rows:
+            if len(items) >= MAX_SOURCE_ITEMS:
+                break
             if not isinstance(row, dict):
                 continue
             title = _txt(_dig(row, f_title)) if f_title else ""
@@ -227,11 +236,16 @@ def _make_html(entry: dict):
         from . import sources as src
 
         url = render_url(url_tpl, query, page)
-        text = src.http_get(url, timeout=timeout, batch=batch)
+        text = src.http_get(url, timeout=timeout, batch=batch,
+                            limit=MAX_SOURCE_TEXT, strict=False)
+        if not isinstance(text, str):
+            text = ""
 
         items: list[dict] = []
         seen: set[str] = set()
         for m in re_hash.finditer(text):
+            if len(items) >= MAX_SOURCE_ITEMS:
+                break
             h = _first_group(m.group(1) if m.groups() else m.group(0))
             h = str(h).lower()
             if h.startswith("magnet:"):

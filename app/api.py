@@ -47,6 +47,8 @@ OUTCOME_CANCEL = "cancel"
 OUTCOME_PARSE = "parse"
 OUTCOME_451 = "http451"
 OUTCOME_BLOCKED = "blocked"
+OUTCOME_SHAPE = "shape"
+OUTCOME_UNKNOWN = "unknown"
 
 OUTCOME_STATE = {
     OUTCOME_OK: "ok",
@@ -62,6 +64,8 @@ OUTCOME_STATE = {
     OUTCOME_PARSE: "warn",
     OUTCOME_451: "err",
     OUTCOME_BLOCKED: "err",
+    OUTCOME_SHAPE: "warn",
+    OUTCOME_UNKNOWN: "warn",
 }
 
 OUTCOME_TEXT = {
@@ -78,17 +82,26 @@ OUTCOME_TEXT = {
     OUTCOME_PARSE: "解析失败",
     OUTCOME_451: "451 地区受限",
     OUTCOME_BLOCKED: sources.BLOCKED_TEXT,
+    OUTCOME_SHAPE: "结果页结构不符",
+    OUTCOME_UNKNOWN: "请求失败",
 }
 
 FATAL_OUTCOMES = frozenset({OUTCOME_TIMEOUT, OUTCOME_NET,
                             OUTCOME_403, OUTCOME_5XX, OUTCOME_BLOCKED})
 
-_HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+)?\b([45]\d{2})\b")
+_HTTP_CODE_RE = re.compile(r"(?:HTTP\s+Error\s+|HTTP\s+|状态码\s*)(\d{3})")
+_PROXY_SIGN_RE = re.compile(r"(?i)(?:\b(?:proxy|tunnel)\b|系统代理|代理不可达)")
 _HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 _PARSE_SIGNS = ("jsondecodeerror", "expecting value", "unexpected token",
                 "valueerror", "keyerror", "indexerror", "attributeerror",
                 "typeerror", "not subscriptable", "has no attribute",
                 "cannot unpack", "unsupported operand")
+_NET_SIGNS = ("urlerror", "gaierror", "getaddrinfo", "name or service not known",
+              "nodename nor servname", "connection refused", "connection reset",
+              "connection aborted", "network is unreachable", "no route to host",
+              "10061", "10060", "10054", "10051", "目标计算机积极拒绝",
+              "由于连接方", "远程主机", "远程计算机", "连接被拒绝",
+              "sslerror", "certificate verify", "tlsv1", "eof occurred")
 
 
 def _addr_of(entry: dict) -> str:
@@ -163,8 +176,8 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
     if sources.BLOCKED_TEXT in (err or ""):
         return OUTCOME_BLOCKED, 0
 
-    if "tunnel" in low or "proxy" in low:
-        return OUTCOME_NET, 0
+    if "shapeerror" in low:
+        return OUTCOME_SHAPE, 0
 
     code = _http_code(err)
     if code == 451:
@@ -180,11 +193,18 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
     if "timed out" in low or "timeout" in low or "timeouterror" in low:
         return OUTCOME_TIMEOUT, 0
 
+    if _PROXY_SIGN_RE.search(str(err or "")):
+        return OUTCOME_NET, 0
+
+    for sign in _NET_SIGNS:
+        if sign in low:
+            return OUTCOME_NET, 0
+
     for sign in _PARSE_SIGNS:
         if sign in low:
             return OUTCOME_PARSE, 0
 
-    return OUTCOME_NET, 0
+    return OUTCOME_UNKNOWN, 0
 
 
 def outcome_text(outcome: str, code: int = 0) -> str:
@@ -207,7 +227,8 @@ def _state_of(outcomes: list[str]) -> str:
         return "err"
     if last == OUTCOME_EMPTY:
         return "empty"
-    if last in (OUTCOME_429, OUTCOME_4XX, OUTCOME_PARSE):
+    if last in (OUTCOME_429, OUTCOME_4XX, OUTCOME_PARSE,
+                OUTCOME_SHAPE, OUTCOME_UNKNOWN):
         return "warn"
     if last in (OUTCOME_OK, OUTCOME_SLOW):
         return "warn" if _window_empty(recent) else "ok"
@@ -306,7 +327,8 @@ def _item_view(item: dict) -> dict:
         names = [str(only)] if only else []
     raw_files = item.get("files")
     files = [
-        {"n": str(f.get("n") or ""), "s": str(f.get("s") or "")}
+        {"n": str(f.get("n") or ""),
+         "s": str(f.get("s") or (core.format_size(f.get("b")) if f.get("b") else "") or "")}
         for f in raw_files if isinstance(f, dict) and f.get("n")
     ][:FILES_CAP] if isinstance(raw_files, list) else []
     raw_fetch = item.get("fetch")
@@ -558,6 +580,7 @@ class Api:
             return False
         self._health_store.drop(key)
         self._cfg.save()
+        self._health_store.save()
         sources.reload_from_config(self._cfg)
         return True
 
@@ -655,11 +678,15 @@ class Api:
             self._push(f"window.__onProbe && window.__onProbe({payload})")
 
         workers = max(1, min(8, len(targets)))
-        with futures.ThreadPoolExecutor(max_workers=workers) as pool:
-            for _ in pool.map(one, targets):
-                pass
-        self._persist_health()
-        self._push("window.__onProbeDone && window.__onProbeDone()")
+        try:
+            with futures.ThreadPoolExecutor(max_workers=workers) as pool:
+                for _ in pool.map(one, targets):
+                    pass
+        except Exception as exc:
+            logger.warning("测速收尾时出错：%s: %s", type(exc).__name__, exc)
+        finally:
+            self._persist_health()
+            self._push("window.__onProbeDone && window.__onProbeDone()")
 
     def _cache_take(self, ckey: str) -> dict | None:
         with self._search_cache_lock:
@@ -917,6 +944,7 @@ class Api:
         self._cfg.reset_defaults()
         self._cfg.save()
         self._health_store.replace({})
+        self._health_store.save()
         sources.reload_from_config(self._cfg)
         return True
 

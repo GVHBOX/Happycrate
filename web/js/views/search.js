@@ -798,8 +798,31 @@
     st.relaxed = "";
     st.settled = false;
     st.searched = false;
+    st.token = null;
+    st.pending = [];
     nohashSeq = 0;
     renderTip();
+  }
+
+  function dispatch(type, d){
+    if (!st.busy) return false;
+    if (st.token === null){
+      (st.pending || (st.pending = [])).push({type: type, d: d});
+      return false;
+    }
+    return d.token === st.token;
+  }
+
+  var hooks = null;
+
+  function replayPending(){
+    var queue = st.pending || [];
+    st.pending = [];
+    if (!hooks) return;
+    queue.forEach(function(p){
+      var fn = hooks[p.type];
+      if (fn) fn(p.d);
+    });
   }
 
   function setProgress(){
@@ -860,8 +883,9 @@
       if (gen !== st.progGen) return;
       var dl = progEl.querySelector(".deadline");
       if (dl) dl.classList.remove("show", "passed");
+      var lit = [];
       if (isSeg){
-        var lit = [].slice.call(progEl.querySelectorAll(".seg.on")).reverse();
+        lit = [].slice.call(progEl.querySelectorAll(".seg.on")).reverse();
         lit.forEach(function(seg, i){
           setTimeout(function(){
             if (gen !== st.progGen) return;
@@ -922,6 +946,8 @@
     if (st.busy){
       HC.api.cancelSearch(st.token);
       st.busy = false;
+      st.token = 0;
+      st.pending = [];
       Object.keys(st.strip).forEach(function(k){
         if (st.strip[k].state === "pending" || st.strip[k].state === "busy") st.strip[k] = {state:"cancel"};
       });
@@ -965,6 +991,8 @@
     HC.api.startSearch(q).then(function(res){
       if (!res || !res.ok){
         st.busy = false;
+        st.token = 0;
+        st.pending = [];
         goBtn.textContent = "搜索";
         goBtn.classList.remove("stop");
         stopProgress();
@@ -978,8 +1006,11 @@
       st.parsed = res.query || null;
       setProgress();
       setChip("搜索中 0/" + res.total + "…", "busy");
+      replayPending();
     }).catch(function(err){
       st.busy = false;
+      st.token = 0;
+      st.pending = [];
         goBtn.textContent = "搜索";
         goBtn.classList.remove("stop");
         stopProgress();
@@ -1127,9 +1158,9 @@
     }
     loadSourcesOnce();
 
-    HC.api.onSearch({
+    hooks = {
       source: function(d){
-        if (!st.busy || d.token !== st.token) return;
+        if (!dispatch("source", d)) return;
         st.done += 1;
         if (progEl) progEl.classList.remove("wait");
         var seg = progEl && progEl.querySelector('.seg[data-key="' + d.key + '"]');
@@ -1161,7 +1192,7 @@
         paintStrip();
       },
       settled: function(d){
-        if (!st.busy || d.token !== st.token) return;
+        if (!dispatch("settled", d)) return;
         st.settled = true;
         renderRows();
         paintBadge();
@@ -1173,7 +1204,7 @@
         if (left > 0) setChip(st.items.length + " 条 · " + left + " 个源仍在返回", "busy");
       },
       batch: function(d){
-        if (!st.busy || d.token !== st.token) return;
+        if (!dispatch("batch", d)) return;
         var fresh = 0, bumped = null;
         d.items.forEach(function(it){
           if (!it.hash) it.hash = "nohash-" + (++nohashSeq);
@@ -1189,6 +1220,8 @@
         if (st.field){
           renderRows();
           updateSelUI();
+        } else if (st.settled){
+          refreshRows(bumped);
         } else {
           if (bumped) refreshRows(bumped);
           if (fresh) appendRows(fresh);
@@ -1197,7 +1230,7 @@
         autoExpand(AUTO_EARLY, false);
       },
       done: function(d){
-        if (!st.busy || d.token !== st.token) return;
+        if (!dispatch("done", d)) return;
         st.errors = d.errors || {};
         st.rawTotal = Number(d.raw) || 0;
         st.dupCount = Number(d.dup) || 0;
@@ -1211,7 +1244,8 @@
         }
         searchDone();
       }
-    });
+    };
+    HC.api.onSearch(hooks);
 
     root.querySelector(".sentry").addEventListener("click", function(e){
       if (e.target === goBtn) return;

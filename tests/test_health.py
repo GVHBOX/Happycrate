@@ -389,6 +389,29 @@ class OutcomeClassificationTest(unittest.TestCase):
             "代理层 502 必须仍是 net，不能被 parse 分支截胡")
 
 
+    def test_bare_numbers_in_text_are_not_status_codes(self):
+        self.assertNotEqual(self.check(False, 0, "RuntimeError: 解析到第 451 行失败")[0],
+                            "http451", "错误文本里的三位数不是 HTTP 状态码")
+        self.assertNotEqual(self.check(False, 0, "ValueError: 重试了 500 次仍失败")[0],
+                            "http5xx", "错误文本里的三位数不是 HTTP 状态码")
+        self.assertEqual(self.check(False, 0, "HTTP Error 503: Unavailable"),
+                         ("http5xx", 503))
+
+    def test_shape_mismatch_is_not_network_failure(self):
+        outcome, _code = self.check(
+            False, 0, "ShapeError: TPB 镜像 https://piratebayproxy.live 返回的不是搜索结果页")
+        self.assertEqual(outcome, "shape",
+                         "页面结构变了不是网络故障，别让用户去查代理")
+        self.assertNotIn("shape", api_mod.FATAL_OUTCOMES,
+                         "结构不符不该把源排到后面")
+
+    def test_unrecognized_is_unknown_not_network(self):
+        outcome, _code = self.check(False, 0, "RuntimeError: boom")
+        self.assertEqual(outcome, "unknown",
+                         "认不出的异常不要冒充网络故障")
+        self.assertEqual(api_mod.outcome_text(outcome), "请求失败")
+
+
 class OutcomeStateTest(unittest.TestCase):
 
     def state(self, outcomes):

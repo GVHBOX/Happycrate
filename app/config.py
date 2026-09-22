@@ -323,11 +323,26 @@ class Config:
                            version, SOURCES_VERSION)
         return raw
 
+    def retired_keys(self) -> set[str]:
+        raw = self.data.get("retiredBuiltins")
+        if not isinstance(raw, list):
+            return set()
+        return {str(k).strip() for k in raw if str(k).strip()}
+
+    def _retire(self, key: str) -> None:
+        if not any(d.get("key") == key for d in DEFAULT_SOURCES):
+            return
+        current = [str(k) for k in (self.data.get("retiredBuiltins") or []) if str(k)]
+        if key not in current:
+            current.append(key)
+            self.data["retiredBuiltins"] = current
+
     def _normalize(self):
         srcs = self.data.get("sources")
         if not isinstance(srcs, list):
             srcs = []
 
+        retired = self.retired_keys()
         cleaned: list[dict] = []
         seen_keys: set[str] = set()
         for item in srcs:
@@ -355,7 +370,7 @@ class Config:
 
         for default in DEFAULT_SOURCES:
             key = default.get("key", "")
-            if key and key not in seen_keys:
+            if key and key not in seen_keys and key not in retired:
                 seen_keys.add(key)
                 fresh = dict(default)
                 fresh["order"] = len(cleaned)
@@ -425,6 +440,7 @@ class Config:
         if entry is None:
             return False
         self.data["sources"] = [e for e in self.sources if e.get("key") != key]
+        self._retire(key)
         self._normalize()
         return True
 
@@ -488,6 +504,9 @@ class Config:
             return False, "文件里没有 sources 列表", 0, 0
 
         self.data.pop("orderLocked", None)
+        if isinstance(raw, dict) and isinstance(raw.get("retiredBuiltins"), list):
+            for key in raw["retiredBuiltins"]:
+                self._retire(str(key).strip())
         builtin_ok = {"enabled", "timeout", "base", "label"}
         added = updated = 0
         skipped: list[str] = []
@@ -579,6 +598,8 @@ class Settings:
                 v = int(value)
             elif kind is str:
                 v = str(value)
+            elif kind is bool:
+                v = value if isinstance(value, bool) else str(value).strip().lower() in ("1", "true", "yes", "on")
             else:
                 v = value
         except (TypeError, ValueError, OverflowError):

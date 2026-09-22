@@ -112,7 +112,12 @@
     var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["时间","added"],["链接","magnet"]];
     var map = d.map || {};
 
-    var keyPromise = isEdit ? Promise.resolve(d.key) : Promise.resolve(api.nextCustomKey());
+    var keyPromise = isEdit
+      ? api.sourceAddr(d.key).then(function(a){
+          if (a) d = Object.assign({}, d, {addr: a});
+          return d.key;
+        })
+      : Promise.resolve(api.nextCustomKey());
 
     keyPromise.then(function(newKey){
       var m = openModal(

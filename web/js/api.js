@@ -263,6 +263,12 @@
       return "custom" + n;
     },
 
+    sourceAddr: function(key){
+      if (live()) return window.pywebview.api.source_addr(key);
+      var hit = seed().filter(function(s){ return s.key === key; })[0];
+      return Promise.resolve(hit ? (hit.addr || "") : "");
+    },
+
     diagnostics: function(keys){
       if (live()) return window.pywebview.api.diagnostics(keys);
       var list = seed().filter(function(s){

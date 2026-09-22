@@ -473,6 +473,150 @@ class ReadmeDirTableTest(unittest.TestCase):
             "README 目录表漏了这些一级目录，读者按表找会找不到：" + repr(missing))
 
 
+class ProgressLineWiringTest(unittest.TestCase):
+
+    def build_prog_block(self):
+        src = (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+        i = src.index("function buildProg(")
+        return src[i:src.index("\n  }", i)]
+
+    def test_build_prog_reads_live_state_not_startup_snapshot(self):
+        block = self.build_prog_block()
+        self.assertIn(
+            "st.progLineOn", block,
+            "警戒线开关要读实时状态。改读 HC.settings 那份启动快照后，"
+            "在设置页关掉开关必须重启程序才生效")
+        self.assertNotIn(
+            "HC.settings", block,
+            "buildProg 不能依赖 HC.settings 快照")
+
+    def test_settings_save_refreshes_the_global_snapshot(self):
+        src = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        marker = '#btnSave").onclick'
+        i = src.index(marker)
+        block = src[i:i + 900]
+        self.assertIn(
+            "HC.settings", block,
+            "保存设置后要回填 HC.settings，否则全局快照永远是启动时那份")
+
+    def test_warning_line_is_wired_end_to_end(self):
+        settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")
+        self.assertIn("s_progline", settings, "设置页要有警戒线开关")
+        self.assertIn("progress_line", settings, "开关要读写 progress_line")
+        api = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        self.assertIn("progress_line", api, "mock 设置里也要有这个键")
+        backend = (ROOT / "app" / "config.py").read_text(encoding="utf-8")
+        self.assertIn("progress_line", backend, "后端要有默认值")
+
+
+class CacheReplayStateTest(unittest.TestCase):
+
+    def setUp(self):
+        import tempfile
+        from pathlib import Path
+        from app import api as api_mod, config, sources
+        self.api_mod = api_mod
+        self.sources = sources
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-replay-")
+        self.api = api_mod.Api()
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
+        self.api._cfg.load()
+        self.api._settings = config.Settings(
+            path=Path(self.tmpdir) / "settings.json")
+        self.api._settings.load()
+        self.api._health_store = config.HealthStore(
+            path=Path(self.tmpdir) / "health.json")
+        self.orig_all = sources.ALL_SOURCES
+        self.orig_by = sources.BY_KEY
+        self.pushed = []
+        self.api._push = self.capture
+        sources.reload_from_config(self.api._cfg)
+
+    def tearDown(self):
+        self.sources.ALL_SOURCES = self.orig_all
+        self.sources.BY_KEY = self.orig_by
+
+    def capture(self, js):
+        if "__onSearchSource" in js:
+            import json
+            self.pushed.append(json.loads(
+                js.split("__onSearchSource(", 1)[1].rsplit(")", 1)[0]))
+
+    def wire(self, empty_key, full_key):
+        def empty_fn(q, page=1, timeout=15, base="", batch=None):
+            return []
+
+        def full_fn(q, page=1, timeout=15, base="", batch=None):
+            return [{"title": "t", "info_hash": "a" * 40, "source": full_key}]
+
+        pair = [self.sources.Source(empty_key, empty_key, empty_fn),
+                self.sources.Source(full_key, full_key, full_fn)]
+        self.sources.ALL_SOURCES = pair
+        self.sources.BY_KEY = {s.key: s for s in pair}
+        return [s.key for s in pair]
+
+    def test_replay_reports_empty_for_zero_result_sources(self):
+        keys = self.wire("s_empty", "s_full")
+        token = self.sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "ubuntu", keys)
+        self.assertEqual(
+            [r["state"] for r in self.pushed], ["empty", "ok"],
+            "第一轮就应如实反映：0 条是 empty，有结果是 ok")
+
+        self.pushed.clear()
+        token = self.sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "ubuntu", keys)
+        by_key = {r["key"]: r for r in self.pushed}
+        self.assertEqual(
+            by_key["s_empty"]["state"], "empty",
+            "缓存回放时不能把 0 条的源写成 ok —— 界面会亮绿点，"
+            "与源管理页的红/灰状态互相矛盾")
+        self.assertTrue(by_key["s_empty"].get("cached"),
+                        "回放要带 cached 标记，前端据此显示「缓存」")
+
+
+class TestCollectionPositionTest(unittest.TestCase):
+
+    FILES = ("test_front_hygiene.py", "test_front_smoke.py",
+             "test_source_relevance.py", "test_xccl263.py",
+             "test_adapter_contract.py", "test_contract.py",
+             "test_regressions.py", "test_pure.py")
+
+    def test_main_guard_is_the_last_thing_in_the_file(self):
+        for name in self.FILES:
+            path = ROOT / "tests" / name
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8")
+            marker = 'if __name__ == "__main__":'
+            lines = text.splitlines()
+            starts = [i for i, l in enumerate(lines) if l.strip() == marker]
+            if not starts:
+                continue
+            with self.subTest(file=name):
+                after = "\n".join(lines[starts[-1]:])
+                self.assertNotIn(
+                    "\nclass ", after,
+                    f"{name} 的 unittest.main() 之后还有测试类，"
+                    f"直接运行这个文件时它们不会被收集")
+
+    def test_files_add_project_root_to_sys_path(self):
+        for name in self.FILES:
+            path = ROOT / "tests" / name
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "from app" not in text:
+                continue
+            with self.subTest(file=name):
+                self.assertIn(
+                    "sys.path.insert", text,
+                    f"{name} 导入了 app 却没把项目根加进 sys.path，"
+                    f"直接运行会 ModuleNotFoundError")
+
+
 class JsonHighlightTest(unittest.TestCase):
 
     def semantic_map(self):

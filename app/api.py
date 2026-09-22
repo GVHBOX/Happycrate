@@ -113,12 +113,15 @@ _NET_SIGNS = ("urlerror", "gaierror", "getaddrinfo", "name or service not known"
               "sslerror", "certificate verify", "tlsv1", "eof occurred")
 
 
-def _addr_of(entry: dict) -> str:
+def _addr_of(entry: dict, raw: bool = False) -> str:
     if entry.get("type") == "builtin":
         if entry.get("addr"):
-            return str(entry["addr"])
-        return sources.base_of(entry.get("key", ""), entry.get("base") or "")
-    return entry.get("addr") or entry.get("url") or ""
+            value = str(entry["addr"])
+        else:
+            value = sources.base_of(entry.get("key", ""), entry.get("base") or "")
+    else:
+        value = entry.get("addr") or entry.get("url") or ""
+    return str(value) if raw else _redact(value)
 
 
 def _base_field(key: str, addr: str) -> str:
@@ -277,7 +280,7 @@ def _draft(item: dict) -> dict:
         "key": item.get("key") or "test",
         "label": item.get("label") or "test",
         "type": item.get("type") or "json",
-        "url": _addr_of(item),
+        "url": _addr_of(item, raw=True),
         "base": item.get("base", "") or "",
         "list_path": item.get("listPath", "") or "",
         "map": item.get("map") or {},
@@ -503,6 +506,10 @@ class Api:
     def next_custom_key(self) -> str:
         return self._cfg.next_custom_key()
 
+    def source_addr(self, key: str) -> str:
+        entry = self._cfg.get(str(key or "").strip())
+        return _addr_of(entry, raw=True) if entry else ""
+
     def toggle_source(self, key: str, on: bool) -> bool:
         if not self._cfg.set_enabled(key, bool(on)):
             return False
@@ -546,7 +553,7 @@ class Api:
                 payload = {
                     "label": item.get("label") or current.get("label"),
                     "type": "builtin",
-                    "base": _base_field(key, _addr_of(item) or current.get("base", "")),
+                    "base": _base_field(key, _addr_of(item, raw=True) or current.get("base", "")),
                     "timeout": item.get("timeout", current.get("timeout", 15)),
                     "enabled": bool(item.get("enabled", current.get("enabled", True))),
                 }
@@ -554,7 +561,7 @@ class Api:
                 payload = {
                     "label": item.get("label") or current.get("label"),
                     "type": final_type,
-                    "url": _addr_of(item),
+                    "url": _addr_of(item, raw=True),
                     "list_path": item.get("listPath", "") or "",
                     "map": item.get("map") or {},
                     "timeout": item.get("timeout", current.get("timeout", 15)),
@@ -574,7 +581,7 @@ class Api:
             "key": key or self._cfg.next_custom_key(),
             "label": item.get("label") or "未命名源",
             "type": item.get("type") or "json",
-            "url": _addr_of(item),
+            "url": _addr_of(item, raw=True),
             "list_path": item.get("listPath", "") or "",
             "map": item.get("map") or {},
             "timeout": int(item.get("timeout", 15) or 15),
@@ -604,7 +611,7 @@ class Api:
             src = sources.get(item.get("key", ""))
             if not src:
                 return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
-            base = _base_field(item.get("key", ""), _addr_of(item))
+            base = _base_field(item.get("key", ""), _addr_of(item, raw=True))
             draft = sources.Source(
                 key=src.key, label=src.label, func=src.func, enabled=True,
                 timeout=int(item.get("timeout") or src.timeout),
@@ -709,7 +716,7 @@ class Api:
                 continue
             parts.append(":".join((
                 str(entry.get("key", "")),
-                str(_addr_of(entry)),
+                str(_addr_of(entry, raw=True)),
                 str(entry.get("timeout", "")),
             )))
         return ",".join(sorted(parts))

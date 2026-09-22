@@ -96,6 +96,43 @@ class FileRevealsTest(unittest.TestCase):
                          + (proc.stdout or "") + (proc.stderr or ""))
 
 
+class HighlightCheckTest(unittest.TestCase):
+
+    def setUp(self):
+        self.node = find_node()
+        if not self.node:
+            self.skipTest("本机没有 node，跳过高亮校验")
+        self.script = ROOT / "tests" / "highlight_check.cjs"
+
+    def test_highlight_never_corrupts_titles(self):
+        self.assertTrue(self.script.is_file(), f"校验脚本缺失：{self.script}")
+        proc = subprocess.run(
+            [self.node, str(self.script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        out = (proc.stdout or "") + (proc.stderr or "")
+        self.assertEqual(
+            proc.returncode, 0,
+            "高亮把标题改坏了。高亮必须在原文上定位、逐段转义，"
+            "不能在转义后的串上匹配——否则 & 会被拆成实体碎片，"
+            "页面上多出 amp; 字样：\n" + out)
+
+    def test_check_covers_enough_cases(self):
+        import json
+        proc = subprocess.run(
+            [self.node, str(self.script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        line = [l for l in (proc.stdout or "").splitlines()
+                if l.strip().startswith("{")]
+        self.assertTrue(line, "校验脚本没输出 JSON：" + (proc.stdout or ""))
+        data = json.loads(line[-1])
+        self.assertGreaterEqual(data.get("total", 0), 50,
+                                "用例太少，护栏覆盖不足")
+
+
 class RelevanceCheckTest(unittest.TestCase):
 
     def setUp(self):

@@ -205,6 +205,8 @@ body.dark{
   --ok-soft:rgba(22,163,74,.16);
   --warn-soft:rgba(202,138,4,.18);
   --warn-line:rgba(202,138,4,.42);
+  --warn:#E0A81E;
+  --warn-stripe:#7A5503;
   --ok-strong:#4ADE80;
   --warn-strong:#FCD34D;
   --err-strong:#F87171;

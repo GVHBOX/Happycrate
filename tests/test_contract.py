@@ -82,6 +82,60 @@ class VersionAlignmentTest(unittest.TestCase):
         self.assertRegex(app_version, r"^\d+\.\d+\.\d+$")
 
 
+class CredentialHygieneTest(unittest.TestCase):
+
+    def setUp(self):
+        import tempfile
+        from pathlib import Path
+        from app import api as api_mod
+        self.api_mod = api_mod
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-cred-")
+        self.api = api_mod.Api()
+        from app import config
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
+        self.api._cfg.load()
+        self.api._settings = config.Settings(
+            path=Path(self.tmpdir) / "settings.json")
+        self.api._settings.load()
+        self.api._health_store = config.HealthStore(
+            path=Path(self.tmpdir) / "health.json")
+        self.api._push = lambda js: None
+        self.url = "https://user:secret@example.com/api?q={query}"
+        self.api._cfg.add_source({
+            "key": "mycred", "label": "带凭据", "type": "json",
+            "url": self.url, "list_path": "data", "map": {"title": "t"},
+            "timeout": 15,
+        })
+
+    def test_list_view_hides_credentials(self):
+        row = [r for r in self.api.list_sources() if r["key"] == "mycred"][0]
+        self.assertNotIn("secret", row["addr"],
+                         "源列表会显示给用户，地址里的密码不能原样带出去")
+        self.assertIn("example.com", row["addr"], "主机部分要保留，用户才认得出是哪个源")
+
+    def test_diagnostics_hides_credentials(self):
+        self.api._health_store.data["mycred"] = {
+            "state": "err", "outcomes": ["timeout"] * 5, "err": "超时",
+            "events": [], "times": [], "ms": 0, "lastOk": 0, "lastCount": 0,
+        }
+        report = self.api.diagnostics([])
+        self.assertNotIn("secret", report,
+                         "诊断会被复制到剪贴板并贴给别人，不能带出代理/源密码")
+
+    def test_edit_keeps_credentials_on_save(self):
+        raw = self.api.source_addr("mycred")
+        self.assertEqual(raw, self.url,
+                         "编辑源时必须拿到原始地址，否则用户点一下保存"
+                         "就把自己的密码覆盖成 ***")
+        self.api.save_source({
+            "key": "mycred", "label": "带凭据", "type": "json",
+            "addr": raw, "listPath": "data", "map": {"title": "t"},
+            "timeout": 15, "isNew": False,
+        })
+        self.assertEqual(self.api._cfg.get("mycred").get("url"), self.url,
+                         "保存后配置里的地址必须还是完整的")
+
+
 class ContractCoverageTest(unittest.TestCase):
 
     def test_every_frontend_call_exists_on_backend(self):

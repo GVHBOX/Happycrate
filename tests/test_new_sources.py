@@ -195,81 +195,276 @@ class ApibayCategorySpanTest(unittest.TestCase):
                              "会留下一个名字重复的源")
 
 
-class KnabenRequestTest(unittest.TestCase):
+def sukebei_html(rows):
+    body = []
+    for i, (h, title, size, date, se, le, dl) in enumerate(rows):
+        body.append(
+            f'<tr class="default">'
+            f'<td class="category-icon"><a href="/?c=2_2" title="Real Life">'
+            f'<img src="/i.png" alt="cat"></a></td>'
+            f'<td colspan="2"><a href="/view/{1000 + i}" title="{title}">'
+            f'{title}</a></td>'
+            f'<td class="text-center"><a href="/download/{1000 + i}.torrent">'
+            f'<i class="fa fa-download"></i></a>'
+            f'<a href="magnet:?xt=urn:btih:{h}&amp;dn=x">M</a></td>'
+            f'<td class="text-center">{size}</td>'
+            f'<td class="text-center" data-timestamp="1789884998">{date}</td>'
+            f'<td class="text-center">{se}</td>'
+            f'<td class="text-center">{le}</td>'
+            f'<td class="text-center">{dl}</td>'
+            f'</tr>')
+    return ("<html><body><table id=\"torrentList\"><thead><tr>"
+            "<th>Category</th><th>Name</th><th></th><th>Link</th>"
+            "<th>Size</th><th>Date</th><th></th><th></th><th></th>"
+            "</tr></thead><tbody>" + "".join(body)
+            + "</tbody></table></body></html>")
 
-    def test_posts_the_documented_query_field(self):
-        seen = {}
+
+SUK_ROWS = [
+    ("a" * 40, "[无码破解] SSIS-321 title", "6.5 GiB", "2026-09-20 06:16", "23", "16", "83"),
+    ("b" * 40, "[HD 720p] SSIS-068 title", "1.6 GiB", "2026-09-19 11:02", "20", "7", "61"),
+    ("c" * 40, "[中文字幕] SSIS-100 title", "7.4 GiB", "2026-09-18 03:40", "18", "2", "44"),
+]
+
+
+def sukebei_rss_xml(rows):
+    items = []
+    for h, title, size, date, se, le, dl in rows:
+        items.append(
+            f"<item><title>{title}</title>"
+            f"<nyaa:infoHash>{h}</nyaa:infoHash>"
+            f"<nyaa:size>{size}</nyaa:size>"
+            f"<nyaa:seeders>{se}</nyaa:seeders>"
+            f"<nyaa:leechers>{le}</nyaa:leechers>"
+            f"<nyaa:downloads>{dl}</nyaa:downloads>"
+            f"<guid>https://sukebei.nyaa.si/view/1000</guid></item>")
+    return ("<?xml version=\"1.0\"?><rss version=\"2.0\"><channel>"
+            + "".join(items) + "</channel></rss>")
+
+
+class SukebeiHtmlPageTest(unittest.TestCase):
+
+    def test_parses_every_row_field(self):
+        items = sources._parse_sukebei_html(sukebei_html(SUK_ROWS[:2]), "")
+        self.assertEqual(len(items), 2)
+        it = items[0]
+        self.assertEqual(it["info_hash"], "a" * 40)
+        self.assertEqual(it["title"], "[无码破解] SSIS-321 title")
+        self.assertEqual(it["size"], int(6.5 * 1024 ** 3))
+        self.assertEqual(it["seeders"], 23)
+        self.assertEqual(it["leechers"], 16)
+        self.assertEqual(it["source"], "sukebei")
+        self.assertIsNotNone(it["added"])
+        self.assertTrue(it["magnet"].startswith("magnet:?xt=urn:btih:"))
+
+    def test_row_columns_match_the_rss_semantics(self):
+        html_rows = sources._parse_sukebei_html(sukebei_html(SUK_ROWS[:1]), "")
+        rss_rows = sources._parse_nyaa_rss(
+            sukebei_rss_xml(SUK_ROWS[:1]), "sukebei", "")
+        for field in ("seeders", "leechers", "size", "title"):
+            with self.subTest(field=field):
+                self.assertEqual(html_rows[0][field], rss_rows[0][field],
+                                 "HTML 的列顺序取自实测：第 6/7 列是做种/下载"
+                                 "之外，与 RSS 逐条一致")
+
+    def test_rows_without_a_magnet_are_skipped(self):
+        html = sukebei_html(SUK_ROWS[:1]).replace("magnet:?xt=urn:btih:" + "a" * 40, "")
+        self.assertEqual(sources._parse_sukebei_html(html, ""), [])
+
+    def test_short_rows_are_skipped(self):
+        html = ('<html><table><tr><td><a href="magnet:?xt=urn:btih:'
+                + "d" * 40 + '</a></td></tr></table></html>')
+        self.assertEqual(sources._parse_sukebei_html(html, ""), [])
+
+    def test_torrent_download_link_is_kept(self):
+        items = sources._parse_sukebei_html(
+            sukebei_html(SUK_ROWS[:1]), "https://sukebei.nyaa.si")
+        self.assertEqual(items[0]["fetch"]["url"],
+                         "https://sukebei.nyaa.si/download/1000.torrent")
+
+
+class SukebeiSearchTest(unittest.TestCase):
+
+    def _run(self, page=1):
+        seen = []
 
         def fake_get(url, **kw):
-            seen["url"] = url
-            seen["data"] = kw.get("data")
-            seen["headers"] = kw.get("headers") or {}
-            return knaben_payload([knaben_hit(1)])
+            seen.append(url)
+            if "page=rss" in url:
+                return sukebei_rss_xml(SUK_ROWS[:1])
+            n = len([u for u in seen if "page=rss" not in u])
+            return sukebei_html([
+                (f"{n:040x}", f"[page{n}] SSIS title", "1.0 GiB",
+                 "2026-09-20 06:16", "9", "1", "2")])
 
         with mock.patch.object(sources, "http_get", fake_get):
-            sources._search_knaben("ubuntu", 1, timeout=5)
+            items = sources._search_sukebei("SSIS", page, timeout=5)
+        return seen, items
 
-        body = json.loads(seen["data"].decode("utf-8"))
+    def test_rss_is_the_first_request(self):
+        seen, _items = self._run()
+        self.assertIn("page=rss", seen[0],
+                      "RSS 是最快的保底路径，要先请求它")
+
+    def test_also_spans_html_pages(self):
+        seen, _items = self._run()
+        pages = [re.search(r"[?&]p=(\d+)", u) for u in seen if "page=rss" not in u]
+        got = sorted(int(m.group(1)) for m in pages if m)
+        self.assertEqual(got, list(range(1, sources.SUKEBEI_PAGES + 1)),
+                         "RSS 硬上限 75 条，必须靠 HTML 翻页补齐")
+        self.assertGreater(sources.SUKEBEI_PAGES, 1)
+
+    def test_html_pages_are_sorted_by_seeders(self):
+        seen, _items = self._run()
+        for u in seen:
+            if "page=rss" in u:
+                continue
+            self.assertIn("s=seeders", u,
+                          "按做种降序取页，拿到的是最热的那批而不是随机切片")
+            self.assertIn("o=desc", u)
+
+    def test_results_merge_and_dedupe(self):
+        seen, items = self._run()
+        hashes = [i["info_hash"] for i in items]
+        self.assertEqual(len(hashes), len(set(hashes)))
+        self.assertEqual(len(items), 1 + sources.SUKEBEI_PAGES)
+        self.assertTrue(all(i["source"] == "sukebei" for i in items))
+
+    def test_rss_result_survives_when_every_html_page_fails(self):
+        def fake_get(url, **kw):
+            if "page=rss" in url:
+                return sukebei_rss_xml(SUK_ROWS[:1])
+            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        self.assertEqual(len(items), 1,
+                         "HTML 全挂也要保住 RSS 已经拿到的那一批")
+
+    def test_rss_failure_still_lets_html_answer(self):
+        def fake_get(url, **kw):
+            if "page=rss" in url:
+                raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+            return sukebei_html(SUK_ROWS[:1])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        self.assertEqual(len(items), 1,
+                         "RSS 挂掉不该让整个源失败，HTML 页还能出结果")
+
+    def test_everything_failing_raises(self):
+        def boom(url, **kw):
+            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+
+        with mock.patch.object(sources, "http_get", boom):
+            with self.assertRaises(urllib.error.HTTPError):
+                sources._search_sukebei("SSIS", 1, timeout=5)
+
+    def test_result_count_is_capped(self):
+        def fake_get(url, **kw):
+            if "page=rss" in url:
+                return sukebei_rss_xml(SUK_ROWS[:1])
+            rows = [(f"{i:040x}", f"t{i}", "1.0 GiB", "2026-09-20 06:16",
+                     "5", "1", "1")
+                    for i in range(sources.SUKEBEI_MAX_HITS + 50)]
+            return sukebei_html(rows)
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_sukebei("SSIS", 1, timeout=5)
+        self.assertEqual(len(items), sources.SUKEBEI_MAX_HITS)
+
+
+class KnabenRequestTest(unittest.TestCase):
+
+    def _bodies(self, page=1):
+        seen = []
+
+        def fake_get(url, **kw):
+            body = json.loads(kw["data"].decode("utf-8"))
+            seen.append({"body": body, "url": url,
+                         "headers": kw.get("headers") or {}})
+            return knaben_payload([knaben_hit(len(seen))])
+
+        with mock.patch.object(sources, "http_get", fake_get):
+            items = sources._search_knaben("ubuntu", page, timeout=5)
+        return seen, items
+
+    def test_posts_the_documented_query_field(self):
+        seen, _items = self._bodies()
+        body = seen[0]["body"]
         self.assertIn("query", body,
                       "knaben 只认 query 字段；写成 search_query 会静默返回"
                       "与关键词无关的榜单结果")
         self.assertNotIn("search_query", body)
-        self.assertIn("application/json",
-                      str(seen["headers"].get("Content-Type", "")).lower())
+        for s in seen:
+            self.assertIn("application/json",
+                          str(s["headers"].get("Content-Type", "")).lower())
 
     def test_orders_by_seeders(self):
-        seen = {}
-
-        def fake_get(url, **kw):
-            seen["body"] = json.loads(kw["data"].decode("utf-8"))
-            return knaben_payload([knaben_hit(1)])
-
-        with mock.patch.object(sources, "http_get", fake_get):
-            sources._search_knaben("ubuntu", 1, timeout=5)
-
-        self.assertEqual(seen["body"]["order_by"], "seeders")
-        self.assertEqual(seen["body"]["order_by"],
-                         sources.KNABEN_ORDER)
+        seen, _items = self._bodies()
+        for s in seen:
+            self.assertEqual(s["body"]["order_by"], "seeders")
+            self.assertEqual(s["body"]["order_by"], sources.KNABEN_ORDER)
 
     def test_offset_uses_from_not_page(self):
-        seen = {}
+        seen, _items = self._bodies()
+        for s in seen:
+            self.assertIn("from", s["body"],
+                          "knaben 的偏移量参数是 from；page/offset 会被忽略并"
+                          "重复返回第一页")
+            self.assertNotIn("page", s["body"])
+            self.assertNotIn("offset", s["body"])
 
-        def fake_get(url, **kw):
-            seen["body"] = json.loads(kw["data"].decode("utf-8"))
-            return knaben_payload([knaben_hit(1)])
+    def test_first_page_starts_at_zero(self):
+        seen, _items = self._bodies(1)
+        self.assertIn(0, [s["body"]["from"] for s in seen],
+                      "第一页必须含 from=0")
 
-        with mock.patch.object(sources, "http_get", fake_get):
-            sources._search_knaben("ubuntu", 3, timeout=5)
+    def test_fetches_several_pages_concurrently(self):
+        seen, _items = self._bodies(1)
+        self.assertEqual(len(seen), sources.KNABEN_PAGES,
+                         "只取一页会漏掉接口自报总数里的大部分结果")
+        offsets = sorted(s["body"]["from"] for s in seen)
+        self.assertEqual(offsets,
+                         [i * sources.KNABEN_PAGE_SIZE
+                          for i in range(sources.KNABEN_PAGES)])
+        self.assertGreater(sources.KNABEN_PAGES, 1)
 
-        self.assertIn("from", seen["body"],
-                      "knaben 的偏移量参数是 from；page/offset 会被忽略并"
-                      "重复返回第一页")
-        self.assertNotIn("page", seen["body"])
-        self.assertEqual(seen["body"]["from"],
-                         (3 - 1) * sources.KNABEN_PAGE_SIZE)
+    def test_later_app_pages_move_the_window(self):
+        seen, _items = self._bodies(2)
+        step = sources.KNABEN_PAGE_SIZE * sources.KNABEN_PAGES
+        self.assertEqual(sorted(s["body"]["from"] for s in seen),
+                         [step + i * sources.KNABEN_PAGE_SIZE
+                          for i in range(sources.KNABEN_PAGES)])
 
-    def test_first_page_offsets_to_zero(self):
-        seen = {}
+    def test_requests_the_server_max_page_size(self):
+        seen, _items = self._bodies()
+        for s in seen:
+            self.assertEqual(s["body"]["size"], sources.KNABEN_PAGE_SIZE)
+        self.assertEqual(sources.KNABEN_PAGE_SIZE, 300,
+                         "实测接口的 size 上限就是 300，写更大也只会返回 300")
 
-        def fake_get(url, **kw):
-            seen["body"] = json.loads(kw["data"].decode("utf-8"))
-            return knaben_payload([knaben_hit(1)])
+    def test_all_pages_failing_raises(self):
+        def boom(url, **kw):
+            raise urllib.error.HTTPError(url, 500, "boom", {}, None)
 
-        with mock.patch.object(sources, "http_get", fake_get):
-            sources._search_knaben("ubuntu", 1, timeout=5)
-        self.assertEqual(seen["body"]["from"], 0)
+        with mock.patch.object(sources, "http_get", boom):
+            with self.assertRaises(urllib.error.HTTPError):
+                sources._search_knaben("demo", 1, timeout=5)
 
-    def test_requests_a_full_page_size(self):
-        seen = {}
+    def test_one_failing_page_keeps_the_others(self):
+        calls = {"n": 0}
 
-        def fake_get(url, **kw):
-            seen["body"] = json.loads(kw["data"].decode("utf-8"))
-            return knaben_payload([knaben_hit(1)])
+        def flaky(url, **kw):
+            calls["n"] += 1
+            if calls["n"] == 2:
+                raise urllib.error.HTTPError(url, 500, "boom", {}, None)
+            return knaben_payload([knaben_hit(calls["n"])])
 
-        with mock.patch.object(sources, "http_get", fake_get):
-            sources._search_knaben("ubuntu", 1, timeout=5)
-        self.assertEqual(seen["body"]["size"], sources.KNABEN_PAGE_SIZE)
-        self.assertEqual(sources.KNABEN_PAGE_SIZE, 100)
+        with mock.patch.object(sources, "http_get", flaky):
+            items = sources._search_knaben("demo", 1, timeout=5)
+        self.assertEqual(len(items), sources.KNABEN_PAGES - 1,
+                         "个别页失败不该丢掉其余页的结果")
 
 
 class KnabenParseTest(unittest.TestCase):

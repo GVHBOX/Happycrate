@@ -918,11 +918,99 @@ def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     return _parse_nyaa_rss(
         http_get(url, timeout=timeout, batch=batch), "nyaa", root)
 
+SUKEBEI_PAGES = 3
+SUKEBEI_MAX_HITS = 900
+SUKEBEI_WORKERS = 3
+
+_SUKEBEI_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.I | re.S)
+_SUKEBEI_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
+_SUKEBEI_TAG_RE = re.compile(r"<[^>]+>")
+_SUKEBEI_HASH_RE = re.compile(r"btih:([0-9a-fA-F]{40})")
+_SUKEBEI_TITLE_RE = re.compile(r'href="/view/\d+"[^>]*title="([^"]{2,400})"')
+_SUKEBEI_FETCH_RE = re.compile(r'href="(/download/\d+\.torrent)"')
+
+def _sukebei_cell_text(cell: str) -> str:
+    return re.sub(r"\s+", " ", _SUKEBEI_TAG_RE.sub(" ", cell)).strip()
+
+def _parse_sukebei_html(page_text: str, root: str) -> list[dict]:
+    items: list[dict] = []
+    for row in _SUKEBEI_ROW_RE.findall(page_text):
+        mag = _SUKEBEI_HASH_RE.search(row)
+        if not mag:
+            continue
+        cells = _SUKEBEI_CELL_RE.findall(row)
+        if len(cells) < 8:
+            continue
+        titled = _SUKEBEI_TITLE_RE.search(row)
+        title = _unescape(titled.group(1)) if titled else _sukebei_cell_text(cells[1])
+        it = _mk(
+            title=title, info_hash=mag.group(1).lower(),
+            size=parse_size(_sukebei_cell_text(cells[3])),
+            added=_ts_from_naive_cn(_sukebei_cell_text(cells[4]))
+            or _ts_from_iso(_sukebei_cell_text(cells[4])),
+            seeders=_to_int(_sukebei_cell_text(cells[5])),
+            leechers=_to_int(_sukebei_cell_text(cells[6])),
+            source="sukebei",
+        )
+        fetch = _SUKEBEI_FETCH_RE.search(row)
+        if fetch and root:
+            it["fetch"] = {"url": root + fetch.group(1)}
+        items.append(it)
+    return items
+
+def _sukebei_page(root: str, p: int, needle: str, timeout: int, batch) -> list[dict]:
+    url = (f"{root}/?q={needle}&c=0_0&f=0&s=seeders&o=desc&p={p}")
+    return _parse_sukebei_html(http_get(url, timeout=timeout, batch=batch), root)
+
 def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["sukebei"])
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
-    return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "sukebei", root)
+    rss_failed: Exception | None = None
+    try:
+        rss = _parse_nyaa_rss(
+            http_get(url, timeout=timeout, batch=batch), "sukebei", root)
+    except SearchCancelled:
+        raise
+    except Exception as exc:
+        rss_failed = exc
+        rss = []
+        logger.debug("Sukebei RSS 失败，改用 HTML 页：%s", exc)
+
+    needle = urllib.parse.quote(query)
+    seen: set[str] = set()
+    items: list[dict] = []
+    for it in rss:
+        seen.add(it["info_hash"])
+        items.append(it)
+
+    pages: dict[int, list[dict]] = {}
+    workers = min(SUKEBEI_PAGES, SUKEBEI_WORKERS)
+    pool = futures.ThreadPoolExecutor(max_workers=workers)
+    try:
+        jobs = {pool.submit(_sukebei_page, root, p, needle, timeout, batch): p
+                for p in range(1, SUKEBEI_PAGES + 1)}
+        for job in futures.as_completed(jobs):
+            p = jobs[job]
+            try:
+                pages[p] = job.result()
+            except Exception as exc:
+                logger.debug("Sukebei 第 %d 页失败：%s", p, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    if not pages and not items and rss_failed is not None:
+        raise rss_failed
+
+    for p in sorted(pages):
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= SUKEBEI_MAX_HITS:
+                return items
+    return items
 
 def _parse_nyaa_rss(text: str, source_key: str, root: str = "") -> list[dict]:
     items: list[dict] = []
@@ -1305,9 +1393,11 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
         raise last_exc
     return items
 
-KNABEN_PAGE_SIZE = 100
-KNABEN_MAX_HITS = 200
+KNABEN_PAGE_SIZE = 300
+KNABEN_PAGES = 3
+KNABEN_MAX_HITS = 900
 KNABEN_ORDER = "seeders"
+KNABEN_WORKERS = 3
 
 def _knaben_hits(payload) -> list:
     if not isinstance(payload, dict):
@@ -1317,35 +1407,26 @@ def _knaben_hits(payload) -> list:
         raise ShapeError("knaben 响应缺少 hits 列表")
     return hits
 
-def _search_knaben(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
-    root = _base_of(base, DEFAULT_BASES["knaben"])
-    first = (max(1, int(page)) - 1) * KNABEN_PAGE_SIZE
-    wanted = KNABEN_PAGE_SIZE
-    seen: set[str] = set()
-    items: list[dict] = []
-
+def _knaben_page(root: str, query: str, start: int, timeout: int,
+                 batch) -> list[dict]:
     body = json.dumps({
         "query": query,
         "order_by": KNABEN_ORDER,
-        "size": wanted,
-        "from": first,
+        "size": KNABEN_PAGE_SIZE,
+        "from": start,
     }).encode("utf-8")
     text = http_get(root, timeout=timeout, batch=batch, data=body, headers={
         "Content-Type": "application/json",
         "Accept": "application/json",
     })
-    hits = _knaben_hits(json.loads(text))
-
-    for hit in hits:
+    out: list[dict] = []
+    for hit in _knaben_hits(json.loads(text)):
         if not isinstance(hit, dict):
             continue
         h = _text(hit.get("hash")).strip().lower()
         if not _HASH_HEX_RE.fullmatch(h):
             continue
-        if h in seen:
-            continue
-        seen.add(h)
-        items.append(_mk(
+        out.append(_mk(
             title=_text(hit.get("title")),
             info_hash=h,
             size=_to_int(hit.get("bytes")) or 0,
@@ -1354,8 +1435,45 @@ def _search_knaben(query, page=1, timeout=15, base="", batch=None) -> list[dict]
             added=_ts_from_iso(_text(hit.get("date"))),
             source="knaben",
         ))
-        if len(items) >= KNABEN_MAX_HITS:
-            break
+    return out
+
+def _search_knaben(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
+    root = _base_of(base, DEFAULT_BASES["knaben"])
+    base_start = (max(1, int(page)) - 1) * KNABEN_PAGE_SIZE * KNABEN_PAGES
+    starts = [base_start + i * KNABEN_PAGE_SIZE for i in range(KNABEN_PAGES)]
+
+    seen: set[str] = set()
+    items: list[dict] = []
+    pages: dict[int, list[dict]] = {}
+    last_exc: Exception | None = None
+
+    pool = futures.ThreadPoolExecutor(
+        max_workers=min(len(starts), KNABEN_WORKERS))
+    try:
+        jobs = {pool.submit(_knaben_page, root, query, start, timeout, batch): start
+                for start in starts}
+        for job in futures.as_completed(jobs):
+            start = jobs[job]
+            try:
+                pages[start] = job.result()
+            except Exception as exc:
+                last_exc = exc
+                logger.debug("Knaben from=%d 失败：%s", start, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    if not pages and last_exc is not None:
+        raise last_exc
+
+    for start in sorted(pages):
+        for it in pages[start]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= KNABEN_MAX_HITS:
+                return items
     return items
 
 _TPB_MONTH_DAY_RE = re.compile(r"^(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})$")

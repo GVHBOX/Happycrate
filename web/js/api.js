@@ -101,7 +101,6 @@
   }
 
   var probeOne = null;
-  var probeDone = null;
   var sHooks = {};
   var mockToken = 0;
   var MAX_QUERY_LEN = 100;
@@ -109,12 +108,17 @@
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
     ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true,
-    soft_deadline_ms: 3000, keep_duplicates: false, progress_style: "segment"
+    soft_deadline_ms: 3000, keep_duplicates: false, progress_style: "segment",
+    progress_line: true
   };
   var mockDefaults = Object.assign({}, mockSettings);
 
+  var probeDoneSubs = [];
+
   window.__onProbeDone = function(){
-    if (probeDone) probeDone();
+    probeDoneSubs.slice().forEach(function(fn){
+      try{ fn(); }catch(e){ console.error(e); }
+    });
   };
 
   window.__onSearchBatch = function(d){ if (sHooks.batch && d) sHooks.batch(d); };
@@ -125,7 +129,9 @@
   var api = {
     mode: function(){ return live() ? "live" : "mock"; },
 
-    onProbeDone: function(fn){ probeDone = fn; },
+    onProbeDone: function(fn){
+      probeDoneSubs = fn ? [fn] : [];
+    },
 
     listSources: function(){
       if (live()) return window.pywebview.api.list_sources().then(coerce);
@@ -190,7 +196,7 @@
       });
       var left = targets.length;
       if (!left){
-        if (probeDone) probeDone();
+        window.__onProbeDone();
         return Promise.resolve(0);
       }
       targets.forEach(function(s, i){
@@ -210,7 +216,7 @@
                       empty: res.state === "empty" || (hits > 0 && hits * 2 > times.length)};
           if (probeOne) probeOne(s.key, res);
           left--;
-          if (!left && probeDone) probeDone();
+          if (!left) window.__onProbeDone();
         }, 380 + i * 260 + Math.random() * 220);
       });
       return Promise.resolve(targets.length);
@@ -441,6 +447,11 @@
       return Promise.resolve(true);
     },
 
+    reloadQueryRoles: function(){
+      if (live()) return window.pywebview.api.reload_query_roles();
+      return Promise.resolve(true);
+    },
+
     setWindowTone: function(color){
       if (live()) return window.pywebview.api.set_window_tone(color);
       return Promise.resolve(true);
@@ -496,7 +507,7 @@
   function mockFatal(query){
     if ((query || "").indexOf("断网") >= 0){
       return "未检测到代理，这些源需要代理才能访问，"
-        + "请在设置里填写代理地址或打开系统代理后重试。";
+        + "这些源需要代理才能访问。";
     }
     return "";
   }
@@ -513,7 +524,7 @@
       var full = p.indexOf("://") >= 0 ? p : "http://" + p;
       var scheme = (full.split("://")[0] || "").toLowerCase();
       if (scheme.indexOf("socks") === 0 && !bad){
-        bad = "不支持 " + scheme + " 代理，请填它的 HTTP 代理端口";
+        bad = "不支持 " + scheme + " 代理，只支持 HTTP 代理端口";
         return;
       }
       if (scheme !== "http" && scheme !== "https" && !bad){

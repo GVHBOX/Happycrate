@@ -23,11 +23,20 @@ SEARCH_CACHE_TTL = 60.0
 SEARCH_CACHE_MAX = 8
 
 
+_URL_USERINFO_RE = re.compile(r"(?<=//)[^/@\s]+:[^/@\s]+(?=@)")
+
+def _redact(text) -> str:
+    return _URL_USERINFO_RE.sub("***", str(text or ""))
+
 def _snapshot_row(row: dict) -> dict:
     snap = dict(row)
-    src = snap.get("sources")
-    if isinstance(src, list):
-        snap["sources"] = list(src)
+    for key in ("sources", "files", "altTitles"):
+        value = snap.get(key)
+        if isinstance(value, list):
+            snap[key] = [dict(v) if isinstance(v, dict) else v for v in value]
+    fetch = snap.get("fetch")
+    if isinstance(fetch, dict):
+        snap["fetch"] = dict(fetch)
     return snap
 
 def is_query_too_long(text: str) -> bool:
@@ -287,12 +296,13 @@ _RELAX_RANK = {
 MAX_RELAX_ROUNDS = 2
 
 
-def _relaxed_query(parsed: dict) -> tuple[str, str]:
+def _relaxed_query(parsed: dict, dropped=()) -> tuple[str, str]:
     tokens = list(parsed.get("tokens") or [])
     subject = set(parsed.get("subject") or [])
     if len(tokens) <= 1:
         return "", ""
 
+    gone = set(dropped or ())
     droppable = []
     for m in parsed.get("mods") or []:
         droppable.append((_RELAX_RANK.get(m.get("role"), 99), m.get("text")))
@@ -301,9 +311,9 @@ def _relaxed_query(parsed: dict) -> tuple[str, str]:
     droppable.sort(key=lambda pair: pair[0])
 
     for _rank, text in droppable:
-        if text not in tokens or text in subject:
+        if text not in tokens or text in subject or text in gone:
             continue
-        rest = [t for t in tokens if t != text]
+        rest = [t for t in tokens if t != text and t not in gone]
         if rest:
             return " ".join(rest), text
     return "", ""
@@ -498,6 +508,7 @@ class Api:
             return False
         self._cfg.save()
         sources.reload_from_config(self._cfg)
+        self._cache_clear()
         return True
 
     def reorder_sources(self, keys: list[str]) -> bool:
@@ -556,6 +567,7 @@ class Api:
             self._cfg.update(key, **payload)
             self._cfg.save()
             sources.reload_from_config(self._cfg)
+            self._cache_clear()
             return {"ok": True, "errors": []}
 
         new = {
@@ -573,6 +585,7 @@ class Api:
         if ok:
             self._cfg.save()
             sources.reload_from_config(self._cfg)
+            self._cache_clear()
         return {"ok": ok, "errors": errors}
 
     def remove_source(self, key: str) -> bool:
@@ -582,6 +595,7 @@ class Api:
         self._cfg.save()
         self._health_store.save()
         sources.reload_from_config(self._cfg)
+        self._cache_clear()
         return True
 
     def test_source(self, entry: dict) -> dict:
@@ -653,7 +667,7 @@ class Api:
                 "count": int(count or 0),
                 "ms": int(ms or 0),
                 "round": str(round_id or ""),
-                "err": str(err or "")[:200],
+                "err": _redact(err)[:200],
             })
             h["events"] = events[-EVENT_WINDOW:]
             if ms:
@@ -687,6 +701,22 @@ class Api:
         finally:
             self._persist_health()
             self._push("window.__onProbeDone && window.__onProbeDone()")
+
+    def _source_stamp(self) -> str:
+        parts = []
+        for entry in self._cfg.sources:
+            if not entry.get("enabled"):
+                continue
+            parts.append(":".join((
+                str(entry.get("key", "")),
+                str(_addr_of(entry)),
+                str(entry.get("timeout", "")),
+            )))
+        return ",".join(sorted(parts))
+
+    def _cache_clear(self) -> None:
+        with self._search_cache_lock:
+            self._search_cache.clear()
 
     def _cache_take(self, ckey: str) -> dict | None:
         with self._search_cache_lock:
@@ -779,7 +809,7 @@ class Api:
 
         all_keys = keys
         ckey = ((parsed.get("text") or text) + "|" + ",".join(sorted(all_keys))
-                + "|" + ("k" if keep_dup else ""))
+                + "|" + ("k" if keep_dup else "") + "|p1|" + self._source_stamp())
         cached = self._cache_take(ckey)
         retry_keys = list(all_keys)
 
@@ -809,9 +839,10 @@ class Api:
                     continue
                 count = source_counts.get(key, 0)
                 fuzzy = key in fuzzy_keys
+                state = "ok" if count else "empty"
                 payload = json.dumps(
                     {"token": token, "key": key, "count": count, "err": "",
-                     "outcome": "ok", "state": "ok", "fuzzy": fuzzy,
+                     "outcome": state, "state": state, "fuzzy": fuzzy,
                      "cached": True},
                     ensure_ascii=False,
                 )
@@ -895,7 +926,7 @@ class Api:
                     exhausted = bool(ok_keys) and ok_keys <= fuzzy_keys
                     if rows and not exhausted:
                         return
-                    nxt, dropped = _relaxed_query(parsed)
+                    nxt, dropped = _relaxed_query(parsed, relaxed_used)
                     if not nxt:
                         return
                     rounds += 1
@@ -946,6 +977,7 @@ class Api:
         self._health_store.replace({})
         self._health_store.save()
         sources.reload_from_config(self._cfg)
+        self._cache_clear()
         return True
 
     def export_sources(self) -> dict:
@@ -1093,7 +1125,12 @@ class Api:
             return {"ok": False, "errors": bad}
         self._settings.save()
         runtime.replace(dict(self._settings.data))
+        self._cache_clear()
         return {"ok": True, "errors": []}
+
+    def reload_query_roles(self) -> bool:
+        query.reload()
+        return True
 
     def selftest(self) -> dict:
         missing = []

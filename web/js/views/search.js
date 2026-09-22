@@ -320,10 +320,19 @@
     return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
-  function hlTitle(escaped){
-    if (!st.hlRe) return escaped;
-    st.hlRe.lastIndex = 0;
-    return escaped.replace(st.hlRe, '<mark class="hl">$&</mark>');
+  function hlTitle(raw){
+    var text = String(raw === undefined || raw === null ? "" : raw);
+    var re = st.hlRe;
+    if (!re) return esc(text);
+    re.lastIndex = 0;
+    var out = "", last = 0, m;
+    while ((m = re.exec(text)) !== null){
+      if (!m[0].length){ re.lastIndex += 1; continue; }
+      out += esc(text.slice(last, m.index)) +
+        '<mark class="hl">' + esc(m[0]) + '</mark>';
+      last = m.index + m[0].length;
+    }
+    return last ? out + esc(text.slice(last)) : esc(text);
   }
 
   var FCHEV = '<svg width="10" height="10" viewBox="-3 -3 16 16"><path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -345,7 +354,7 @@
     var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
     if (files && files.length){
       return files.map(function(f){
-        return '<div class="fline"><span class="fname">' + hlTitle(esc(f.n)) +
+        return '<div class="fline"><span class="fname">' + hlTitle(f.n) +
           '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
       }).join("");
     }
@@ -483,7 +492,7 @@
     var src = (it.sources || []).map(function(k){
       return st.names[k] || k;
     }).join(" · ");
-    var title = hlTitle(esc(it.title));
+    var title = hlTitle(it.title);
     var chev = (it.files && it.files.length) || it.fetch
       ? '<button class="fchev" data-hash="' + esc(it.hash) + '" title="文件">' + FCHEV + '</button>'
       : "";
@@ -847,7 +856,7 @@
         seg.style.animationDelay = (i * 0.08) + "s";
         progEl.appendChild(seg);
       });
-      if (HC.settings && HC.settings.progress_line !== false){
+      if (st.progLineOn){
         var dl = document.createElement("div");
         dl.className = "deadline";
         progEl.appendChild(dl);
@@ -968,7 +977,7 @@
     st.qtokens = st.qphrase.split(/\s+/).filter(Boolean);
     st.hlRe = st.qtokens.length
       ? new RegExp(st.qtokens.slice().sort(function(a, b){ return b.length - a.length; })
-          .map(function(t){ return reEscape(esc(t)); }).join("|"), "gi")
+          .map(reEscape).join("|"), "gi")
       : null;
     reset();
     st.srcList.forEach(function(s){ st.strip[s.key] = {state:"pending"}; });

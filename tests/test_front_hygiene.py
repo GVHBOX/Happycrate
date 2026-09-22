@@ -1,13 +1,32 @@
 import re
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 JS = sorted((ROOT / "web" / "js").rglob("*.js"))
 CSS = sorted((ROOT / "web" / "styles").rglob("*.css"))
 HTML = ROOT / "web" / "index.html"
+
+_BANNED_GUIDANCE = ("点击", "请选择", "您可以", "建议", "试试", "请注意",
+                    "使用方法", "该字段", "点击这里")
+
+_BANNED_GUIDANCE_EXTRA = ("请先", "请再", "请把", "请确认", "请检查", "请重新",
+                          "填写代理", "打开系统代理", "换一个", "先启用",
+                          "重新搜索", "需要换", "换成", "然后在", "即可",
+                          "如果反复", "发给我", "粘贴到")
+
+_NOT_USER_FACING = re.compile(
+    r"logger\.|log\.|logging\.|#\s|re\.compile|_RE\b|PATTERN"
+    r"|def test_|assert|self\.assert|docstring|\.md\b")
+
+
+def _is_not_user_facing(line: str) -> bool:
+    return bool(_NOT_USER_FACING.search(line))
 
 
 class SharedEscTest(unittest.TestCase):
@@ -238,30 +257,63 @@ class CssHygieneTest(unittest.TestCase):
         start = src.find("function showBadModal()")
         end = src.find("\n  }", start)
         body = src[start:end]
-        self.assertNotIn('class="term"', body,
-                         "异常详情是给用户看的，不能直接把面向 AI 的诊断原文摊出来")
         self.assertNotIn("adapterLocation", body,
                          "代码路径不该出现在用户界面里")
         self.assertIn("issue", body, "应改用结构化的问题列表")
+        detail = body.find("highlightJson")
+        self.assertGreater(detail, -1, "诊断原文应只有一处渲染入口")
+        wrapper = body[max(0, detail - 260):detail]
+        self.assertIn("<details", wrapper,
+                      "诊断原文（面向 AI 的排查数据）不能直接摊在用户面前，"
+                      "必须收进可折叠块里")
+        self.assertRegex(wrapper, r"<details(?![^>]*\sopen\b)",
+                         "折叠块不能默认展开，否则等于直接摊出来")
+        self.assertIn("logbox", wrapper,
+                      "折叠块要带 logbox 类，否则 .logbox:not([open]) 的 "
+                      "display:none 规则落不到 .term 上，面板会以 171px 漏出来")
 
     def test_user_facing_strings_carry_no_advice(self):
-        banned = ("点击", "请选择", "您可以", "建议", "试试", "请注意",
-                  "使用方法", "该字段", "点击这里")
+        banned = _BANNED_GUIDANCE + _BANNED_GUIDANCE_EXTRA
         targets = [ROOT / "web" / "js" / "views" / "sources.js",
                    ROOT / "web" / "js" / "views" / "search.js",
                    ROOT / "web" / "js" / "views" / "settings.js",
-                   ROOT / "app" / "api.py"]
+                   ROOT / "web" / "js" / "api.js",
+                   ROOT / "web" / "js" / "motion.js",
+                   ROOT / "web" / "js" / "diagnostics.js",
+                   ROOT / "web" / "index.html",
+                   ROOT / "app" / "api.py",
+                   ROOT / "app" / "sources.py",
+                   ROOT / "app" / "shell.py",
+                   ROOT / "app" / "templates.py",
+                   ROOT / "app" / "downloaders" / "thunder.py",
+                   ROOT / "app" / "downloaders" / "base.py"]
         for p in targets:
             text = p.read_text(encoding="utf-8")
             for lineno, line in enumerate(text.splitlines(), 1):
                 if not re.search(r"[\u4e00-\u9fff]", line):
+                    continue
+                if _is_not_user_facing(line):
                     continue
                 for b in banned:
                     with self.subTest(file=p.name, line=lineno, banned=b):
                         self.assertNotIn(
                             b, line,
                             f"{p.name}:{lineno} 界面只写「是什么」和「出了什么问题」，"
-                            f"不写「怎么用」"),
+                            f"不写「怎么用」")
+
+    def test_banned_word_list_covers_the_synonyms(self):
+        for word in ("请先", "请再", "换一个", "先启用", "重新搜索",
+                     "需要换", "换成", "然后在", "即可"):
+            with self.subTest(word=word):
+                self.assertIn(
+                    word, _BANNED_GUIDANCE_EXTRA,
+                    "护栏的禁用词表要覆盖这类引导措辞，否则同义改写就绕过了")
+
+    def test_guard_catches_a_real_violation(self):
+        sample = "连接失败（需要换地址或查网络）"
+        self.assertTrue(
+            any(b in sample for b in _BANNED_GUIDANCE_EXTRA),
+            "这条样本是 AGENTS.md 点名的违规形态，护栏必须能拦下来"),
 
     def test_health_dot_has_fixed_size(self):
         base = ROOT / "web" / "styles" / "base.css"
@@ -383,6 +435,44 @@ class MockSourceListTest(unittest.TestCase):
             self.assertIn(key, block, "三种自定义源类型的样例要留在 mock 里")
 
 
+class MockSettingsTest(unittest.TestCase):
+
+    def mock_keys(self):
+        text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        block = text.split("var mockSettings = {", 1)[1].split("};", 1)[0]
+        return set(re.findall(r"(\w+)\s*:", block))
+
+    def test_mock_settings_cover_backend_specs(self):
+        from app import config
+        missing = sorted(set(config.SETTING_SPECS) - self.mock_keys())
+        self.assertEqual(
+            missing, [],
+            "浏览器直开时 mock 就是后端。这些设置项 mock 里没有，"
+            "预览会读到 undefined，与真实模式行为分叉：" + repr(missing))
+
+    def test_mock_settings_have_no_unknown_keys(self):
+        from app import config
+        extra = sorted(self.mock_keys() - set(config.SETTING_SPECS) - {"version"})
+        self.assertEqual(
+            extra, [],
+            "mock 里有后端不认识的设置项，保存时会被静默丢弃：" + repr(extra))
+
+
+class ReadmeDirTableTest(unittest.TestCase):
+
+    def test_readme_lists_every_top_level_dir(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        block = readme.split("## 目录", 1)[1].split("## ", 1)[0]
+        listed = set(re.findall(r"`([A-Za-z_.-]+)/`", block))
+        actual = {p.name for p in ROOT.iterdir()
+                  if p.is_dir() and not p.name.startswith(".")
+                  and p.name not in {"build", "_internal"}}
+        missing = sorted(actual - listed)
+        self.assertEqual(
+            missing, [],
+            "README 目录表漏了这些一级目录，读者按表找会找不到：" + repr(missing))
+
+
 class JsonHighlightTest(unittest.TestCase):
 
     def semantic_map(self):
@@ -468,9 +558,6 @@ class MockHashTest(unittest.TestCase):
         self.assertEqual(data["dup"], [], "mock hash 有重复")
         self.assertEqual(data["n"], 24)
 
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class SourceStripWrapTest(unittest.TestCase):
@@ -640,3 +727,7 @@ class StripCompletionMotionTest(unittest.TestCase):
                          "CSS 动画从头重启，扫光相位会乱跳")
         self.assertIn("insertBefore", block,
                       "已就位的标签不要动，缺的才插入")
+
+
+if __name__ == "__main__":
+    unittest.main()

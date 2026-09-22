@@ -33,6 +33,7 @@
 
   var netEl = null;
   var netBusy = false;
+  var netGen = 0;
 
   function netState(data){
     if (!data) return {busy:true, dot:"busy", note:"检测中", muted:true};
@@ -89,11 +90,14 @@
     }
     if (netBusy) return;
     netBusy = true;
+    var gen = netGen;
     netPaint(null);
     HC.api.proxyStatus(force).then(function(d){
+      if (gen !== netGen) return;
       netBusy = false;
       netPaint(d || {mode:"none"});
     }).catch(function(){
+      if (gen !== netGen) return;
       netBusy = false;
       netEl.hidden = true;
     });
@@ -367,6 +371,7 @@
         '<div class="div"></div>' +
         '<div class="mbody" id="about"></div>' +
         '<div class="dfoot"><div class="spacer"></div>' +
+          '<button class="btn btn-ghost" id="btnReloadRoles">重新载入词表</button>' +
           '<button class="btn btn-ghost" id="btnLogs">打开日志目录</button></div>' +
       '</div>';
 
@@ -374,6 +379,7 @@
 
     netEl = root.querySelector("#netbar");
     netBusy = false;
+    netGen += 1;
     root.querySelector("#btnNetRecheck").onclick = function(){ netCheck(true); };
 
     function fill(settings, list){
@@ -418,32 +424,42 @@
       onEdit();
     });
 
-    Promise.all([HC.api.getSettings(), HC.api.downloaders(), HC.api.appInfo()])
+    function aboutHtml(info){
+      var lines = [
+        ["版本", info.version, false],
+        ["数据目录", info.dataDir, true],
+        ["运行模式", info.mode, false],
+        ["日志", info.logFile, true]
+      ];
+      if (info.proxy) lines.push(["网络出口", info.proxy, true]);
+      if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom, true]);
+      return lines.map(function(p){
+        return '<div class="kv"><span class="k">' + esc(p[0]) + '</span>' +
+          '<span class="v">' + esc(p[1] || "") + '</span>' +
+          (p[2] ? '<button type="button" class="cp" data-cp="' + esc(p[1] || "") + '">复制</button>' : '') +
+          '</div>';
+      }).join("");
+    }
+
+    function aboutFail(prefix, err){
+      root.querySelector("#about").innerHTML =
+        '<div style="color:var(--err)">' + esc(prefix) + '：' +
+        esc(err && err.message ? err.message : String(err)) + '</div>';
+    }
+
+    Promise.all([HC.api.getSettings(), HC.api.downloaders()])
       .then(function(res){
         fill(res[0] || {}, res[1] || []);
-        var info = res[2] || {};
-
-        var lines = [
-          ["版本", info.version, false],
-          ["数据目录", info.dataDir, true],
-          ["运行模式", info.mode, false],
-          ["日志", info.logFile, true]
-        ];
-        if (info.proxy) lines.push(["网络出口", info.proxy, true]);
-        if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom, true]);
-
-        root.querySelector("#about").innerHTML = lines.map(function(p){
-          return '<div class="kv"><span class="k">' + esc(p[0]) + '</span>' +
-            '<span class="v">' + esc(p[1] || "") + '</span>' +
-            (p[2] ? '<button type="button" class="cp" data-cp="' + esc(p[1] || "") + '">复制</button>' : '') +
-            '</div>';
-        }).join("");
       })
       .catch(function(err){
-        root.querySelector("#about").innerHTML =
-          '<div style="color:var(--err)">设置加载失败：' +
-          esc(err && err.message ? err.message : String(err)) + '</div>';
+        aboutFail("设置加载失败", err);
       });
+
+    HC.api.appInfo().then(function(info){
+      root.querySelector("#about").innerHTML = aboutHtml(info || {});
+    }).catch(function(err){
+      aboutFail("版本信息读取失败", err);
+    });
 
     root.querySelector("#s_dl").addEventListener("click", function(e){
       var b = e.target.closest("[data-dl]");
@@ -513,10 +529,12 @@
 
     root.querySelector("#btnSave").onclick = function(){
       var btn = this;
+      var fields = readFields();
       btn.disabled = true;
-      HC.api.saveSettings(readFields()).then(function(r){
+      HC.api.saveSettings(fields).then(function(r){
         btn.disabled = false;
         if (r && r.ok){
+          HC.settings = Object.assign({}, HC.settings, fields);
           baseline = snapshot();
           onEdit();
           HC.motion.toast("设置已保存", "ok");
@@ -573,6 +591,14 @@
 
     root.querySelector("#btnLogs").onclick = function(){
       HC.api.openLogs();
+    };
+
+    root.querySelector("#btnReloadRoles").onclick = function(){
+      HC.api.reloadQueryRoles().then(function(){
+        HC.motion.toast("词表已重新载入", "ok");
+      }, function(){
+        HC.motion.toast("词表载入失败", "err");
+      });
     };
   }
 

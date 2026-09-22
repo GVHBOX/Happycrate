@@ -1,10 +1,13 @@
 import os
 import shutil
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 SCRIPT = ROOT / "tests" / "front_smoke.cjs"
 
 
@@ -72,9 +75,6 @@ class FrontEndSmokeTest(unittest.TestCase):
         self.assertIn("mount", body)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class FileRevealsTest(unittest.TestCase):
 
@@ -94,3 +94,42 @@ class FileRevealsTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0,
                          "自动展开的条件只能是「标题里没有、文件里有」：\n"
                          + (proc.stdout or "") + (proc.stderr or ""))
+
+
+class RelevanceCheckTest(unittest.TestCase):
+
+    def setUp(self):
+        self.node = find_node()
+        if not self.node:
+            self.skipTest("本机没有 node，跳过相关性校验")
+        self.script = ROOT / "tests" / "relevance_check.cjs"
+
+    def test_relevance_ranks_by_query_fit(self):
+        self.assertTrue(self.script.is_file(), f"校验脚本缺失：{self.script}")
+        proc = subprocess.run(
+            [self.node, str(self.script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        self.assertEqual(
+            proc.returncode, 0,
+            "相关性排序未通过 —— 排序权重或匹配规则被改动：\n"
+            + (proc.stdout or "") + (proc.stderr or ""))
+
+    def test_script_reports_no_bad_cases(self):
+        import json
+        proc = subprocess.run(
+            [self.node, str(self.script)],
+            cwd=str(ROOT), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+        line = [l for l in (proc.stdout or "").splitlines() if l.strip().startswith("{")]
+        self.assertTrue(line, "校验脚本没输出 JSON 结果：" + (proc.stdout or ""))
+        data = json.loads(line[-1])
+        self.assertGreater(data.get("total", 0), 0, "校验用例数为 0，护栏失效了")
+        self.assertEqual(data.get("bad"), 0,
+                         f"有 {data.get('bad')} 个排序用例不达标：{data}")
+
+
+if __name__ == "__main__":
+    unittest.main()

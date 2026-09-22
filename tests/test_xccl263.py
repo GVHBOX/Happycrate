@@ -1,3 +1,4 @@
+import ast
 import sys
 import unittest
 from pathlib import Path
@@ -31,6 +32,46 @@ XCCL_ITEM = """
 
 def page(*items) -> str:
     return "<html><body>" + "".join(items) + "</body></html>"
+
+
+def _source_module():
+    import ast
+    from pathlib import Path as _Path
+    return ast.parse(_Path(sources.__file__).read_text(encoding="utf-8"))
+
+
+def _call_name(node) -> str:
+    return getattr(getattr(node, "func", None), "id", "")
+
+
+def _keyword_literal(call, name):
+    for kw in call.keywords:
+        if kw.arg == name and isinstance(kw.value, ast.Constant):
+            return kw.value.value
+    return None
+
+
+def _adapter_source_map() -> dict:
+    out = {}
+    for node in ast.walk(_source_module()):
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        for sub in ast.walk(node):
+            if not isinstance(sub, ast.Call):
+                continue
+            if _call_name(sub) == "_mk":
+                got = _keyword_literal(sub, "source")
+                if got is not None:
+                    out.setdefault(node.name, got)
+            elif _call_name(sub) == "_parse_nyaa_rss":
+                literals = [a.value for a in sub.args if isinstance(a, ast.Constant)]
+                if len(literals) >= 2:
+                    out.setdefault(node.name, literals[1])
+    return out
+
+
+def _emitted_source_literals() -> set:
+    return {v for v in _adapter_source_map().values()}
 
 
 class Xccl263ParseTest(unittest.TestCase):
@@ -79,10 +120,32 @@ class Xccl263ParseTest(unittest.TestCase):
     def test_real_empty_page_is_empty(self):
         self.assertEqual(sources._parse_xccl263("<html><body></body></html>"), [])
 
-    def test_source_label_is_chinese(self):
+    def test_source_carries_the_source_key(self):
         html = page(XCCL_ITEM.format(
             title="x", h="f" * 40, size="1GB", date="2024-01-01", heat="1"))
-        self.assertEqual(sources._parse_xccl263(html)[0]["source"], "小草磁力")
+        self.assertEqual(sources._parse_xccl263(html)[0]["source"], "xccl263")
+
+    def test_builtin_adapters_emit_keys_not_labels(self):
+        emitted = _emitted_source_literals()
+        self.assertTrue(emitted, "没扫到任何 source= 字面量，护栏失效了")
+        unknown = sorted(v for v in emitted if v not in sources.BUILTIN_KEYS)
+        self.assertEqual(
+            unknown, [],
+            "内置源写出的 source 必须是自己的 key，界面靠 key 反查名称。"
+            "写中文名（或写别的源的 key）会让「来源」列显示成另一回事，"
+            "而且两个不同源会显示成同一个名字：" + repr(unknown))
+
+    def test_each_adapter_emits_its_own_key(self):
+        by_name = _adapter_source_map()
+        wrong = []
+        for key, (_label, fn) in sources._BUILTIN_ADAPTERS.items():
+            emitted = by_name.get(fn.__name__)
+            if emitted is not None and emitted != key:
+                wrong.append((key, fn.__name__, emitted))
+        self.assertEqual(
+            wrong, [],
+            "适配器写出的 source 与自己的 key 不一致（key, 函数, 实际写出）："
+            + repr(wrong))
 
 
 class Xccl263SearchTest(unittest.TestCase):

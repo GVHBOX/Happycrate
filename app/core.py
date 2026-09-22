@@ -64,10 +64,7 @@ def _merge_size(values) -> int:
             nums.append(n)
     if not nums:
         return 0
-    if len(nums) < 3:
-        return max(nums)
-    nums.sort()
-    return nums[len(nums) // 2]
+    return max(nums)
 
 
 def _merge_earliest(values) -> int:

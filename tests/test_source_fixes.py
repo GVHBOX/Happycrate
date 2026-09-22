@@ -433,6 +433,12 @@ if __name__ == "__main__":
 
 class TunAdapterTest(unittest.TestCase):
 
+    def setUp(self):
+        sources.reset_tun_cache()
+
+    def tearDown(self):
+        sources.reset_tun_cache()
+
     def test_detects_clash_adapter(self):
         out = ("Windows IP Configuration\r\n"
                "\r\n"

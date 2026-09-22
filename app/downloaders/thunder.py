@@ -167,7 +167,7 @@ class ProtocolMethod(Method):
         logger.error("迅雷协议方式全部失败，首个错误：%s",
                      errors[0] if errors else "未知")
         return DeliveryResult(0, len(magnets),
-                              errors or ["迅雷启动出错，请检查安装"], self.key)
+                              errors or ["迅雷主程序启动失败"], self.key)
 
 class Thunder(Downloader):
 

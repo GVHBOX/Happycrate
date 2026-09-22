@@ -72,5 +72,29 @@ class AdapterPageContractTest(unittest.TestCase):
         self.assertEqual(seen, [4], "支持分页的源必须把页码原样传下去")
 
 
+class AdapterLabelContractTest(unittest.TestCase):
+
+    def test_adapter_labels_match_default_sources(self):
+        from app import config
+        want = {s["key"]: s["label"] for s in config.DEFAULT_SOURCES}
+        wrong = []
+        for key, (label, _fn) in sources._BUILTIN_ADAPTERS.items():
+            if want.get(key) != label:
+                wrong.append((key, label, want.get(key)))
+        self.assertEqual(
+            wrong, [],
+            "_BUILTIN_ADAPTERS 的 label 与 config.DEFAULT_SOURCES 漂移了"
+            "（key, 适配器里的, 配置里的）：" + repr(wrong)
+            + "。界面上源名以 DEFAULT_SOURCES 为准，两边必须一致")
+
+    def test_every_default_source_has_an_adapter(self):
+        from app import config
+        missing = sorted(s["key"] for s in config.DEFAULT_SOURCES
+                         if s["type"] == "builtin"
+                         and s["key"] not in sources.BUILTIN_KEYS)
+        self.assertEqual(missing, [],
+                         "这些内置源在配置里有、却没有适配器函数：" + repr(missing))
+
+
 if __name__ == "__main__":
     unittest.main()

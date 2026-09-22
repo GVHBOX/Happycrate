@@ -149,17 +149,14 @@ class PaginationRealityTest(unittest.TestCase):
                       "nyaa 的分页参数要照实传；源站当前忽略它，但不是我们的 bug")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class NoProxyDiagnosisTest(unittest.TestCase):
 
     KEYS = ["nyaa", "apibay", "mikan", "dmhy", "sukebei",
             "eztv", "bitsearch", "tpb", "xccl263"]
 
-    def hint(self, errors, proxy):
-        with mock.patch.object(sources, "proxy_info", lambda: proxy):
+    def hint(self, errors, proxy, tun=""):
+        with mock.patch.object(sources, "proxy_info", lambda: proxy),              mock.patch.object(sources, "tun_adapter", lambda *a, **k: tun):
             return sources.proxy_hint_for(errors)
 
     def test_no_proxy_plus_widespread_timeout_names_the_cause(self):
@@ -189,7 +186,7 @@ class NoProxyDiagnosisTest(unittest.TestCase):
         self.assertIn("未检测到代理", self.hint(errors, {}))
 
     def test_empty_errors_fall_back_to_generic(self):
-        self.assertEqual(self.hint({}, {}), "网络请求失败，请检查网络连接。")
+        self.assertEqual(self.hint({}, {}), sources.NET_FAIL_TEXT)
 
     def test_overseas_set_covers_the_known_walled_sources(self):
         for key in ("nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb"):
@@ -203,9 +200,8 @@ class NoProxyDiagnosisTest(unittest.TestCase):
             return {k: ([], "URLError: <urlopen error timed out>", 1)
                     for k in self.KEYS}
 
-        with mock.patch.object(sources, "search_many", fake_many):
-            with mock.patch.object(sources, "proxy_info", lambda: {}):
-                _res, fatal = core.search("1080p", 1, None, self.KEYS, min_len=2)
+        with mock.patch.object(sources, "search_many", fake_many),              mock.patch.object(sources, "proxy_info", lambda: {}),              mock.patch.object(sources, "tun_adapter", lambda *a, **k: ""):
+            _res, fatal = core.search("1080p", 1, None, self.KEYS, min_len=2)
         self.assertIsNotNone(fatal, "全源超时且无代理时必须给出整体提示")
         self.assertIn("未检测到代理", fatal)
 
@@ -460,3 +456,7 @@ class SelbarDefaultTest(unittest.TestCase):
     def test_mock_default_is_off(self):
         src = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         self.assertRegex(src, r"selbar:\s*false")
+
+
+if __name__ == "__main__":
+    unittest.main()

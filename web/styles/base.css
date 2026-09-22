@@ -650,10 +650,10 @@ input, textarea{
 .progress.style-flow .fill{height:100%;width:calc(var(--p)*100%);position:relative;
   overflow:hidden;transition:width .25s var(--e-out)}
 .progress.style-flow .fill .tex{position:absolute;inset:-14px -20px;
-  background:repeating-linear-gradient(-55deg,var(--brand) 0 11px,#3A36B8 11px 16px);
+  background:repeating-linear-gradient(-55deg,var(--brand) 0 11px,var(--brand-stripe) 11px 16px);
   animation:segflow .8s linear infinite}
 .progress.style-flow.slow .fill .tex{
-  background:repeating-linear-gradient(-55deg,var(--warn) 0 11px,#8a6404 11px 16px)}
+  background:repeating-linear-gradient(-55deg,var(--warn) 0 11px,var(--warn-stripe) 11px 16px)}
 .progress.on.wait .fill{width:40%;animation:indet 1.1s var(--e) infinite}
 @keyframes indet{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 .progress.wait .seg{animation:segscan 1.9s linear infinite}

@@ -1,7 +1,7 @@
 import { spawn, execSync } from "node:child_process";
 import { createServer } from "node:http";
 import { get as httpGet } from "node:http";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, readdirSync } from "node:fs";
 import { dirname, extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -89,6 +89,7 @@ async function main() {
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const profileDir = join(tmpRoot, "hc-e2e-" + stamp);
+  await sweepStaleProfiles(profileDir);
   mkdirSync(profileDir, { recursive: true });
 
   try {
@@ -113,7 +114,42 @@ async function main() {
     return 1;
   } finally {
     if (server) server.close();
+    await sweepProfile(profileDir);
   }
+}
+
+async function sweepStaleProfiles(keep) {
+  let names = [];
+  try {
+    names = readdirSync(tmpRoot).filter((n) => n.startsWith("hc-e2e-"));
+  } catch (e) {
+    return;
+  }
+  for (const name of names) {
+    const dir = join(tmpRoot, name);
+    if (dir === keep) continue;
+    try {
+      rmSync(dir, { recursive: true, force: true, maxRetries: 2 });
+      console.log("[clean] 清掉上次残留:", name);
+    } catch (e) {}
+  }
+}
+
+async function sweepProfile(dir) {
+  if (process.env.HC_KEEP_PROFILE === "1") {
+    console.log("[clean] 保留 profile（HC_KEEP_PROFILE=1）:", dir);
+    return;
+  }
+  for (let i = 0; i < 4; i++) {
+    try {
+      rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
+      console.log("[clean] 已删除 profile:", dir);
+      return;
+    } catch (e) {
+      await sleep(700);
+    }
+  }
+  console.log("[clean] profile 仍被占用，稍后清理:", dir);
 }
 
 async function runOnce(exe, profileDir, pageUrl) {

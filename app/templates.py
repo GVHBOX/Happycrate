@@ -325,6 +325,6 @@ def test_source(entry: dict, query: str = "test", timeout: int = 15):
         return False, 0, f"{type(exc).__name__}: {exc}"
     count = len(items or [])
     if count == 0:
-        return True, 0, "请求成功，但没有解析到结果（检查字段映射或正则）"
+        return True, 0, "请求成功，但没有解析到结果：字段映射或正则不匹配"
     return True, count, ""
 

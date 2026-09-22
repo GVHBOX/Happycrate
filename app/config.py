@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 
 from . import log, paths
 
@@ -105,6 +106,35 @@ SETTING_LABELS = {
 
 SOURCE_TIMEOUT_MIN = 1
 SOURCE_TIMEOUT_MAX = 120
+
+PATTERN_PROBE_BYTES = 8 * 1024
+PATTERN_LIMIT_SECONDS = 0.2
+
+_NESTED_QUANT_RE = re.compile(
+    r"\([^()]*[*+][^()]*\)\s*[*+{]"      # (a+)+ / (a+)* / (a+){2,}
+    r"|\[[^\]]*\][*+]\s*[*+]"            # a*+ 这类占有式叠写
+    r"|\.\*[^)]*[*+]\s*\)"               # (.*)+
+)
+
+
+def risky_pattern_text(pattern: str) -> str:
+    source = str(pattern or "")
+    if _NESTED_QUANT_RE.search(source):
+        return "存在嵌套量词"
+    return ""
+
+
+def slow_pattern(compiled, size: int = PATTERN_PROBE_BYTES) -> int:
+    if not hasattr(compiled, "search"):
+        return 0
+    sample = (("<a href=\"magnet:?xt=urn:btih:" + "a" * 40 + "\">x</a> "
+               "1080p BluRay 1.96GB 2024-05-06 eps 12 [Sub] ") * 32)[:size]
+    started = time.monotonic()
+    try:
+        compiled.search(sample)
+    except Exception:
+        return 0
+    return size if time.monotonic() - started > PATTERN_LIMIT_SECONDS else 0
 
 def clamp_timeout(value, default: int = 15) -> int:
     try:
@@ -262,9 +292,16 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
             if not value:
                 continue
             try:
-                re.compile(value)
+                compiled = re.compile(value)
             except re.error as exc:
                 errs.append(f"{label}正则无效：{exc}")
+                continue
+            risk = risky_pattern_text(value)
+            if risk:
+                errs.append(f"{label}正则{risk}，匹配长文本时会卡住搜索")
+                continue
+            if slow_pattern(compiled):
+                errs.append(f"{label}正则匹配太慢，会在搜索时卡住")
 
         if stype != "html":
             mapping = src.get("map") or {}

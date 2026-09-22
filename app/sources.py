@@ -10,6 +10,7 @@ import socket
 import subprocess
 import sys
 import ssl
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -41,22 +42,28 @@ _LAX_TTL = 600.0
 _LAX_LIMIT = 32
 
 _LAX_HOSTS: dict[str, float] = {}
+_LAX_LOCK = threading.Lock()
 
 def ssl_lax_hosts() -> list[str]:
     _expire_lax()
-    return sorted(_LAX_HOSTS)
+    with _LAX_LOCK:
+        return sorted(_LAX_HOSTS)
 
 def ssl_known_lax(url: str) -> bool:
     _expire_lax()
-    return (urllib.parse.urlsplit(url).hostname or "") in _LAX_HOSTS
+    host = urllib.parse.urlsplit(url).hostname or ""
+    with _LAX_LOCK:
+        return host in _LAX_HOSTS
 
 def ssl_mark_lax(url: str) -> None:
     host = urllib.parse.urlsplit(url).hostname or url
     now = time.monotonic()
-    _LAX_HOSTS[host] = now + _LAX_TTL
-    if len(_LAX_HOSTS) > _LAX_LIMIT:
-        for stale in sorted(_LAX_HOSTS, key=_LAX_HOSTS.get)[:len(_LAX_HOSTS) - _LAX_LIMIT]:
-            _LAX_HOSTS.pop(stale, None)
+    with _LAX_LOCK:
+        _LAX_HOSTS[host] = now + _LAX_TTL
+        if len(_LAX_HOSTS) > _LAX_LIMIT:
+            stale = sorted(_LAX_HOSTS, key=_LAX_HOSTS.get)
+            for name in stale[:len(_LAX_HOSTS) - _LAX_LIMIT]:
+                _LAX_HOSTS.pop(name, None)
 
 def _error_text(exc: BaseException) -> str:
     reason = getattr(exc, "reason", None)
@@ -77,12 +84,14 @@ def _demote_ssl(url: str, exc: BaseException) -> None:
     ssl_mark_lax(url)
 
 def reset_ssl_lax() -> None:
-    _LAX_HOSTS.clear()
+    with _LAX_LOCK:
+        _LAX_HOSTS.clear()
 
 def _expire_lax() -> None:
     now = time.monotonic()
-    for host in [h for h, until in _LAX_HOSTS.items() if until <= now]:
-        _LAX_HOSTS.pop(host, None)
+    with _LAX_LOCK:
+        for host in [h for h, until in _LAX_HOSTS.items() if until <= now]:
+            _LAX_HOSTS.pop(host, None)
 
 _SIZE_RE = re.compile(r"(-?\d{1,12}(?:\.\d{1,4})?)\s*([KMGTP]?)i?[Bb](?![A-Za-z0-9])")
 _SIZE_SCAN_LIMIT = 200
@@ -139,19 +148,23 @@ def _captcha_wall(exc) -> bool:
     return any(sign in body for sign in _CAPTCHA_SIGNS)
 
 _cancel_epoch = 0
+_EPOCH_LOCK = threading.Lock()
 
 def start_batch() -> int:
     global _cancel_epoch
-    _cancel_epoch += 1
-    return _cancel_epoch
+    with _EPOCH_LOCK:
+        _cancel_epoch += 1
+        return _cancel_epoch
 
 def cancel_batch(token: int) -> None:
     global _cancel_epoch
-    if _cancel_epoch <= token:
-        _cancel_epoch = token + 1
+    with _EPOCH_LOCK:
+        if _cancel_epoch <= token:
+            _cancel_epoch = token + 1
 
 def _batch_alive(token: int) -> bool:
-    return token == _cancel_epoch
+    with _EPOCH_LOCK:
+        return token == _cancel_epoch
 
 def _ua() -> str:
     import os
@@ -183,7 +196,7 @@ def parse_proxy(raw: str) -> tuple[dict, str]:
     def reject(part: str) -> str:
         scheme = part.split("://", 1)[0].lower() if "://" in part else ""
         if scheme.startswith("socks"):
-            return f"不支持 {scheme} 代理，请填它的 HTTP 代理端口"
+            return f"不支持 {scheme} 代理，只支持 HTTP 代理端口"
         return f"代理地址格式无法识别：{part}"
 
     if len(parts) == 1:
@@ -261,12 +274,31 @@ def _proxy_works(mapping: dict) -> bool:
         return False
 
 _TUN_WORDS = ("clash", "mihomo", "wintun", "sing-box", "singbox", "v2ray",
-              "tap-windows", "tun")
+              "tap-windows", "utun", "tunnel")
+
+_TUN_ADAPTER_TTL = 30.0
+_tun_cache = {"at": 0.0, "name": None}
 
 
-def tun_adapter() -> str:
+def reset_tun_cache() -> None:
+    _tun_cache["at"] = 0.0
+    _tun_cache["name"] = None
+
+
+def tun_adapter(force: bool = False) -> str:
     if sys.platform != "win32":
         return ""
+    now = time.monotonic()
+    if (not force and _tun_cache["name"] is not None
+            and now - _tun_cache["at"] < _TUN_ADAPTER_TTL):
+        return _tun_cache["name"]
+    name = _scan_tun_adapter()
+    _tun_cache["at"] = time.monotonic()
+    _tun_cache["name"] = name
+    return name
+
+
+def _scan_tun_adapter() -> str:
     try:
         out = subprocess.run(
             ["ipconfig"], capture_output=True, text=True,
@@ -353,35 +385,40 @@ def _is_timeout_text(err: str) -> bool:
     low = (err or "").lower()
     return "timed out" in low or "timeout" in low or "超时" in (err or "")
 
+NET_FAIL_TEXT = "网络请求失败"
+NET_TIMEOUT_TEXT = "网络请求超时"
+
+
+def _proxy_down_text(addr: str) -> str:
+    return f"系统代理 {addr} 连不上"
+
+
 def proxy_hint_for(errors: dict) -> str:
     p = proxy_info()
     if p:
         addr = p.get("https") or p.get("http") or ""
-        return (f"系统代理 {addr} 连不上。若使用 Clash / v2ray 等，"
-                f"请确认已启动；或在系统设置里关闭代理后重试。")
+        return _proxy_down_text(addr)
 
     keys = [k for k in (errors or {}) if k]
     if not keys:
-        return "网络请求失败，请检查网络连接。"
+        return NET_FAIL_TEXT
 
     timed = [k for k in keys if _is_timeout_text((errors or {}).get(k, ""))]
     overseas = [k for k in timed if k in _OVERSEAS_KEYS]
     if len(overseas) >= 2 and len(overseas) * 2 >= len(keys):
         if tun_adapter():
             return "TUN 模式已接管网络，这些源仍超时：可能被墙或站点故障。"
-        return ("未检测到代理，这些源需要代理才能访问，"
-                "请在设置里填写代理地址或打开系统代理后重试。")
+        return "未检测到代理，这些源需要代理才能访问。"
     if timed:
-        return "网络请求超时，请检查网络连接。"
-    return "网络请求失败，请检查网络连接。"
+        return NET_TIMEOUT_TEXT
+    return NET_FAIL_TEXT
 
 def proxy_hint() -> str:
     p = proxy_info()
     if not p:
-        return "网络请求失败，请检查网络连接。"
+        return NET_FAIL_TEXT
     addr = p.get("https") or p.get("http") or ""
-    return (f"系统代理 {addr} 连不上。若使用 Clash / v2ray 等，"
-            f"请确认已启动；或在系统设置里关闭代理后重试。")
+    return _proxy_down_text(addr)
 
 def _looks_like_proxy_failure(exc: BaseException) -> bool:
     if isinstance(exc, urllib.error.HTTPError):
@@ -415,11 +452,12 @@ def _read_capped(resp, limit: int | None, strict: bool = True) -> bytes:
         if not chunk:
             break
         got += len(chunk)
-        if got > limit and strict:
-            raise TooLarge(f"响应超过 {limit} 字节上限")
-        chunks.append(chunk)
         if got > limit:
+            if strict:
+                raise TooLarge(f"响应超过 {limit} 字节上限")
+            chunks.append(chunk[:limit - (got - len(chunk))])
             break
+        chunks.append(chunk)
     return b"".join(chunks)
 
 def http_get(url: str, timeout: int = 15, referer: str = "",
@@ -737,7 +775,7 @@ DEFAULT_BASES = {
 }
 
 def base_of(entry_key: str, base: str = "") -> str:
-    return (base or DEFAULT_BASES.get(entry_key, "")).rstrip("/")
+    return _base_of(base, DEFAULT_BASES.get(entry_key, ""))
 
 def _base_of(base: str, default: str) -> str:
     return (base or default).rstrip("/")
@@ -799,7 +837,7 @@ def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]
             seeders=_to_int(row.get("seeders")),
             leechers=_to_int(row.get("leechers")),
             added=_to_int(row.get("added")),
-            source="TPB",
+            source="apibay",
         ))
 
     if items and not _apibay_relevant(items, query):
@@ -810,15 +848,15 @@ def _search_nyaa(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["nyaa"])
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
     return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "Nyaa", root)
+        http_get(url, timeout=timeout, batch=batch), "nyaa", root)
 
 def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["sukebei"])
     url = f"{root}/?page=rss&q={urllib.parse.quote(query)}&p={int(page)}"
     return _parse_nyaa_rss(
-        http_get(url, timeout=timeout, batch=batch), "Sukebei", root)
+        http_get(url, timeout=timeout, batch=batch), "sukebei", root)
 
-def _parse_nyaa_rss(text: str, label: str, root: str = "") -> list[dict]:
+def _parse_nyaa_rss(text: str, source_key: str, root: str = "") -> list[dict]:
     items: list[dict] = []
     for chunk in _split_items(text):
         title = _unescape(_tags(chunk, "title")[0])
@@ -834,7 +872,7 @@ def _parse_nyaa_rss(text: str, label: str, root: str = "") -> list[dict]:
             seeders=_to_int(_tags(chunk, "nyaa:seeders")[0]),
             leechers=_to_int(_tags(chunk, "nyaa:leechers")[0]),
             added=_ts_from_rfc(_tags(chunk, "pubDate")[0]),
-            source=label,
+            source=source_key,
         )
         gid = re.search(r"/view/(\d+)", _tags(chunk, "guid")[0])
         if gid and root:
@@ -863,7 +901,7 @@ def _search_mikan(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
             size=parse_size(_tags(chunk, "contentLength")[0]),
             added=_ts_from_naive_cn(_tags(chunk, "pubDate")[0])
             or _ts_from_iso(_tags(chunk, "pubDate")[0]),
-            source="Mikan",
+            source="mikan",
         ))
     return items
 
@@ -943,7 +981,7 @@ def _parse_dmhy_list(page_text: str, root: str) -> tuple[list[dict], int, bool]:
             size=_dmhy_size(cells[4]),
             seeders=_dmhy_count(cells[5]),
             added=_dmhy_pub_date(row),
-            source="DMHY",
+            source="dmhy",
         )
         if link:
             it["fetch"] = {"url": root + link.group(1)}
@@ -970,15 +1008,18 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     seen: set[str] = set()
     items: list[dict] = []
     pages: dict[int, tuple[list[dict], int, bool]] = {}
+    failed: dict[int, Exception] = {}
     pool = futures.ThreadPoolExecutor(max_workers=DMHY_WORKERS)
     try:
         jobs = {pool.submit(_dmhy_page, root, p, needle, timeout, batch): p
                 for p in range(1, DMHY_PAGES + 1)}
         for job in futures.as_completed(jobs):
+            p = jobs[job]
             try:
-                pages[jobs[job]] = job.result()
+                pages[p] = job.result()
             except Exception as exc:
-                logger.debug("DMHY 第 %d 页失败：%s", jobs[job], exc)
+                failed[p] = exc
+                logger.debug("DMHY 第 %d 页失败：%s", p, exc)
     finally:
         pool.shutdown(wait=False, cancel_futures=True)
 
@@ -988,8 +1029,16 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
             break
 
     if items:
+        lost = sorted(set(failed) | {p for p, v in pages.items() if not v[2]})
+        if lost:
+            logger.warning("DMHY 有 %d/%d 页没拿到结果，可能不全：%s",
+                           len(lost), DMHY_PAGES, lost)
         return items[:DMHY_MAX_HITS]
-    if pages.get(1, ([], 0, False))[2]:
+    if any(v[2] for v in pages.values()):
+        return []
+    if failed:
+        raise next(iter(failed.values()))
+    if pages and any(v[1] for v in pages.values()):
         return []
     return _search_dmhy_rss(query, timeout, root, batch)
 
@@ -1018,7 +1067,7 @@ def _search_dmhy_rss(query, timeout, root, batch) -> list[dict]:
         it = _mk(
             title=title, info_hash=h, size=size,
             added=_ts_from_rfc(_tags(chunk, "pubDate")[0]),
-            source="DMHY",
+            source="dmhy",
         )
         guid = _tags(chunk, "guid")[0].strip()
         if guid.startswith("http"):
@@ -1057,7 +1106,7 @@ def _eztv_page(root: str, p: int, timeout: int, batch) -> list[dict]:
             seeders=_to_int(row.get("seeds")),
             leechers=_to_int(row.get("peers")),
             added=_to_int(row.get("date_released_unix")),
-            source="EZTV",
+            source="eztv",
         ))
     return out
 
@@ -1069,6 +1118,7 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
 
     first = _eztv_page(root, 1, timeout, batch)
     pages: dict[int, list[dict]] = {1: first}
+    failed: dict[int, Exception] = {}
 
     if len(first) >= EZTV_PAGE_SIZE:
         rest = list(range(2, EZTV_PAGES + 1))
@@ -1081,10 +1131,13 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
                 try:
                     pages[p] = job.result()
                 except Exception as exc:
+                    failed[p] = exc
                     logger.debug("EZTV 第 %d 页失败：%s", p, exc)
-                    pages[p] = []
         finally:
             pool.shutdown(wait=False, cancel_futures=True)
+
+        if failed and len(failed) >= len(rest):
+            raise next(iter(failed.values()))
 
     items: list[dict] = []
     seen: set[str] = set()
@@ -1098,7 +1151,11 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
             seen.add(h)
             items.append(it)
             if len(items) >= EZTV_MAX_HITS:
-                return items
+                items = items[:EZTV_MAX_HITS]
+                break
+    if failed:
+        logger.warning("EZTV 有 %d 页失败，结果可能不全：%s",
+                       len(failed), sorted(failed))
     return items
 
 BITSEARCH_PAGES = 2
@@ -1137,7 +1194,7 @@ def _bitsearch_page(root: str, p: int, query: str, timeout: int, batch) -> list[
             seeders=_to_int(row.get("seeders")),
             leechers=_to_int(row.get("leechers")),
             added=_ts_from_iso(_text(row.get("updatedAt"))),
-            source="BitSearch",
+            source="bitsearch",
         ))
     return out
 
@@ -1263,7 +1320,7 @@ def _tpb_parse(text: str) -> list[dict]:
         items.append(_mk(
             title=title, info_hash=h, size=size,
             seeders=seeders, leechers=leechers, added=added,
-            source="TPB镜像",
+            source="tpb",
         ))
     return items
 
@@ -1281,7 +1338,8 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
     budget = max(1, int(timeout))
     deadline = time.monotonic() + budget
     per_try = max(3, budget // 2)
-    last_exc: Exception | None = None
+    net_exc: Exception | None = None
+    shape_exc: Exception | None = None
 
     for root in roots:
         left = int(deadline - time.monotonic())
@@ -1291,13 +1349,13 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
         try:
             text = _tpb_fetch(root, query, page, min(left, per_try), batch)
         except Exception as exc:
-            last_exc = exc
+            net_exc = exc
             logger.debug("TPB 镜像 %s 请求失败：%s", root, exc)
             continue
 
         if _TPB_RESULT_MARK not in text:
-            last_exc = ShapeError(f"TPB 镜像 {root} 返回的不是搜索结果页")
-            logger.debug("%s", last_exc)
+            shape_exc = ShapeError(f"TPB 镜像 {root} 返回的不是搜索结果页")
+            logger.debug("%s", shape_exc)
             continue
 
         items = _tpb_parse(text)
@@ -1307,8 +1365,10 @@ def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[d
             return []
         logger.debug("TPB 镜像 %s 结果页没有条目，换下一个", root)
 
-    if last_exc is not None:
-        raise last_exc
+    if net_exc is not None:
+        raise net_exc
+    if shape_exc is not None:
+        raise shape_exc
     return []
 
 _BENCODE_MAX_DEPTH = 32
@@ -1424,7 +1484,7 @@ def _parse_xccl263(text: str) -> list[dict]:
             size=parse_size(size.group(1)) if size else 0,
             seeders=_to_int(heat.group(1)) if heat else None,
             added=_xccl_added(date.group(1)) if date else None,
-            source="小草磁力",
+            source="xccl263",
         ))
     return items
 

@@ -256,8 +256,7 @@ def _watch(window, url: str, bridge) -> None:
     if not _ensure_bridge(window, url):
         logger.error("界面桥接多次未就绪，退出")
         alert(
-            "界面初始化失败，请重新启动程序。\n\n"
-            "如果反复出现，请把这个目录里的日志发给我：\n" + str(log.logs_dir())
+            "界面初始化失败。\n\n日志目录：\n" + str(log.logs_dir())
         )
         try:
             window.destroy()
@@ -291,16 +290,15 @@ def run() -> int:
 
     logger.info("%s v%s 就绪 · 界面目录 %s", APP_TITLE, __version__, web_dir())
     if not (web_dir() / "index.html").is_file():
-        alert(f"找不到界面文件：{web_dir() / 'index.html'}\n\n程序可能损坏，请重新下载完整压缩包。")
+        alert(f"找不到界面文件：{web_dir() / 'index.html'}\n\n安装包不完整，缺少 web/ 目录。")
         single.release()
         return 1
 
     if not has_webview2():
         store.copy_to_clipboard(WEBVIEW2_URL)
         alert(
-            "这个程序需要 Windows 的 WebView2 运行库才能显示界面。\n\n"
-            "下载地址已经复制到剪贴板，粘贴到浏览器打开、装完再双击本程序即可：\n"
-            + WEBVIEW2_URL
+            "缺少 Windows 的 WebView2 运行库，界面无法显示。\n\n"
+            "运行库下载地址已复制到剪贴板：\n" + WEBVIEW2_URL
         )
         single.release()
         return 1

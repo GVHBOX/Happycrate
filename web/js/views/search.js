@@ -847,6 +847,9 @@
     if (!progEl) return;
     progEl.className = "progress " + styleClass();
     progEl.innerHTML = "";
+    var track = document.createElement("div");
+    track.className = "track";
+    progEl.appendChild(track);
     if (st.progStyle !== "flow"){
       var order = st.segOrder && st.segOrder.length ? st.segOrder : [];
       order.forEach(function(key, i){
@@ -854,18 +857,18 @@
         seg.className = "seg";
         seg.dataset.key = key;
         seg.style.animationDelay = (i * 0.08) + "s";
-        progEl.appendChild(seg);
+        track.appendChild(seg);
       });
-      if (st.progLineOn){
-        var dl = document.createElement("div");
-        dl.className = "deadline";
-        progEl.appendChild(dl);
-      }
     } else {
       var fill = document.createElement("div");
       fill.className = "fill";
       fill.innerHTML = '<div class="tex"></div>';
-      progEl.appendChild(fill);
+      track.appendChild(fill);
+    }
+    if (st.progLineOn && st.deadline > 0){
+      var dl = document.createElement("div");
+      dl.className = "deadline";
+      progEl.appendChild(dl);
     }
   }
 
@@ -876,7 +879,7 @@
     var isSeg = st.progStyle !== "flow";
     if (celebrate){
       if (isSeg){
-        [].slice.call(progEl.querySelectorAll(".seg")).forEach(function(seg){
+        [].slice.call(progEl.querySelectorAll(".seg:not(.err)")).forEach(function(seg){
           seg.className = "seg on";
         });
       } else {
@@ -918,7 +921,7 @@
     if (!st.busy || !progEl){ dlRaf = 0; return; }
     var elapsed = (performance.now() - st.t0) / 1000;
     var dl = st.progStyle === "segment" ? progEl.querySelector(".deadline") : null;
-    if (dl){
+    if (dl && st.deadline > 0){
       var ratio = Math.min(1, elapsed / (st.deadline / 1000));
       dl.style.left = (ratio * 100) + "%";
       dl.classList.add("show");
@@ -934,7 +937,8 @@
       }
     }
     if (st.progStyle === "flow"){
-      progEl.classList.toggle("slow", elapsed > st.deadline / 1000 && st.done < st.total);
+      progEl.classList.toggle("slow", st.deadline > 0 &&
+        elapsed > st.deadline / 1000 && st.done < st.total);
     }
     dlRaf = requestAnimationFrame(dlLoop);
   }
@@ -984,7 +988,8 @@
     st.segOrder = st.srcList.map(function(s){ return s.key; });
     if (!st.segOrder.length) st.segOrder = Object.keys(st.strip);
     st.t0 = performance.now();
-    st.deadline = (HC.settings && parseInt(HC.settings.soft_deadline_ms, 10)) || 3000;
+    var dlMs = HC.settings ? parseInt(HC.settings.soft_deadline_ms, 10) : NaN;
+    st.deadline = isNaN(dlMs) ? 3000 : dlMs;
     st.progGen = (st.progGen || 0) + 1;
     buildProg();
     progEl.classList.add("on", "wait");
@@ -1105,9 +1110,12 @@
     autoFiles = !s || s.auto_files !== false;
     var style = s && s.progress_style === "flow" ? "flow" : "segment";
     var line = !s || s.progress_line !== false;
-    if (st.progStyle !== style || st.progLineOn !== line){
+    var dlMs = s ? parseInt(s.soft_deadline_ms, 10) : NaN;
+    var deadline = isNaN(dlMs) ? 3000 : dlMs;
+    if (st.progStyle !== style || st.progLineOn !== line || st.deadline !== deadline){
       st.progStyle = style;
       st.progLineOn = line;
+      st.deadline = deadline;
       buildProg();
     }
     updateSelUI(true);
@@ -1139,7 +1147,7 @@
             '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
           '</div>' +
         '</div>' +
-        '<div class="progress" id="prog"><div class="fill"></div></div>' +
+        '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead">' + headHtml() + '</div>' +

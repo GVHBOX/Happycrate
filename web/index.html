@@ -82,6 +82,119 @@
     document.body.setAttribute("data-brand", v || "");
   };
 
+  var LOOK_DEFAULTS = {
+    on:"", warn:"", line:"", err:"", slot:"", gap:"",
+    h:10, radius:2.5, gapx:4, skew:16,
+    flow:700, ang:-55, sw:4, cycle:9, alpha:16, glow:8, pulse:550,
+    dlw:2, dlout:4, hold:420, step:45
+  };
+  var LOOK_RANGE = {
+    h:[6,16], radius:[0,6], gapx:[1,8], skew:[0,24],
+    flow:[300,2000], ang:[-80,-20], sw:[2,8], cycle:[6,18],
+    alpha:[5,40], glow:[0,14], pulse:[300,1200],
+    dlw:[1,4], dlout:[0,6], hold:[0,900], step:[15,110]
+  };
+  var LOOK_VARS = {
+    h:["--prog-h","px"], radius:["--prog-radius","px"], gapx:["--prog-gapx","px"],
+    skew:["--prog-skew","deg",-1], flow:["--prog-flow","ms"], ang:["--prog-ang","deg"],
+    sw:["--prog-sw","px"], cycle:["--prog-cycle","px"], alpha:["--prog-alpha","",0.01],
+    glow:["--prog-glow","px"], pulse:["--prog-pulse","ms"],
+    dlw:["--prog-dlw","px"], dlout:["--prog-dlout","px"]
+  };
+  var LOOK_COLORS = {on:"--prog-on", warn:"--prog-warn", line:"--prog-line",
+                     err:"--prog-err", slot:"--prog-slot", gap:"--prog-gap"};
+
+  function lookClamp(key, v){
+    var r = LOOK_RANGE[key];
+    if (!r) return v;
+    v = parseFloat(v);
+    if (isNaN(v)) return LOOK_DEFAULTS[key];
+    return Math.max(r[0], Math.min(r[1], v));
+  }
+
+  function readLook(raw){
+    var out = {};
+    var src = {};
+    if (typeof raw === "string" && raw){
+      try { src = JSON.parse(raw) || {}; } catch (e) { src = {}; }
+    } else if (raw && typeof raw === "object"){
+      src = raw;
+    }
+    Object.keys(LOOK_DEFAULTS).forEach(function(k){
+      var v = src[k];
+      if (v === undefined || v === null || v === ""){
+        out[k] = LOOK_DEFAULTS[k];
+      } else if (LOOK_RANGE[k]){
+        out[k] = lookClamp(k, v);
+      } else {
+        out[k] = String(v).trim();
+      }
+    });
+    return out;
+  }
+
+  function hexToHsl(hex){
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || "").trim());
+    if (!m) return null;
+    var r = parseInt(m[1].slice(0,2),16)/255, g = parseInt(m[1].slice(2,4),16)/255, b = parseInt(m[1].slice(4,6),16)/255;
+    var mx = Math.max(r,g,b), mn = Math.min(r,g,b), d = mx-mn, l = (mx+mn)/2, h = 0, s = 0;
+    if (d){
+      s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
+      if (mx === r) h = ((g-b)/d + (g < b ? 6 : 0));
+      else if (mx === g) h = (b-r)/d + 2;
+      else h = (r-g)/d + 4;
+      h *= 60;
+    }
+    return [h, s, l];
+  }
+
+  function shade(hex, dl){
+    var c = hexToHsl(hex);
+    if (!c) return "";
+    var s = Math.min(1, Math.max(0, c[1]));
+    var l = Math.min(1, Math.max(0, c[2] + dl));
+    var hh = ((c[0] % 360) + 360) % 360 / 360;
+    var q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    var f = function(t){
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q-p)*6*t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q-p)*(2/3-t)*6;
+      return p;
+    };
+    var to = function(v){ return ("0" + Math.round(Math.min(1,Math.max(0,v))*255).toString(16)).slice(-2); };
+    return "#" + to(f(hh + 1/3)) + to(f(hh)) + to(f(hh - 1/3));
+  }
+
+  var LOOK_HEX = /^#[0-9a-fA-F]{6}$/;
+
+  HC.applyProgressLook = function(raw){
+    var look = readLook(raw);
+    var st = document.documentElement.style;
+    Object.keys(LOOK_COLORS).forEach(function(k){
+      var v = look[k];
+      if (v && LOOK_HEX.test(v)) st.setProperty(LOOK_COLORS[k], v);
+      else st.removeProperty(LOOK_COLORS[k]);
+    });
+    if (look.on && LOOK_HEX.test(look.on)) st.setProperty("--prog-on-stripe", shade(look.on, -0.12));
+    else st.removeProperty("--prog-on-stripe");
+    if (look.warn && LOOK_HEX.test(look.warn)) st.setProperty("--prog-warn-stripe", shade(look.warn, -0.09));
+    else st.removeProperty("--prog-warn-stripe");
+    Object.keys(LOOK_VARS).forEach(function(k){
+      var spec = LOOK_VARS[k];
+      var v = look[k] * (spec[2] || 1);
+      if (spec[1] === "ms" || spec[1] === "px" || spec[1] === "deg") v = Math.round(v * 100) / 100;
+      st.setProperty(spec[0], String(v) + spec[1]);
+    });
+    HC.progressLook = look;
+    return look;
+  };
+  HC.LOOK_DEFAULTS = LOOK_DEFAULTS;
+  HC.LOOK_RANGE = LOOK_RANGE;
+  HC.readLook = readLook;
+  HC.lookShade = shade;
+
   var TONE = {light: "#FFFFFF", dark: "#131419"};
   var DIMMED = {light: "#A3A3AA", dark: "#6D6D70"};
   var lastTone = "";
@@ -112,6 +225,7 @@
       applyFont(s.ui_font_size);
       HC.applyTheme(s.theme);
       HC.applyBrand(s.brand);
+      HC.applyProgressLook(s.progress_look);
     });
   }
 

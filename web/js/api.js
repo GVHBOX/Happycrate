@@ -111,7 +111,7 @@
     default_downloader: "", proxy: "", user_agent: "",
     ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true,
     soft_deadline_ms: 3000, keep_duplicates: false, progress_style: "segment",
-    progress_line: true
+    progress_line: true, progress_look: ""
   };
   var mockDefaults = Object.assign({}, mockSettings);
 

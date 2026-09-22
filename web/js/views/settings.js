@@ -235,7 +235,8 @@
   var BRAND_OPTS = [
     {key:"", label:"默认"},
     {key:"teal", label:"青碧"},
-    {key:"slate", label:"石墨蓝"}
+    {key:"slate", label:"石墨蓝"},
+    {key:"lilac", label:"薰衣草"}
   ];
 
   function paintBrand(current){
@@ -246,6 +247,348 @@
       return '<button type="button" class="swatch" data-brand="' + o.key + '"' +
         ' aria-pressed="' + (on ? "true" : "false") + '" aria-label="' + esc(o.label) + '"></button>';
     }).join("");
+  }
+
+  var LOOK_COLORS = [
+    {key:"on", label:"已返回"},
+    {key:"warn", label:"超期"},
+    {key:"line", label:"警戒线"},
+    {key:"err", label:"失败"},
+    {key:"slot", label:"空槽"},
+    {key:"gap", label:"槽底"}
+  ];
+
+  var LOOK_NUMS = [
+    {key:"h", label:"条高", unit:"px", step:1},
+    {key:"radius", label:"圆角", unit:"px", step:0.5},
+    {key:"gapx", label:"间距", unit:"px", step:1},
+    {key:"skew", label:"斜切", unit:"°", step:1},
+    {key:"flow", label:"斜纹周期", unit:"ms", step:50},
+    {key:"ang", label:"条纹角度", unit:"°", step:1},
+    {key:"sw", label:"亮条宽", unit:"px", step:1},
+    {key:"cycle", label:"条纹周期", unit:"px", step:1},
+    {key:"alpha", label:"白纹浓度", unit:"%", step:1},
+    {key:"glow", label:"辉光", unit:"px", step:1},
+    {key:"pulse", label:"脉冲周期", unit:"ms", step:50},
+    {key:"dlw", label:"线宽", unit:"px", step:1},
+    {key:"dlout", label:"线出头", unit:"px", step:1},
+    {key:"hold", label:"完成停顿", unit:"ms", step:30},
+    {key:"step", label:"熄灭间隔", unit:"ms", step:5}
+  ];
+
+  var LOOK_PRESETS = [
+    {key:"", label:"跟随主题"},
+    {key:"aubergine", label:"藕紫"},
+    {key:"mint", label:"薄荷"},
+    {key:"sky", label:"晴空"},
+    {key:"matcha", label:"抹茶"}
+  ];
+
+  var LOOK_PRESET_COLORS = {
+    aubergine:{on:"#8B7FE0", warn:"#6F5CB8", line:"#4C3D8F", err:"#D4676E", slot:"#E3E1F2", gap:"#C5C1DF"},
+    mint:{on:"#1F9C82", warn:"#177A63", line:"#0E4F41", err:"#D4676E", slot:"#DCE7E3", gap:"#BDD3CD"},
+    sky:{on:"#1C8FC9", warn:"#126B99", line:"#0F4A66", err:"#D4676E", slot:"#DBE6F0", gap:"#B9CDE3"},
+    matcha:{on:"#6BA33F", warn:"#4E7B2C", line:"#37581E", err:"#D4676E", slot:"#E4E9DB", gap:"#C6D3B9"}
+  };
+
+  var LOOK_FALLBACK_DEFAULTS = {
+    on:"", warn:"", line:"", err:"", slot:"", gap:"",
+    h:10, radius:2.5, gapx:4, skew:16,
+    flow:700, ang:-55, sw:4, cycle:9, alpha:16, glow:8, pulse:550,
+    dlw:2, dlout:4, hold:420, step:45
+  };
+
+  var LOOK_FALLBACK_RANGE = {
+    h:[6,16], radius:[0,6], gapx:[1,8], skew:[0,24],
+    flow:[300,2000], ang:[-80,-20], sw:[2,8], cycle:[6,18],
+    alpha:[5,40], glow:[0,14], pulse:[300,1200],
+    dlw:[1,4], dlout:[0,6], hold:[0,900], step:[15,110]
+  };
+
+  var look = null;
+  var lookPreset = "";
+  var lookRaf = 0;
+  var lookTimes = [];
+  var lookTimer = [];
+
+  function lookDefaults(){
+    var out = {};
+    var base = Object.assign({}, LOOK_FALLBACK_DEFAULTS, HC.LOOK_DEFAULTS || {});
+    Object.keys(base).forEach(function(k){ out[k] = base[k]; });
+    return out;
+  }
+
+  function lookRange(key){
+    return (HC.LOOK_RANGE || {})[key] || LOOK_FALLBACK_RANGE[key] || null;
+  }
+
+  function lookNum(v, key){
+    var r = lookRange(key);
+    v = parseFloat(v);
+    if (isNaN(v)) v = lookDefaults()[key];
+    if (r) v = Math.max(r[0], Math.min(r[1], v));
+    return v;
+  }
+
+  function lookRead(){
+    if (!look) return lookDefaults();
+    return look;
+  }
+
+  var LOOK_VAR = {on:"--prog-on", warn:"--prog-warn", line:"--prog-line",
+                  err:"--prog-err", slot:"--prog-slot", gap:"--prog-gap"};
+
+  function rgbToHex(v){
+    var m = /^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(String(v || ""));
+    if (!m) return "";
+    var to = function(n){
+      return ("0" + Math.round(Math.max(0, Math.min(255, parseFloat(n)))).toString(16)).slice(-2);
+    };
+    return "#" + to(m[1]) + to(m[2]) + to(m[3]);
+  }
+
+  function lookCurrentColor(key){
+    var v = lookRead()[key];
+    if (v && /^#[0-9a-fA-F]{6}$/.test(v)) return v;
+    var css = (getComputedStyle(document.documentElement)
+      .getPropertyValue(LOOK_VAR[key] || "") || "").trim();
+    if (/^#[0-9a-fA-F]{3}$/.test(css)){
+      return "#" + css[1] + css[1] + css[2] + css[2] + css[3] + css[3];
+    }
+    if (/^#[0-9a-fA-F]{6}$/.test(css)) return css;
+    var rgb = rgbToHex(css);
+    if (rgb && !/rgba\(/i.test(css)) return rgb;
+    var fb = LOOK_COLOR_FALLBACK[key];
+    if (fb) return document.body.classList.contains("dark") ? fb.dark : fb.light;
+    if (rgb) return rgb;
+    return "#8B7FE0";
+  }
+
+  var LOOK_COLOR_FALLBACK = {
+    gap:{light:"#C7CAD3", dark:"#3A3D4C"},
+    slot:{light:"#F1F2F5", dark:"#252732"},
+    on:{light:"#4A45E3", dark:"#5B56EE"}
+  };
+
+  function lookHtml(){
+    var l = lookRead();
+    return '<div class="lookprev">' +
+        '<div class="progress" id="lookBar"><div class="track" id="lookTrack"></div>' +
+          '<div class="deadline" id="lookDl"></div></div>' +
+        '<div class="lookrow"><button type="button" class="btn btn-ghost" id="btnLookPlay">播放一轮</button>' +
+          '<span class="lookst" id="lookSt">9 个源 · 最快 0.4s · 最慢 4.0s</span></div>' +
+      '</div>' +
+      '<div class="field inline"><span class="lbl" id="lb_lookp">配色</span>' +
+        '<div class="seg" id="s_lookpreset" role="group" aria-labelledby="lb_lookp">' +
+        segHtml(LOOK_PRESETS, lookPreset, "lp") + '</div></div>' +
+      '<div class="looksub">颜色</div>' +
+      '<div class="lookgrid c3">' + LOOK_COLORS.map(function(c){
+        return '<div class="lookc"><input type="color" class="csel" data-lookc="' + c.key +
+          '" value="' + lookCurrentColor(c.key) + '" aria-label="' + esc(c.label) + '">' +
+          '<span>' + esc(c.label) + '</span></div>';
+      }).join("") + '</div>' +
+      '<div class="looksub">形状</div>' +
+      '<div class="lookgrid">' + LOOK_NUMS.slice(0, 4).map(function(n){
+        return lookNumHtml(n, l);
+      }).join("") + '</div>' +
+      '<div class="looksub">动画</div>' +
+      '<div class="lookgrid">' + LOOK_NUMS.slice(4).map(function(n){
+        return lookNumHtml(n, l);
+      }).join("") + '</div>' +
+      '<div class="looksub">导入导出</div>' +
+      '<textarea class="lookjson" id="lookJson" spellcheck="false"></textarea>' +
+      '<div class="lookacts">' +
+        '<button type="button" class="btn btn-ghost" id="btnLookExport">复制</button>' +
+        '<button type="button" class="btn btn-ghost" id="btnLookImport">从文本框应用</button>' +
+      '</div>';
+  }
+
+  function lookNumHtml(n, l){
+    var r = lookRange(n.key) || [0, 100];
+    var v = lookNum(l[n.key], n.key);
+    return '<div class="lookn" data-lookn="' + n.key + '">' +
+      '<div class="lrow"><span class="lb">' + esc(n.label) + '</span>' +
+        '<b class="rv">' + v + esc(n.unit) + '</b></div>' +
+      '<input type="range" min="' + r[0] + '" max="' + r[1] + '" step="' + n.step +
+        '" value="' + v + '" aria-label="' + esc(n.label) + '">' +
+      '<div class="rscale"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>' +
+    '</div>';
+  }
+
+  function lookWire(){
+    var box = root.querySelector("#lookCtl");
+    if (!box) return;
+    box.querySelectorAll("[data-lookn]").forEach(function(wrap){
+      var key = wrap.dataset.lookn;
+      var input = wrap.querySelector("input[type=range]");
+      var out = wrap.querySelector(".rv");
+      var spec = null;
+      LOOK_NUMS.forEach(function(n){ if (n.key === key) spec = n; });
+      if (!spec || !input) return;
+      input.addEventListener("input", function(){
+        var v = lookNum(input.value, key);
+        look[key] = v;
+        input.value = v;
+        out.textContent = v + spec.unit;
+        lookApply();
+        onEdit();
+      });
+    });
+    box.querySelectorAll("[data-lookc]").forEach(function(el){
+      el.addEventListener("input", function(){
+        look[el.dataset.lookc] = el.value;
+        lookPreset = "";
+        syncSeg(root.querySelector("#s_lookpreset"), "lp", lookPreset);
+        lookApply();
+        onEdit();
+      });
+    });
+    var presetBox = box.querySelector("#s_lookpreset");
+    if (presetBox) presetBox.addEventListener("click", function(e){
+      var b = e.target.closest("[data-lp]");
+      if (!b) return;
+      lookPreset = b.dataset.lp;
+      syncSeg(this, "lp", lookPreset);
+      var preset = LOOK_PRESET_COLORS[lookPreset] || null;
+      LOOK_COLORS.forEach(function(c){
+        look[c.key] = preset ? preset[c.key] : "";
+        var el = root.querySelector('[data-lookc="' + c.key + '"]');
+        if (el) el.value = lookCurrentColor(c.key);
+      });
+      lookApply();
+      onEdit();
+    });
+
+    var play = box.querySelector("#btnLookPlay");
+    if (play) play.onclick = lookPlay;
+
+    var exp = box.querySelector("#btnLookExport");
+    if (exp) exp.onclick = function(){
+      var txt = root.querySelector("#lookJson").value;
+      HC.motion.copy(txt).then(function(ok){
+        HC.motion.toast(ok ? "已复制外观配置" : "复制失败", ok ? "ok" : "err");
+      });
+    };
+
+    var imp = box.querySelector("#btnLookImport");
+    if (imp) imp.onclick = function(){
+      var txt = root.querySelector("#lookJson").value;
+      var parsed = null;
+      try { parsed = JSON.parse(txt); } catch (err) { parsed = null; }
+      if (!parsed){
+        HC.motion.toast("不是合法的 JSON", "err");
+        return;
+      }
+      look = HC.readLook ? HC.readLook(parsed) : lookDefaults();
+      buildLook(look);
+      onEdit();
+      HC.motion.toast("已应用", "ok");
+    };
+  }
+
+  function lookApply(){
+    if (HC.applyProgressLook) HC.applyProgressLook(look);
+    var j = root.querySelector("#lookJson");
+    if (j) j.value = JSON.stringify(look);
+  }
+
+  function lookStop(){
+    cancelAnimationFrame(lookRaf);
+    lookTimer.forEach(clearTimeout);
+    lookTimer = [];
+    lookRaf = 0;
+  }
+
+  function lookResetPreview(){
+    var track = root.querySelector("#lookTrack");
+    var bar = root.querySelector("#lookBar");
+    if (!track || !bar) return;
+    bar.classList.remove("slow", "receding");
+    bar.classList.toggle("flow", progStyleKey === "flow");
+    track.innerHTML = "";
+    if (progStyleKey === "flow"){
+      var f = document.createElement("div");
+      f.className = "fill";
+      f.innerHTML = '<div class="tex"></div>';
+      track.appendChild(f);
+    } else {
+      for (var i = 0; i < 9; i++){
+        var s = document.createElement("div");
+        s.className = "seg";
+        track.appendChild(s);
+      }
+    }
+    var dl = root.querySelector("#lookDl");
+    if (dl) dl.classList.remove("show", "passed");
+  }
+
+  function lookPlay(){
+    var track = root.querySelector("#lookTrack");
+    var dl = root.querySelector("#lookDl");
+    var st = root.querySelector("#lookSt");
+    var bar = root.querySelector("#lookBar");
+    if (!track || !bar) return;
+    lookStop();
+    lookResetPreview();
+    var deadline = 3;
+    var raw = (HC.settings || {}).soft_deadline_ms;
+    if (raw !== undefined && raw !== null && raw !== "") deadline = parseInt(raw, 10) / 1000;
+    if (!deadline || deadline <= 0 || isNaN(deadline)) deadline = 3;
+    lookTimes = [];
+    for (var j = 0; j < 9; j++) lookTimes.push(0.4 + Math.random() * 3.6);
+    lookTimes.sort(function(a, b){ return a - b; });
+    var t0 = performance.now();
+    (function frame(now){
+      var el = (now - t0) / 1000;
+      var done = 0, warned = 0;
+      var segs = track.querySelectorAll(".seg");
+      for (var i = 0; i < segs.length; i++){
+        var back = lookTimes[i] <= el;
+        if (back) done++;
+        else if (el > deadline) warned++;
+        segs[i].className = "seg" + (back ? " on" : (el > deadline ? " warned" : ""));
+      }
+      if (dl){
+        var ratio = Math.min(1, el / deadline);
+        dl.style.left = (ratio * 100) + "%";
+        dl.classList.add("show");
+        dl.classList.toggle("passed", ratio >= 1);
+      }
+      if (st) st.textContent = done + "/9 源" + (warned ? " · 越过软截止 " + warned + " 个" : "");
+      if (el >= lookTimes[8] + 0.3){ lookFinish(); return; }
+      lookRaf = requestAnimationFrame(frame);
+    })(t0);
+  }
+
+  function lookFinish(){
+    var track = root.querySelector("#lookTrack");
+    var dl = root.querySelector("#lookDl");
+    var st = root.querySelector("#lookSt");
+    var hold = lookNum(look.hold, "hold") || 0;
+    var step = lookNum(look.step, "step") || 45;
+    if (st) st.textContent = "完成 · 9/9";
+    lookTimer.push(setTimeout(function(){
+      var lit = [].slice.call(track.querySelectorAll(".seg.on")).reverse();
+      lit.forEach(function(seg, i){
+        lookTimer.push(setTimeout(function(){ seg.className = "seg"; }, i * step));
+      });
+      if (dl) dl.classList.remove("show", "passed");
+      lookTimer.push(setTimeout(function(){
+        if (st) st.textContent = "完成 · 已回退到空槽";
+      }, lit.length * step + 260));
+    }, hold));
+  }
+
+  function buildLook(raw){
+    look = HC.readLook ? HC.readLook(raw) : lookDefaults();
+    var box = root.querySelector("#lookCtl");
+    if (!box) return;
+    box.innerHTML = lookHtml();
+    lookPreset = "";
+    syncSeg(root.querySelector("#s_lookpreset"), "lp", lookPreset);
+    lookWire();
+    lookApply();
+    lookResetPreview();
   }
 
   var fontKey = "18";
@@ -278,6 +621,7 @@
     out.progress_style = progStyleKey;
     out.progress_line = progLineOn;
     out.keep_duplicates = keepDupOn;
+    out.progress_look = look ? JSON.stringify(look) : "";
     return out;
   }
 
@@ -367,6 +711,12 @@
           '<button class="btn btn-brand" id="btnSave">保存</button></div>' +
       '</div>' +
       '<div class="card">' +
+        '<div class="dhead"><span class="dtitle">进度条外观</span><div class="spacer"></div>' +
+          '<span class="status" id="lookHint"></span></div>' +
+        '<div class="div"></div>' +
+        '<div class="mbody" id="lookCtl"></div>' +
+      '</div>' +
+      '<div class="card">' +
         '<div class="dhead"><span class="dtitle">关于</span></div>' +
         '<div class="div"></div>' +
         '<div class="mbody" id="about"></div>' +
@@ -409,6 +759,7 @@
       paintBrand(brandKey);
       if (HC.applyTheme) HC.applyTheme(settings.theme || "light");
       if (HC.applyBrand) HC.applyBrand(brandKey);
+      buildLook(settings.progress_look);
       baseline = snapshot();
       onEdit();
     }
@@ -535,6 +886,7 @@
         btn.disabled = false;
         if (r && r.ok){
           HC.settings = Object.assign({}, HC.settings, fields);
+          if (HC.applyProgressLook) HC.applyProgressLook(fields.progress_look);
           baseline = snapshot();
           onEdit();
           HC.motion.toast("设置已保存", "ok");
@@ -565,6 +917,7 @@
     };
 
     function leave(){
+      lookStop();
       location.hash = "search";
     }
 

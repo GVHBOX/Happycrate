@@ -841,8 +841,11 @@ class StripCompletionMotionTest(unittest.TestCase):
 
     def test_progress_slot_stays_visible(self):
         block = self.rule(".progress{")
-        self.assertIn("background:var(--track)", block,
+        self.assertIn("background:var(--prog-gap)", block.replace(" ", ""),
                       "顶部进度条要有常驻深色进度槽，搜索结束后也能看总进度")
+        tokens = (ROOT / "web" / "styles" / "tokens.css").read_text(encoding="utf-8")
+        self.assertGreaterEqual(tokens.count("--prog-gap:"), 2,
+                                "浅色与暗色都要定义进度槽色，槽是常驻的不能透明")
 
     def tile_block(self):
         src = self.css()

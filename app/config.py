@@ -64,6 +64,7 @@ DEFAULT_SETTINGS = {
     "keep_duplicates": False,
     "progress_style": "segment",
     "progress_line": True,
+    "progress_look": "",
 }
 
 SETTING_SPECS = {
@@ -83,6 +84,7 @@ SETTING_SPECS = {
     "keep_duplicates": {"type": bool},
     "progress_style": {"type": str},
     "progress_line": {"type": bool},
+    "progress_look": {"type": str},
 }
 
 INTERNAL_SETTING_KEYS = frozenset({"migrated_from"})
@@ -104,6 +106,7 @@ SETTING_LABELS = {
     "keep_duplicates": "保留重复项",
     "progress_style": "进度条",
     "progress_line": "进度条警戒线",
+    "progress_look": "进度条外观",
 }
 
 SOURCE_TIMEOUT_MIN = 1

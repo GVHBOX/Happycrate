@@ -630,40 +630,54 @@ input, textarea{
 .marquee{position:absolute; z-index:var(--z-marquee); pointer-events:none; border-radius:2px;
   background:rgba(var(--brand-rgb),.12); border:1px solid rgba(var(--brand-rgb),.55)}
 
-.progress{flex:none;height:10px;position:relative;display:flex;gap:4px;--p:0;
-  background:var(--track);overflow:hidden;border-radius:3px}
+.progress{flex:none;height:var(--prog-h);position:relative;--p:0;
+  background:var(--prog-gap);border-radius:var(--prog-radius)}
+.progress .track{display:flex;gap:var(--prog-gapx);height:100%;overflow:hidden;
+  border-radius:var(--prog-radius)}
 .progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden;
+  border-radius:var(--prog-radius);
   transition:width .25s var(--e-out), transform .3s var(--e-out)}
-.progress .seg{flex:1;transform:skewX(-16deg);border-radius:2.5px;background:var(--rowline);
+.progress .seg{flex:1;transform:skewX(var(--prog-skew));border-radius:var(--prog-radius);
+  background:var(--prog-slot);
   position:relative;overflow:hidden;transition:background .2s,opacity .3s}
 .progress .seg::after{content:"";position:absolute;inset:0;opacity:0}
-.progress .seg.on{background:var(--brand)}
+.progress .seg.on{background:var(--prog-on)}
 .progress .seg.on::after{opacity:1;
-  background:repeating-linear-gradient(-55deg,rgba(255,255,255,.16) 0 4px,transparent 4px 9px);
-  animation:segflow .7s linear infinite}
-.progress .seg.warned{background:var(--warn)}
+  background:repeating-linear-gradient(var(--prog-ang),
+    rgba(255,255,255,var(--prog-alpha)) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
+  animation:segflow var(--prog-flow) linear infinite}
+.progress .seg.warned{background:var(--prog-warn)}
 .progress .seg.warned::after{opacity:1;
-  background:repeating-linear-gradient(-55deg,rgba(0,0,0,.28) 0 4px,transparent 4px 9px);
-  animation:segflow .7s linear infinite}
-.progress .seg.err{background:var(--err-bar)}
-.progress.style-flow{display:block;overflow:hidden}
+  background:repeating-linear-gradient(var(--prog-ang),
+    rgba(0,0,0,.28) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
+  animation:segflow var(--prog-flow) linear infinite}
+.progress .seg.err{background:var(--prog-err)}
+.progress .seg.err::after{opacity:1;
+  background:repeating-linear-gradient(var(--prog-ang),
+    rgba(0,0,0,.28) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
+  animation:segflow var(--prog-flow) linear infinite}
+.progress.style-flow .track{display:block}
 .progress.style-flow .fill{height:100%;width:calc(var(--p)*100%);position:relative;
+  border-radius:var(--prog-radius);
   overflow:hidden;transition:width .25s var(--e-out)}
 .progress.style-flow .fill .tex{position:absolute;inset:-14px -20px;
-  background:repeating-linear-gradient(-55deg,var(--brand) 0 11px,var(--brand-stripe) 11px 16px);
-  animation:segflow .8s linear infinite}
+  background:repeating-linear-gradient(var(--prog-ang),
+    var(--prog-on) 0 11px, var(--prog-on-stripe) 11px 16px);
+  animation:segflow calc(var(--prog-flow) * 1.15) linear infinite}
 .progress.style-flow.slow .fill .tex{
-  background:repeating-linear-gradient(-55deg,var(--warn) 0 11px,var(--warn-stripe) 11px 16px)}
+  background:repeating-linear-gradient(var(--prog-ang),
+    var(--prog-warn) 0 11px, var(--prog-warn-stripe) 11px 16px)}
 .progress.on.wait .fill{width:40%;animation:indet 1.1s var(--e) infinite}
 @keyframes indet{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 .progress.wait .seg{animation:segscan 1.9s linear infinite}
 .progress.style-flow.receding .fill{width:0 !important;
   transition:width .45s cubic-bezier(.5,0,.7,.4)}
-.progress .deadline{position:absolute;top:0;bottom:0;width:2px;border-radius:2px;
-  background:var(--warn);left:0;opacity:0;pointer-events:none;
-  box-shadow:0 0 8px rgba(252,211,77,.7);transition:opacity .3s}
+.progress .deadline{position:absolute;top:calc(-1 * var(--prog-dlout));bottom:calc(-1 * var(--prog-dlout));
+  width:var(--prog-dlw);border-radius:2px;
+  background:var(--prog-line);color:var(--prog-line);left:0;opacity:0;pointer-events:none;
+  box-shadow:0 0 var(--prog-glow) currentColor, 0 0 2px currentColor;transition:opacity .3s}
 .progress .deadline.show{opacity:1}
-.progress .deadline.passed{animation:dlpulse .55s ease-in-out infinite alternate}
+.progress .deadline.passed{animation:dlpulse var(--prog-pulse) ease-in-out infinite alternate}
 @keyframes segflow{0%{background-position:0 0}100%{background-position:13px 0}}
 @keyframes segscan{0%,18%{background:var(--brand)}24%,100%{background:var(--track)}}
 @keyframes dlpulse{from{opacity:.55}to{opacity:1}}
@@ -1093,6 +1107,7 @@ body.dark .sw::after{background:var(--knob)}
 .swatch[data-brand=""]{background:var(--brand-opt-default)}
 .swatch[data-brand="teal"]{background:var(--brand-opt-teal)}
 .swatch[data-brand="slate"]{background:var(--brand-opt-slate)}
+.swatch[data-brand="lilac"]{background:var(--brand-opt-lilac)}
 .swatch[aria-pressed="true"]{box-shadow:0 0 0 calc(2px*var(--frs)) var(--brand)}
 .field.inline{display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4)}
 .field.inline label,.field.inline .lbl{margin:0}
@@ -1107,3 +1122,32 @@ body.dark .sw::after{background:var(--knob)}
 .kv .v{flex:1; word-break:break-all; font:400 var(--fc-xs)/1.4 var(--font-mono); color:var(--t1)}
 .kv .cp{flex:none; border:0; background:transparent; color:var(--brand);
   font:400 var(--fc-xs)/1 var(--font); padding:0; cursor:pointer}
+
+.lookprev{border:1px solid var(--line); border-radius:var(--r-ctrl);
+  padding:calc(14px*var(--frs)) calc(16px*var(--frs)) calc(12px*var(--frs)); background:var(--shell)}
+.lookrow{display:flex; align-items:center; gap:var(--sp-4); margin-top:calc(10px*var(--frs))}
+.lookrow .btn{height:calc(28px*var(--frs)); padding:0 calc(12px*var(--frs)); font:400 var(--fc-xs)/1 var(--font)}
+.lookst{font:400 var(--fc-xs)/1 var(--font-num); color:var(--t3)}
+.looksub{font:500 var(--fc-sm)/1 var(--font); color:var(--t2); margin:calc(16px*var(--frs)) 0 calc(10px*var(--frs))}
+.lookgrid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:calc(14px*var(--frs)) calc(18px*var(--frs))}
+.lookgrid.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lookn{display:flex; flex-direction:column; gap:calc(3px*var(--frs))}
+.lookn .lrow{display:flex; align-items:baseline; justify-content:space-between; gap:var(--sp-2)}
+.lookn .lb{font:400 var(--fc-sm)/1 var(--font); color:var(--t2)}
+.lookn .rv{font:600 var(--fc-sm)/1 var(--font-num); color:var(--t1); font-variant-numeric:tabular-nums}
+.lookn input[type=range]{width:100%; height:calc(16px*var(--frs)); margin:0; padding:0;
+  accent-color:var(--brand); background:transparent; cursor:pointer}
+.lookn .rscale{display:flex; justify-content:space-between;
+  font:400 var(--fc-2xs)/1 var(--font-num); color:var(--t4)}
+.lookc{display:flex; align-items:center; gap:calc(8px*var(--frs));
+  font:400 var(--fc-sm)/1 var(--font); color:var(--t2)}
+.lookc .csel{width:calc(32px*var(--frs)); height:calc(22px*var(--frs)); flex:none; padding:0;
+  border:1px solid var(--border); border-radius:calc(6px*var(--frs)); background:none; cursor:pointer}
+.lookc .csel::-webkit-color-swatch-wrapper{padding:0}
+.lookc .csel::-webkit-color-swatch{border:none; border-radius:calc(5px*var(--frs))}
+.lookjson{width:100%; height:calc(72px*var(--frs)); font:400 var(--fc-xs)/1.5 var(--font-mono);
+  color:var(--t2); background:var(--shell); border:1px solid var(--border);
+  border-radius:var(--r-ctrl); padding:calc(8px*var(--frs)) calc(10px*var(--frs)); resize:vertical}
+.lookacts{display:flex; align-items:center; gap:var(--sp-4); margin-top:calc(8px*var(--frs))}
+.lookacts .btn{height:calc(28px*var(--frs)); padding:0 calc(12px*var(--frs)); font:400 var(--fc-xs)/1 var(--font)}

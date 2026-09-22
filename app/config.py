@@ -60,6 +60,7 @@ DEFAULT_SETTINGS = {
     "soft_deadline_ms": 3000,
     "keep_duplicates": False,
     "progress_style": "segment",
+    "progress_line": True,
 }
 
 SETTING_SPECS = {
@@ -78,6 +79,7 @@ SETTING_SPECS = {
     "soft_deadline_ms": {"type": int, "min": 0, "max": 60000},
     "keep_duplicates": {"type": bool},
     "progress_style": {"type": str},
+    "progress_line": {"type": bool},
 }
 
 INTERNAL_SETTING_KEYS = frozenset({"migrated_from"})
@@ -98,6 +100,7 @@ SETTING_LABELS = {
     "soft_deadline_ms": "软截止（毫秒）",
     "keep_duplicates": "保留重复项",
     "progress_style": "进度条",
+    "progress_line": "进度条警戒线",
 }
 
 SOURCE_TIMEOUT_MIN = 1

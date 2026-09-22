@@ -47,7 +47,7 @@
     query: "", qtokens: [], qphrase: "", hlRe: null, parsed: null,
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
-    selbarOn: false, progStyle: "segment",
+    selbarOn: false, progStyle: "segment", progLineOn: true,
     segOrder: [], t0: 0, deadline: 3000
   };
 
@@ -824,9 +824,11 @@
         seg.style.animationDelay = (i * 0.08) + "s";
         progEl.appendChild(seg);
       });
-      var dl = document.createElement("div");
-      dl.className = "deadline";
-      progEl.appendChild(dl);
+      if (HC.settings && HC.settings.progress_line !== false){
+        var dl = document.createElement("div");
+        dl.className = "deadline";
+        progEl.appendChild(dl);
+      }
     } else {
       var fill = document.createElement("div");
       fill.className = "fill";
@@ -1062,8 +1064,10 @@
     st.selbarOn = !!s && s.selbar === true;
     autoFiles = !s || s.auto_files !== false;
     var style = s && s.progress_style === "flow" ? "flow" : "segment";
-    if (st.progStyle !== style){
+    var line = !s || s.progress_line !== false;
+    if (st.progStyle !== style || st.progLineOn !== line){
       st.progStyle = style;
+      st.progLineOn = line;
       buildProg();
     }
     updateSelUI(true);

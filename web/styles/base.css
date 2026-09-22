@@ -631,7 +631,7 @@ input, textarea{
   background:rgba(var(--brand-rgb),.12); border:1px solid rgba(var(--brand-rgb),.55)}
 
 .progress{flex:none;height:10px;position:relative;display:flex;gap:4px;--p:0;
-  background:var(--track)}
+  background:var(--track);overflow:hidden}
 .progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden;
   transition:width .25s var(--e-out), transform .3s var(--e-out)}
 .progress .seg{flex:1;transform:skewX(-16deg);border-radius:2.5px;background:var(--rowline);
@@ -659,7 +659,7 @@ input, textarea{
 .progress.wait .seg{animation:segscan 1.9s linear infinite}
 .progress.style-flow.receding .fill{width:0 !important;
   transition:width .45s cubic-bezier(.5,0,.7,.4)}
-.progress .deadline{position:absolute;top:-4px;bottom:-4px;width:2px;border-radius:2px;
+.progress .deadline{position:absolute;top:0;bottom:0;width:2px;border-radius:2px;
   background:var(--warn);left:0;opacity:0;pointer-events:none;
   box-shadow:0 0 8px rgba(252,211,77,.7);transition:opacity .3s}
 .progress .deadline.show{opacity:1}

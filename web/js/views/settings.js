@@ -21,6 +21,7 @@
   var autoFilesOn = true;
   var keepDupOn = false;
   var progStyleKey = "segment";
+  var progLineOn = true;
   var brandKey = "";
 
   var STEP_BTN = {
@@ -271,6 +272,7 @@
     out.brand = brandKey;
     out.auto_files = autoFilesOn;
     out.progress_style = progStyleKey;
+    out.progress_line = progLineOn;
     out.keep_duplicates = keepDupOn;
     return out;
   }
@@ -352,6 +354,8 @@
             '<button type="button" class="sw" id="s_keepdup" role="switch"></button></div>' +
           '<div class="field inline"><span class="lbl" id="lb_prog">进度条</span>' +
             '<div class="seg" id="s_progstyle" role="group" aria-labelledby="lb_prog"></div></div>' +
+          '<div class="field inline"><label for="s_progline">警戒线</label>' +
+            '<button type="button" class="sw" id="s_progline" role="switch"></button></div>' +
         '</div>' +
         '<div class="dfoot"><span class="status" id="st"></span>' +
           '<div class="spacer"></div>' +
@@ -393,6 +397,8 @@
       setSw("#s_keepdup", keepDupOn);
       progStyleKey = settings.progress_style === "flow" ? "flow" : "segment";
       paintProg(progStyleKey);
+      progLineOn = settings.progress_line !== false;
+      setSw("#s_progline", progLineOn);
       brandKey = settings.brand || "";
       paintBrand(brandKey);
       if (HC.applyTheme) HC.applyTheme(settings.theme || "light");
@@ -481,6 +487,12 @@
     root.querySelector("#s_keepdup").onclick = function(){
       keepDupOn = !keepDupOn;
       setSw("#s_keepdup", keepDupOn);
+      onEdit();
+    };
+
+    root.querySelector("#s_progline").onclick = function(){
+      progLineOn = !progLineOn;
+      setSw("#s_progline", progLineOn);
       onEdit();
     };
 

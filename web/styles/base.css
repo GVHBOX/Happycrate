@@ -631,7 +631,7 @@ input, textarea{
   background:rgba(var(--brand-rgb),.12); border:1px solid rgba(var(--brand-rgb),.55)}
 
 .progress{flex:none;height:10px;position:relative;display:flex;gap:4px;--p:0;
-  background:var(--track);overflow:hidden}
+  background:var(--track);overflow:hidden;border-radius:3px}
 .progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden;
   transition:width .25s var(--e-out), transform .3s var(--e-out)}
 .progress .seg{flex:1;transform:skewX(-16deg);border-radius:2.5px;background:var(--rowline);
@@ -646,7 +646,7 @@ input, textarea{
   background:repeating-linear-gradient(-55deg,rgba(0,0,0,.28) 0 4px,transparent 4px 9px);
   animation:segflow .7s linear infinite}
 .progress .seg.err{background:var(--err-bar)}
-.progress.style-flow{display:block;background:var(--track);border-radius:2.5px;overflow:hidden}
+.progress.style-flow{display:block;overflow:hidden}
 .progress.style-flow .fill{height:100%;width:calc(var(--p)*100%);position:relative;
   overflow:hidden;transition:width .25s var(--e-out)}
 .progress.style-flow .fill .tex{position:absolute;inset:-14px -20px;

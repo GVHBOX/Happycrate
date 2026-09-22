@@ -742,16 +742,24 @@
     return list.map(function(it){ return it.magnet; }).filter(function(m){ return m; });
   }
 
+  function overCap(n){
+    if (n <= HC.MAGNET_CAP) return false;
+    flash("已选 " + n + " 条，一次最多 " + HC.MAGNET_CAP + " 条", "err");
+    return true;
+  }
+
   function doCopy(){
     var list = selList();
     if (!list.length) return;
-    var text = magnetsOf(list).join("\n");
+    var magnets = magnetsOf(list);
+    var text = magnets.join("\n");
     if (!text){
       HC.motion.toast("选中项没有可用的磁力链接", "err");
       return;
     }
+    if (overCap(magnets.length)) return;
     HC.motion.copy(text).then(function(ok){
-      if (ok) flash(list.length > 1 ? "已复制 " + list.length + " 条磁力" : "已复制磁力链接", "ok");
+      if (ok) flash(magnets.length > 1 ? "已复制 " + magnets.length + " 条磁力" : "已复制磁力链接", "ok");
       else HC.motion.toast("复制失败", "err");
     });
   }
@@ -764,6 +772,7 @@
       HC.motion.toast("选中项没有标题", "err");
       return;
     }
+    if (overCap(list.length)) return;
     HC.motion.copy(text).then(function(ok){
       if (ok) flash(list.length > 1 ? "已复制 " + list.length + " 个标题" : "已复制标题", "ok");
       else HC.motion.toast("复制失败", "err");
@@ -778,6 +787,7 @@
       HC.motion.toast("选中项没有可用的磁力链接", "err");
       return;
     }
+    if (overCap(magnets.length)) return;
     HC.api.deliver(magnets).then(function(r){
       flash(r.message || (r.ok ? "已提交" : "投递失败"), r.ok ? "ok" : "err");
     });
@@ -1484,12 +1494,10 @@
     rowsEl.addEventListener("dblclick", function(e){
       var row = e.target.closest(".srow");
       if (!row) return;
-      if (!st.sel[row.dataset.hash]){
-        st.sel = {};
-        st.sel[row.dataset.hash] = true;
-        st.anchor = row.dataset.hash;
-        updateSelUI();
-      }
+      st.sel = {};
+      st.sel[row.dataset.hash] = true;
+      st.anchor = row.dataset.hash;
+      updateSelUI();
       doCopy();
     });
 

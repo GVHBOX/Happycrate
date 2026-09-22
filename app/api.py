@@ -19,6 +19,7 @@ FILES_CAP = 200
 BAD_MIN = 3
 SLOW_MS = 5000
 MAX_QUERY_LEN = 100
+MAGNET_CAP = 200
 SEARCH_CACHE_TTL = 60.0
 SEARCH_CACHE_MAX = 8
 
@@ -1242,6 +1243,9 @@ class Api:
         items = [str(m) for m in (magnets or []) if m]
         if not items:
             return {"ok": False, "message": "没有可提交的磁力链接"}
+        if len(items) > MAGNET_CAP:
+            return {"ok": False,
+                    "message": f"一次最多提交 {MAGNET_CAP} 条，本次 {len(items)} 条"}
 
         prefer = str(key or self._settings.get("default_downloader", "") or "")
         target = downloaders.pick_default(prefer, refresh=True)

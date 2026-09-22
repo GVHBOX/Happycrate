@@ -31,8 +31,25 @@ _PROTOCOL_FLAG = "-StartType:magnet"
 
 _GAP_WARMUP = 0.2
 _GAP_BATCH = 0.05
+_GAP_MIN = 0.005
 _GAP_BUDGET = 2.0
 _WARMUP_TASKS = 3
+
+def _plan_gaps(count: int, timeout: int) -> list[float]:
+    if count <= 1:
+        return []
+    budget = max(0.0, min(_GAP_BUDGET, float(timeout or 0)))
+    if budget <= 0:
+        return []
+
+    left = count - 1
+    warm = min(_WARMUP_TASKS, left)
+    ideal = warm * _GAP_WARMUP + (left - warm) * _GAP_BATCH
+    if ideal <= budget:
+        return [_GAP_WARMUP] * warm + [_GAP_BATCH] * (left - warm)
+
+    share = budget / left
+    return [max(_GAP_MIN, share)] * left
 
 def find_exe() -> str | None:
     for candidate in THUNDER_EXE_CANDIDATES:
@@ -145,18 +162,14 @@ class ProtocolMethod(Method):
 
         added = 0
         errors: list[str] = []
-        last = len(magnets) - 1
-        budget = max(0.0, min(_GAP_BUDGET, float(timeout or 0)))
-        spent = 0.0
+        gaps = _plan_gaps(len(magnets), timeout)
         for i, magnet in enumerate(magnets):
             try:
                 subprocess.Popen([exe, magnet, _PROTOCOL_FLAG],
                                  close_fds=True)
                 added += 1
-                if i < last and spent < budget:
-                    gap = _GAP_WARMUP if i < _WARMUP_TASKS else _GAP_BATCH
-                    time.sleep(gap)
-                    spent += gap
+                if i < len(gaps):
+                    time.sleep(gaps[i])
             except Exception as exc:
                 errors.append(f"{type(exc).__name__}: {exc}")
 

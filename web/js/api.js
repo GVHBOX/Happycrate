@@ -106,6 +106,7 @@
   var sHooks = {};
   var mockToken = 0;
   var MAX_QUERY_LEN = 100;
+  var MAGNET_CAP = 200;
   var mockSettings = {
     min_query_len: 2, max_workers: 8, timeout: 15, retries: 1,
     default_downloader: "", proxy: "", user_agent: "",
@@ -607,4 +608,5 @@
   HC.api = api;
   HC.validateSource = validate;
   HC.esc = esc;
+  HC.MAGNET_CAP = MAGNET_CAP;
 })();

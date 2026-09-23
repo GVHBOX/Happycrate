@@ -6,7 +6,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(os.environ.get("SCAN_ROOT", r"D:\AI\happycrate"))
+ROOT = Path(os.environ.get("SCAN_ROOT") or Path(__file__).resolve().parents[2])
 FILES = sorted((ROOT / "app").glob("*.py")) + [ROOT / "main.py"]
 ALL_SRC = [(p, p.read_text(encoding="utf-8")) for p in FILES]
 CORPUS = "\n".join(t for _, t in ALL_SRC)

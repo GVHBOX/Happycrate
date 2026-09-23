@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\happycrate")
+ROOT = Path(__file__).resolve().parents[2]
 WEB = ROOT / "web"
 
 CSS_FILES = sorted(WEB.rglob("*.css"))

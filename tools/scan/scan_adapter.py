@@ -2,7 +2,7 @@ import ast
 import json
 from pathlib import Path
 
-src = Path(r"D:\AI\happycrate\app\sources.py").read_text(encoding="utf-8")
+src = (Path(__file__).resolve().parents[2] / "app" / "sources.py").read_text(encoding="utf-8")
 tree = ast.parse(src)
 
 rows = []

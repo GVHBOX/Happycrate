@@ -3,7 +3,7 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\happycrate")
+ROOT = Path(__file__).resolve().parents[2]
 WEB = ROOT / "web"
 
 tree = ast.parse((ROOT / "app" / "api.py").read_text(encoding="utf-8"))

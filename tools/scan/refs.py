@@ -3,7 +3,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\happycrate")
+ROOT = Path(__file__).resolve().parents[2]
 report = json.load(open(ROOT / "tools" / "scan" / "py-report.json", encoding="utf-8"))
 files = sorted((ROOT / "app").glob("*.py")) + [ROOT / "main.py"]
 tests = sorted((ROOT / "tests").glob("*.py"))

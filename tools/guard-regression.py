@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 PY = str(ROOT / ".venv" / "Scripts" / "python.exe")
 
 IMPORT_CLEAR = (
@@ -262,6 +262,41 @@ CASES = [
         '                           err: err || (outcome === "empty" ? "无结果" : ""),\n'
         '                           outcome: outcome,',
         '                           err: err,',
+        "tests/test_front_hygiene.py",
+    ),
+    (
+        "CDATA 回退：hash 字段又不剥壳",
+        "app/sources.py",
+        "    h = _unescape(_text(info_hash)).strip().lower()",
+        "    h = _text(info_hash).strip().lower()",
+        "tests/test_regressions.py",
+    ),
+    (
+        "暗色错误色回退：--err 又只留浅色一份",
+        "web/styles/tokens.css",
+        "  --err:#F87171;\n  --err-rgb:248,113,113;",
+        "  --err-rgb:248,113,113;",
+        "tests/test_front_hygiene.py",
+    ),
+    (
+        "文字色回退：选中栏数字又拿描边色当文字",
+        "web/styles/base.css",
+        "body.dark .selbar .st b{color:var(--brand-active)}",
+        "body.dark .selbar .st b{color:var(--brand-line)}",
+        "tests/test_front_hygiene.py",
+    ),
+    (
+        "映射字段回退：编辑器又漏 leechers",
+        "web/js/views/sources.js",
+        '["做种","seeders"],["下载","leechers"],["时间","added"]',
+        '["做种","seeders"],["时间","added"]',
+        "tests/test_contract.py",
+    ),
+    (
+        "外观参数回退：新参数又不落 CSS 变量",
+        "web/index.html",
+        'glow:["--prog-glow","px"], pulse:["--prog-pulse","ms"],',
+        'pulse:["--prog-pulse","ms"],',
         "tests/test_front_hygiene.py",
     ),
 ]

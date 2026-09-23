@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-FILES = sorted(Path(r"D:\AI\happycrate\app").glob("*.py"))
+FILES = sorted((Path(__file__).resolve().parents[2] / "app").glob("*.py"))
 groups = defaultdict(list)
 
 for p in FILES:

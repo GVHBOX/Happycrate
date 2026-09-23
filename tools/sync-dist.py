@@ -9,7 +9,7 @@ import shutil
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist" / "happycrate" / "_internal"
 PAIRS = (("app", "app"), ("web", "web"))
 SKIP_DIRS = {"__pycache__"}

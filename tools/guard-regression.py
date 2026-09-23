@@ -2,6 +2,13 @@
 
 护栏「全绿」只证明当前代码不违规；只有把它改坏后确实报错，
 才证明它真的在防回归。
+
+用法：
+  .venv/Scripts/python.exe tools/guard-regression.py                # 全跑 38 条（约 5min）
+  .venv/Scripts/python.exe tools/guard-regression.py --list         # 列出全部 case
+  .venv/Scripts/python.exe tools/guard-regression.py --case 外观参数   # 只跑名字含它的
+
+日常只加了某一条护栏时，用 --case 过滤到十几秒，别为了一次改动等满 5 分钟。
 """
 
 import subprocess
@@ -344,12 +351,44 @@ def run(test_file):
     return r.returncode, (r.stdout or "") + (r.stderr or "")
 
 
+def select(argv):
+    """按 --case 关键字挑出要跑的 case。
+
+    全量 38 条要 5 分钟，日常改一条护栏不该等 5 分钟。
+    关键字匹配 case 名字 / 源文件 / 测试文件，任中其一即可。
+    """
+    if "--list" in argv:
+        for i, (name, rel, _old, _new, test_file) in enumerate(CASES, 1):
+            print(f"{i:>3}  {name}")
+            print(f"      {rel}  ->  {test_file}")
+        return None
+
+    keyword = None
+    for arg in argv:
+        if arg.startswith("--case="):
+            keyword = arg.split("=", 1)[1]
+        elif arg == "--case" and argv.index(arg) + 1 < len(argv):
+            keyword = argv[argv.index(arg) + 1]
+    if not keyword:
+        return CASES
+
+    picked = [c for c in CASES
+              if keyword in c[0] or keyword in c[1] or keyword in c[4]]
+    if not picked:
+        raise SystemExit(f"没有 case 匹配 {keyword!r}，用 --list 看全部名字")
+    print(f"选中 {len(picked)}/{len(CASES)} 条（关键字 {keyword!r}）\n")
+    return picked
+
+
 def main():
-    saved = backup(sorted({c[1] for c in CASES}))
+    selected = select(sys.argv[1:])
+    if selected is None:
+        return 0
+    saved = backup(sorted({c[1] for c in selected}))
     caught, missed = 0, []
 
     try:
-        for name, rel, old, new, test_file in CASES:
+        for name, rel, old, new, test_file in selected:
             path = ROOT / rel
             text = path.read_text(encoding="utf-8")
             if old not in text:
@@ -372,7 +411,7 @@ def main():
         restore(saved)
 
     print()
-    print(f"共 {len(CASES)} 项 · 拦住 {caught} · 漏过 {len(missed)}")
+    print(f"共 {len(selected)} 项 · 拦住 {caught} · 漏过 {len(missed)}")
     for m in missed:
         print("  漏过:", m)
     return 0 if not missed else 1

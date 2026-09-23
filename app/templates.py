@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import html as _html
 import json
 import re
 from urllib.parse import quote
@@ -62,11 +61,6 @@ def _txt(val) -> str:
         return ""
     return str(val).strip()
 
-def _unescape(text: str) -> str:
-    if not text:
-        return ""
-    return _html.unescape(str(text)).strip()
-
 def _get_first(mapping: dict, *keys) -> str:
     for k in keys:
         v = mapping.get(k)
@@ -96,11 +90,11 @@ def _make_rss(entry: dict):
         for chunk in src._split_items(text):
             if len(items) >= MAX_SOURCE_ITEMS:
                 break
-            title = _unescape(src._tags(chunk, f_title)[0]) if f_title else ""
-            magnet = _unescape(src._tags(chunk, f_magnet)[0]) if f_magnet else ""
+            title = src._unescape(src._tags(chunk, f_title)[0]) if f_title else ""
+            magnet = src._unescape(src._tags(chunk, f_magnet)[0]) if f_magnet else ""
             info_hash = ""
             if f_hash:
-                info_hash = _unescape(src._tags(chunk, f_hash)[0])
+                info_hash = src._unescape(src._tags(chunk, f_hash)[0])
             if not info_hash and magnet:
                 info_hash = src.hash_from_magnet(magnet)
             if not info_hash:
@@ -108,15 +102,17 @@ def _make_rss(entry: dict):
             if not title and not info_hash:
                 continue
 
-            size_raw = _unescape(src._tags(chunk, f_size)[0]) if f_size else ""
-            added_raw = _unescape(src._tags(chunk, f_added)[0]) if f_added else ""
-            seeders = src._to_int(src._tags(chunk, f_seeders)[0]) if f_seeders else None
+            size_raw = src._unescape(src._tags(chunk, f_size)[0]) if f_size else ""
+            added_raw = src._unescape(src._tags(chunk, f_added)[0]) if f_added else ""
+            seeders = src._to_int(src._unescape(
+                src._tags(chunk, f_seeders)[0])) if f_seeders else None
 
             items.append(src._mk(
                 title=title, info_hash=info_hash,
                 size=src.parse_size(size_raw),
                 seeders=seeders,
-                leechers=src._to_int(src._tags(chunk, f_leechers)[0]) if f_leechers else None,
+                leechers=src._to_int(src._unescape(
+                    src._tags(chunk, f_leechers)[0])) if f_leechers else None,
                 added=src._ts_from_rfc(added_raw) or None,
                 source=entry.get("label") or entry.get("key") or "自定义",
             ))
@@ -254,7 +250,7 @@ def _make_html(entry: dict):
                 continue
             seen.add(h)
 
-            title = _unescape(_nearest(re_title, text, m.start(), m.end()))
+            title = src._unescape(_nearest(re_title, text, m.start(), m.end()))
             size_raw = _nearest(re_size, text, m.start(), m.end())
 
             items.append(src._mk(

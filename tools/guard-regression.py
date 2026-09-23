@@ -279,6 +279,38 @@ CASES = [
         "tests/test_regressions.py",
     ),
     (
+        "CDATA 回退：数字字段又不剥壳",
+        "app/templates.py",
+        "            size_raw = src._unescape(src._tags(chunk, f_size)[0]) if f_size else \"\"\n"
+        "            added_raw = src._unescape(src._tags(chunk, f_added)[0]) if f_added else \"\"\n"
+        "            seeders = src._to_int(src._unescape(\n"
+        "                src._tags(chunk, f_seeders)[0])) if f_seeders else None",
+        "            size_raw = src._tags(chunk, f_size)[0] if f_size else \"\"\n"
+        "            added_raw = src._tags(chunk, f_added)[0] if f_added else \"\"\n"
+        "            seeders = src._to_int(\n"
+        "                src._tags(chunk, f_seeders)[0]) if f_seeders else None",
+        "tests/test_regressions.py",
+    ),
+    (
+        "导入护栏回退：更新已有源又只查语法",
+        "app/config.py",
+        "    for field, label in PATTERN_FIELDS:\n"
+        "        bad = pattern_problem(label, src.get(field))\n"
+        "        if bad:\n"
+        "            return bad\n"
+        "    return \"\"",
+        "    return \"\"",
+        "tests/test_pure.py",
+    ),
+    (
+        "回溯守卫回退：分支可重叠不再拦",
+        "app/config.py",
+        "    if _OVERLAP_BRANCH_RE.search(source):\n"
+        "        return \"分支可重叠回溯\"\n",
+        "",
+        "tests/test_pure.py",
+    ),
+    (
         "暗色错误色回退：--err 又只留浅色一份",
         "web/styles/tokens.css",
         "  --err:#F87171;\n  --err-rgb:248,113,113;",

@@ -381,6 +381,26 @@ class ImportFromTest(unittest.TestCase):
         self.assertEqual(src["url"], "https://example.org/s?k={query}")
         self.assertEqual(src["hash_pattern"], "([0-9a-f]{40})")
 
+    def test_custom_import_rejects_nested_quantifier(self):
+        keep = ">([^<>]{4,200})<"
+        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
+                                 "url": "https://example.org/?q={query}",
+                                 "title_pattern": keep,
+                                 "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myhtml", "title_pattern": "(a+)+$"})
+        self.assertEqual(src["title_pattern"], keep,
+                         "导入更新已有源时也要挡嵌套量词，否则搜索会被卡死")
+
+    def test_custom_import_rejects_overlapping_branches(self):
+        keep = ">([^<>]{4,200})<"
+        self.cfg.sources.append({"key": "myhtml3", "label": "H", "type": "html",
+                                 "url": "https://example.org/?q={query}",
+                                 "size_pattern": keep,
+                                 "timeout": 15, "order": 9})
+        src = self._import_one({"key": "myhtml3", "size_pattern": "(?:ab|a)+x"})
+        self.assertEqual(src["size_pattern"], keep,
+                         "分支可重叠的分支同样会指数回溯，也要挡")
+
 
 class RemoveBuiltinTest(unittest.TestCase):
 

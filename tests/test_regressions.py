@@ -757,6 +757,23 @@ class TemplateHashCleanTest(unittest.TestCase):
         self.assertEqual(sources._mk(title="t", info_hash="abc&amp;def")["info_hash"],
                          "abc&def")
 
+    def test_cdata_wrapped_numbers_and_date_are_read(self):
+        sources.http_get = lambda *a, **k: self.rss.replace(
+            "<pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>",
+            "<pubDate><![CDATA[Wed, 01 Jan 2025 00:00:00 +0000]]></pubDate>"
+            "<nyaa:size><![CDATA[1.5 GiB]]></nyaa:size>"
+            "<nyaa:seeders><![CDATA[42]]></nyaa:seeders>"
+            "<nyaa:leechers><![CDATA[7]]></nyaa:leechers>")
+        items = self.run_rss({"title": "title", "hash": "guid",
+                              "size": "nyaa:size", "seeders": "nyaa:seeders",
+                              "leechers": "nyaa:leechers", "added": "pubDate"})
+        it = items[0]
+        self.assertEqual(it["seeders"], 42,
+                         "CDATA 包住的做种数要能读出来，否则排序按空值走")
+        self.assertEqual(it["leechers"], 7, "CDATA 包住的下载数要能读出来")
+        self.assertIsNotNone(it["added"], "CDATA 包住的发布时间要能读出来")
+        self.assertEqual(it["size"], 1610612736, "CDATA 包住的体积要能读出来")
+
 
 if __name__ == "__main__":
     unittest.main()

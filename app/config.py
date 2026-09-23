@@ -121,18 +121,44 @@ _NESTED_QUANT_RE = re.compile(
     r"|\.\*[^)]*[*+]\s*\)"               # (.*)+
 )
 
+_OVERLAP_BRANCH_RE = re.compile(r"\([^()]*\|[^()]*\)\s*[*+{]")
+
+
+PATTERN_FIELDS = (("hash_pattern", "哈希"),
+                  ("title_pattern", "标题"),
+                  ("size_pattern", "体积"))
+
+
+def pattern_problem(label: str, value) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    try:
+        compiled = re.compile(text)
+    except re.error as exc:
+        return f"{label}正则无效：{exc}"
+    risk = risky_pattern_text(text)
+    if risk:
+        return f"{label}正则{risk}，匹配长文本时会卡住搜索"
+    if slow_pattern(compiled):
+        return f"{label}正则匹配太慢，会在搜索时卡住"
+    return ""
+
 
 def risky_pattern_text(pattern: str) -> str:
     source = str(pattern or "")
     if _NESTED_QUANT_RE.search(source):
         return "存在嵌套量词"
+    if _OVERLAP_BRANCH_RE.search(source):
+        return "分支可重叠回溯"
     return ""
 
 
 def slow_pattern(compiled, size: int = PATTERN_PROBE_BYTES) -> int:
     if not hasattr(compiled, "search"):
         return 0
-    sample = (("<a href=\"magnet:?xt=urn:btih:" + "a" * 40 + "\">x</a> "
+    sample = (("<a href=\"magnet:?xt=urn:btih:"
+               "0123456789abcdef0123456789abcdef01234567\">x</a> "
                "1080p BluRay 1.96GB 2024-05-06 eps 12 [Sub] ") * 32)[:size]
     started = time.monotonic()
     try:
@@ -290,23 +316,10 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
         if stype == "json" and not str(src.get("list_path") or "").strip():
             errs.append("json 类型必须填列表路径（如 data.list）")
 
-        for field, label in (("hash_pattern", "哈希"),
-                             ("title_pattern", "标题"),
-                             ("size_pattern", "体积")):
-            value = str(src.get(field) or "").strip()
-            if not value:
-                continue
-            try:
-                compiled = re.compile(value)
-            except re.error as exc:
-                errs.append(f"{label}正则无效：{exc}")
-                continue
-            risk = risky_pattern_text(value)
-            if risk:
-                errs.append(f"{label}正则{risk}，匹配长文本时会卡住搜索")
-                continue
-            if slow_pattern(compiled):
-                errs.append(f"{label}正则匹配太慢，会在搜索时卡住")
+        for field, label in PATTERN_FIELDS:
+            bad = pattern_problem(label, src.get(field))
+            if bad:
+                errs.append(bad)
 
         if stype != "html":
             mapping = src.get("map") or {}
@@ -321,16 +334,10 @@ def _incoming_problem(src: dict) -> str:
     if url and (not url.lower().startswith(("http://", "https://"))
                 or "{query}" not in url):
         return "URL 模板必须以 http:// 或 https:// 开头并含 {query}"
-    for field, label in (("hash_pattern", "哈希"),
-                         ("title_pattern", "标题"),
-                         ("size_pattern", "体积")):
-        value = str(src.get(field) or "").strip()
-        if not value:
-            continue
-        try:
-            re.compile(value)
-        except re.error as exc:
-            return f"{label}正则无效：{exc}"
+    for field, label in PATTERN_FIELDS:
+        bad = pattern_problem(label, src.get(field))
+        if bad:
+            return bad
     return ""
 
 

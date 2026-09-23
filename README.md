@@ -3,7 +3,7 @@
 一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，
 选中后批量复制磁力链接，或直接投递到迅雷。
 
-![happycrate 工具截图](assets/readme_preview.jpg)
+![happycrate 工具截图](assets/readme_preview.png)
 
 ## 定位
 

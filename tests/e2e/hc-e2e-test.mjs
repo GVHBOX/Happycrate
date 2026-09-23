@@ -14,9 +14,12 @@ const BROWSERS = [
   ["Edge", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe"],
   ["Chrome", "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"],
   ["Chrome", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"],
-].filter(([, p]) => existsSync(p));
+].filter(([, p]) => existsSync(p))
+  .filter(([label]) => !process.env.HC_E2E_BROWSER
+    || label.toLowerCase() === process.env.HC_E2E_BROWSER.toLowerCase());
 
 const SHARED_PORT = 8123;
+const HEADED = process.env.HC_E2E_HEADED === "1";
 const CTRL = 2;
 const SHIFT = 8;
 
@@ -75,6 +78,9 @@ function staticServer(root) {
 async function main() {
   if (!BROWSERS.length) { console.error("no edge/chrome found"); return 2; }
   mkdirSync(tmpRoot, { recursive: true });
+  if (HEADED) {
+    console.log("[run] 有头模式：浏览器窗口会在你桌面上出现（已尽量最小化），跑完自动关闭");
+  }
 
   let server = null;
   let pageUrl = "http://127.0.0.1:" + SHARED_PORT + "/index.html";
@@ -93,6 +99,7 @@ async function main() {
   mkdirSync(profileDir, { recursive: true });
 
   try {
+    const errors = [];
     for (const [label, exe] of BROWSERS) {
       console.log("[run] browser:", label);
       try {
@@ -107,8 +114,17 @@ async function main() {
         }
         console.log("[run] " + label + " failed: " + failed.map((f) => f.name).join("; "));
       } catch (e) {
-        console.log("[run] " + label + " error: " + String((e && e.message) || e));
+        const msg = String((e && e.message) || e);
+        console.log("[run] " + label + " error: " + msg);
+        if (msg.indexOf("browser-exited-early") >= 0 && !HEADED) {
+          errors.push(label);
+        }
       }
+    }
+    if (errors.length === BROWSERS.length) {
+      console.log("[hint] 每个浏览器都在启动阶段就退出、且没有任何输出。这台机器把 headless Chromium");
+      console.log("[hint] 静默拦掉了（关掉沙箱也一样），不是脚本问题。要跑就用有头模式：");
+      console.log("[hint]   HC_E2E_HEADED=1 node tests/e2e/hc-e2e-test.mjs   （会短暂出现浏览器窗口）");
     }
     console.log("VERDICT: FAIL");
     return 1;
@@ -161,13 +177,29 @@ async function runOnce(exe, profileDir, pageUrl) {
     "--disable-session-crashed-bubble",
     "--no-proxy-server",
     "--window-size=1280,1500",
-    "--headless",
+    ...(HEADED
+      ? ["--start-minimized", "--window-position=-32000,-32000"]
+      : ["--headless"]),
     pageUrl,
   ], { stdio: "ignore" });
   let exited = false;
   child.on("exit", () => { exited = true; });
+  let browserPort = 0;
+  const killByPort = () => {
+    if (!browserPort) return;
+    try {
+      const out = execSync("netstat -ano", { encoding: "utf8" });
+      for (const line of out.split(/\r?\n/)) {
+        if (line.indexOf(":" + browserPort) < 0 || !/LISTENING/i.test(line)) continue;
+        const cols = line.trim().split(/\s+/);
+        const pid = cols[cols.length - 1];
+        if (/^\d+$/.test(pid)) execSync("taskkill /PID " + pid + " /T /F", { stdio: "ignore" });
+      }
+    } catch (e) {}
+  };
   const killTree = () => {
     try { execSync("taskkill /PID " + child.pid + " /T /F", { stdio: "ignore" }); } catch (e) {}
+    killByPort();
   };
 
   let ws = null;
@@ -183,12 +215,13 @@ async function runOnce(exe, profileDir, pageUrl) {
   try {
     const portFile = join(profileDir, "DevToolsActivePort");
     const port = await waitFor(() => {
-      if (exited) return -1;
       if (!existsSync(portFile)) return 0;
       const p = Number(readFileSync(portFile, "utf8").split("\n")[0].trim());
       return p > 0 ? p : 0;
-    }, 15000, 300, "devtools-port");
-    if (port === -1) throw new Error("browser-exited-early");
+    }, 30000, 300, "devtools-port").catch(() => {
+      throw new Error(exited ? "browser-exited-early" : "devtools-port-timeout");
+    });
+    browserPort = port;
 
     const wsPath = readFileSync(portFile, "utf8").split("\n")[1].trim();
     ws = new WebSocket("ws://127.0.0.1:" + port + wsPath);
@@ -324,6 +357,22 @@ async function runOnce(exe, profileDir, pageUrl) {
     await realClick(p.x, p.y);
     check("click-row-selects-single", (await selCount()) === 1, "sel=" + JSON.stringify(await selIdx()));
     check("selbar-shows", (await evaluate("document.getElementById('selbar').classList.contains('show') && document.getElementById('selN').textContent", page)) === "1");
+
+    const darkSelCount = await evaluate(`(function(){
+      document.body.classList.add("dark");
+      var b = document.getElementById("selN");
+      function rgb(c){ return c.slice(c.indexOf("(") + 1, c.indexOf(")")).split(",").map(Number); }
+      function lum(c){ var f = rgb(c).map(function(x){ x = x / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * f[0] + 0.7152 * f[1] + 0.0722 * f[2]; }
+      var fg = getComputedStyle(b).color;
+      var bg = getComputedStyle(document.getElementById("selbar")).backgroundColor;
+      var hi = Math.max(lum(fg), lum(bg)), lo = Math.min(lum(fg), lum(bg));
+      var r = (hi + 0.05) / (lo + 0.05);
+      document.body.classList.remove("dark");
+      return fg + " on " + bg + " = " + r.toFixed(2) + " darkBack=" + !document.body.classList.contains("dark");
+    })()`, page);
+    const darkRatio = parseFloat(String(darkSelCount).split(" = ")[1]);
+    check("dark-selbar-count-is-readable",
+      darkRatio >= 4 && /darkBack=true/.test(darkSelCount), darkSelCount);
 
     p = centerOf(await rectOf("#rows .srow", 5));
     await realClick(p.x, p.y);
@@ -545,6 +594,12 @@ async function runOnce(exe, profileDir, pageUrl) {
       ce.title === "添加自定义" && ce.types.join(",") === "RSS,JSON,HTML" &&
       ce.addrLabel === "URL 模板",
       customEditor);
+
+    const mapFieldList = await evaluate(`JSON.stringify([].slice.call(document.querySelectorAll("#wMap [data-map]")).map(function(i){ return i.dataset.map; }))`, page);
+    const mfl = JSON.parse(mapFieldList);
+    check("custom-editor-maps-every-supported-field",
+      mfl.length === 7 && mfl.indexOf("leechers") >= 0 && mfl.indexOf("seeders") >= 0,
+      mapFieldList);
     await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
     await sleep(400);
 

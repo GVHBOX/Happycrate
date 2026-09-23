@@ -1,11 +1,12 @@
-"""清理测试遗留的无头 Edge 进程与 .scratch/tmp 下的 profile 目录。
+"""清理测试遗留的浏览器进程与 .scratch/tmp 下的 profile 目录。
 
-只结束「浏览器进程 且 命令行含 .scratch/tmp」，绝不碰用户自己的浏览器，
-也不会误伤同时在跑的 bash / python。
+按 profile 目录里的 DevToolsActivePort 找端口、再找监听该端口的进程，
+只结束「自己起的那个浏览器」，绝不碰用户自己的浏览器。
 覆盖 e2e（hc-e2e-*）与截图工具（prof）两处 profile，
-两者都落在 .scratch/tmp 下，所以用同一个标记识别。
+两者都落在 .scratch/tmp 下。
 """
 
+import re
 import shutil
 import subprocess
 import sys
@@ -13,28 +14,41 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TMP = ROOT / ".scratch" / "tmp"
-MARK = str(TMP)
-BROWSERS = ("msedge", "chrome", "chromium")
-
-PS_QUERY = (
-    "Get-CimInstance Win32_Process | "
-    "Where-Object { "
-    f"$_.CommandLine -like '*{MARK}*' -and ("
-    + " -or ".join(f"$_.Name -like '*{b}*'" for b in BROWSERS)
-    + ") } | Select-Object -ExpandProperty ProcessId"
-)
 
 
-def e2e_pids() -> list[str]:
+def profile_ports() -> list[int]:
+    ports = []
+    for f in sorted(TMP.glob("*/DevToolsActivePort")):
+        try:
+            ports.append(int(f.read_text(encoding="utf-8").split("\n")[0].strip()))
+        except Exception:
+            continue
+    return ports
+
+
+def listening_pids(ports: list[int]) -> list[str]:
+    if not ports:
+        return []
     try:
         out = subprocess.run(
-            ["powershell", "-NoProfile", "-Command", PS_QUERY],
-            capture_output=True, text=True, errors="replace", timeout=120,
+            ["netstat", "-ano"], capture_output=True, text=True,
+            errors="replace", timeout=60,
         ).stdout
     except Exception as exc:
-        print(f"查询进程失败：{exc}")
+        print(f"查询端口失败：{exc}")
         return []
-    return [p.strip() for p in out.split() if p.strip().isdigit()]
+    pids = []
+    for line in out.splitlines():
+        if "LISTENING" not in line.upper():
+            continue
+        cols = line.split()
+        if not cols or not cols[-1].isdigit():
+            continue
+        for port in ports:
+            if re.search(r":" + str(port) + r"(?!\d)", line):
+                pids.append(cols[-1])
+                break
+    return pids
 
 
 def kill(pid: str) -> bool:
@@ -49,14 +63,19 @@ def kill(pid: str) -> bool:
 
 def reap(rounds: int = 6) -> int:
     total = 0
+    ports = profile_ports()
+    if not ports:
+        print("没有可用的调试端口记录，跳过进程清理")
+        return 0
+    print(f"profile 记录的调试端口：{ports}")
     for i in range(rounds):
-        pids = e2e_pids()
+        pids = listening_pids(ports)
         if not pids:
-            print(f"第 {i + 1} 轮：已无残留进程")
+            print(f"第 {i + 1} 轮：端口已无人监听")
             break
         killed = sum(1 for pid in pids if kill(pid))
         total += killed
-        print(f"第 {i + 1} 轮：发现 {len(pids)} 个，结束 {killed} 个")
+        print(f"第 {i + 1} 轮：发现 {len(pids)} 个监听进程，结束 {killed} 个")
     return total
 
 

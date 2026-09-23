@@ -126,6 +126,7 @@
 
   window.__onSearchBatch = function(d){ if (sHooks.batch && d) sHooks.batch(d); };
   window.__onSearchSource = function(d){ if (sHooks.source && d) sHooks.source(d); };
+  window.__onSearchStart = function(d){ if (sHooks.start && d) sHooks.start(d); };
   window.__onSearchDone = function(d){ if (sHooks.done && d) sHooks.done(d); };
   window.__onSearchSettled = function(d){ if (sHooks.settled && d) sHooks.settled(d); };
 
@@ -387,6 +388,13 @@
       var fatal = mockFatal(query);
       keys.forEach(function(key, i){
         var part = list.filter(function(it){ return it.sources.indexOf(key) >= 0; });
+        var typical = mockTypical(key);
+        setTimeout(function(){
+          if (token !== mockToken) return;
+          if (sHooks.start){
+            sHooks.start({token:token, key:key, typical_ms:typical});
+          }
+        }, 60 + i * 30);
         setTimeout(function(){
           if (token !== mockToken) return;
           var err = errs[key] || "";
@@ -511,6 +519,14 @@
   function mockErrors(query){
     if ((query || "").indexOf("坏") >= 0) return {"dmhy": "超时", "mikan": "返回 0 条"};
     return {};
+  }
+
+  var MOCK_TYPICAL = {nyaa:1500, apibay:112, mikan:5230, dmhy:1180,
+                      sukebei:2600, eztv:940, bitsearch:410, tpb:2900,
+                      xccl263:2400, knaben:356};
+
+  function mockTypical(key){
+    return MOCK_TYPICAL[key] || 0;
   }
 
   function mockFatal(query){

@@ -656,6 +656,17 @@ class Api:
         ).start()
         return len(targets)
 
+    def _typical_ms(self, key: str) -> int:
+        with self._health_lock:
+            h = self._health_store.get(key) or {}
+            events = list(h.get("events") or [])
+        times = sorted(int(e.get("ms") or 0) for e in events
+                       if int(e.get("ms") or 0) > 0
+                       and e.get("outcome") in (OUTCOME_OK, OUTCOME_SLOW))
+        if not times:
+            return 0
+        return times[len(times) // 2]
+
     def _mark(self, key: str, ok: bool, count: int, ms: int, err: str,
               round_id: str = "") -> dict:
         outcome, code = classify(ok, count, err, ms)
@@ -915,12 +926,23 @@ class Api:
                 )
                 self._push(f"window.__onSearchBatch && window.__onSearchBatch({payload})")
 
+        def on_start(key: str) -> None:
+            if token != self._search_token:
+                return
+            payload = json.dumps(
+                {"token": token, "key": key,
+                 "typical_ms": self._typical_ms(key)},
+                ensure_ascii=False,
+            )
+            self._push(f"window.__onSearchStart && window.__onSearchStart({payload})")
+
         def run_round(qtext: str, subset=None) -> None:
             keys = subset if subset is not None else all_keys
             try:
                 result, fatal = core.search(
                     qtext, page, None, keys, min_len=min_len,
                     on_source=on_source, batch=token, collect=False,
+                    on_start=on_start,
                 )
                 if fatal and not rows and not ok_keys:
                     errors[""] = fatal

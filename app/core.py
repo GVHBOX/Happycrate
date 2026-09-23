@@ -220,7 +220,8 @@ class SearchResult:
 def search(query: str, page: int, timeout: int | None, enabled,
            min_len: int = 2, on_source=None,
            batch: int | None = None,
-           collect: bool = True) -> tuple[SearchResult, str | None]:
+           collect: bool = True,
+           on_start=None) -> tuple[SearchResult, str | None]:
     from . import sources
 
     result = SearchResult()
@@ -231,7 +232,7 @@ def search(query: str, page: int, timeout: int | None, enabled,
     by_key = sources.search_many(
         query, page, timeout,
         enabled=enabled, max_workers=None, on_source=on_source,
-        batch=batch,
+        batch=batch, on_start=on_start,
     )
 
     collected: list[dict] = []

@@ -922,5 +922,121 @@ class StripCompletionMotionTest(unittest.TestCase):
                       "已就位的标签不要动，缺的才插入")
 
 
+class SourceProgressVisibilityTest(unittest.TestCase):
+
+    def search_js(self):
+        return (ROOT / "web" / "js" / "views" / "search.js").read_text(encoding="utf-8")
+
+    def api_js(self):
+        return (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+
+    def test_backend_emits_start_before_the_source_finishes(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        self.assertIn("def _search_starting(", src,
+                      "没有开始事件，前端就分不出「排队」和「进行中」，"
+                      "两种完全不同的处境只能都显示成「等待」")
+        self.assertIn("on_start(source.key)", src,
+                      "开始事件要在任务真正拿到线程时发，不是在提交任务时发")
+
+    def test_start_fires_inside_the_worker_not_at_submit(self):
+        src = (ROOT / "app" / "sources.py").read_text(encoding="utf-8")
+        i = src.index("def search_many(")
+        tail = src[i + 10:]
+        nxt = tail.find("\ndef ")
+        block = tail if nxt < 0 else tail[:nxt]
+        self.assertIn("pool.submit(_search_starting", block,
+                      "提交时发开始事件的话，排队中的源会被当成正在跑")
+        self.assertIn("on_start)] = s.key", block,
+                      "回调必须真的传进 worker。传 None 的话事件永远不发，"
+                      "界面上就只剩「排队」和「已完成」，进行中整段消失")
+
+        wrap = src[src.index("def _search_starting("):]
+        wrap = wrap[:wrap.index("def search_one(")]
+        self.assertIn("on_start(source.key)", wrap,
+                      "开始事件要在任务真正拿到线程时发")
+
+    def test_typical_is_a_median_not_a_mean(self):
+        from app import api as api_mod
+        api = api_mod.Api()
+        api._health_store.data["probe_src"] = {"events": [
+            {"ms": 100, "outcome": "ok"},
+            {"ms": 200, "outcome": "ok"},
+            {"ms": 9000, "outcome": "ok"},
+        ]}
+        try:
+            self.assertEqual(api._typical_ms("probe_src"), 200,
+                             "「约」要用中位数：均值会被偶发的一次超时拉飞，"
+                             "给用户一个没有参考价值的基线")
+        finally:
+            api._health_store.data.pop("probe_src", None)
+
+    def test_typical_ignores_failures_and_unknown_keys(self):
+        from app import api as api_mod
+        api = api_mod.Api()
+        self.assertEqual(api._typical_ms("no_such_source_at_all"), 0,
+                         "没有历史时必须返回 0，前端才知道不要显示「约」")
+        api._health_store.data["probe_src2"] = {"events": [
+            {"ms": 9999, "outcome": "http429"},
+            {"ms": 0, "outcome": "ok"},
+        ]}
+        try:
+            self.assertEqual(api._typical_ms("probe_src2"), 0,
+                             "失败请求的耗时不能进基线，否则错误地抬高预期")
+        finally:
+            api._health_store.data.pop("probe_src2", None)
+
+    def test_frontend_has_the_start_hook(self):
+        self.assertIn("window.__onSearchStart", self.api_js(),
+                      "后端推的开始事件要有接收口，否则白推")
+        self.assertIn("start: function(d)", self.search_js(),
+                      "搜索视图要处理 start 事件")
+
+    def test_running_needs_a_start_marker_not_just_pending(self):
+        src = self.search_js()
+        self.assertIn('ss.state === "pending" && !!ss.startedAt', src,
+                      "排队与进行中共用 pending 状态，靠 startedAt 区分；"
+                      "少了这个判断两者又会合并成一个样子")
+
+    def test_elapsed_time_comes_from_the_start_event(self):
+        src = self.search_js()
+        self.assertIn("startedAt = performance.now()", src,
+                      "已用时间要锚在开始事件上，不能用搜索开始时间冒充，"
+                      "否则排队时间会被算进请求耗时")
+
+    def test_eta_is_dropped_once_the_baseline_is_passed(self):
+        src = self.search_js()
+        self.assertIn("used < typ", src,
+                      "超过基线后要撤掉「约」，否则会出现"
+                      "「12.0s / 约 3.2s」这种自己打自己脸的读数")
+
+    def test_running_style_is_defined_and_breathing_is_moved_off_pending(self):
+        src = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        self.assertIn(".stile.running .sdot{", src,
+                      "进行中要有自己的圆点样式")
+        i = src.index(".stile.running .sdot{")
+        block = src[i:src.index("}", i)]
+        self.assertIn("breathe", block,
+                      "呼吸动画是「在跑」的信号，要挂在 running 上")
+        pending = src[src.index(".stile.pending .sdot{"):]
+        pending = pending[:pending.index("}")]
+        self.assertNotIn("animation", pending,
+                         "排队态不该呼吸：不动的点才表示「还没轮到」，"
+                         "排队和进行中都呼吸就又分不出来了")
+
+    def test_mock_emits_start_so_both_modes_match(self):
+        src = self.api_js()
+        i = src.index("startSearch: function(query){")
+        block = src[i:src.index("function mockItems(", i)]
+        self.assertIn("sHooks.start(", block,
+                      "直开网页与真机两种跑法要一致，mock 也要推开始事件")
+
+    def test_concurrency_covers_the_builtin_sources(self):
+        from app import config, sources
+        self.assertGreaterEqual(
+            sources.MAX_SEARCH_WORKERS, len(config.DEFAULT_SOURCES),
+            f"默认并发 {sources.MAX_SEARCH_WORKERS} 小于内置源数量 "
+            f"{len(config.DEFAULT_SOURCES)}，多出来的源要在队列里白等")
+
+
 if __name__ == "__main__":
     unittest.main()

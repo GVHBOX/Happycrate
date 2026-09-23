@@ -617,7 +617,23 @@
       return "<b>" + esc(ss.count) + "</b> 条" + (ss.err ? " · " + esc(ss.err) : "");
     }
     if (ss.state === "cancel") return "已取消";
-    return "等待";
+    return ss.startedAt ? "进行中" : "排队";
+  }
+
+  function secs(ms){
+    if (!ms || ms < 0) return "";
+    return (ms / 1000).toFixed(1) + "s";
+  }
+
+  function runningLabel(ss){
+    var out = esc(ss.name || "");
+    var used = ss.startedAt ? (performance.now() - ss.startedAt) : 0;
+    var typ = ss.typical || 0;
+    out += ' <span class="ela">' + secs(used) + "</span>";
+    if (typ > 0 && used < typ){
+      out += ' <span class="eta">/ 约 ' + secs(typ) + "</span>";
+    }
+    return out;
   }
 
   var DONE_STATE = {ok:1, err:1, empty:1, cancel:1, warn:1};
@@ -659,18 +675,29 @@
     var seen = {};
     order.forEach(function(k, i){
       var ss = st.strip[k] || {state:"pending"};
-      if (DONE_STATE[ss.state]) done++;
+      var settled = !!DONE_STATE[ss.state];
+      if (settled) done++;
       seen[k] = 1;
 
       var el = tileFor(k);
-      var prev = el.dataset.st || "";
-      if (prev !== ss.state) el.className = "stile " + ss.state;
-      if (DONE_STATE[ss.state] && !DONE_STATE[prev]) flashTile(el);
-      el.dataset.st = ss.state;
+      var busy = ss.state === "pending" && !!ss.startedAt;
+      var cls = busy ? "running" : (settled ? ss.state + " settled" : ss.state);
+      var prevState = el.dataset.ss || "";
+      if (el.dataset.st !== cls) el.className = "stile " + cls;
+      if (settled && !DONE_STATE[prevState]) flashTile(el);
+      el.dataset.st = cls;
+      el.dataset.ss = ss.state;
       var name = st.names[k] || k;
-      var text = esc(name) + " · " + stripLabel(ss);
+      var text = busy
+        ? runningLabel({name:name, startedAt:ss.startedAt, typical:ss.typical})
+        : esc(name) + " · " + stripLabel(ss);
+      if (settled && ss.state !== "cancel" && !el.querySelector(".tick")){
+        var tick = document.createElement("span");
+        tick.className = "tick";
+        el.appendChild(tick);
+      }
       var title = el.querySelector(".stitle");
-      if (title.innerHTML !== text) title.innerHTML = text;
+      if (title && title.innerHTML !== text) title.innerHTML = text;
       var at = stripEl.children[i];
       if (at !== el) stripEl.insertBefore(el, at || null);
     });
@@ -927,6 +954,29 @@
     }, hold);
   }
 
+  function paintClock(){
+    if (!progEl) return;
+    var clk = progEl.parentNode && progEl.parentNode.querySelector(".progclock");
+    if (clk){
+      var txt = ((performance.now() - st.t0) / 1000).toFixed(1) + "s";
+      if (clk.textContent !== txt) clk.textContent = txt;
+    }
+  }
+
+  function paintRunning(){
+    if (!stripEl) return;
+    [].slice.call(stripEl.querySelectorAll(".stile.running")).forEach(function(el){
+      var ss = st.strip[el.dataset.key];
+      if (!ss || ss.state !== "pending" || !ss.startedAt) return;
+      var title = el.querySelector(".stitle");
+      var text = runningLabel({
+        name: st.names[el.dataset.key] || el.dataset.key,
+        startedAt: ss.startedAt, typical: ss.typical,
+      });
+      if (title && title.innerHTML !== text) title.innerHTML = text;
+    });
+  }
+
   function dlLoop(){
     if (!st.busy || !progEl){ dlRaf = 0; return; }
     var elapsed = (performance.now() - st.t0) / 1000;
@@ -950,6 +1000,8 @@
       progEl.classList.toggle("slow", st.deadline > 0 &&
         elapsed > st.deadline / 1000 && st.done < st.total);
     }
+    paintClock();
+    paintRunning();
     dlRaf = requestAnimationFrame(dlLoop);
   }
 
@@ -1157,7 +1209,10 @@
             '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
           '</div>' +
         '</div>' +
-        '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
+        '<div class="progrow">' +
+          '<span class="progclock" id="progClock"></span>' +
+          '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
+        '</div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead">' + headHtml() + '</div>' +
@@ -1186,6 +1241,14 @@
     loadSourcesOnce();
 
     hooks = {
+      start: function(d){
+        if (!dispatch("start", d)) return;
+        var one = st.strip[d.key];
+        if (!one || one.state !== "pending") return;
+        one.startedAt = performance.now();
+        one.typical = Number(d.typical_ms) || 0;
+        paintStrip();
+      },
       source: function(d){
         if (!dispatch("source", d)) return;
         st.done += 1;

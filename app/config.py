@@ -49,7 +49,7 @@ DEFAULT_SOURCES = [
 DEFAULT_SETTINGS = {
     "version": SETTINGS_VERSION,
     "min_query_len": 2,
-    "max_workers": 8,
+    "max_workers": 12,
     "timeout": 15,
     "default_downloader": "",
     "retries": 1,

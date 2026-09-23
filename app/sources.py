@@ -24,7 +24,7 @@ logger = log.get_logger(__name__)
 _DEFAULT_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-MAX_SEARCH_WORKERS = 8
+MAX_SEARCH_WORKERS = 12
 
 _CANCEL_POLL = 0.1
 
@@ -2058,6 +2058,15 @@ def get(key: str) -> Source | None:
         reload_from_config()
     return BY_KEY.get(key)
 
+def _search_starting(source: Source, query: str, page: int, timeout, batch,
+                     on_start):
+    if on_start is not None:
+        try:
+            on_start(source.key)
+        except Exception as exc:
+            logger.debug("on_start 回调异常：%s", exc)
+    return search_one(source, query, page, timeout, batch=batch)
+
 def search_one(source: Source, query: str, page: int = 1,
                timeout: int | None = None,
                batch: int | None = None):
@@ -2092,7 +2101,8 @@ def search_one(source: Source, query: str, page: int = 1,
 
 def search_many(query: str, page: int = 1, timeout: int | None = None,
                 enabled=None, max_workers: int | None = None,
-                on_source=None, batch: int | None = None) -> dict:
+                on_source=None, batch: int | None = None,
+                on_start=None) -> dict:
     if not ALL_SOURCES:
         reload_from_config()
 
@@ -2109,10 +2119,10 @@ def search_many(query: str, page: int = 1, timeout: int | None = None,
     results: dict[str, tuple[list[dict], str, int]] = {}
     pool = futures.ThreadPoolExecutor(max_workers=workers)
     try:
-        jobs = {
-            pool.submit(search_one, s, query, page, timeout, batch): s.key
-            for s in picked
-        }
+        jobs = {}
+        for s in picked:
+            jobs[pool.submit(_search_starting, s, query, page, timeout, batch,
+                             on_start)] = s.key
         pending = set(jobs)
         while pending:
             if batch is not None and not _batch_alive(batch):

@@ -632,6 +632,10 @@ input, textarea{
 
 .progress{flex:none;height:var(--prog-h);position:relative;--p:0;
   background:var(--prog-gap);border-radius:var(--prog-radius)}
+.progrow{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) var(--sp-4) 0}
+.progrow .progress{flex:1}
+.progclock{flex:none;font:600 var(--fs-2xs)/1 var(--font-num);color:var(--t4);
+  font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
 .progress .track{display:flex;gap:var(--prog-gapx);height:100%;overflow:hidden;
   border-radius:var(--prog-radius)}
 .progress .fill{height:100%;width:calc(var(--p)*100%);position:relative;overflow:hidden;
@@ -966,7 +970,17 @@ input, textarea{
 .stile.warn .track .fill{background:var(--warn)}
 .stile.err .track .fill{background:var(--err)}
 .stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}
-.stile.pending .sdot{animation:breathe 1.6s var(--e) infinite}
+.stile.pending .sdot{background:var(--ink-13)}
+.stile.running{border-color:var(--brand-line); background:var(--brand-soft); color:var(--t2)}
+.stile.running .sdot{background:var(--brand); animation:breathe 1.4s var(--e) infinite}
+.stile.running .stitle{color:var(--t1)}
+.stile.running .track{opacity:1}
+.stile.running .track .fill{transform:scaleX(1); background:var(--brand)}
+.stile .ela,.stile .eta{font-family:var(--font-num); font-variant-numeric:tabular-nums; flex:none}
+.stile .ela{color:var(--t2); font-weight:600}
+.stile .eta{color:var(--t4); font-weight:400}
+.stile.settled{opacity:.78}
+.stile .tick{width:1px; height:9px; background:var(--ink-13); flex:none; margin-left:1px}
 .stile.ok .sdot{background:var(--ok)}
 .stile.ok b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.err{color:var(--err-strong); border-color:var(--err-line); background:var(--panel); box-shadow:inset 3px 0 0 var(--err-bar)}

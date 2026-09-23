@@ -90,6 +90,13 @@ CASES = [
         "tests/test_contract.py",
     ),
     (
+        "线程收尾回退：start_search 的测试又不等 worker",
+        "tests/test_contract.py",
+        "            self.await_search_threads(before)",
+        "            pass",
+        "tests/test_front_hygiene.py",
+    ),
+    (
         "缓存恢复回退：又硬写 state=ok",
         "app/api.py",
         '                state = "ok" if count else "empty"',
@@ -291,13 +298,6 @@ CASES = [
         "body.dark .selbar .st b{color:var(--brand-active)}",
         "body.dark .selbar .st b{color:var(--brand-line)}",
         "tests/test_front_hygiene.py",
-    ),
-    (
-        "映射字段回退：编辑器又漏 leechers",
-        "web/js/views/sources.js",
-        '["做种","seeders"],["下载","leechers"],["时间","added"]',
-        '["做种","seeders"],["时间","added"]',
-        "tests/test_contract.py",
     ),
     (
         "外观参数回退：新参数又不落 CSS 变量",

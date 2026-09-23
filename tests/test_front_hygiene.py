@@ -623,6 +623,33 @@ class CacheReplayStateTest(unittest.TestCase):
                         "回放要带 cached 标记，前端据此显示「缓存」")
 
 
+class SearchThreadCleanupTest(unittest.TestCase):
+
+    def callers(self):
+        out = []
+        for path in sorted((ROOT / "tests").glob("test_*.py")):
+            text = path.read_text(encoding="utf-8")
+            for i, line in enumerate(text.splitlines(), 1):
+                if "start_search(" not in line or line.lstrip().startswith("#"):
+                    continue
+                if "MAX_QUERY_LEN" in line or "assertRaises" in line:
+                    continue
+                out.append((path, i, text))
+        return out
+
+    def test_start_search_callers_wait_for_the_worker(self):
+        offenders = []
+        for path, lineno, text in self.callers():
+            window = "\n".join(text.splitlines()[lineno - 1:lineno + 14])
+            if "self.await_search_threads(" not in window:
+                offenders.append(f"{path.name}:{lineno}")
+        self.assertEqual(
+            offenders, [],
+            "调 start_search 会起一个 _search_worker 后台线程。测试必须等它结束，"
+            "否则 mock 窗口一关，它就拿着真 search_many 去打真实站点，"
+            "并被后续测试的 http_get 替身记进它们的断言列表：" + repr(offenders))
+
+
 class TestCollectionPositionTest(unittest.TestCase):
 
     FILES = ("test_front_hygiene.py", "test_front_smoke.py",

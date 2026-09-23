@@ -3,6 +3,8 @@ import inspect
 import re
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -421,15 +423,31 @@ class SafeCallSmokeTest(unittest.TestCase):
 
     def test_start_search_success_path_returns_parsed_query(self):
         self.api._settings.set("soft_deadline_ms", 0)
+        before = self.search_threads()
         with mock.patch.object(sources, "search_many", lambda *a, **k: {}):
             res = self.api.start_search("ubuntu")
-        self.assertTrue(res.get("ok"),
-                        "成功路径不能抛异常——参数名遮蔽过 query 模块")
-        self.assertIn("query", res)
-        self.assertEqual(res["query"].get("subject"), ["ubuntu"])
-        self.assertEqual(res["query"].get("browse"), False)
-        self.assertIn("token", res)
-        self.assertIn("total", res)
+            self.assertTrue(res.get("ok"),
+                            "成功路径不能抛异常——参数名遮蔽过 query 模块")
+            self.assertIn("query", res)
+            self.assertEqual(res["query"].get("subject"), ["ubuntu"])
+            self.assertEqual(res["query"].get("browse"), False)
+            self.assertIn("token", res)
+            self.assertIn("total", res)
+            self.await_search_threads(before)
+
+    def search_threads(self):
+        return {t for t in threading.enumerate() if "_search_worker" in t.name}
+
+    def await_search_threads(self, before):
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            if not (self.search_threads() - before):
+                return
+            time.sleep(0.01)
+        self.api.cancel_search()
+        self.fail("搜索线程没停下来。它会在这个测试的 mock 窗口关闭之后才去调用 "
+                  "search_many，那时拿到的是真函数，会向真实站点发请求，"
+                  "并被后续测试的 http_get 替身记进它们的断言列表")
 
 
 class MutatingCallSmokeTest(unittest.TestCase):

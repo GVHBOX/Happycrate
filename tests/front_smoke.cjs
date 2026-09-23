@@ -196,7 +196,7 @@ console.log("== 7. 桥接就绪前刷的 mock 源列表，必须在 live 后被�
   box.HC.views.search.mount(el("div"));
   setTimeout(function(){
     const before = box.HC.views.search.st.srcList.map(s => s.key);
-    report("桥接前是 mock 源（含 custom1）", before.indexOf("custom1") >= 0,
+    report("桥接前是 mock 源", before.length > 1 && before.indexOf("nyaa") >= 0,
            JSON.stringify(before));
     box.window.pywebview = { api: {
       start_search: function(){
@@ -213,7 +213,7 @@ console.log("== 7. 桥接就绪前刷的 mock 源列表，必须在 live 后被�
     }};
     setTimeout(function(){
       const after = box.HC.views.search.st.srcList.map(s => s.key);
-      report("live 后 custom1 被替换", after.indexOf("custom1") < 0,
+      report("live 后 mock 源被替换", after.length === 1 && after[0] === "nyaa",
              JSON.stringify(after));
       report("live 后源列表来自后端", after.indexOf("nyaa") >= 0,
              JSON.stringify(after));

@@ -21,20 +21,7 @@
     {key:"xccl263", label:"小草磁力", type:"builtin", enabled:true, timeout:20,
      addr:"https://www.xccl263.xyz", health:{state:"ok", ms:240, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"knaben", label:"Knaben", type:"builtin", enabled:true, timeout:15,
-     addr:"https://api.knaben.org/v1", health:{state:"ok", ms:356, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"custom1", label:"我的私藏源", type:"json", enabled:true, timeout:15,
-     addr:"https://e.com/api/search?q={query}&p={page}",
-     listPath:"data.list",
-     map:{title:"title", hash:"info_hash", size:"size", seeders:"seeders", added:"added"},
-     health:{state:"na", ms:0, err:"", times:[]}},
-    {key:"custom2", label:"备用索引", type:"rss", enabled:true, timeout:20,
-     addr:"https://index.example.org/search?q={query}",
-     listPath:"", map:{title:"title"},
-     health:{state:"ok", ms:87, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"custom3", label:"旧镜像站", type:"html", enabled:false, timeout:15,
-     addr:"https://old.example.net/s?k={query}&p={page}",
-     listPath:"", map:{title:"title", hash:"hash"},
-     health:{state:"na", ms:0, err:"", times:[]}}
+     addr:"https://api.knaben.org/v1", health:{state:"ok", ms:356, err:"", times:["ok","ok","ok","ok","ok"]}}
   ];
 
   var db = null;
@@ -64,15 +51,9 @@
       return {
         key: s.key || "",
         label: s.label || s.key || "",
-        type: s.type || "builtin",
         enabled: s.enabled !== false,
         timeout: Number(s.timeout) || 15,
         addr: s.addr || "",
-        listPath: s.listPath || "",
-        map: s.map || null,
-        hashPattern: s.hashPattern || "",
-        titlePattern: s.titlePattern || "",
-        sizePattern: s.sizePattern || "",
         health: {
           state: (s.health && s.health.state) || "na",
           ms: (s.health && s.health.ms) || 0,
@@ -232,9 +213,8 @@
       if (errors.length) return Promise.resolve({ok:false, count:0, ms:0, errors:errors});
       return new Promise(function(res){
         setTimeout(function(){
-          var bad = /example\.com|e\.com/.test(entry.addr || "");
           res({ok: true, ms: 620, errors: [],
-               count: bad ? 0 : 3 + Math.floor(Math.random()*20)});
+               count: 3 + Math.floor(Math.random()*20)});
         }, 700);
       });
     },
@@ -258,13 +238,6 @@
     importSources: function(){
       if (live()) return window.pywebview.api.import_sources();
       return Promise.resolve({ok:true, added:1, updated:8, message:"新增 1 个，更新 8 个"});
-    },
-
-    nextCustomKey: function(){
-      if (live()) return window.pywebview.api.next_custom_key();
-      var list = seed(), n = 1;
-      while (list.filter(function(s){ return s.key === "custom" + n; })[0]) n++;
-      return "custom" + n;
     },
 
     sourceAddr: function(key){
@@ -571,13 +544,6 @@
   function validate(e){
     var errs = [];
     if (!e.label) errs.push("名称不能为空");
-    var url = String(e.addr || "");
-    if (e.type !== "builtin"){
-      if (!url) errs.push("地址不能为空");
-      else if (!/^https?:\/\//i.test(url)) errs.push("地址必须以 http:// 或 https:// 开头");
-      if (url && url.indexOf("{query}") < 0) errs.push("URL 模板必须包含 {query}");
-    }
-    if (e.type === "json" && !String(e.listPath || "").trim()) errs.push("json 类型必须填列表路径");
     var t = Number(e.timeout);
     if (!t || t < 1 || t > 120) errs.push("超时需在 1-120 秒之间");
     return errs;
@@ -594,7 +560,6 @@
   }
 
   function adapterLocation(s){
-    if (s.type !== "builtin") return "app/templates.py :: _make_" + s.type;
     var n = adapterName(s.key);
     return n ? "app/sources.py :: " + n
              : "app/sources.py :: (未知内置源 " + s.key + ")";

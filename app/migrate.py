@@ -43,10 +43,9 @@ def find_legacy() -> Path | None:
     return None
 
 
-def run(cfg, settings) -> dict:
+def run(settings) -> dict:
     report = {
-        "done": False, "source": "", "added": 0,
-        "skipped": 0, "settings": 0, "error": "",
+        "done": False, "source": "", "settings": 0, "error": "",
     }
 
     if settings.data.get(MARK):
@@ -58,31 +57,6 @@ def run(cfg, settings) -> dict:
     legacy = find_legacy()
     if legacy is None:
         return report
-
-    try:
-        raw = json.loads((legacy / "sources.json").read_text(encoding="utf-8"))
-    except Exception as exc:
-        report["error"] = f"sources.json 读不了：{type(exc).__name__}"
-        logger.warning("旧配置读取失败：%s", exc)
-        return report
-
-    have = set(cfg.all_keys())
-    entries = raw.get("sources") if isinstance(raw, dict) else raw
-    if isinstance(entries, list):
-        for item in entries:
-            if not isinstance(item, dict):
-                continue
-            key = str(item.get("key") or "").strip()
-            if not key or key in have or str(item.get("type") or "builtin") == "builtin":
-                report["skipped"] += 1
-                continue
-            ok, errors = cfg.add_source(item)
-            if ok:
-                have.add(key)
-                report["added"] += 1
-            else:
-                report["skipped"] += 1
-                logger.warning("旧源 %s 跳过：%s", key, errors)
 
     try:
         sraw = json.loads((legacy / "settings.json").read_text(encoding="utf-8"))
@@ -102,12 +76,11 @@ def run(cfg, settings) -> dict:
     }
 
     try:
-        cfg.save()
         settings.save()
         report["done"] = True
         report["source"] = str(legacy)
-        logger.info("已迁移旧配置：新增 %d 个源 · %d 项设置（来自 %s）",
-                    report["added"], report["settings"], legacy)
+        logger.info("已迁移旧配置：%d 项设置（来自 %s）",
+                    report["settings"], legacy)
     except Exception as exc:
         report["error"] = f"保存失败：{type(exc).__name__}"
         logger.warning("迁移后保存失败：%s", exc)

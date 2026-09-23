@@ -284,7 +284,6 @@ class CssHygieneTest(unittest.TestCase):
                    ROOT / "app" / "api.py",
                    ROOT / "app" / "sources.py",
                    ROOT / "app" / "shell.py",
-                   ROOT / "app" / "templates.py",
                    ROOT / "app" / "downloaders" / "thunder.py",
                    ROOT / "app" / "downloaders" / "base.py"]
         for p in targets:
@@ -428,11 +427,12 @@ class MockSourceListTest(unittest.TestCase):
             self.assertNotIn(key, self.mock_builtins(),
                              f"{key} 已下线，mock 里不该还留着")
 
-    def test_mock_keeps_custom_examples(self):
+    def test_mock_has_no_custom_source_left(self):
         text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         block = text.split("var MOCK = [", 1)[1].split("var db = null;", 1)[0]
         for key in ("custom1", "custom2", "custom3"):
-            self.assertIn(key, block, "三种自定义源类型的样例要留在 mock 里")
+            self.assertNotIn(key, block,
+                             "自定义源已移除，mock 里不该再有样例")
 
 
 class MockSettingsTest(unittest.TestCase):

@@ -16,11 +16,6 @@ SETTINGS_VERSION = 1
 
 _KEY_RE = re.compile(r"^[A-Za-z0-9_]+$")
 
-CUSTOM_TYPES = ("rss", "json", "html")
-ALL_TYPES = ("builtin", *CUSTOM_TYPES)
-
-URL_PLACEHOLDERS = ("{query}", "{page}")
-
 RETIRED_SOURCES = frozenset({"btdig", "apibay_adult"})
 
 DEFAULT_SOURCES = [
@@ -111,61 +106,6 @@ SETTING_LABELS = {
 
 SOURCE_TIMEOUT_MIN = 1
 SOURCE_TIMEOUT_MAX = 120
-
-PATTERN_PROBE_BYTES = 8 * 1024
-PATTERN_LIMIT_SECONDS = 0.2
-
-_NESTED_QUANT_RE = re.compile(
-    r"\([^()]*[*+][^()]*\)\s*[*+{]"      # (a+)+ / (a+)* / (a+){2,}
-    r"|\[[^\]]*\][*+]\s*[*+]"            # a*+ 这类占有式叠写
-    r"|\.\*[^)]*[*+]\s*\)"               # (.*)+
-)
-
-_OVERLAP_BRANCH_RE = re.compile(r"\([^()]*\|[^()]*\)\s*[*+{]")
-
-
-PATTERN_FIELDS = (("hash_pattern", "哈希"),
-                  ("title_pattern", "标题"),
-                  ("size_pattern", "体积"))
-
-
-def pattern_problem(label: str, value) -> str:
-    text = str(value or "").strip()
-    if not text:
-        return ""
-    try:
-        compiled = re.compile(text)
-    except re.error as exc:
-        return f"{label}正则无效：{exc}"
-    risk = risky_pattern_text(text)
-    if risk:
-        return f"{label}正则{risk}，匹配长文本时会卡住搜索"
-    if slow_pattern(compiled):
-        return f"{label}正则匹配太慢，会在搜索时卡住"
-    return ""
-
-
-def risky_pattern_text(pattern: str) -> str:
-    source = str(pattern or "")
-    if _NESTED_QUANT_RE.search(source):
-        return "存在嵌套量词"
-    if _OVERLAP_BRANCH_RE.search(source):
-        return "分支可重叠回溯"
-    return ""
-
-
-def slow_pattern(compiled, size: int = PATTERN_PROBE_BYTES) -> int:
-    if not hasattr(compiled, "search"):
-        return 0
-    sample = (("<a href=\"magnet:?xt=urn:btih:"
-               "0123456789abcdef0123456789abcdef01234567\">x</a> "
-               "1080p BluRay 1.96GB 2024-05-06 eps 12 [Sub] ") * 32)[:size]
-    started = time.monotonic()
-    try:
-        compiled.search(sample)
-    except Exception:
-        return 0
-    return size if time.monotonic() - started > PATTERN_LIMIT_SECONDS else 0
 
 def clamp_timeout(value, default: int = 15) -> int:
     try:
@@ -280,9 +220,9 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
     if not label:
         errs.append("名称不能为空")
 
-    stype = str(src.get("type") or "").strip()
-    if stype not in ALL_TYPES:
-        errs.append("type 必须是 builtin / rss / json / html 之一")
+    stype = str(src.get("type") or "builtin").strip()
+    if stype != "builtin":
+        errs.append(f"不支持的源类型：{stype}")
 
     timeout = src.get("timeout", 15)
     try:
@@ -292,53 +232,14 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
     except (TypeError, ValueError, OverflowError):
         errs.append("超时必须是整数")
 
-    if stype == "builtin":
-        from . import sources as sourcesmod
-        if key and key not in sourcesmod.BUILTIN_KEYS:
-            errs.append(f"未知内置源 key：{key}")
-        base = str(src.get("base") or "").strip()
-        if base and not base.lower().startswith(("http://", "https://")):
-            errs.append("URL 覆盖必须以 http:// 或 https:// 开头")
-
-    if stype in CUSTOM_TYPES:
-        url = str(src.get("url") or "").strip()
-        if not url:
-            errs.append("URL 模板不能为空")
-        else:
-            if not url.lower().startswith(("http://", "https://")):
-                errs.append("URL 模板必须以 http:// 或 https:// 开头")
-            if "{query}" not in url:
-                errs.append("URL 模板必须包含 {query} 占位符")
-            for ph in re.findall(r"\{[a-z_]*\}", url):
-                if ph not in URL_PLACEHOLDERS:
-                    errs.append(f"未知占位符 {ph}，可用：{{query}} {{page}}")
-
-        if stype == "json" and not str(src.get("list_path") or "").strip():
-            errs.append("json 类型必须填列表路径（如 data.list）")
-
-        for field, label in PATTERN_FIELDS:
-            bad = pattern_problem(label, src.get(field))
-            if bad:
-                errs.append(bad)
-
-        if stype != "html":
-            mapping = src.get("map") or {}
-            if isinstance(mapping, dict):
-                if not str(mapping.get("title") or "").strip():
-                    errs.append("字段映射至少要配一个标题字段")
+    from . import sources as sourcesmod
+    if key and key not in sourcesmod.BUILTIN_KEYS:
+        errs.append(f"未知内置源 key：{key}")
+    base = str(src.get("base") or "").strip()
+    if base and not base.lower().startswith(("http://", "https://")):
+        errs.append("URL 覆盖必须以 http:// 或 https:// 开头")
 
     return errs
-
-def _incoming_problem(src: dict) -> str:
-    url = str(src.get("url") or "").strip()
-    if url and (not url.lower().startswith(("http://", "https://"))
-                or "{query}" not in url):
-        return "URL 模板必须以 http:// 或 https:// 开头并含 {query}"
-    for field, label in PATTERN_FIELDS:
-        bad = pattern_problem(label, src.get(field))
-        if bad:
-            return bad
-    return ""
 
 
 class Config:
@@ -517,13 +418,6 @@ class Config:
         self.data = defaults()
         self._normalize()
 
-    def next_custom_key(self) -> str:
-        existing = set(self.all_keys())
-        i = 1
-        while f"custom{i}" in existing:
-            i += 1
-        return f"custom{i}"
-
     def export_to(self, path) -> bool:
         try:
             payload = dict(self.data)
@@ -557,7 +451,7 @@ class Config:
             for key in raw["retiredBuiltins"]:
                 self._retire(str(key).strip())
         builtin_ok = {"enabled", "timeout", "base", "label"}
-        added = updated = 0
+        updated = 0
         skipped: list[str] = []
 
         for src in srcs:
@@ -570,45 +464,26 @@ class Config:
                 continue
             cur = self.get(key)
 
-            if cur is not None and cur.get("type") == "builtin":
-                for field in builtin_ok:
-                    if field in src:
-                        cur[field] = src[field]
-                if "timeout" in src:
-                    cur["timeout"] = clamp_timeout(src["timeout"])
-                updated += 1
+            if cur is None:
+                skipped.append(f"{key} (不是内置源)")
                 continue
 
-            if cur is not None:
-                bad = _incoming_problem(src)
-                if bad:
-                    skipped.append(f"{key} ({bad})")
-                    continue
-                for field, value in src.items():
-                    if field in ("key", "health"):
-                        continue
-                    if field == "type" and value == "builtin":
-                        continue
-                    cur[field] = value
-                if "timeout" in src:
-                    cur["timeout"] = clamp_timeout(src["timeout"])
-                updated += 1
-                continue
-
-            errs = validate_source(src, existing_keys=None)
+            patch = {f: src[f] for f in builtin_ok if f in src}
+            if "timeout" in patch:
+                patch["timeout"] = clamp_timeout(patch["timeout"])
+            errs = validate_source({**cur, **patch})
             if errs:
                 skipped.append(f"{key} ({errs[0]})")
                 continue
-            item = {k: v for k, v in src.items() if k != "health"}
-            self.sources.append(item)
-            added += 1
+            cur.update(patch)
+            updated += 1
 
         self._normalize()
 
-        msg = f"新增 {added} 个，更新 {updated} 个"
+        msg = f"更新 {updated} 个"
         if skipped:
             msg += f"，跳过 {len(skipped)} 个：{'；'.join(skipped[:3])}"
-        return True, msg, added, updated
+        return True, msg, 0, updated
 
 class Settings:
 

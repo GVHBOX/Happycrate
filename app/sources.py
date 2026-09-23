@@ -1926,11 +1926,9 @@ PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
 
 BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
 
-def adapter_location(key: str, stype: str = "builtin") -> str:
-    if stype == "builtin":
-        name = BUILTIN_ADAPTER_NAMES.get(key)
-        return f"app/sources.py :: {name}" if name else f"app/sources.py :: (未知内置源 {key})"
-    return f"app/templates.py :: _make_{stype}"
+def adapter_location(key: str) -> str:
+    name = BUILTIN_ADAPTER_NAMES.get(key)
+    return f"app/sources.py :: {name}" if name else f"app/sources.py :: (未知内置源 {key})"
 
 class Source:
 
@@ -1941,22 +1939,18 @@ class Source:
         "key",
         "label",
         "order",
-        "raw",
-        "stype",
         "timeout",
     )
 
     def __init__(self, key, label, func, enabled=True, timeout=15,
-                 stype="builtin", base="", order=0, raw=None):
+                 base="", order=0):
         self.key = key
         self.label = label
         self.func = func
         self.enabled = bool(enabled)
         self.timeout = int(timeout or 15)
-        self.stype = stype
         self.base = base or ""
         self.order = int(order or 0)
-        self.raw = raw or {}
 
     def search(self, query, page=1, timeout=None, batch=None):
         if self.key in PAGELESS_KEYS:
@@ -1983,29 +1977,19 @@ class Source:
             return False, ms, 0, f"{type(exc).__name__}: {exc}"
 
     def __repr__(self) -> str:
-        return f"Source({self.key!r}, {self.stype}, enabled={self.enabled})"
+        return f"Source({self.key!r}, enabled={self.enabled})"
 
 ALL_SOURCES: list[Source] = []
 BY_KEY: dict[str, Source] = {}
 _config = None
 
 def _build_func(entry: dict):
-    stype = (entry.get("type") or "builtin").strip()
     key = entry.get("key") or ""
-
-    if stype == "builtin":
-        pair = _BUILTIN_ADAPTERS.get(key)
-        if pair is None:
-            logger.warning("未知内置源 key=%s", key)
-            return None
-        return pair[1]
-
-    from . import templates
-    try:
-        return templates.build(entry)
-    except ValueError as exc:
-        logger.warning("自定义源 %s 编译失败：%s", key, exc)
+    pair = _BUILTIN_ADAPTERS.get(key)
+    if pair is None:
+        logger.warning("未知内置源 key=%s", key)
         return None
+    return pair[1]
 
 def reload_from_config(cfg=None):
     global _config, ALL_SOURCES, BY_KEY
@@ -2030,10 +2014,8 @@ def reload_from_config(cfg=None):
             func=func,
             enabled=entry.get("enabled", True),
             timeout=int(entry.get("timeout", 15) or 15),
-            stype=entry.get("type", "builtin"),
             base=entry.get("base", "") or "",
             order=int(entry.get("order", 0) or 0),
-            raw=entry,
         ))
 
     built.sort(key=lambda s: s.order)

@@ -131,31 +131,10 @@ class ValidateSourceTest(unittest.TestCase):
                                        "type": "builtin", "base": "ftp://x"})
         self.assertTrue(any("http" in e for e in errs))
 
-    def test_custom_missing_query_placeholder(self):
-        errs = config.validate_source({"key": "c1", "label": "C", "type": "json",
-                                       "url": "https://a.example/s?p={page}"})
-        self.assertTrue(any("{query}" in e for e in errs))
-
-    def test_custom_unknown_placeholder(self):
-        errs = config.validate_source({"key": "c1", "label": "C", "type": "json",
-                                       "url": "https://a.example/s?q={query}&k={key}"})
-        self.assertTrue(any("未知占位符" in e for e in errs))
-
-    def test_json_without_list_path(self):
+    def test_custom_type_is_rejected(self):
         errs = config.validate_source({"key": "c1", "label": "C", "type": "json",
                                        "url": "https://a.example/s?q={query}"})
-        self.assertTrue(any("列表路径" in e for e in errs))
-
-    def test_html_without_map_allowed(self):
-        self.assertEqual(config.validate_source({
-            "key": "c1", "label": "C", "type": "html",
-            "url": "https://a.example/s?q={query}"}), [])
-
-    def test_invalid_regex(self):
-        errs = config.validate_source({"key": "c1", "label": "C", "type": "html",
-                                       "url": "https://a.example/s?q={query}",
-                                       "hash_pattern": "([unclosed"})
-        self.assertTrue(any("正则无效" in e for e in errs))
+        self.assertTrue(any("不支持的源类型" in e for e in errs))
 
     def test_bad_timeout(self):
         errs = config.validate_source({"key": "nyaa", "label": "N",
@@ -336,70 +315,17 @@ class ImportFromTest(unittest.TestCase):
         src = self._import_one({"key": "nyaa", "type": "builtin", "timeout": "abc"})
         self.assertEqual(src["timeout"], 15)
 
-    def test_custom_timeout_clamped(self):
-        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
-                                 "base": "https://example.org/?q={query}",
-                                 "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myrss", "timeout": 99999})
-        self.assertEqual(src["timeout"], 120)
+    def test_unknown_key_is_skipped(self):
+        self.assertIsNone(self._import_one({"key": "myrss", "label": "M",
+                                            "timeout": 15}))
 
-    def test_new_source_timeout_still_rejected(self):
-        result = self._import_one({"key": "myrss", "label": "M", "type": "rss",
-                                   "base": "https://example.org/?q={query}",
-                                   "timeout": 99999})
-        self.assertIsNone(result)
-
-    def test_custom_bad_url_is_skipped(self):
-        keep = "https://example.org/?q={query}"
-        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
-                                 "url": keep, "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myrss", "url": "not-a-url"})
-        self.assertEqual(src["url"], keep, "坏 URL 不能盖掉已有配置")
-
-    def test_custom_url_without_query_placeholder_is_skipped(self):
-        keep = "https://example.org/?q={query}"
-        self.cfg.sources.append({"key": "myrss", "label": "M", "type": "rss",
-                                 "url": keep, "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myrss", "url": "https://example.org/s"})
-        self.assertEqual(src["url"], keep)
-
-    def test_custom_bad_regex_is_skipped(self):
-        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
-                                 "url": "https://example.org/?q={query}",
-                                 "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myhtml", "hash_pattern": "([0-9"})
-        self.assertNotEqual(src.get("hash_pattern"), "([0-9",
-                            "坏正则不能写进配置")
-
-    def test_custom_good_fields_still_apply(self):
-        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
-                                 "url": "https://example.org/?q={query}",
-                                 "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myhtml",
-                                "url": "https://example.org/s?k={query}",
-                                "hash_pattern": "([0-9a-f]{40})"})
-        self.assertEqual(src["url"], "https://example.org/s?k={query}")
-        self.assertEqual(src["hash_pattern"], "([0-9a-f]{40})")
-
-    def test_custom_import_rejects_nested_quantifier(self):
-        keep = ">([^<>]{4,200})<"
-        self.cfg.sources.append({"key": "myhtml", "label": "H", "type": "html",
-                                 "url": "https://example.org/?q={query}",
-                                 "title_pattern": keep,
-                                 "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myhtml", "title_pattern": "(a+)+$"})
-        self.assertEqual(src["title_pattern"], keep,
-                         "导入更新已有源时也要挡嵌套量词，否则搜索会被卡死")
-
-    def test_custom_import_rejects_overlapping_branches(self):
-        keep = ">([^<>]{4,200})<"
-        self.cfg.sources.append({"key": "myhtml3", "label": "H", "type": "html",
-                                 "url": "https://example.org/?q={query}",
-                                 "size_pattern": keep,
-                                 "timeout": 15, "order": 9})
-        src = self._import_one({"key": "myhtml3", "size_pattern": "(?:ab|a)+x"})
-        self.assertEqual(src["size_pattern"], keep,
-                         "分支可重叠的分支同样会指数回溯，也要挡")
+    def test_import_keeps_custom_payload_out_of_config(self):
+        keep = "https://example.org"
+        entry = self.cfg.get("nyaa")
+        entry["base"] = keep
+        src = self._import_one({"key": "nyaa", "url": "https://evil.example/s"})
+        self.assertNotIn("url", src, "只有内置源的字段能被导入更新")
+        self.assertEqual(src["base"], keep)
 
 
 class RemoveBuiltinTest(unittest.TestCase):

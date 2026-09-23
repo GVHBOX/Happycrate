@@ -103,26 +103,16 @@
   }
 
   function editorSource(existing){
-    var isEdit = !!existing;
-    var d = existing || {key:"", label:"", type:"json", timeout:15, addr:"", listPath:"", map:{},
-                         hashPattern:"", titlePattern:"", sizePattern:""};
-    var TYPE_LABEL = {builtin:"内置", rss:"RSS", json:"JSON", html:"HTML"};
-    var isBuiltin = isEdit && d.type === "builtin";
-    var types = ["rss", "json", "html"];
-    var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["下载","leechers"],["时间","added"],["链接","magnet"]];
-    var map = d.map || {};
+    if (!existing) return;
+    var d = Object.assign({key:"", label:"", timeout:15, addr:""}, existing);
 
-    var keyPromise = isEdit
-      ? api.sourceAddr(d.key).then(function(a){
-          if (a) d = Object.assign({}, d, {addr: a});
-          return d.key;
-        })
-      : Promise.resolve(api.nextCustomKey());
-
-    keyPromise.then(function(newKey){
+    api.sourceAddr(d.key).then(function(a){
+      if (a) d = Object.assign({}, d, {addr: a});
+      return d.key;
+    }).then(function(newKey){
       var m = openModal(
-        '<div class="dhead"><div class="tile">' + (isEdit ? ICON.edit : ICON.plus) + '</div>' +
-        '<div class="dtitle">' + (isEdit ? "编辑" : "添加自定义") + '</div>' +
+        '<div class="dhead"><div class="tile">' + ICON.edit + '</div>' +
+        '<div class="dtitle">编辑</div>' +
         '<div class="spacer"></div><button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
         '<div class="mbody">' +
@@ -131,30 +121,8 @@
             '<span class="idchip">' + esc(newKey) + '</span></div>' +
           '<div class="field"><label>名称</label>' +
             '<input class="input" id="fLabel" value="' + esc(d.label) + '" placeholder="我的源"></div>' +
-          (isBuiltin ? "" :
-            '<div class="field"><label>类型</label>' +
-            '<div class="seg" id="fType">' +
-              types.map(function(t){
-                return '<button data-t="' + t + '" class="' + (d.type === t ? "on" : "") + '">' + TYPE_LABEL[t] + '</button>';
-              }).join("") +
-            '</div></div>') +
-          '<div class="field"><label id="fAddrLabel">URL 模板</label>' +
-            '<input class="input mono" id="fUrl" value="' + esc(d.addr) + '" placeholder="https://e.com/api/search?q={query}&p={page}"></div>' +
-          '<div class="field" id="wPath"><label>列表路径</label>' +
-            '<input class="input mono" id="fPath" value="' + esc(d.listPath) + '" placeholder="data.list"></div>' +
-          '<div class="field" id="wMap"><label>字段映射</label><div class="mapgrid">' +
-            fields.map(function(f){
-              return '<div class="cell"><label>' + f[0] + '</label>' +
-                '<input class="input mono" data-map="' + f[1] + '" value="' +
-                esc(map[f[1]] || "") + '" placeholder="' + f[1] + '"></div>';
-            }).join("") +
-          '</div></div>' +
-          '<div class="field" id="wPatH"><label>哈希正则</label>' +
-            '<input class="input mono" id="fHashPat" value="' + esc(d.hashPattern) + '" placeholder="magnet:\\?xt=urn:btih:([0-9a-fA-F]{40})"></div>' +
-          '<div class="field" id="wPatT"><label>标题正则</label>' +
-            '<input class="input mono" id="fTitlePat" value="' + esc(d.titlePattern) + '" placeholder="&gt;([^&lt;&gt;]{4,200})\\s*&lt;"></div>' +
-          '<div class="field" id="wPatS"><label>体积正则</label>' +
-            '<input class="input mono" id="fSizePat" value="' + esc(d.sizePattern) + '" placeholder="&gt;([\\d.]+\\s*[KMGT]i?B)\\s*&lt;"></div>' +
+          '<div class="field"><label>镜像地址</label>' +
+            '<input class="input mono" id="fUrl" value="' + esc(d.addr) + '" placeholder="https://e.com"></div>' +
           '<div class="field"><label>超时（秒）</label>' +
             '<div class="stepper">' +
               '<button data-step="-1">' + STEP_BTN.minus + '</button>' +
@@ -170,62 +138,16 @@
         true
       );
 
-      var type = d.type;
-
-      function syncFields(){
-        var wPath = m.querySelector("#wPath"), wMap = m.querySelector("#wMap");
-        var showPath = type === "json";
-        var showMap = type === "rss" || type === "json";
-        var showPat = type === "html";
-        wPath.classList.toggle("hidden", !showPath);
-        wMap.classList.toggle("hidden", !showMap);
-        ["#wPatH", "#wPatT", "#wPatS"].forEach(function(id){
-          m.querySelector(id).classList.toggle("hidden", !showPat);
-        });
-        var addr = m.querySelector("#fAddrLabel");
-        if (addr) addr.textContent = type === "builtin" ? "镜像地址" : "URL 模板";
-      }
-
-      var typeBox = m.querySelector("#fType");
-      if (typeBox){
-        typeBox.querySelectorAll("button").forEach(function(b){
-          b.onclick = function(){
-            type = b.dataset.t;
-            typeBox.querySelectorAll("button").forEach(function(x){ x.classList.remove("on"); });
-            b.classList.add("on");
-            syncFields();
-          };
-        });
-      }
-      syncFields();
-
       stepper(m, m.querySelector("#fTo"), 1, 120);
 
       function collect(){
-        var out = {
+        return {
           key: newKey,
           label: m.querySelector("#fLabel").value.trim(),
-          type: type,
           addr: m.querySelector("#fUrl").value.trim(),
           timeout: parseInt(m.querySelector("#fTo").textContent, 10),
-          enabled: existing ? existing.enabled : true,
-          isNew: existing ? false : true
+          enabled: existing.enabled
         };
-        out.listPath = m.querySelector("#fPath") ? m.querySelector("#fPath").value.trim() : "";
-        var mapOut = {};
-        m.querySelectorAll("[data-map]").forEach(function(i){
-          var v = i.value.trim();
-          if (v) mapOut[i.dataset.map] = v;
-        });
-        out.map = mapOut;
-        function pat(id){
-          var el = m.querySelector(id);
-          return el ? el.value.trim() : "";
-        }
-        out.hashPattern = pat("#fHashPat");
-        out.titlePattern = pat("#fTitlePat");
-        out.sizePattern = pat("#fSizePat");
-        return out;
       }
 
       m.querySelector("#mTest").onclick = function(){
@@ -454,7 +376,6 @@
             '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
             '<button class="btn btn-ghost" id="btnAuto">自动排序</button>' +
             '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
-            '<button class="btn btn-ghost" id="btnAdd">' + ICON.plus + '自定义源</button>' +
           '</div>' +
           '<div class="group hidden" id="groupBatch">' +
             '<button class="btn btn-brand" id="btnBatchDone">' + ICON.check + '完成</button>' +
@@ -504,8 +425,6 @@
     root.querySelector("#search").addEventListener("input", function(){
       store.set({filter: this.value});
     });
-
-    root.querySelector("#btnAdd").onclick = function(){ editorSource(null); };
 
     root.querySelector("#btnAuto").onclick = function(){
       autoOrder = !autoOrder;
@@ -665,7 +584,7 @@
     };
 
     root.querySelector("#btnReset").onclick = function(){
-      M.confirm("恢复默认会清掉自定义源？", "恢复", function(){
+      M.confirm("恢复默认会清掉排序与启用状态？", "恢复", function(){
         api.resetSources().then(function(){
           store.set({filter: "", checked: []});
           anchor = -1;

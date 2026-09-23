@@ -101,21 +101,18 @@ class CredentialHygieneTest(unittest.TestCase):
         self.api._health_store = config.HealthStore(
             path=Path(self.tmpdir) / "health.json")
         self.api._push = lambda js: None
-        self.url = "https://user:secret@example.com/api?q={query}"
-        self.api._cfg.add_source({
-            "key": "mycred", "label": "带凭据", "type": "json",
-            "url": self.url, "list_path": "data", "map": {"title": "t"},
-            "timeout": 15,
-        })
+        self.url = "https://user:secret@example.com/api"
+        entry = self.api._cfg.get("nyaa")
+        entry["base"] = self.url
 
     def test_list_view_hides_credentials(self):
-        row = [r for r in self.api.list_sources() if r["key"] == "mycred"][0]
+        row = [r for r in self.api.list_sources() if r["key"] == "nyaa"][0]
         self.assertNotIn("secret", row["addr"],
                          "源列表会显示给用户，地址里的密码不能原样带出去")
         self.assertIn("example.com", row["addr"], "主机部分要保留，用户才认得出是哪个源")
 
     def test_diagnostics_hides_credentials(self):
-        self.api._health_store.data["mycred"] = {
+        self.api._health_store.data["nyaa"] = {
             "state": "err", "outcomes": ["timeout"] * 5, "err": "超时",
             "events": [], "times": [], "ms": 0, "lastOk": 0, "lastCount": 0,
         }
@@ -124,16 +121,15 @@ class CredentialHygieneTest(unittest.TestCase):
                          "诊断会被复制到剪贴板并贴给别人，不能带出代理/源密码")
 
     def test_edit_keeps_credentials_on_save(self):
-        raw = self.api.source_addr("mycred")
+        raw = self.api.source_addr("nyaa")
         self.assertEqual(raw, self.url,
                          "编辑源时必须拿到原始地址，否则用户点一下保存"
                          "就把自己的密码覆盖成 ***")
-        self.api.save_source({
-            "key": "mycred", "label": "带凭据", "type": "json",
-            "addr": raw, "listPath": "data", "map": {"title": "t"},
-            "timeout": 15, "isNew": False,
+        result = self.api.save_source({
+            "key": "nyaa", "label": "Nyaa", "addr": raw, "timeout": 15,
         })
-        self.assertEqual(self.api._cfg.get("mycred").get("url"), self.url,
+        self.assertTrue(result.get("ok"), result.get("errors"))
+        self.assertEqual(self.api._cfg.get("nyaa").get("base"), self.url,
                          "保存后配置里的地址必须还是完整的")
 
 
@@ -368,9 +364,8 @@ class DynamicDispatchTest(unittest.TestCase):
             "标题栏按钮用 call(name) 派发，后端没有这些方法，点了没反应："
             + repr(missing))
 
-    def test_custom_type_location_points_to_template(self):
-        self.assertEqual(sources.adapter_location("x", "html"),
-                         "app/templates.py :: _make_html")
+    def test_unknown_key_location_says_unknown(self):
+        self.assertIn("未知内置源", sources.adapter_location("x"))
 
 
 
@@ -395,9 +390,7 @@ class SafeCallSmokeTest(unittest.TestCase):
                                       f"{name} 返回 {type(result).__name__}，期望 {expected.__name__}")
 
     def test_list_sources_have_frontend_contract_fields(self):
-        required = {"key", "label", "type", "enabled", "timeout", "addr",
-                    "listPath", "map", "hashPattern", "titlePattern",
-                    "sizePattern", "health"}
+        required = {"key", "label", "enabled", "timeout", "addr", "health"}
         for row in self.api.list_sources():
             with self.subTest(key=row.get("key")):
                 self.assertTrue(required.issubset(row.keys()),
@@ -459,21 +452,26 @@ class MutatingCallSmokeTest(unittest.TestCase):
                                       f"{name} 返回 {type(result).__name__}，期望 {expected.__name__}")
 
     def test_save_source_roundtrip(self):
-        entry = {"key": "custom1", "label": "C1", "type": "json",
-                 "url": "https://a.example/s?q={query}", "listPath": "data.list",
-                 "map": {"title": "title"}, "timeout": 15,
-                 "hashPattern": "hp", "titlePattern": "tp", "sizePattern": "sp"}
+        entry = {"key": "nyaa", "label": "Nyaa 镜像", "timeout": 20,
+                 "addr": "https://mirror.example"}
         self.assertTrue(self.api.save_source(entry).get("ok"))
-        saved = [s for s in self.api.list_sources() if s["key"] == "custom1"]
+        saved = [s for s in self.api.list_sources() if s["key"] == "nyaa"]
         self.assertEqual(len(saved), 1)
-        self.assertEqual(saved[0]["hashPattern"], "hp")
-        self.assertEqual(saved[0]["titlePattern"], "tp")
-        self.assertEqual(saved[0]["sizePattern"], "sp")
+        self.assertEqual(saved[0]["label"], "Nyaa 镜像")
+        self.assertEqual(saved[0]["timeout"], 20)
+        self.assertEqual(saved[0]["addr"], "https://mirror.example")
 
     def test_save_source_rejects_invalid(self):
-        result = self.api.save_source({"key": "bad", "label": "", "type": "json",
-                                       "url": "nope"})
+        result = self.api.save_source({"key": "nyaa", "label": "",
+                                       "timeout": 15})
         self.assertFalse(result.get("ok"))
+        self.assertTrue(result.get("errors"))
+
+    def test_save_source_rejects_unknown_key(self):
+        result = self.api.save_source({"key": "nonexistent", "label": "X",
+                                       "timeout": 15})
+        self.assertFalse(result.get("ok"),
+                         "不存在的新增源路径已移除，只能编辑既有内置源")
         self.assertTrue(result.get("errors"))
 
     def test_reorder_locks_manual_order(self):
@@ -509,25 +507,15 @@ class UnreachableCodeTest(unittest.TestCase):
             + repr(found))
 
 
-class CustomMapFieldCoverageTest(unittest.TestCase):
+class BuiltinEditorCoverageTest(unittest.TestCase):
 
-    def template_fields(self):
-        text = (ROOT / "app" / "templates.py").read_text(encoding="utf-8")
-        return {m.group(1) for m in
-                re.finditer(r'mapping\.get\(\s*"(\w+)"\s*\)', text)}
-
-    def editor_fields(self):
+    def test_editor_offers_name_mirror_and_timeout(self):
         text = (ROOT / "web" / "js" / "views" / "sources.js").read_text(
             encoding="utf-8")
-        block = text[text.index("var fields = ["):]
-        return set(re.findall(r'"(\w+)"\]', block[:block.index("];")]))
-
-    def test_editor_exposes_every_mappable_field(self):
-        missing = sorted(self.template_fields() - self.editor_fields())
-        self.assertEqual(
-            missing, [],
-            "后端模板支持这些映射字段，但自定义源编辑器里没有输入框：" + repr(missing)
-            + "（配置不了 = 该列永远是空的）")
+        for field in ("fLabel", "fUrl", "fTo"):
+            with self.subTest(field=field):
+                self.assertIn(field, text,
+                              "内置源编辑器必须能改名称、镜像地址与超时")
 
 
 if __name__ == "__main__":

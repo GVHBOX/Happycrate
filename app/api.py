@@ -9,7 +9,7 @@ import time
 import urllib.parse
 
 from . import (APP_TITLE, __version__, config, core, downloaders, log, migrate,
-               paths, query, runtime, sources, store, templates)
+               paths, query, runtime, sources, store)
 
 logger = log.get_logger(__name__)
 
@@ -115,13 +115,10 @@ _NET_SIGNS = ("urlerror", "gaierror", "getaddrinfo", "name or service not known"
 
 
 def _addr_of(entry: dict, raw: bool = False) -> str:
-    if entry.get("type") == "builtin":
-        if entry.get("addr"):
-            value = str(entry["addr"])
-        else:
-            value = sources.base_of(entry.get("key", ""), entry.get("base") or "")
+    if entry.get("addr"):
+        value = str(entry["addr"])
     else:
-        value = entry.get("addr") or entry.get("url") or ""
+        value = sources.base_of(entry.get("key", ""), entry.get("base") or "")
     return str(value) if raw else _redact(value)
 
 
@@ -140,15 +137,9 @@ def _to_view(entry: dict, health: dict | None = None) -> dict:
     return {
         "key": entry.get("key", ""),
         "label": entry.get("label", entry.get("key", "")),
-        "type": entry.get("type", "builtin"),
         "enabled": bool(entry.get("enabled", True)),
         "timeout": int(entry.get("timeout", 15) or 15),
         "addr": _addr_of(entry),
-        "listPath": entry.get("list_path", "") or "",
-        "map": entry.get("map") or {},
-        "hashPattern": entry.get("hash_pattern", "") or "",
-        "titlePattern": entry.get("title_pattern", "") or "",
-        "sizePattern": entry.get("size_pattern", "") or "",
         "health": {
             "state": h.get("state", "na"),
             "ms": int(h.get("ms", 0) or 0),
@@ -263,33 +254,6 @@ def _window_empty(outcomes: list[str]) -> bool:
 def _blank_health() -> dict:
     return {"state": "na", "ms": 0, "err": "", "times": [], "outcomes": [],
             "events": [], "lastOk": 0, "lastCount": 0}
-
-
-def _pattern_fields(item: dict) -> dict:
-    out = {}
-    for name, camel in (("hash_pattern", "hashPattern"),
-                        ("title_pattern", "titlePattern"),
-                        ("size_pattern", "sizePattern")):
-        value = str(item.get(camel) or item.get(name) or "").strip()
-        if value:
-            out[name] = value
-    return out
-
-
-def _draft(item: dict) -> dict:
-    return {
-        "key": item.get("key") or "test",
-        "label": item.get("label") or "test",
-        "type": item.get("type") or "json",
-        "url": _addr_of(item, raw=True),
-        "base": item.get("base", "") or "",
-        "list_path": item.get("listPath", "") or "",
-        "map": item.get("map") or {},
-        "hash_pattern": item.get("hashPattern", "") or item.get("hash_pattern", "") or "",
-        "title_pattern": item.get("titlePattern", "") or item.get("title_pattern", "") or "",
-        "size_pattern": item.get("sizePattern", "") or item.get("size_pattern", "") or "",
-        "timeout": item.get("timeout", 15),
-    }
 
 
 _RELAX_RANK = {
@@ -412,7 +376,7 @@ class Api:
         self._settings.load()
         runtime.replace(dict(self._settings.data))
         try:
-            self._migration = migrate.run(self._cfg, self._settings)
+            self._migration = migrate.run(self._settings)
         except Exception as exc:
             self._migration = {"done": False, "error": f"{type(exc).__name__}: {exc}"}
             logger.warning("旧配置迁移跳过：%s", exc)
@@ -495,9 +459,6 @@ class Api:
     def list_sources(self) -> list[dict]:
         return [_to_view(e, self._health_store.get(e.get("key", ""))) for e in self._cfg.sources]
 
-    def next_custom_key(self) -> str:
-        return self._cfg.next_custom_key()
-
     def source_addr(self, key: str) -> str:
         entry = self._cfg.get(str(key or "").strip())
         return _addr_of(entry, raw=True) if entry else ""
@@ -535,57 +496,26 @@ class Api:
     def save_source(self, entry: dict) -> dict:
         item = dict(entry or {})
         key = str(item.get("key") or "").strip()
-        if key and item.get("isNew") is False and not self._cfg.get(key):
+        if not key:
+            return {"ok": False, "errors": ["缺少数据源标识"]}
+        current = self._cfg.get(key)
+        if current is None:
             return {"ok": False, "errors": [f"找不到数据源 {key}"]}
 
-        if key and self._cfg.get(key):
-            current = self._cfg.get(key)
-            final_type = str(item.get("type") or current.get("type") or "builtin")
-            if final_type == "builtin":
-                payload = {
-                    "label": item.get("label") or current.get("label"),
-                    "type": "builtin",
-                    "base": _base_field(key, _addr_of(item, raw=True) or current.get("base", "")),
-                    "timeout": item.get("timeout", current.get("timeout", 15)),
-                    "enabled": bool(item.get("enabled", current.get("enabled", True))),
-                }
-            else:
-                payload = {
-                    "label": item.get("label") or current.get("label"),
-                    "type": final_type,
-                    "url": _addr_of(item, raw=True),
-                    "list_path": item.get("listPath", "") or "",
-                    "map": item.get("map") or {},
-                    "timeout": item.get("timeout", current.get("timeout", 15)),
-                    "enabled": bool(item.get("enabled", current.get("enabled", True))),
-                    **_pattern_fields(item),
-                }
-            errs = config.validate_source({**current, **payload})
-            if errs:
-                return {"ok": False, "errors": errs}
-            self._cfg.update(key, **payload)
-            self._cfg.save()
-            sources.reload_from_config(self._cfg)
-            self._cache_clear()
-            return {"ok": True, "errors": []}
-
-        new = {
-            "key": key or self._cfg.next_custom_key(),
-            "label": item.get("label") or "未命名源",
-            "type": item.get("type") or "json",
-            "url": _addr_of(item, raw=True),
-            "list_path": item.get("listPath", "") or "",
-            "map": item.get("map") or {},
-            "timeout": int(item.get("timeout", 15) or 15),
-            "enabled": bool(item.get("enabled", True)),
-            **_pattern_fields(item),
+        payload = {
+            "label": item["label"] if "label" in item else current.get("label"),
+            "base": _base_field(key, _addr_of(item, raw=True) or current.get("base", "")),
+            "timeout": item.get("timeout", current.get("timeout", 15)),
+            "enabled": bool(item.get("enabled", current.get("enabled", True))),
         }
-        ok, errors = self._cfg.add_source(new)
-        if ok:
-            self._cfg.save()
-            sources.reload_from_config(self._cfg)
-            self._cache_clear()
-        return {"ok": ok, "errors": errors}
+        errs = config.validate_source({**current, **payload})
+        if errs:
+            return {"ok": False, "errors": errs}
+        self._cfg.update(key, **payload)
+        self._cfg.save()
+        sources.reload_from_config(self._cfg)
+        self._cache_clear()
+        return {"ok": True, "errors": []}
 
     def remove_source(self, key: str) -> bool:
         if not self._cfg.remove_source(key):
@@ -599,38 +529,23 @@ class Api:
 
     def test_source(self, entry: dict) -> dict:
         item = dict(entry or {})
-        if item.get("type") == "builtin":
-            src = sources.get(item.get("key", ""))
-            if not src:
-                return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
-            base = _base_field(item.get("key", ""), _addr_of(item, raw=True))
-            draft = sources.Source(
-                key=src.key, label=src.label, func=src.func, enabled=True,
-                timeout=int(item.get("timeout") or src.timeout),
-                base=base or sources.base_of(item.get("key", ""), ""),
-            )
-            ok, ms, count, err = draft.probe()
-            outcome, code = classify(ok, count, err, ms)
-            return {
-                "ok": ok,
-                "count": count if ok else 0,
-                "ms": ms,
-                "errors": [] if ok else [outcome_text(outcome, code) or "请求失败"],
-            }
-
-        draft = _draft(item)
-        errors = config.validate_source(draft)
-        if errors:
-            return {"ok": False, "count": 0, "errors": errors}
-        try:
-            ok, count, msg = templates.test_source(
-                draft, "test", int(draft.get("timeout") or 15))
-        except ValueError as exc:
-            return {"ok": False, "count": 0, "errors": [str(exc)]}
+        key = str(item.get("key") or "").strip()
+        src = sources.get(key)
+        if not src:
+            return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
+        base = _base_field(key, _addr_of(item, raw=True))
+        draft = sources.Source(
+            key=src.key, label=src.label, func=src.func, enabled=True,
+            timeout=int(item.get("timeout") or src.timeout),
+            base=base or sources.base_of(key, ""),
+        )
+        ok, ms, count, err = draft.probe()
+        outcome, code = classify(ok, count, err, ms)
         return {
             "ok": ok,
-            "count": count,
-            "errors": [] if ok else [msg or "请求失败"],
+            "count": count if ok else 0,
+            "ms": ms,
+            "errors": [] if ok else [outcome_text(outcome, code) or "请求失败"],
         }
 
     def probe_sources(self, keys: list[str] | None = None) -> int:
@@ -1070,7 +985,7 @@ class Api:
                  "err": ev.get("err", "")}
                 for ev in events
             ],
-            "adapter": sources.adapter_location(key, entry.get("type", "builtin")),
+            "adapter": sources.adapter_location(key),
         }
 
     def _peer_stats(self, key: str) -> tuple[int, int]:

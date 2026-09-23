@@ -558,50 +558,29 @@ async function runOnce(exe, profileDir, pageUrl) {
 
     const editAlwaysVisible = await evaluate("document.querySelectorAll('#rows .op[data-edit]').length", page);
     const delOnlyBatch = await evaluate("document.querySelectorAll('#rows .op[data-del]').length", page);
-    check("edit-reachable-without-batch", editAlwaysVisible >= 10 && delOnlyBatch === 0,
-      "edit=" + editAlwaysVisible + " del=" + delOnlyBatch);
+    check("edit-reachable-without-batch", editAlwaysVisible === srcCount - 1 && delOnlyBatch === 0,
+      "edit=" + editAlwaysVisible + " del=" + delOnlyBatch + " expect=" + (srcCount - 1));
 
     const editBtnRect = centerOf(await rectOf("#rows .op[data-edit]", 0));
     await realClick(editBtnRect.x, editBtnRect.y);
     await waitFor(async () => !!(await evaluate("document.querySelector('.backdrop #fLabel')", page)), 4000, 150, "builtin-editor");
     const builtinEditor = await evaluate(`JSON.stringify({
-      hasType: !!document.querySelector("#fType"),
-      addrLabel: (document.querySelector("#fAddrLabel")||{}).textContent,
-      fields: [].slice.call(document.querySelectorAll(".mbody .field"))
-        .filter(function(f){ return !f.classList.contains("hidden"); })
-        .map(function(f){ return (f.querySelector("label")||{}).textContent; })
+      hasTypesBox: !!document.querySelector("#fType"),
+      hasAddrLabel: !!document.querySelector("#fAddrLabel"),
+      labels: [].slice.call(document.querySelectorAll(".mbody .field > label"))
+        .map(function(l){ return l.textContent; })
     })`, page);
     const be = JSON.parse(builtinEditor);
     check("builtin-editor-shows-mirror-only",
-      !be.hasType && be.addrLabel === "镜像地址" &&
-      be.fields.length === 3 &&
-      be.fields.indexOf("镜像地址") >= 0 && be.fields.indexOf("URL 模板") < 0 &&
-      be.fields.indexOf("列表路径") < 0 && be.fields.indexOf("字段映射") < 0,
+      be.hasTypesBox === false && be.hasAddrLabel === false &&
+      be.labels.join(",") === "名称,镜像地址,超时（秒）",
       builtinEditor);
     await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
     await sleep(400);
 
-    const addBtnRect = centerOf(await rectOf("#btnAdd", 0));
-    await realClick(addBtnRect.x, addBtnRect.y);
-    await waitFor(async () => !!(await evaluate("document.querySelector('#fType')", page)), 4000, 150, "custom-editor");
-    const customEditor = await evaluate(`JSON.stringify({
-      title: (document.querySelector(".backdrop .dtitle")||{}).textContent,
-      types: [].slice.call(document.querySelectorAll("#fType button")).map(function(b){ return b.textContent; }),
-      addrLabel: (document.querySelector("#fAddrLabel")||{}).textContent
-    })`, page);
-    const ce = JSON.parse(customEditor);
-    check("custom-editor-keeps-type-switch",
-      ce.title === "添加自定义" && ce.types.join(",") === "RSS,JSON,HTML" &&
-      ce.addrLabel === "URL 模板",
-      customEditor);
-
-    const mapFieldList = await evaluate(`JSON.stringify([].slice.call(document.querySelectorAll("#wMap [data-map]")).map(function(i){ return i.dataset.map; }))`, page);
-    const mfl = JSON.parse(mapFieldList);
-    check("custom-editor-maps-every-supported-field",
-      mfl.length === 7 && mfl.indexOf("leechers") >= 0 && mfl.indexOf("seeders") >= 0,
-      mapFieldList);
-    await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
-    await sleep(400);
+    const addBtnCount = await evaluate("document.querySelectorAll('#btnAdd').length", page);
+    check("custom-source-button-removed", addBtnCount === 0,
+      "btnAdd=" + addBtnCount);
 
     await evaluate('location.hash = "search"', page);
     await sleep(400);

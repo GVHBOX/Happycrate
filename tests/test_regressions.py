@@ -11,7 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app import api as api_mod
-from app import config, core, query, sources, templates
+from app import config, core, query, sources
 
 
 def _same_hash_source(key, title, **extra):
@@ -456,30 +456,6 @@ class PerSourceTimeoutTest(unittest.TestCase):
         self.assertEqual(seen["timeout"], 12, "显式超时仍应能覆盖源级值")
 
 
-class JsonAddedValueTest(unittest.TestCase):
-
-    def test_unix_int_is_kept(self):
-        self.assertEqual(templates._added_value(1757848402, sources), 1757848402.0)
-
-    def test_unix_string_is_kept(self):
-        self.assertEqual(templates._added_value("1757848402", sources), 1757848402.0)
-
-    def test_iso_string_still_parsed(self):
-        got = templates._added_value("2025-09-14T12:00:00Z", sources)
-        self.assertIsNotNone(got)
-        self.assertGreater(got, 1_700_000_000)
-
-    def test_zero_and_negative_rejected(self):
-        self.assertIsNone(templates._added_value(0, sources))
-        self.assertIsNone(templates._added_value(-5, sources))
-
-    def test_bool_rejected(self):
-        self.assertIsNone(templates._added_value(True, sources))
-
-    def test_garbage_returns_none(self):
-        self.assertIsNone(templates._added_value("not a date", sources))
-
-
 class SettingReasonTest(unittest.TestCase):
 
     def setUp(self):
@@ -652,28 +628,11 @@ class SaveSourceGuardTest(unittest.TestCase):
 
     def test_editing_missing_key_is_rejected(self):
         result = self.api.save_source({
-            "key": "typo_key", "label": "L", "type": "json",
-            "url": "https://a.example/s?q={query}", "listPath": "a.b",
-            "map": {"title": "t"}, "timeout": 15, "isNew": False,
+            "key": "typo_key", "label": "L", "timeout": 15,
         })
         self.assertFalse(result.get("ok"),
                          "明确是编辑但 key 不存在时，应当报错而不是静默新建")
         self.assertTrue(result.get("errors"))
-
-    def test_new_source_still_creates(self):
-        result = self.api.save_source({
-            "key": "custom1", "label": "C1", "type": "json",
-            "url": "https://a.example/s?q={query}", "listPath": "a.b",
-            "map": {"title": "t"}, "timeout": 15,
-        })
-        self.assertTrue(result.get("ok"), result.get("errors"))
-
-    def test_explicit_new_flag_allows_creation(self):
-        result = self.api.save_source({
-            "key": "custom2", "label": "C2", "type": "html",
-            "url": "https://a.example/s?q={query}", "timeout": 15, "isNew": True,
-        })
-        self.assertTrue(result.get("ok"), result.get("errors"))
 
 
 class FilesCapTest(unittest.TestCase):
@@ -692,15 +651,6 @@ class FilesCapTest(unittest.TestCase):
 
 class SourceViewKeysTest(unittest.TestCase):
 
-    def test_view_exposes_pattern_fields(self):
-        entry = {"key": "c1", "label": "L", "type": "html",
-                 "url": "https://a/", "hash_pattern": "HP",
-                 "title_pattern": "TP", "size_pattern": "SP"}
-        view = api_mod._to_view(entry)
-        self.assertEqual(view["hashPattern"], "HP")
-        self.assertEqual(view["titlePattern"], "TP")
-        self.assertEqual(view["sizePattern"], "SP")
-
     def test_view_exposes_health_detail(self):
         health = {"state": "ok", "outcomes": ["ok", "empty"],
                   "lastOk": 1757848402, "lastCount": 7, "events": []}
@@ -713,41 +663,7 @@ class SourceViewKeysTest(unittest.TestCase):
 _CDATA_HASH = "0123456789abcdef0123456789abcdef01234567"
 
 
-class TemplateHashCleanTest(unittest.TestCase):
-
-    def setUp(self):
-        self.orig_get = sources.http_get
-        self.rss = (
-            '<?xml version="1.0"?><rss><channel><item>'
-            "<title><![CDATA[Foo Bar 1080p]]></title>"
-            "<guid><![CDATA[" + _CDATA_HASH + "]]></guid>"
-            "<pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>"
-            "</item></channel></rss>"
-        )
-        sources.http_get = lambda *a, **k: self.rss
-
-    def tearDown(self):
-        sources.http_get = self.orig_get
-
-    def run_rss(self, mapping):
-        entry = {"url": "https://example.com/?q={query}", "map": mapping,
-                 "label": "我的源"}
-        self.addCleanup(setattr, sources, "http_get", self.orig_get)
-        return templates._make_rss(entry)("q")
-
-    def test_cdata_wrapped_hash_field_yields_a_bare_hash(self):
-        items = self.run_rss({"title": "title", "hash": "guid",
-                              "added": "pubDate"})
-        self.assertEqual(len(items), 1)
-        self.assertEqual(
-            items[0]["info_hash"], _CDATA_HASH,
-            "哈希字段被 CDATA 包住时要剥壳，否则拼出来的磁力链是坏的")
-        self.assertEqual(items[0]["magnet"],
-                         "magnet:?xt=urn:btih:" + _CDATA_HASH + "&dn=Foo%20Bar%201080p")
-
-    def test_cdata_wrapped_title_still_cleans(self):
-        items = self.run_rss({"title": "title", "hash": "guid"})
-        self.assertEqual(items[0]["title"], "Foo Bar 1080p")
+class MkCleanTest(unittest.TestCase):
 
     def test_mk_strips_cdata_and_decodes_entities(self):
         got = sources._mk(title="t", info_hash="<![CDATA[" + _CDATA_HASH + "]]>")
@@ -756,23 +672,6 @@ class TemplateHashCleanTest(unittest.TestCase):
                          "magnet:?xt=urn:btih:" + _CDATA_HASH + "&dn=t")
         self.assertEqual(sources._mk(title="t", info_hash="abc&amp;def")["info_hash"],
                          "abc&def")
-
-    def test_cdata_wrapped_numbers_and_date_are_read(self):
-        sources.http_get = lambda *a, **k: self.rss.replace(
-            "<pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>",
-            "<pubDate><![CDATA[Wed, 01 Jan 2025 00:00:00 +0000]]></pubDate>"
-            "<nyaa:size><![CDATA[1.5 GiB]]></nyaa:size>"
-            "<nyaa:seeders><![CDATA[42]]></nyaa:seeders>"
-            "<nyaa:leechers><![CDATA[7]]></nyaa:leechers>")
-        items = self.run_rss({"title": "title", "hash": "guid",
-                              "size": "nyaa:size", "seeders": "nyaa:seeders",
-                              "leechers": "nyaa:leechers", "added": "pubDate"})
-        it = items[0]
-        self.assertEqual(it["seeders"], 42,
-                         "CDATA 包住的做种数要能读出来，否则排序按空值走")
-        self.assertEqual(it["leechers"], 7, "CDATA 包住的下载数要能读出来")
-        self.assertIsNotNone(it["added"], "CDATA 包住的发布时间要能读出来")
-        self.assertEqual(it["size"], 1610612736, "CDATA 包住的体积要能读出来")
 
 
 if __name__ == "__main__":

@@ -138,11 +138,9 @@ class HealthStoreTest(DataDirCase):
         cfg = config.Config().load()
         ok, msg, added, updated = cfg.import_from(incoming)
         self.assertTrue(ok, msg)
-        self.assertEqual((added, updated), (1, 1), msg)
-        fresh = cfg.get("brandnew")
-        self.assertIsNotNone(fresh, "新源应被加入")
-        self.assertNotIn("health", fresh,
-                         "导入不应把外来 health 带进新增源")
+        self.assertEqual((added, updated), (0, 1), msg)
+        self.assertIsNone(cfg.get("brandnew"),
+                          "只认内置源，外来自定义源不能被加进来")
         kept = cfg.get("nyaa")
         self.assertEqual(kept["health"]["ms"], 50,
                          "同 key 的导入不该覆盖本机自己的健康度")

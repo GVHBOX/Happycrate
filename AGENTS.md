@@ -57,6 +57,11 @@
 `.scratch/` 整体不进版本库，`.scratch/reports/` 的成品报告也不例外，交付时用原生
 Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路径。
 
+**不要往 `.workbuddy/` 里写任何东西。** 那是宿主（WorkBuddy）强制新建的目录，项目不用它
+（`.gitignore` 里已忽略）。项目日志与长期约定放 `.scratch/memory/`：
+`YYYY-MM-DD.md` 记当天进展、`MEMORY.md` 记跨会话仍然成立的约定。
+不要用宿主默认的记忆路径，也不要在项目里重建这个目录。
+
 ## 4.网络与代理
 
 程序走不走代理由 `app/sources.py :: _opener` 决定：设置里填了 `proxy` 就用它，

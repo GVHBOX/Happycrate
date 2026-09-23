@@ -1,26 +1,22 @@
 # Happycrate · 快乐箱
 
+一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，
+选中后批量复制磁力链接，或直接投递到迅雷。
+
+![happycrate 工具截图](assets/readme_preview.jpg)
+
 ## 定位
 
 **只做搜集，不做判断。**
 
-- 资源能不能下载，取决于迅雷 / 115 / PikPak 服务器有没有存货。同一条磁力在不同网盘结果不同，
-  这件事工具说了不算，也不该说。P2P 时代已经过去。
-- 所以 **0 做种、老种、死链一律保留**。线索越多越好，一条都不丢。
-- 排序只是让批量复制时顺手，不缩小搜集范围。常规用法是框选全部、批量复制，交给下载工具去判断。
+资源能不能下载，取决于下载工具的服务器有没有存货，同一条磁力在不同网盘结果不同——这件事工具说了不算。
+所以 **0 做种、老种、死链一律保留**，线索越多越好。排序只为批量复制顺手，不缩小搜集范围。
 
-优化方向只有三条：**搜集更快、信息损失更少（向 100% 靠近）、关键词匹配又准又快又多**。
-
-![happycrate 工具截图](assets/readme_preview.jpg)
-
-## 它做什么
-
-一次输入关键词，同时检索 10 个公开磁力索引站，把结果按 info_hash 去重合并成一张表，
-选中后批量复制磁力链接，或者直接投递到迅雷。
+## 功能
 
 - **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB镜像、小草磁力、Knaben
+- **自定义源**：RSS / JSON / HTML 三种类型，填 URL 与抽取规则即可接入
 - **去重合并**：同一个种子被多个站点收录时合并成一行，各站字段取并集
-- **自定义源**：支持 RSS / JSON / HTML 三种类型，自己填 URL 和抽取规则即可接入
 - **健康度**：每个源记录最近若干次搜索的结果，故障与「长期零结果」分开显示，持续故障会自动降权
 - **批量操作**：框选、全选、按列排序，右键批量复制磁力或标题
 - **投递迅雷**：协议拉起与 COM 接口两种方式，自动挑选可用的那个
@@ -29,11 +25,10 @@
 
 ## 运行
 
-下载发行包解压后双击 `happycrate.exe` 即可，无需安装 Python。
-
+下载发行包解压后双击 `happycrate.exe`，无需安装 Python。
 首次启动若提示缺少 WebView2，按弹窗里的地址装一下运行库（地址会自动复制到剪贴板）。
 
-## 从源码运行
+## 开发
 
 需要 Python 3.11 ~ 3.13 和 Windows。
 
@@ -43,16 +38,22 @@ python -m venv .venv
 .venv/Scripts/python main.py
 ```
 
-## 打包
+测试：
+
+```bash
+.venv/Scripts/python -m unittest discover -s tests -p "test_*.py"
+node tests/front_smoke.cjs
+```
+
+打包：
 
 ```bash
 .venv/Scripts/pip install pyinstaller
 .venv/Scripts/python -m PyInstaller happycrate.spec --noconfirm
 ```
 
-产物在 `dist/happycrate/`。`app/` 与 `web/` 是外置的，不编译进 exe，
-所以改了源码只需要把同名文件复制到 `dist/happycrate/_internal/` 下对应位置，重启即生效；
-只有新增或删除第三方依赖时才需要重新打包。
+产物在 `dist/happycrate/`。`app/` 与 `web/` 是外置的，不编译进 exe，所以改了源码只需把同名文件
+复制到 `dist/happycrate/_internal/` 下对应位置，重启即生效；只有新增或删除第三方依赖时才需重新打包。
 
 ## 目录
 
@@ -65,19 +66,10 @@ python -m venv .venv
 | `tests/`  | 单元测试与前端冒烟脚本                                 |
 | `dist/`   | 构建产物，`happycrate.exe` 在 `dist/happycrate/` 下    |
 
-## 测试
-
-```bash
-.venv/Scripts/python -m unittest discover -s tests -p "test_*.py"
-node tests/front_smoke.cjs
-```
-
 ## 说明
 
-- 本工具不提供、不存储、不校验任何资源内容，只聚合各公开索引站返回的公开条目。
-- 搜索请求直接发往各索引站，本工具不做中转，也不保留查询记录。
-- 不涉及账号体系：不登录，不保存任何站点的用户名或令牌。迅雷只是被唤起的下载工具，
-  登录与配额由它自己处理。
+- 不提供、不存储、不校验任何资源内容，只聚合各公开索引站返回的公开条目。
+- 搜索请求直接发往各索引站，不做中转，不保留查询记录；不涉及账号体系，不登录、不保存任何站点的凭据。
 - 请遵守所在地法律法规，勿用于下载或传播受版权保护的内容。
 
 ## 许可

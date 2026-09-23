@@ -22,11 +22,7 @@ def find_node() -> str | None:
     ):
         if os.path.isfile(cand):
             return cand
-    import glob
-    hits = sorted(glob.glob(
-        os.path.expanduser(
-            r"~\.workbuddy\binaries\node\versions\*\node.exe")))
-    return hits[-1] if hits else None
+    return None
 
 
 class FrontEndSmokeTest(unittest.TestCase):

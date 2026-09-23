@@ -717,8 +717,6 @@ class MockHashTest(unittest.TestCase):
         for cand in (shutil.which("node"), r"C:\Program Files\nodejs\node.exe"):
             if cand and Path(cand).exists():
                 return cand
-        for p in Path.home().glob(".workbuddy/binaries/node/versions/*/node.exe"):
-            return str(p)
         return None
 
     def test_mock_hashes_are_valid_hex(self):

@@ -6,8 +6,6 @@
 ## 新会话起手（按顺序，别跳）
 
 ```bash
-export PATH="/c/Users/GVH/.workbuddy/binaries/PortableGit/versions/1.2.0/usr/bin:$PATH"
-
 git -C "D:/AI/happycrate" status --short        # 1. 工作区干净吗
 git log --oneline -12                            # 2. 上次做到哪
 .venv/Scripts/python.exe tools/check-all.py      # 3. 现状是不是绿的（约 19s）
@@ -127,7 +125,7 @@ git log --oneline -12                            # 2. 上次做到哪
 
 ## 环境
 
-- Bash 工具要先 `export PATH="/c/Users/GVH/.workbuddy/binaries/PortableGit/versions/1.2.0/usr/bin:$PATH"`，否则 `ls` / `wc` 全 not found。
+- Bash 的 `ls` / `wc` / `which` 直接可用，**不需要**改 `PATH`。别引入任何指向用户目录的路径。
 - `.venv` **没有 pytest**，只能用 `unittest discover`。
 - 命令行文本里**不能出现 "PowerShell" 字样**（heredoc 内容也算），会被安全策略拦截。
 - 打包必须用项目 `.venv`；全局 python 3.14 打出来是空壳。

@@ -214,6 +214,14 @@
     clearTimeout(toneTimer);
     toneTimer = setTimeout(syncWindowTone, 30);
   }
+  document.addEventListener("focusin", function(e){
+    var t = e.target;
+    if (!t) return;
+    if (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA") return;
+    if (t.type === "range" || t.type === "color") return;
+    t.spellcheck = false;
+  });
+
   document.addEventListener("DOMContentLoaded", function(){
     new MutationObserver(watchBackdrop).observe(document.body, {childList: true});
   });

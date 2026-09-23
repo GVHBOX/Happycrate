@@ -282,7 +282,7 @@
       if (!list.length) return Promise.resolve("");
       var report = {
         at: stamp(),
-        version: "1.0.23",
+        version: "1.2.3",
         lax: [],
         sources: list.map(function(s){
           var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
@@ -340,7 +340,7 @@
 
     appInfo: function(){
       if (live()) return window.pywebview.api.app_info();
-      return Promise.resolve({version:"1.0.23", dataDir:"(mock 模式)", mode:"mock",
+      return Promise.resolve({version:"1.2.3", dataDir:"(mock 模式)", mode:"mock",
                               logFile:"(mock 模式)",
                               proxy:"跟随系统 127.0.0.1:7890"});
     },

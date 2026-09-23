@@ -1012,6 +1012,18 @@
     recedeProg(celebrate === true);
   }
 
+  function abortSearch(msg){
+    st.busy = false;
+    st.token = 0;
+    st.pending = [];
+    goBtn.textContent = "搜索";
+    goBtn.classList.remove("stop");
+    stopProgress();
+    chipIdle();
+    if (msg) HC.motion.toast(msg, "err");
+    renderRows();
+  }
+
   function go(){
     if (st.hero){
       var heroInp = document.getElementById("heroInp");
@@ -1066,15 +1078,7 @@
     goBtn.classList.add("stop");
     HC.api.startSearch(q).then(function(res){
       if (!res || !res.ok){
-        st.busy = false;
-        st.token = 0;
-        st.pending = [];
-        goBtn.textContent = "搜索";
-        goBtn.classList.remove("stop");
-        stopProgress();
-        chipIdle();
-        if (res && res.error) HC.motion.toast(res.error, "err");
-        renderRows();
+        abortSearch(res && res.error);
         return;
       }
       st.token = res.token;
@@ -1084,15 +1088,7 @@
       setChip("搜索中 0/" + res.total + "…", "busy");
       replayPending();
     }).catch(function(err){
-      st.busy = false;
-      st.token = 0;
-      st.pending = [];
-        goBtn.textContent = "搜索";
-        goBtn.classList.remove("stop");
-        stopProgress();
-        chipIdle();
-        HC.motion.toast(err && err.message ? err.message : String(err), "err");
-      renderRows();
+      abortSearch(err && err.message ? err.message : String(err));
     });
   }
 
@@ -1183,64 +1179,8 @@
     updateSelUI(true);
   }
 
-  function mount(mountEl){
-    root = document.createElement("div");
-    root.className = "app";
-
-    root.innerHTML =
-      '<div class="card">' +
-        '<div class="bar">' +
-          '<div class="group">' +
-            '<button class="cb" id="ckAll"></button>' +
-            '<span class="allabel">全选</span>' +
-            '<span class="badge" id="badge">共 0 条</span>' +
-            '<div class="chipwrap">' +
-              '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
-              '<div class="chiptip" id="tip"></div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="spacer"></div>' +
-          '<div class="sentry">' + ICONS.search +
-            '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
-            '<button class="gobtn" id="goBtn">搜索</button>' +
-          '</div>' +
-          '<div class="group">' +
-            '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
-            '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
-          '</div>' +
-        '</div>' +
-        '<div class="progrow">' +
-          '<span class="progclock" id="progClock"></span>' +
-          '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
-        '</div>' +
-        '<div class="srcstrip" id="srcstrip" hidden></div>' +
-        '<div class="div"></div>' +
-        '<div class="shead" id="shead">' + headHtml() + '</div>' +
-        '<div class="rows" id="rows"></div>' +
-      '</div>';
-
-    mountEl.appendChild(root);
-    rowsEl = root.querySelector("#rows");
-    badgeEl = root.querySelector("#badge");
-    chipEl = root.querySelector("#chip");
-    tipEl = root.querySelector("#tip");
-    ckAllEl = root.querySelector("#ckAll");
-    inp = root.querySelector("#inp");
-    goBtn = root.querySelector("#goBtn");
-    headEl = root.querySelector("#shead");
-    progEl = root.querySelector("#prog");
-    stripEl = root.querySelector("#srcstrip");
-    badgeEl.innerHTML = badgeHtml();
-
-    var srcLoaded = false;
-    function loadSourcesOnce(){
-      if (srcLoaded) return;
-      srcLoaded = HC.api.isLive();
-      refreshSources();
-    }
-    loadSourcesOnce();
-
-    hooks = {
+  function buildHooks(){
+    return {
       start: function(d){
         if (!dispatch("start", d)) return;
         var one = st.strip[d.key];
@@ -1336,6 +1276,177 @@
         searchDone();
       }
     };
+  }
+
+  var autoT = null;
+
+
+  function stopAuto(){
+    if (autoT){
+      clearInterval(autoT);
+      autoT = null;
+    }
+  }
+
+  function startAuto(){
+    stopAuto();
+    autoT = setInterval(function(){
+      if (!marquee || !marquee.active){
+        stopAuto();
+        return;
+      }
+      var rect = marquee.rect;
+      var edge = 24;
+      var dir = 0;
+      if (marquee.y < rect.top + edge) dir = -1;
+      else if (marquee.y > rect.bottom - edge) dir = 1;
+      if (dir){
+        rowsEl.scrollTop += dir * 12;
+        paintMarquee();
+      }
+    }, 16);
+  }
+
+  function collectSpans(rect, sx, sy){
+    return [].slice.call(rowsEl.querySelectorAll(".srow")).map(function(row){
+      var rc = row.getBoundingClientRect();
+      return {
+        h: row.dataset.hash,
+        l: rc.left - rect.left + sx, r: rc.right - rect.left + sx,
+        t: rc.top - rect.top + sy, b: rc.bottom - rect.top + sy
+      };
+    });
+  }
+
+  function paintMarquee(){
+    var rect = marquee.rect;
+    var sx = rowsEl.scrollLeft, sy = rowsEl.scrollTop;
+    var cx = marquee.x - rect.left + sx, cy = marquee.y - rect.top + sy;
+    var l = Math.min(marquee.cx0, cx), t = Math.min(marquee.cy0, cy);
+    var r = Math.max(marquee.cx0, cx), b = Math.max(marquee.cy0, cy);
+    marquee.el.style.left = l + "px";
+    marquee.el.style.top = t + "px";
+    marquee.el.style.width = (r - l) + "px";
+    marquee.el.style.height = (b - t) + "px";
+    marquee.spans.forEach(function(sp){
+      if (sp.l < r && sp.r > l && sp.t < b && sp.b > t) st.sel[sp.h] = true;
+      else delete st.sel[sp.h];
+    });
+    updateSelUI();
+  }
+
+  function endMarquee(e){
+    if (!marquee || e.pointerId !== marquee.id) return;
+    var m = marquee;
+    marquee = null;
+    rowsEl.classList.remove("mq-ing");
+    stopAuto();
+    if (m.el) m.el.remove();
+    if (m.active){
+      justMarqueed = true;
+      st.anchor = "";
+      updateSelUI();
+    }
+  }
+  function bindMarquee(){
+    rowsEl.addEventListener("pointerdown", function(e){
+      if (e.button !== 0) return;
+      justMarqueed = false;
+      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+      var rect = rowsEl.getBoundingClientRect();
+      if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
+      rowsEl.classList.add("mq-ing");
+      marquee = {
+        id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY,
+        cx0: e.clientX - rect.left + rowsEl.scrollLeft,
+        cy0: e.clientY - rect.top + rowsEl.scrollTop,
+        rect: rect, spans: null, visList: null, active: false, el: null
+      };
+    });
+
+    rowsEl.addEventListener("pointermove", function(e){
+      if (!marquee || e.pointerId !== marquee.id) return;
+      marquee.x = e.clientX;
+      marquee.y = e.clientY;
+      var dx = e.clientX - marquee.x0, dy = e.clientY - marquee.y0;
+      if (!marquee.active){
+        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        marquee.active = true;
+        try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
+        var el = document.createElement("div");
+        el.className = "marquee";
+        rowsEl.appendChild(el);
+        marquee.el = el;
+        st.sel = {};
+        marquee.visList = visible();
+        marquee.spans = collectSpans(marquee.rect, rowsEl.scrollLeft, rowsEl.scrollTop);
+        startAuto();
+      }
+      paintMarquee();
+    });
+
+    rowsEl.addEventListener("pointerup", endMarquee);
+    rowsEl.addEventListener("pointercancel", endMarquee);
+  }
+
+  function mount(mountEl){
+    root = document.createElement("div");
+    root.className = "app";
+
+    root.innerHTML =
+      '<div class="card">' +
+        '<div class="bar">' +
+          '<div class="group">' +
+            '<button class="cb" id="ckAll"></button>' +
+            '<span class="allabel">全选</span>' +
+            '<span class="badge" id="badge">共 0 条</span>' +
+            '<div class="chipwrap">' +
+              '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
+              '<div class="chiptip" id="tip"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="spacer"></div>' +
+          '<div class="sentry">' + ICONS.search +
+            '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
+            '<button class="gobtn" id="goBtn">搜索</button>' +
+          '</div>' +
+          '<div class="group">' +
+            '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
+            '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="progrow">' +
+          '<span class="progclock" id="progClock"></span>' +
+          '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
+        '</div>' +
+        '<div class="srcstrip" id="srcstrip" hidden></div>' +
+        '<div class="div"></div>' +
+        '<div class="shead" id="shead">' + headHtml() + '</div>' +
+        '<div class="rows" id="rows"></div>' +
+      '</div>';
+
+    mountEl.appendChild(root);
+    rowsEl = root.querySelector("#rows");
+    badgeEl = root.querySelector("#badge");
+    chipEl = root.querySelector("#chip");
+    tipEl = root.querySelector("#tip");
+    ckAllEl = root.querySelector("#ckAll");
+    inp = root.querySelector("#inp");
+    goBtn = root.querySelector("#goBtn");
+    headEl = root.querySelector("#shead");
+    progEl = root.querySelector("#prog");
+    stripEl = root.querySelector("#srcstrip");
+    badgeEl.innerHTML = badgeHtml();
+
+    var srcLoaded = false;
+    function loadSourcesOnce(){
+      if (srcLoaded) return;
+      srcLoaded = HC.api.isLive();
+      refreshSources();
+    }
+    loadSourcesOnce();
+
+    hooks = buildHooks();
     HC.api.onSearch(hooks);
 
     root.querySelector(".sentry").addEventListener("click", function(e){
@@ -1447,113 +1558,7 @@
       updateSelUI();
     });
 
-    var autoT = null;
-
-    function stopAuto(){
-      if (autoT){
-        clearInterval(autoT);
-        autoT = null;
-      }
-    }
-
-    function startAuto(){
-      stopAuto();
-      autoT = setInterval(function(){
-        if (!marquee || !marquee.active){
-          stopAuto();
-          return;
-        }
-        var rect = marquee.rect;
-        var edge = 24;
-        var dir = 0;
-        if (marquee.y < rect.top + edge) dir = -1;
-        else if (marquee.y > rect.bottom - edge) dir = 1;
-        if (dir){
-          rowsEl.scrollTop += dir * 12;
-          paintMarquee();
-        }
-      }, 16);
-    }
-
-    function collectSpans(rect, sx, sy){
-      return [].slice.call(rowsEl.querySelectorAll(".srow")).map(function(row){
-        var rc = row.getBoundingClientRect();
-        return {
-          h: row.dataset.hash,
-          l: rc.left - rect.left + sx, r: rc.right - rect.left + sx,
-          t: rc.top - rect.top + sy, b: rc.bottom - rect.top + sy
-        };
-      });
-    }
-
-    function paintMarquee(){
-      var rect = marquee.rect;
-      var sx = rowsEl.scrollLeft, sy = rowsEl.scrollTop;
-      var cx = marquee.x - rect.left + sx, cy = marquee.y - rect.top + sy;
-      var l = Math.min(marquee.cx0, cx), t = Math.min(marquee.cy0, cy);
-      var r = Math.max(marquee.cx0, cx), b = Math.max(marquee.cy0, cy);
-      marquee.el.style.left = l + "px";
-      marquee.el.style.top = t + "px";
-      marquee.el.style.width = (r - l) + "px";
-      marquee.el.style.height = (b - t) + "px";
-      marquee.spans.forEach(function(sp){
-        if (sp.l < r && sp.r > l && sp.t < b && sp.b > t) st.sel[sp.h] = true;
-        else delete st.sel[sp.h];
-      });
-      updateSelUI();
-    }
-
-    rowsEl.addEventListener("pointerdown", function(e){
-      if (e.button !== 0) return;
-      justMarqueed = false;
-      if (e.shiftKey || e.ctrlKey || e.metaKey) return;
-      var rect = rowsEl.getBoundingClientRect();
-      if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
-      rowsEl.classList.add("mq-ing");
-      marquee = {
-        id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY,
-        cx0: e.clientX - rect.left + rowsEl.scrollLeft,
-        cy0: e.clientY - rect.top + rowsEl.scrollTop,
-        rect: rect, spans: null, visList: null, active: false, el: null
-      };
-    });
-
-    rowsEl.addEventListener("pointermove", function(e){
-      if (!marquee || e.pointerId !== marquee.id) return;
-      marquee.x = e.clientX;
-      marquee.y = e.clientY;
-      var dx = e.clientX - marquee.x0, dy = e.clientY - marquee.y0;
-      if (!marquee.active){
-        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
-        marquee.active = true;
-        try{ rowsEl.setPointerCapture(e.pointerId); }catch(err){}
-        var el = document.createElement("div");
-        el.className = "marquee";
-        rowsEl.appendChild(el);
-        marquee.el = el;
-        st.sel = {};
-        marquee.visList = visible();
-        marquee.spans = collectSpans(marquee.rect, rowsEl.scrollLeft, rowsEl.scrollTop);
-        startAuto();
-      }
-      paintMarquee();
-    });
-
-    function endMarquee(e){
-      if (!marquee || e.pointerId !== marquee.id) return;
-      var m = marquee;
-      marquee = null;
-      rowsEl.classList.remove("mq-ing");
-      stopAuto();
-      if (m.el) m.el.remove();
-      if (m.active){
-        justMarqueed = true;
-        st.anchor = "";
-        updateSelUI();
-      }
-    }
-    rowsEl.addEventListener("pointerup", endMarquee);
-    rowsEl.addEventListener("pointercancel", endMarquee);
+    bindMarquee();
 
     rowsEl.addEventListener("dblclick", function(e){
       var row = e.target.closest(".srow");

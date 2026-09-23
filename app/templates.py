@@ -176,8 +176,8 @@ def _make_json(entry: dict):
 
             items.append(src._mk(
                 title=title, info_hash=info_hash, size=size,
-                seeders=_to_int_or_none(_dig(row, f_seeders)) if f_seeders else None,
-                leechers=_to_int_or_none(_dig(row, f_leechers)) if f_leechers else None,
+                seeders=src._to_int(_dig(row, f_seeders)) if f_seeders else None,
+                leechers=src._to_int(_dig(row, f_leechers)) if f_leechers else None,
                 added=_added_value(added_val, src),
                 source=entry.get("label") or entry.get("key") or "自定义",
             ))
@@ -276,14 +276,6 @@ _BUILDERS = {
     "json": _make_json,
     "html": _make_html,
 }
-
-def _to_int_or_none(value):
-    if value is None or value == "":
-        return None
-    try:
-        return int(float(value))
-    except (TypeError, ValueError, OverflowError):
-        return None
 
 def _added_value(value, src):
     if value is None or value == "" or isinstance(value, bool):

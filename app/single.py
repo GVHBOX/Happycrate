@@ -16,9 +16,6 @@ _handle = None
 
 _FORCE_INNER = os.environ.get("HAPPYCRATE_FORCE_SINGLE_CHECK") == "1"
 
-def is_frozen() -> bool:
-    return bool(getattr(sys, "frozen", False))
-
 def is_inner_process() -> bool:
     if _FORCE_INNER:
         return True

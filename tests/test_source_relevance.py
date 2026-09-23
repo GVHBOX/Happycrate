@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app import api as api_mod
+from app import core as core_mod
 from app import sources
 
 REAL_TITLES = [
@@ -133,6 +134,13 @@ class QueryLengthTest(unittest.TestCase):
         self.assertIsNotNone(m, "前端的 mock 也要有长度上限，两种跑法才一致")
         self.assertEqual(int(m.group(1)), api_mod.MAX_QUERY_LEN,
                          "前后端上限必须一致，否则直开网页与真机行为不同")
+
+    def test_frontend_mirrors_min_len_message(self):
+        js = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
+        m = re.search(r'error:\s*"([^"]+)"\s*\+\s*minLen\s*\+\s*"([^"]+)"', js)
+        self.assertIsNotNone(m, "前端 mock 的关键词过短文案没找到")
+        self.assertEqual(m.group(1) + "2" + m.group(2), core_mod.min_len_message(2),
+                         "前后端文案必须一致，否则直开网页与真机提示不同")
 
 
 class PaginationRealityTest(unittest.TestCase):

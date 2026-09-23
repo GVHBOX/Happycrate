@@ -134,12 +134,11 @@ def dedupe(items: list[dict]) -> list[dict]:
         cur["size"] = _merge_size([cur.get("size"), it.get("size")])
         cur["added"] = _merge_earliest([cur.get("added"), it.get("added")])
 
-        for donor in (it, cur):
-            for key, value in donor.items():
-                if key in _HANDLED_KEYS:
-                    continue
-                if value and not cur.get(key):
-                    cur[key] = value
+        for key, value in it.items():
+            if key in _HANDLED_KEYS:
+                continue
+            if value and not cur.get(key):
+                cur[key] = value
 
     return out
 
@@ -193,8 +192,6 @@ def format_time_relative(ts) -> str:
     delta = now - dt
     secs = delta.total_seconds()
 
-    if secs < 0:
-        return "刚刚"
     if secs < 60:
         return "刚刚"
     if secs < 3600:
@@ -210,6 +207,9 @@ def format_time_relative(ts) -> str:
     if days < 7:
         return f"{days} 天前"
     return dt.strftime("%Y-%m-%d")
+
+def min_len_message(min_len: int) -> str:
+    return f"关键字至少 {min_len} 个字符"
 
 class SearchResult:
 
@@ -227,7 +227,7 @@ def search(query: str, page: int, timeout: int | None, enabled,
     result = SearchResult()
 
     if len(query.strip()) < min_len:
-        return result, f"关键字至少 {min_len} 个字符"
+        return result, min_len_message(min_len)
 
     by_key = sources.search_many(
         query, page, timeout,
@@ -249,10 +249,9 @@ def search(query: str, page: int, timeout: int | None, enabled,
         result.items = dedupe(collected)
 
     if not reached and result.errors:
-        from . import sources as _s
-        if all(_s.proxy_hint() in (e or "") for e in result.errors.values()):
-            return result, _s.proxy_hint()
-        return result, _s.proxy_hint_for(result.errors)
+        if all(sources.proxy_hint() in (e or "") for e in result.errors.values()):
+            return result, sources.proxy_hint()
+        return result, sources.proxy_hint_for(result.errors)
 
     return result, None
 

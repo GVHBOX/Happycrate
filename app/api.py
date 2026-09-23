@@ -323,15 +323,6 @@ def _relaxed_query(parsed: dict, dropped=()) -> tuple[str, str]:
     return "", ""
 
 
-def _opt_int(value):
-    if value is None or value == "":
-        return None
-    try:
-        return int(value)
-    except (TypeError, ValueError, OverflowError):
-        return None
-
-
 def _item_view(item: dict) -> dict:
     size = item.get("size")
     added = item.get("added")
@@ -356,8 +347,8 @@ def _item_view(item: dict) -> dict:
         "title": item.get("title") or "",
         "size": int(size or 0),
         "sizeText": core.format_size(size),
-        "seeders": _opt_int(item.get("seeders")),
-        "leechers": _opt_int(item.get("leechers")),
+        "seeders": core._as_int(item.get("seeders")),
+        "leechers": core._as_int(item.get("leechers")),
         "added": int(added or 0),
         "addedText": core.format_time_relative(added),
         "magnet": core.magnet_of(item),
@@ -760,7 +751,7 @@ class Api:
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         if len(text) < min_len:
             return {"ok": False, "token": 0, "total": 0,
-                    "error": f"关键字至少 {min_len} 个字符"}
+                    "error": core.min_len_message(min_len)}
         if is_query_too_long(text):
             return {"ok": False, "token": 0, "total": 0,
                     "error": f"关键字最长 {MAX_QUERY_LEN} 个字符"}

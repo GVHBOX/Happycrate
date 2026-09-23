@@ -534,8 +534,7 @@
 
   function mockFatal(query){
     if ((query || "").indexOf("断网") >= 0){
-      return "未检测到代理，这些源需要代理才能访问，"
-        + "这些源需要代理才能访问。";
+      return "未检测到代理，这些源需要代理才能访问。";
     }
     return "";
   }

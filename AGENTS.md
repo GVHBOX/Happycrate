@@ -118,21 +118,24 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 - mock 的 startSearch 按源逐个投放（约 2.3s），E2E/探针等搜索完成必须等
   `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
 
-- `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（617 行，CDP 协议驱动），
+- `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（714 行，CDP 协议驱动），
   能自动跑完搜索/框选/全选/弹窗/主题切换等 60+ 项。它每次运行会在 `.scratch/tmp`
   生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.scratch/tmp`**。
 
 ## 工具
+
+**开工先跑 `tools/check-all.py`（约 19s）**：一次拿到单测项数、6 个扫描器结果与耗时、dist 是否同步。
+别自己拼命令统计规模或跑测试。
+
+**找轮子 / 写新脚本之前先读 `tools/README.md`**：里面按「我要做 X」列了决策表。已有的一律复用，不要重写。
 
 三个地方，别搞混：
 
 | 位置 | 性质 | 说明 |
 | --- | --- | --- |
 | `happycrate.bat` | 启动器 | 无参数跑 `dist` 里的 exe；`dev` 最小化跑源码；`web` 起本地服务器 8123 |
-| `tests/` | 测试 | 单元测试（587 项）· `front_smoke.cjs` 等 5 个源码校验 · `e2e/hc-e2e-test.mjs` 端到端 |
-| `tools/` | 生产工具 | 代码体检扫描器 · dist 同步 · 护栏回归。**清单见 `tools/README.md`** |
-
-**写新脚本或工具之前先读 `tools/README.md`——已有的一律复用，不要重写。**
+| `tests/` | 测试 | 单元测试（599 项）· `front_smoke.cjs` 等 6 个源码校验 · `e2e/hc-e2e-test.mjs` 端到端 |
+| `tools/` | 生产工具 | **一键全检** · 代码体检扫描器 · dist 同步 · 护栏回归 · 提交前检查。**清单见 `tools/README.md`** |
 
 `tools/` 里的东西是长期资产：**不许以「清理」「整理」为名删除或重写**。
 判定标准只有一个 —— 下轮还会不会用。会用的进 `tools/`，用完即弃的才放 `.scratch/tools/`。
@@ -141,11 +144,21 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 那里的东西不进版本库，也不该攒。
 
 ```bash
-# 单元测试（587 项）
+# 一键全检（改完代码跑这条就够了，约 19s）
+.venv/Scripts/python.exe tools/check-all.py
+# --full 加 E2E · --guard 加反向注入 · --update-baseline 重设已知项基线
+
+# 单元测试（599 项）
 .venv/Scripts/python.exe -m unittest discover -s tests -p "test_*.py"
+
+# 只跑某几条反向注入（全量 38 条要 5min，--list 看名字，--case 过滤）
+.venv/Scripts/python.exe tools/guard-regression.py --case 外观参数
 
 # 改完源码同步到 dist（不用重新打包）
 .venv/Scripts/python.exe tools/sync-dist.py
+
+# 提交前检查（会挡住「改了源码忘了同步 dist」）
+.venv/Scripts/python.exe tools/pre-commit.py --install
 
 # 代码体检
 .venv/Scripts/python.exe tools/scan/scan_py.py

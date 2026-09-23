@@ -759,7 +759,7 @@ def _split_items(xml: str) -> list[str]:
 def _mk(title: str, info_hash: str = "", size=0, seeders=None, leechers=None,
         added=None, source: str = "", files=None) -> dict:
     clean_title = re.sub(r"\s+", " ", _unescape(title or "")).strip()
-    h = _text(info_hash).strip().lower()
+    h = _unescape(_text(info_hash)).strip().lower()
     item = {
         "title": clean_title,
         "info_hash": h,

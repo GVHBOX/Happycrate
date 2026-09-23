@@ -1079,5 +1079,172 @@ class SourceProgressVisibilityTest(unittest.TestCase):
                          "前端 segRed 依赖 outcome/state 来区分它与真失败")
 
 
+_PREVIEW_ONLY_LOOK_KEYS = frozenset({"hold", "step"})
+
+_TEXT_CONTRAST_EXEMPT = frozenset({"t4", "t5", "t-disabled"})
+_TEXT_CONTRAST_PENDING = frozenset({"brand", "brand-active", "ok", "warn", "danger"})
+_PENDING_REASON = ("这几项都是「按填充调出来的饱和度」被拿去当文字用："
+                   "ok / warn / danger 的浅色值对白底只有 2.94~3.76，"
+                   "brand / brand-active 的暗色值对浮层底只有 3.24~4.08。"
+                   "要修得重新选色（或让文字用法改走 -strong 变体），属取舍，等拍板。")
+
+_LIGHT_SURFACE = "#FFFFFF"
+_DARK_SURFACE = "#2A2C36"
+_AA_TEXT = 4.5
+
+
+def _token_blocks(path):
+    text = Path(path).read_text(encoding="utf-8")
+    blocks = {}
+    i = 0
+    while True:
+        brace = text.find("{", i)
+        if brace < 0:
+            break
+        head = [l.strip() for l in text[i:brace].split("\n") if l.strip()]
+        depth = 0
+        j = brace
+        while j < len(text):
+            if text[j] == "{":
+                depth += 1
+            elif text[j] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            j += 1
+        blocks[" ".join(head)] = {
+            m.group(1): m.group(2).strip()
+            for m in re.finditer(r"(--[\w-]+)\s*:\s*([^;]+);", text[brace + 1:j])
+        }
+        i = j + 1
+    return blocks
+
+
+def _resolved(layer, root, name):
+    value = layer.get(name, root.get(name, ""))
+    m = re.match(r"var\(\s*(--[\w-]+)\s*\)$", value)
+    if m:
+        return layer.get(m.group(1), root.get(m.group(1), value))
+    return value
+
+
+def _luminance(hex_value):
+    h = str(hex_value).lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    if not re.match(r"^[0-9a-fA-F]{6}$", h):
+        return None
+    channels = [int(h[k:k + 2], 16) / 255 for k in (0, 2, 4)]
+    linear = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+              for c in channels]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def _contrast(fg, bg):
+    a, b = _luminance(fg), _luminance(bg)
+    if a is None or b is None:
+        return None
+    high, low = max(a, b), min(a, b)
+    return (high + 0.05) / (low + 0.05)
+
+
+class LookParamWiringTest(unittest.TestCase):
+
+    def html(self):
+        return HTML.read_text(encoding="utf-8")
+
+    def object_keys(self, name):
+        src = self.html()
+        i = src.index("var " + name + " = {")
+        block = src[i:src.index("\n  };", i)]
+        return block
+
+    def test_every_numeric_look_param_reaches_a_css_var(self):
+        defaults = self.object_keys("LOOK_DEFAULTS")
+        numeric = {m.group(1) for m in re.finditer(r"(\w+)\s*:\s*\d", defaults)}
+        wired = set(re.findall(r"(\w+)\s*:\s*\[", self.object_keys("LOOK_VARS")))
+        orphan = sorted(numeric - wired - _PREVIEW_ONLY_LOOK_KEYS)
+        self.assertEqual(
+            orphan, [],
+            "这些外观参数既没落到 CSS 变量、也没登记为预览专用，" + repr(orphan)
+            + "：用户在设置页拖了它不会有任何效果")
+
+    def test_preview_only_params_are_really_consumed(self):
+        settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(
+            encoding="utf-8")
+        for key in sorted(_PREVIEW_ONLY_LOOK_KEYS):
+            self.assertIn("look." + key, settings,
+                          key + " 被登记为预览专用，但预览里也没人读它")
+
+
+class TextContrastTest(unittest.TestCase):
+
+    def audit(self):
+        blocks = _token_blocks(ROOT / "web" / "styles" / "tokens.css")
+        root, dark = blocks[":root"], blocks["body.dark"]
+        css = (ROOT / "web" / "styles" / "base.css").read_text(encoding="utf-8")
+        used = {m.group(1) for m in
+                re.finditer(r"(?<![\w-])color\s*:\s*var\(\s*(--[\w-]+)\s*\)", css)}
+        rows = []
+        for name in sorted(used):
+            key = name[2:]
+            if key.startswith("inv-") or key in _TEXT_CONTRAST_EXEMPT:
+                continue
+            light = _contrast(_resolved(root, root, name), _LIGHT_SURFACE)
+            darkc = _contrast(_resolved(dark, root, name), _DARK_SURFACE)
+            rows.append((key, light, darkc))
+        return rows
+
+    def test_text_tokens_clear_aa_in_both_themes(self):
+        bad = []
+        for key, light, dark in self.audit():
+            if key in _TEXT_CONTRAST_PENDING:
+                continue
+            if light is not None and light < _AA_TEXT:
+                bad.append(key + " 浅色 " + str(round(light, 2)))
+            if dark is not None and dark < _AA_TEXT:
+                bad.append(key + " 暗色 " + str(round(dark, 2)))
+        self.assertEqual(bad, [], "文字色对比度不达 AA：" + repr(bad))
+
+    def test_pending_tokens_are_reported_until_they_pass(self):
+        failing = set()
+        for key, light, dark in self.audit():
+            if key not in _TEXT_CONTRAST_PENDING:
+                continue
+            if light is not None and light < _AA_TEXT:
+                failing.add(key)
+            elif dark is not None and dark < _AA_TEXT:
+                failing.add(key)
+        self.assertEqual(
+            sorted(failing), sorted(_TEXT_CONTRAST_PENDING),
+            "待定表与实际不符（待定项已达标，或达标判定失效）：" + _PENDING_REASON)
+
+
+class ToolRootPathTest(unittest.TestCase):
+
+    def tools(self):
+        return sorted((ROOT / "tools").rglob("*.py"))
+
+    def test_tool_roots_resolve_to_the_project_root(self):
+        for path in self.tools():
+            text = path.read_text(encoding="utf-8")
+            for m in re.finditer(
+                    r"Path\(__file__\)\.resolve\(\)\.parents\[(\d+)\]", text):
+                got = path.resolve().parents[int(m.group(1))]
+                self.assertEqual(
+                    got, ROOT,
+                    path.relative_to(ROOT).as_posix() + " 的 __file__ 层级算到了 "
+                    + str(got) + "，不是项目根。工具搬目录后这个数字必须跟着改")
+
+    def test_no_tool_hardcodes_an_absolute_project_path(self):
+        for path in self.tools():
+            text = path.read_text(encoding="utf-8")
+            for needle in (str(ROOT), ROOT.as_posix()):
+                self.assertNotIn(
+                    needle, text,
+                    path.relative_to(ROOT).as_posix()
+                    + " 里写死了本机绝对路径，换个 clone 就跑不了")
+
+
 if __name__ == "__main__":
     unittest.main()

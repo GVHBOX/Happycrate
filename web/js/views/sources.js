@@ -109,7 +109,7 @@
     var TYPE_LABEL = {builtin:"内置", rss:"RSS", json:"JSON", html:"HTML"};
     var isBuiltin = isEdit && d.type === "builtin";
     var types = ["rss", "json", "html"];
-    var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["时间","added"],["链接","magnet"]];
+    var fields = [["标题 *","title"],["哈希","hash"],["体积","size"],["做种","seeders"],["下载","leechers"],["时间","added"],["链接","magnet"]];
     var map = d.map || {};
 
     var keyPromise = isEdit

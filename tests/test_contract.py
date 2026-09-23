@@ -509,5 +509,26 @@ class UnreachableCodeTest(unittest.TestCase):
             + repr(found))
 
 
+class CustomMapFieldCoverageTest(unittest.TestCase):
+
+    def template_fields(self):
+        text = (ROOT / "app" / "templates.py").read_text(encoding="utf-8")
+        return {m.group(1) for m in
+                re.finditer(r'mapping\.get\(\s*"(\w+)"\s*\)', text)}
+
+    def editor_fields(self):
+        text = (ROOT / "web" / "js" / "views" / "sources.js").read_text(
+            encoding="utf-8")
+        block = text[text.index("var fields = ["):]
+        return set(re.findall(r'"(\w+)"\]', block[:block.index("];")]))
+
+    def test_editor_exposes_every_mappable_field(self):
+        missing = sorted(self.template_fields() - self.editor_fields())
+        self.assertEqual(
+            missing, [],
+            "后端模板支持这些映射字段，但自定义源编辑器里没有输入框：" + repr(missing)
+            + "（配置不了 = 该列永远是空的）")
+
+
 if __name__ == "__main__":
     unittest.main()

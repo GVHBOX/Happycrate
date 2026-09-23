@@ -710,5 +710,53 @@ class SourceViewKeysTest(unittest.TestCase):
         self.assertEqual(view["health"]["lastCount"], 7)
 
 
+_CDATA_HASH = "0123456789abcdef0123456789abcdef01234567"
+
+
+class TemplateHashCleanTest(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_get = sources.http_get
+        self.rss = (
+            '<?xml version="1.0"?><rss><channel><item>'
+            "<title><![CDATA[Foo Bar 1080p]]></title>"
+            "<guid><![CDATA[" + _CDATA_HASH + "]]></guid>"
+            "<pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>"
+            "</item></channel></rss>"
+        )
+        sources.http_get = lambda *a, **k: self.rss
+
+    def tearDown(self):
+        sources.http_get = self.orig_get
+
+    def run_rss(self, mapping):
+        entry = {"url": "https://example.com/?q={query}", "map": mapping,
+                 "label": "我的源"}
+        self.addCleanup(setattr, sources, "http_get", self.orig_get)
+        return templates._make_rss(entry)("q")
+
+    def test_cdata_wrapped_hash_field_yields_a_bare_hash(self):
+        items = self.run_rss({"title": "title", "hash": "guid",
+                              "added": "pubDate"})
+        self.assertEqual(len(items), 1)
+        self.assertEqual(
+            items[0]["info_hash"], _CDATA_HASH,
+            "哈希字段被 CDATA 包住时要剥壳，否则拼出来的磁力链是坏的")
+        self.assertEqual(items[0]["magnet"],
+                         "magnet:?xt=urn:btih:" + _CDATA_HASH + "&dn=Foo%20Bar%201080p")
+
+    def test_cdata_wrapped_title_still_cleans(self):
+        items = self.run_rss({"title": "title", "hash": "guid"})
+        self.assertEqual(items[0]["title"], "Foo Bar 1080p")
+
+    def test_mk_strips_cdata_and_decodes_entities(self):
+        got = sources._mk(title="t", info_hash="<![CDATA[" + _CDATA_HASH + "]]>")
+        self.assertEqual(got["info_hash"], _CDATA_HASH)
+        self.assertEqual(got["magnet"],
+                         "magnet:?xt=urn:btih:" + _CDATA_HASH + "&dn=t")
+        self.assertEqual(sources._mk(title="t", info_hash="abc&amp;def")["info_hash"],
+                         "abc&def")
+
+
 if __name__ == "__main__":
     unittest.main()

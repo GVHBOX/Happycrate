@@ -216,6 +216,7 @@ body.dark{
   --track:rgba(255,255,255,.22);
   --empty:#8B97A8;
 
+  --err:#F87171;
   --err-rgb:248,113,113;
   --err-bar:#F87171;
   --err-line:rgba(248,113,113,.38);

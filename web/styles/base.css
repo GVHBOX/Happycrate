@@ -1071,7 +1071,7 @@ body.dark .selbar{
   box-shadow:var(--sh-modal), 0 0 0 1px var(--float-bd);
 }
 body.dark .selbar .st{color:var(--t1)}
-body.dark .selbar .st b{color:var(--brand-line)}
+body.dark .selbar .st b{color:var(--brand-active)}
 body.dark .selbar .sdiv{background:rgba(255,255,255,.14)}
 body.dark .selbar .sbtn{background:rgba(255,255,255,.08); color:var(--t1)}
 body.dark .selbar .sbtn:hover{background:rgba(255,255,255,.16)}

@@ -916,7 +916,7 @@
     var isSeg = st.progStyle !== "flow";
     if (celebrate){
       if (isSeg){
-        [].slice.call(progEl.querySelectorAll(".seg:not(.err)")).forEach(function(seg){
+        [].slice.call(progEl.querySelectorAll(".seg")).forEach(function(seg){
           seg.className = "seg on";
         });
       } else {
@@ -934,7 +934,7 @@
       if (dl) dl.classList.remove("show", "passed");
       var lit = [];
       if (isSeg){
-        lit = [].slice.call(progEl.querySelectorAll(".seg.on")).reverse();
+        lit = [].slice.call(progEl.querySelectorAll(".seg.on, .seg.err")).reverse();
         lit.forEach(function(seg, i){
           setTimeout(function(){
             if (gen !== st.progGen) return;
@@ -1253,8 +1253,9 @@
         if (!dispatch("source", d)) return;
         st.done += 1;
         if (progEl) progEl.classList.remove("wait");
+        var segRed = d.state === "err" || (!d.state && d.err && d.outcome !== "empty");
         var seg = progEl && progEl.querySelector('.seg[data-key="' + d.key + '"]');
-        if (seg) seg.className = "seg" + (d.err ? " err" : " on");
+        if (seg) seg.className = "seg" + (segRed ? " err" : " on");
         setProgress();
         var name = st.names[d.key] || d.key;
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));

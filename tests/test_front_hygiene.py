@@ -1037,6 +1037,47 @@ class SourceProgressVisibilityTest(unittest.TestCase):
             f"默认并发 {sources.MAX_SEARCH_WORKERS} 小于内置源数量 "
             f"{len(config.DEFAULT_SOURCES)}，多出来的源要在队列里白等")
 
+    def test_seg_red_requires_err_state_not_a_filled_err_field(self):
+        js = self.search_js()
+        self.assertNotIn('d.err ? " err" : " on"', js,
+                         "后端把「无结果」装在 err 字段里（outcome_text 对 "
+                         "OUTCOME_EMPTY 返回「无结果」），拿 err 非空当失败 "
+                         "会把空结果涂成红色")
+        self.assertIn('var segRed = d.state === "err"', js,
+                      "红块判定要以后端 state 为准：只有真失败才上红")
+        i = js.index("var segRed = d.state === \"err\"")
+        body = js[i:i + 200]
+        self.assertIn('d.outcome !== "empty"', body,
+                      "旧载荷没有 state 时要用 outcome 排除空结果，"
+                      "否则旧形状事件会把无结果涂红")
+
+    def test_recede_does_not_exclude_err_segments(self):
+        js = self.search_js()
+        self.assertNotIn('.seg:not(.err)', js,
+                         "退场排除红块的话，失败块就成了唯一不熄灭的残留")
+        i = js.index("function recedeProg(")
+        block = js[i:js.index("function paintClock(", i)]
+        self.assertIn('.seg.on, .seg.err', block,
+                      "逐块熄灭要把失败块也扫进去，全条一起退场")
+        self.assertIn('querySelectorAll(".seg")', block,
+                      "庆祝点亮要覆盖全部块，红块先转 on 才有得灭")
+
+    def test_mock_empty_result_carries_the_real_payload_shape(self):
+        src = self.api_js()
+        i = src.index("startSearch: function(query){")
+        block = src[i:src.index("function mockItems(", i)]
+        self.assertIn('err: err || (outcome === "empty" ? "无结果" : "")', block,
+                      "真实后端对空结果在 err 字段里填「无结果」，"
+                      "mock 缺这个形状的话这类缺陷在 E2E 里永远测不出")
+        self.assertIn('outcome: outcome', block,
+                      "mock 载荷要带 outcome，与真实 on_source 一致")
+
+    def test_backend_empty_text_still_travels_in_err_field(self):
+        from app import api
+        self.assertEqual(api.OUTCOME_TEXT[api.OUTCOME_EMPTY], "无结果",
+                         "后端契约：空结果的说明文字放在 err 字段里下发，"
+                         "前端 segRed 依赖 outcome/state 来区分它与真失败")
+
 
 if __name__ == "__main__":
     unittest.main()

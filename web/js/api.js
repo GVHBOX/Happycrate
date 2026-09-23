@@ -398,9 +398,12 @@
         setTimeout(function(){
           if (token !== mockToken) return;
           var err = errs[key] || "";
+          var outcome = err ? "err" : (part.length ? "ok" : "empty");
           if (sHooks.source){
             sHooks.source({token:token, key:key, count: err ? 0 : part.length,
-                           err:err, state: err ? "err" : (part.length ? "ok" : "empty")});
+                           err: err || (outcome === "empty" ? "无结果" : ""),
+                           outcome: outcome,
+                           state: err ? "err" : (part.length ? "ok" : "empty")});
           }
           if (!err && part.length && sHooks.batch){
             sHooks.batch({token:token, key:key, items:part});

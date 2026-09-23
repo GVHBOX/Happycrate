@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const webRoot = join(projectRoot, "web");
-const tmpRoot = join(projectRoot, ".ai", "tmp");
+const tmpRoot = join(projectRoot, ".scratch", "tmp");
 
 const BROWSERS = [
   ["Edge", "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"],

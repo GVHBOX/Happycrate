@@ -1,0 +1,196 @@
+{
+ "tuple_arity": [],
+ "dead_code": [],
+ "dup_definitions": {
+  "settings_path": [
+   [
+    "config.py",
+    154,
+    1
+   ],
+   [
+    "paths.py",
+    122,
+    1
+   ]
+  ],
+  "health_path": [
+   [
+    "config.py",
+    157,
+    1
+   ],
+   [
+    "paths.py",
+    125,
+    1
+   ]
+  ],
+  "logs_dir": [
+   [
+    "log.py",
+    21,
+    1
+   ],
+   [
+    "paths.py",
+    128,
+    3
+   ]
+  ],
+  "log_path": [
+   [
+    "log.py",
+    24,
+    1
+   ],
+   [
+    "paths.py",
+    134,
+    1
+   ]
+  ],
+  "run": [
+   [
+    "migrate.py",
+    46,
+    13
+   ],
+   [
+    "shell.py",
+    276,
+    14
+   ]
+  ],
+  "is_frozen": [
+   [
+    "paths.py",
+    27,
+    1
+   ],
+   [
+    "single.py",
+    19,
+    1
+   ]
+  ],
+  "get": [
+   [
+    "runtime.py",
+    11,
+    1
+   ],
+   [
+    "sources.py",
+    2056,
+    2
+   ]
+  ],
+  "_unescape": [
+   [
+    "sources.py",
+    734,
+    4
+   ],
+   [
+    "templates.py",
+    65,
+    2
+   ]
+  ]
+ },
+ "versions": [
+  {
+   "file": "__init__.py",
+   "line": 3,
+   "value": "1.0.23"
+  },
+  {
+   "file": "pyproject.toml",
+   "line": 3,
+   "value": "1.0.23"
+  },
+  {
+   "file": "api.js",
+   "line": 285,
+   "value": "1.0.23"
+  },
+  {
+   "file": "api.js",
+   "line": 343,
+   "value": "1.0.23"
+  }
+ ],
+ "swallow": [
+  {
+   "file": "config.py",
+   "line": 180,
+   "kind": "except-continue"
+  },
+  {
+   "file": "config.py",
+   "line": 203,
+   "kind": "except-pass"
+  },
+  {
+   "file": "migrate.py",
+   "line": 31,
+   "kind": "except-pass"
+  },
+  {
+   "file": "migrate.py",
+   "line": 41,
+   "kind": "except-continue"
+  },
+  {
+   "file": "shell.py",
+   "line": 251,
+   "kind": "except-pass"
+  },
+  {
+   "file": "shell.py",
+   "line": 263,
+   "kind": "except-pass"
+  },
+  {
+   "file": "shell.py",
+   "line": 50,
+   "kind": "except-continue"
+  },
+  {
+   "file": "single.py",
+   "line": 81,
+   "kind": "except-pass"
+  },
+  {
+   "file": "sources.py",
+   "line": 695,
+   "kind": "except-pass"
+  },
+  {
+   "file": "sources.py",
+   "line": 564,
+   "kind": "except-continue"
+  },
+  {
+   "file": "sources.py",
+   "line": 648,
+   "kind": "except-continue"
+  },
+  {
+   "file": "sources.py",
+   "line": 682,
+   "kind": "except-continue"
+  },
+  {
+   "file": "sources.py",
+   "line": 726,
+   "kind": "except-continue"
+  },
+  {
+   "file": "sources.py",
+   "line": 1218,
+   "kind": "except-continue"
+  }
+ ]
+}

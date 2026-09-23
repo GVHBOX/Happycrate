@@ -1,0 +1,47 @@
+# tools/ · 生产辅助工具
+
+团队资产，跟着仓库走。**写新工具之前先读这里——已有的一律复用，别重写。**
+
+命令一律从项目根目录执行，需要 Python 的一律用项目 `.venv`。
+
+## 代码体检（scan/）
+
+对全项目做静态扫描，不依赖运行环境。每个都是独立脚本，结果输出到 stdout。
+
+| 脚本 | 查什么 |
+| --- | --- |
+| `scan_py.py` | 死代码 · 多返回元组长度不一致 · 重复定义 · 版本号漂移 · 异常吞噬 |
+| `scan_css.py` | CSS 变量双向孤儿 · 顶层重复选择器 · 硬编码白底 · 裸 z-index |
+| `scan_api.py` | 后端 Api 方法 ↔ 前端调用，双向差集 |
+| `scan_bloat.py` | 超长函数 · ≥7 行重复代码块 · 跨文件重复字面量 |
+| `scan_dupfunc.py` | 结构逐字相同、但名字不同的函数（复制漂移） |
+| `scan_adapter.py` | 源适配器的参数是否真被函数体读取 |
+| `refs.py` | 查一个名字在全项目的出现位置（不传参数则读 scan_py 的输出） |
+
+```bash
+.venv/Scripts/python.exe tools/scan/scan_py.py
+.venv/Scripts/python.exe tools/scan/refs.py format_size
+```
+
+**校准反例在 `scan/fixture/`。** 改动任何扫描器之后，用它验证「真的会报错」——
+`scan_py.py` 扫 fixture 必须报出 `DEAD_CONST`、`never_used`、`multi_arity`。
+报不出来就是扫描器坏了，不是代码干净。这条别省。
+
+## 项目工具
+
+| 脚本 | 用途 |
+| --- | --- |
+| `sync-dist.py` | 把 `app/` 与 `web/` 同步进 `dist/happycrate/_internal/`。改完源码**不用重新打包**，跑它 + 重启程序即可生效 |
+| `guard-regression.py` | 反向测试护栏：故意把已修好的缺陷改回去，看护栏是否真的报错。**每加一条新护栏后都要跑** |
+| `clean-e2e.py` | 清理 E2E 遗留的无头浏览器进程与 `.scratch/tmp` 下的 profile。只结束命令行含 `.scratch/tmp` 的浏览器进程，不碰用户自己开的 |
+
+## 和 `.scratch/tools/` 的分工
+
+|  | `tools/`（这里） | `.scratch/tools/` |
+| --- | --- | --- |
+| 进版本库 | 是 | 否 |
+| 性质 | 团队资产 | 本地草稿 |
+| 判断标准 | 下轮还会用 | 一次性调试、复现、截图 |
+| 生命周期 | 长期维护 | 用完即弃，可随时删 |
+
+**新的东西往哪放**：下轮还会用 → 进 `tools/`；一次性的 → 扔 `.scratch/tools/`，用完清掉，不要攒。

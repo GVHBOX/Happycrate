@@ -44,14 +44,14 @@
 给 AI 的那份用 JSON 而非中文标签，字段名就是 `key` / `count` / `ms` / `adapter`。
 `tests/test_front_hygiene.py` 有护栏禁止引导语回流。
 
-### 3. 非源码一律进 `.ai/`
+### 3. 非源码一律进 `.scratch/`
 
-报告、备份、脚本、截图、数据导出、临时中间物，全部进 `.ai/`。
+报告、备份、脚本、截图、数据导出、临时中间物，全部进 `.scratch/`。
 允许留在根目录的只有：源码（`app/`、`main.py`、`tests/`）、资源（`assets/`）、
 仓库元文件（`README.md`、`LICENSE`、`pyproject.toml`、`happycrate.spec`、
 `happycrate.bat`、`.gitignore`、`.gitattributes`、`AGENTS.md`）、运行时数据（`data/`）、构建产物（`dist/`、`build/`）。
 
-`.ai/` 整体不进版本库，`.ai/reports/` 的成品报告也不例外，交付时用原生
+`.scratch/` 整体不进版本库，`.scratch/reports/` 的成品报告也不例外，交付时用原生
 Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路径。
 
 ## 4.网络与代理
@@ -73,7 +73,7 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 
 ## 提交纪律
 
-- `.ai/` 不进版本库，不需要 `git add`。
+- `.scratch/` 不进版本库，不需要 `git add`。
 - `happycrate.spec` 是手写构建配方，必须跟踪。`.gitignore` 里 `*.spec` 会误伤它，
   靠 `!happycrate.spec` 放行——别删那行。
 - `data/sources.json` 是核心资产，已纳入版本管理（`.gitignore` 用 `data/*` 排除整个目录、
@@ -86,6 +86,9 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 - 改 `app/*.py` → 改 `dist/happycrate/_internal/app/` 里那份，重启生效
 
 - 改 `web/*` → 改 `dist/happycrate/_internal/web/` 里那份，刷新生效
+
+- 手工复制容易把路径写错（历史上出现过 `dist/happycrate/_internal/data` 这种错位文件），
+  统一走 `.venv/Scripts/python.exe tools/sync-dist.py`
 
 - 只有**新增或删除第三方依赖**才需要重新打包
 
@@ -108,8 +111,37 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
   `HC.views.search.st.busy === false`，只等行数会在 DOM 仍在变化时跑测试。
 
 - `tests/e2e/hc-e2e-test.mjs` 是无头浏览器端到端测试（617 行，CDP 协议驱动），
-  能自动跑完搜索/框选/全选/弹窗/主题切换等 60+ 项。它每次运行会在 `.ai/tmp`
-  生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.ai/tmp`**。
+  能自动跑完搜索/框选/全选/弹窗/主题切换等 60+ 项。它每次运行会在 `.scratch/tmp`
+  生成一个 ~53 MB 的 Chrome profile，**跑完记得清 `.scratch/tmp`**。
+
+## 工具
+
+三个地方，别搞混：
+
+| 位置 | 性质 | 说明 |
+| --- | --- | --- |
+| `happycrate.bat` | 启动器 | 无参数跑 `dist` 里的 exe；`dev` 最小化跑源码；`web` 起本地服务器 8123 |
+| `tests/` | 测试 | 单元测试（587 项）· `front_smoke.cjs` 等 5 个源码校验 · `e2e/hc-e2e-test.mjs` 端到端 |
+| `tools/` | 生产工具 | 代码体检扫描器 · dist 同步 · 护栏回归。**清单见 `tools/README.md`** |
+
+**写新脚本或工具之前先读 `tools/README.md`——已有的一律复用，不要重写。**
+
+一次性的东西（复现、截图、临时分析）扔 `.scratch/tools/`，用完清掉。
+那里的东西不进版本库，也不该攒。
+
+```bash
+# 单元测试（587 项）
+.venv/Scripts/python.exe -m unittest discover -s tests -p "test_*.py"
+
+# 改完源码同步到 dist（不用重新打包）
+.venv/Scripts/python.exe tools/sync-dist.py
+
+# 代码体检
+.venv/Scripts/python.exe tools/scan/scan_py.py
+
+# 端到端；每次生成 ~53MB profile，跑完清 .scratch/tmp
+node tests/e2e/hc-e2e-test.mjs
+```
 
 ## 边界
 

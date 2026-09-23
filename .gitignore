@@ -8,7 +8,7 @@ build/
 dist/
 *.spec
 !happycrate.spec
-.ai/
+.scratch/
 .workbuddy/
 data/*
 !data/sources.json

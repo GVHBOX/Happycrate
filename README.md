@@ -64,6 +64,7 @@ node tests/front_smoke.cjs
 | `assets/` | 图标与 README 截图                               |
 | `data/`   | 运行时数据。`sources.json` 是内置源清单（纳入版本管理），其余为本地状态 |
 | `tests/`  | 单元测试与前端冒烟脚本                                 |
+| `tools/`  | 生产辅助工具：代码体检扫描器、dist 同步、护栏回归；清单见 `tools/README.md` |
 | `dist/`   | 构建产物，`happycrate.exe` 在 `dist/happycrate/` 下    |
 
 ## 说明

@@ -1669,6 +1669,19 @@ def _tpb_fetch(root: str, query: str, page: int, timeout: int, batch,
     url = f"{root}/search/{urllib.parse.quote(query)}/{int(page)}/99/0"
     return http_get(url, timeout=timeout, retries=retries, batch=batch)
 
+def _collect_pages(pages: dict[int, list[dict]], seen: set[str],
+                   items: list[dict], max_hits: int) -> list[dict]:
+    for p in sorted(pages):
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= max_hits:
+                return items
+    return items
+
 def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     if base:
         roots = [base.rstrip("/")]
@@ -1741,16 +1754,7 @@ def _tpb_more_pages(root: str, query: str, page: int, timeout: int, batch,
     finally:
         pool.shutdown(wait=False, cancel_futures=True)
 
-    for p in sorted(pages):
-        for it in pages[p]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= TPB_MAX_HITS:
-                return items
-    return items
+    return _collect_pages(pages, seen, items, TPB_MAX_HITS)
 
 _BENCODE_MAX_DEPTH = 32
 
@@ -1901,18 +1905,7 @@ def _search_xccl263(query, page=1, timeout=15, base="", batch=None) -> list[dict
     if not pages and last_exc is not None:
         raise last_exc
 
-    seen: set[str] = set()
-    items: list[dict] = []
-    for p in sorted(pages):
-        for it in pages[p]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= XCCL_MAX_HITS:
-                return items
-    return items
+    return _collect_pages(pages, set(), [], XCCL_MAX_HITS)
 
 _BUILTIN_ADAPTERS = {
     "apibay": ("海盗湾", _search_apibay),

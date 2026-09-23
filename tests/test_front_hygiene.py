@@ -1176,6 +1176,18 @@ class LookParamWiringTest(unittest.TestCase):
             self.assertIn("look." + key, settings,
                           key + " 被登记为预览专用，但预览里也没人读它")
 
+    def test_preview_tail_uses_the_real_bar_constant(self):
+        search = (ROOT / "web" / "js" / "views" / "search.js").read_text(
+            encoding="utf-8")
+        settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(
+            encoding="utf-8")
+        self.assertIn("HC.PROG_TAIL_MS = PROG_TAIL_MS", search,
+                      "真实进度条的收尾时长要有单一来源并导出，别在函数里写死数字")
+        self.assertIn("lit.length * 45 + PROG_TAIL_MS", search,
+                      "真实进度条自己也要用这个常量，不能导出却另写一个字面量")
+        self.assertIn("HC.PROG_TAIL_MS", settings,
+                      "面板预览要用真实进度条的收尾时长；各写一份会让预览比真实条短一截")
+
 
 class TextContrastTest(unittest.TestCase):
 

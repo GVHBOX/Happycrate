@@ -575,7 +575,7 @@
       if (dl) dl.classList.remove("show", "passed");
       lookTimer.push(setTimeout(function(){
         if (st) st.textContent = "完成 · 已回退到空槽";
-      }, lit.length * step + 260));
+      }, lit.length * step + (HC.PROG_TAIL_MS || 560)));
     }, hold));
   }
 

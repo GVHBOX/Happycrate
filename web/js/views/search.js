@@ -3,6 +3,8 @@
   HC.views = HC.views || {};
 
   var SORTS = {size:"体积", added:"时间", seeders:"做种"};
+  var PROG_TAIL_MS = 560;
+  HC.PROG_TAIL_MS = PROG_TAIL_MS;
 
   var ICONS = {
     search: '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
@@ -950,7 +952,7 @@
         progEl.classList.remove("receding");
         buildProg();
         progEl.style.setProperty("--p", "0");
-      }, lit.length * 45 + 560);
+      }, lit.length * 45 + PROG_TAIL_MS);
     }, hold);
   }
 

@@ -299,6 +299,27 @@ CASES = [
         'pulse:["--prog-pulse","ms"],',
         "tests/test_front_hygiene.py",
     ),
+    (
+        "外观参数回退：越界值不再夹取",
+        "web/index.html",
+        "    return Math.max(r[0], Math.min(r[1], v));",
+        "    return v;",
+        "tests/test_front_smoke.py",
+    ),
+    (
+        "预览收尾回退：又自己写死时长",
+        "web/js/views/settings.js",
+        "}, lit.length * step + (HC.PROG_TAIL_MS || 560)));",
+        "}, lit.length * step + 260));",
+        "tests/test_front_hygiene.py",
+    ),
+    (
+        "预览收尾回退：真实条又写死字面量",
+        "web/js/views/search.js",
+        "      }, lit.length * 45 + PROG_TAIL_MS);",
+        "      }, lit.length * 45 + 560);",
+        "tests/test_front_hygiene.py",
+    ),
 ]
 
 

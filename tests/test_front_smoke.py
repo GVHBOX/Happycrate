@@ -54,6 +54,14 @@ class FrontEndSmokeTest(unittest.TestCase):
                          "窗口留白底色未跟随主题/弹窗状态，会出现边缘白框：\n" + out)
         self.assertIn("RESULT: PASS", out)
 
+    def test_progress_look_parses_and_clamps(self):
+        script = ROOT / "tests" / "look_check.cjs"
+        self.assertTrue(script.is_file(), f"缺失：{script}")
+        code, out = self.run_script(script)
+        self.assertEqual(code, 0,
+                         "进度条外观参数的解析/夹取/落盘行为不符合预期：\n" + out)
+        self.assertIn("RESULT: PASS", out)
+
     def test_all_views_mount_without_throwing(self):
         proc = subprocess.run(
             [self.node, str(SCRIPT)],

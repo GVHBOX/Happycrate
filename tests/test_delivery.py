@@ -1,4 +1,5 @@
 import sys
+import threading
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -175,6 +176,102 @@ class DoubleClickCopyTest(unittest.TestCase):
             "双击必须一律只选中该行再复制。原来是「未选中才重置选区」，"
             "于是先全选再双击某行会把整个选区复制走，看起来像莫名其妙地"
             "复制了一大堆")
+
+
+class ComDeliveryTest(unittest.TestCase):
+
+    def deliver_with(self, magnets=3, timeout=15, agent=None,
+                     dispatch_error=None):
+        client = mock.MagicMock()
+        if dispatch_error is not None:
+            client.Dispatch.side_effect = dispatch_error
+        else:
+            client.Dispatch.return_value = agent if agent is not None \
+                else mock.MagicMock()
+        win32com = mock.MagicMock()
+        win32com.client = client
+        mods = {"pythoncom": mock.MagicMock(),
+                "win32com": win32com,
+                "win32com.client": client}
+        with mock.patch.dict(sys.modules, mods):
+            return thunder.ComMethod().deliver(
+                ["magnet:?xt=1"] * magnets, timeout)
+
+    def test_partial_addtask_success_is_reported_ok(self):
+        agent = mock.MagicMock()
+        state = {"n": 0}
+
+        def add_task(magnet, a, b):
+            state["n"] += 1
+            if state["n"] == 2:
+                raise OSError("boom")
+
+        agent.AddTask.side_effect = add_task
+        result = self.deliver_with(agent=agent)
+        self.assertEqual(result.added, 2)
+        self.assertTrue(result.ok,
+                        "部分成功若报整体失败，上层会整批换协议方式重投，任务重复")
+
+    def test_commit_failure_after_success_does_not_redispatch(self):
+        agent = mock.MagicMock()
+        agent.CommitTasks.side_effect = OSError("commit lost")
+        result = self.deliver_with(agent=agent)
+        self.assertEqual(result.added, 3)
+        self.assertTrue(result.ok,
+                        "任务已进列表再回退协议方式就是双份任务，"
+                        "宁可带错误说明让用户重发，也不能悄悄重投")
+
+    def test_dispatch_failure_leaves_room_for_fallback(self):
+        result = self.deliver_with(dispatch_error=OSError("no com"))
+        self.assertEqual(result.added, 0)
+        self.assertFalse(result.ok)
+
+    def test_hung_com_times_out_instead_of_freezing(self):
+        release = threading.Event()
+        agent = mock.MagicMock()
+
+        def add_task(magnet, a, b):
+            release.wait(5)
+
+        agent.AddTask.side_effect = add_task
+        result = self.deliver_with(agent=agent, magnets=1, timeout=1)
+        release.set()
+        self.assertFalse(result.ok, "COM 挂起不能卡死 js_bridge 线程")
+        self.assertIn("无响应", result.errors[0])
+
+
+class FindExeOwnerTest(unittest.TestCase):
+
+    QB_PATH = r"C:\Program Files\qBittorrent\qbittorrent.exe"
+    TB_PATH = r"C:\Thunder\thunder.exe"
+
+    def find_with_cmd(self, cmd):
+        fake = mock.MagicMock()
+
+        class Key:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        fake.OpenKey.return_value = Key()
+        fake.QueryValueEx.return_value = (cmd, None)
+        with mock.patch.object(thunder, "THUNDER_EXE_CANDIDATES",
+                               (r"C:\none\a.exe",)), \
+             mock.patch.object(thunder.os.path, "isfile",
+                               lambda p: p in (self.QB_PATH, self.TB_PATH)), \
+             mock.patch.dict(sys.modules, {"winreg": fake}):
+            return thunder.find_exe()
+
+    def test_magnet_protocol_hijack_is_rejected(self):
+        got = self.find_with_cmd('"%s" "%%1"' % self.QB_PATH)
+        self.assertIsNone(
+            got, "magnet 协议被别的程序注册时，不能把对方 exe 当迅雷拉起")
+
+    def test_thunder_owner_is_accepted(self):
+        got = self.find_with_cmd('"%s" "%%1"' % self.TB_PATH)
+        self.assertEqual(got, self.TB_PATH)
 
 
 if __name__ == "__main__":

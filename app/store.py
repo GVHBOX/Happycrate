@@ -15,7 +15,7 @@ def copy_to_clipboard(text: str) -> bool:
             win32clipboard.OpenClipboard()
             try:
                 win32clipboard.EmptyClipboard()
-                win32clipboard.SetClipboardText(text)
+                win32clipboard.SetClipboardText(text, win32clipboard.CF_UNICODETEXT)
             finally:
                 win32clipboard.CloseClipboard()
             return True

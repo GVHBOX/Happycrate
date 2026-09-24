@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 
 from .. import log
@@ -77,7 +78,7 @@ def find_exe() -> str | None:
         match = _RE_QUOTED.search(cmd) or _RE_BARE.search(cmd)
         if match:
             path = match.group(1)
-            if os.path.isfile(path):
+            if os.path.isfile(path) and "thunder" in os.path.basename(path).lower():
                 return path
 
     return None
@@ -120,30 +121,51 @@ class ComMethod(Method):
         except ImportError as exc:
             return DeliveryResult(0, len(magnets), [f"缺少 pywin32：{exc}"])
 
-        added = 0
-        errors: list[str] = []
-        try:
-            pythoncom.CoInitialize()
-            try:
-                agent = win32com.client.Dispatch(COM_PROGID)
-                for magnet in magnets:
-                    try:
-                        agent.AddTask(magnet, "", "")
-                        added += 1
-                    except Exception as exc:
-                        logger.debug("COM AddTask 单条失败：%s", exc)
-                        errors.append(f"AddTask：{exc}")
-                agent.CommitTasks()
-            finally:
-                pythoncom.CoUninitialize()
-        except Exception as exc:
-            return DeliveryResult(added, len(magnets),
-                                  [*errors, f"{type(exc).__name__}: {exc}"],
-                                  self.key, ok=False)
+        box: dict = {}
 
-        if added:
-            logger.info("迅雷 COM 批量提交成功：%d/%d", added, len(magnets))
-        return DeliveryResult(added, len(magnets), errors, self.key)
+        def work() -> None:
+            added = 0
+            errors: list[str] = []
+            try:
+                pythoncom.CoInitialize()
+                try:
+                    agent = win32com.client.Dispatch(COM_PROGID)
+                    for magnet in magnets:
+                        try:
+                            agent.AddTask(magnet, "", "")
+                            added += 1
+                        except Exception as exc:
+                            logger.debug("COM AddTask 单条失败：%s", exc)
+                            errors.append(f"AddTask：{exc}")
+                    agent.CommitTasks()
+                finally:
+                    pythoncom.CoUninitialize()
+            except Exception as exc:
+                ok = added > 0
+                box["result"] = DeliveryResult(
+                    added, len(magnets),
+                    [*errors, f"{type(exc).__name__}: {exc}"],
+                    self.key, ok=ok)
+                return
+            box["result"] = DeliveryResult(added, len(magnets), errors, self.key)
+
+        worker = threading.Thread(target=work, daemon=True)
+        worker.start()
+        wait = timeout if isinstance(timeout, (int, float)) and timeout > 0 else 15
+        worker.join(wait)
+
+        if worker.is_alive():
+            logger.error("迅雷 COM 投递 %d 秒无响应，转投下一条路径", wait)
+            return DeliveryResult(0, len(magnets),
+                                  [f"COM 接口 {wait} 秒无响应"],
+                                  self.key, ok=False)
+        result = box.get("result")
+        if result is None:
+            return DeliveryResult(0, len(magnets), ["COM 投递无结果"],
+                                  self.key, ok=False)
+        if result.ok and result.added:
+            logger.info("迅雷 COM 批量提交成功：%d/%d", result.added, result.total)
+        return result
 
 class ProtocolMethod(Method):
 

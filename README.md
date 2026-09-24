@@ -1,6 +1,6 @@
 <h1 align="center">Happycrate · 快乐箱</h1>
 
-<p align="center"><img src="assets/app-256.png" alt="Happycrate 图标" width="160" /></p>
+<p align="center"><img src="web/assets/app-256.png" alt="Happycrate 图标" width="160" /></p>
 
 <p align="center"><strong>磁力搜索聚合工具</strong> · <a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a> · <a href="LICENSE">MIT</a></p>
 

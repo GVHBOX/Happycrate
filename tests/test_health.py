@@ -273,6 +273,31 @@ class SourceIssuesTest(DataDirCase):
         self.assertIn("app/sources.py :: _search_bitsearch", text,
                       "面向 AI 的详细诊断必须保留")
 
+    def test_empty_with_healthy_peers_says_so(self):
+        for mark in ("ok", "ok", "empty"):
+            self._mark_round("nyaa", mark, 1)
+        for mark in ("empty", "empty", "empty"):
+            self._mark_round("eztv", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "eztv"][0]
+        self.assertIn("其它", row["detail"],
+                      "同伴全有结果时要点明是它自己不行：" + row["detail"])
+
+    def test_empty_with_empty_peers_says_so(self):
+        for mark in ("empty", "empty", "empty"):
+            self._mark_round("nyaa", mark, 1)
+            self._mark_round("eztv", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "eztv"][0]
+        self.assertIn("其它源也没有结果", row["detail"],
+                      "同伴也全空时不能冤枉它一个：" + row["detail"])
+
+    def _mark_round(self, key, mark, round_id):
+        if mark == "empty":
+            self.api._mark(key, True, 0, 100, "", round_id=str(round_id))
+        elif mark == "err":
+            self.api._mark(key, False, 0, 100, "HTTP 500", round_id=str(round_id))
+        else:
+            self.api._mark(key, True, 5, 100, "", round_id=str(round_id))
+
 
 class OutcomeClassificationTest(unittest.TestCase):
 

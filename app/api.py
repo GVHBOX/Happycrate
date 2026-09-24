@@ -717,11 +717,17 @@ class Api:
             logger.info("命中搜索缓存：%d 行复用，重打 %d 个源",
                         len(rows), len(retry_keys))
 
+        relax_round = {"n": 0}
+
         def on_source(key, items, err, ms=0):
             if token != self._search_token:
                 return
             items = items or []
             count = len(items)
+            relaxed_zero = relax_round["n"] > 0 and not err and not count
+            if relaxed_zero:
+                logger.info("源 %s：放宽轮 0 条不计健康度（放宽词搜不到不算源失败）", key)
+                return
             outcome, code = classify(not err, count, err, ms)
             text_err = outcome_text(outcome, code)
             mark = self._mark(key, not err, count, ms, err, round_id=str(token))
@@ -809,6 +815,7 @@ class Api:
                         return
                     rounds += 1
                     relaxed_used.append(dropped)
+                    relax_round["n"] = rounds
                     logger.info("放宽关键词重搜：去掉 %s", dropped)
                     run_round(nxt)
             finally:
@@ -932,12 +939,18 @@ class Api:
                 "detail": h.get("err") or "请求失败",
             })
         for e, h in silent:
+            peers, hits = self._peer_stats(e.get("key", ""))
+            detail = f"最近 {min(len([o for o in (h.get('outcomes') or []) if o and o != OUTCOME_CANCEL]), HEALTH_WINDOW)} 次请求均为 0 条"
+            if peers >= 1 and hits == peers:
+                detail += f"，同轮其它 {peers} 个源都有结果"
+            elif peers >= 1 and hits == 0:
+                detail += "，同期其它源也没有结果"
             out.append({
                 "key": e.get("key", ""),
                 "label": e.get("label", e.get("key", "")),
                 "addr": _addr_of(e),
                 "kind": "empty",
-                "detail": f"最近 {min(len([o for o in (h.get('outcomes') or []) if o and o != OUTCOME_CANCEL]), HEALTH_WINDOW)} 次请求均为 0 条",
+                "detail": detail,
             })
         return out
 

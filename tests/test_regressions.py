@@ -122,6 +122,75 @@ class StreamingMergeTest(unittest.TestCase):
         self.assertEqual(last["raw"] - last["dup"], last["total"])
 
 
+class RelaxedRoundHealthTest(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_all = sources.ALL_SOURCES
+        self.orig_by = sources.BY_KEY
+        self.tmpdir = tempfile.mkdtemp(prefix="hc-relax-health-")
+        self.api = api_mod.Api()
+        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
+        self.api._cfg.load()
+        self.api._settings = config.Settings(
+            path=Path(self.tmpdir) / "settings.json")
+        self.api._settings.load()
+        self.api._health_store = config.HealthStore(
+            path=Path(self.tmpdir) / "health.json")
+        self.api._push = lambda js: None
+        sources.reload_from_config(self.api._cfg)
+
+    def tearDown(self):
+        sources.ALL_SOURCES = self.orig_all
+        sources.BY_KEY = self.orig_by
+
+    def _wire(self, fn):
+        self.api._cfg.data["sources"].append(
+            {"key": "t1", "label": "T1", "type": "builtin",
+             "enabled": True, "timeout": 15, "base": "", "order": 99})
+        src = sources.Source("t1", "T1", fn)
+        sources.ALL_SOURCES = [src]
+        sources.BY_KEY = {"t1": src}
+
+    def test_relaxed_zero_does_not_pollute_health(self):
+        calls = []
+
+        def fn(query, page=1, timeout=15, base="", batch=None):
+            calls.append(query)
+            if "4k" in query.lower():
+                return [{"title": "t", "info_hash": "a" * 40, "source": "t1"}]
+            return []
+
+        sources.reload_from_config(self.api._cfg)
+        self._wire(fn)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "t1 4K", ["t1"])
+
+        self.assertTrue(any("4k" in c.lower() for c in calls),
+                         "前置：第一轮带原关键词")
+        health = self.api._health_store.get("t1") or {}
+        outcomes = health.get("outcomes") or []
+        self.assertEqual(outcomes, ["ok"],
+                         "放宽轮的 0 条是放宽词必然的产物，不该把源往失败方向记")
+        empty_events = [e for e in (health.get("events") or [])
+                        if e.get("outcome") == "empty"]
+        self.assertEqual(empty_events, [],
+                         "放宽轮 0 条不应进事件流")
+
+    def test_first_round_zero_still_counts(self):
+        def fn(query, page=1, timeout=15, base="", batch=None):
+            return []
+
+        sources.reload_from_config(self.api._cfg)
+        self._wire(fn)
+        token = sources.start_batch()
+        self.api._search_token = token
+        self.api._search_worker(token, "ubuntu", ["t1"])
+
+        health = self.api._health_store.get("t1") or {}
+        self.assertEqual(health.get("outcomes"), ["empty"],
+                         "原词就 0 条是源的真实表现，要照记")
+
 class RelaxTest(unittest.TestCase):
 
     def test_drops_quality_first(self):

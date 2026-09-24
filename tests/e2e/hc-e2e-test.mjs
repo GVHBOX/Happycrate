@@ -224,11 +224,21 @@ async function runOnce(exe, profileDir, pageUrl) {
     browserPort = port;
 
     const wsPath = readFileSync(portFile, "utf8").split("\n")[1].trim();
-    ws = new WebSocket("ws://127.0.0.1:" + port + wsPath);
     await new Promise((res, rej) => {
-      ws.onopen = res;
-      ws.onerror = () => rej(new Error("ws-open-failed"));
-      setTimeout(() => rej(new Error("ws-open-timeout")), 10000);
+      let tries = 0;
+      let timer = null;
+      const attempt = () => {
+        tries++;
+        ws = new WebSocket("ws://127.0.0.1:" + port + wsPath);
+        ws.onopen = () => { clearTimeout(timer); res(); };
+        ws.onerror = () => {
+          if (exited) return rej(new Error("browser-exited-early"));
+          if (tries >= 12) return rej(new Error("ws-open-failed"));
+          setTimeout(attempt, 500);
+        };
+      };
+      timer = setTimeout(() => rej(new Error("ws-open-timeout")), 30000);
+      attempt();
     });
     ws.onmessage = (ev) => {
       const data = JSON.parse(typeof ev.data === "string" ? ev.data : String(ev.data));

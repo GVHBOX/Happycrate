@@ -38,6 +38,7 @@
 
   var st = {
     items: [], sel: {}, anchor: "",
+    rev: 0,
     field: "", desc: false,
     busy: false, settled: false, searched: false, hero: true,
     token: 0, done: 0, total: 0, startSeq: 0,
@@ -182,12 +183,13 @@
     var relMax = 1 + (p.mods.length ? 1.2 : 0) + p.soft.length * SOFT_WEIGHT;
     var relPart = relMax ? rel / relMax : 0;
 
-    return p.browse ? 50 * relPart + 50 * (heat / 50)
-                    : 70 * relPart + 30 * (heat / 50);
+    return !p.subject.length ? 50 * relPart + 50 * (heat / 50)
+                             : 70 * relPart + 30 * (heat / 50);
   }
 
-  function visible(){
-    if (marquee && marquee.active && marquee.visList) return marquee.visList;
+  var visCache = { key: null, list: null };
+
+  function computeVisible(){
     if (!st.field){
       if ((st.busy && !st.settled) || !st.qtokens.length) return st.items;
       var neutral = neutralSeed();
@@ -203,6 +205,17 @@
       var y = typeof b[st.field] === "number" ? b[st.field] : neutral;
       return st.desc ? y - x : x - y;
     });
+  }
+
+  function visible(){
+    if (marquee && marquee.active && marquee.visList) return marquee.visList;
+    var key = st.rev + "|" + st.field + "|" + (st.desc ? 1 : 0) +
+      "|" + (st.busy ? 1 : 0) + (st.settled ? 1 : 0) + "|" + st.qphrase;
+    if (visCache.key !== key){
+      visCache.key = key;
+      visCache.list = computeVisible();
+    }
+    return visCache.list;
   }
 
   function fileNames(it){
@@ -373,7 +386,10 @@
     if (st.open[h]) renderPanels();
     HC.api.torrentFiles({url: it.fetch.url}).then(function(res){
       delete st.filesLoading[h];
-      if (res && res.ok && res.files && res.files.length) st.filesCache[h] = res.files;
+      if (res && res.ok && res.files && res.files.length){
+        st.filesCache[h] = res.files;
+        st.rev++;
+      }
       else if (!quiet) st.filesErr[h] = (res && res.error) || "获取文件清单失败";
       if (st.open[h]) renderPanels();
       if (cb) cb();
@@ -459,13 +475,11 @@
 
   function renderPanels(){
     if (!rowsEl || !rowsEl.isConnected) return;
-    rowsEl.querySelectorAll(".fpanel").forEach(function(n){ n.remove(); });
-    rowsEl.querySelectorAll(".fchev.on").forEach(function(n){ n.classList.remove("on"); });
-    rowsEl.querySelectorAll(".srow.open").forEach(function(n){ n.classList.remove("open"); });
     var rows = {};
     [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
       rows[row.dataset.hash] = row;
     });
+    var keep = {};
     Object.keys(st.open).forEach(function(h){
       var row = rows[h], it = itemByHash(h);
       var lazy = it && it.fetch && it.fetch.url;
@@ -474,15 +488,33 @@
         delete st.open[h];
         return;
       }
-      var p = document.createElement("div");
-      p.className = "fpanel";
-      p.dataset.hash = h;
-      p.innerHTML = fpanelInner(it);
-      row.parentNode.insertBefore(p, row.nextSibling);
+      keep[h] = true;
+      var next = row.nextElementSibling;
+      var p = next && next.classList.contains("fpanel") &&
+        next.dataset.hash === h ? next : null;
+      var html = fpanelInner(it);
+      if (!p){
+        p = document.createElement("div");
+        p.className = "fpanel";
+        p.dataset.hash = h;
+        p.innerHTML = html;
+        row.parentNode.insertBefore(p, row.nextSibling);
+      } else if (p.innerHTML !== html){
+        p.innerHTML = html;
+      }
       row.classList.add("open");
       var chev = row.querySelector(".fchev");
       if (chev) chev.classList.add("on");
       loadFiles(h, null);
+    });
+    [].slice.call(rowsEl.querySelectorAll(".fpanel")).forEach(function(p){
+      if (!keep[p.dataset.hash]) p.remove();
+    });
+    [].slice.call(rowsEl.querySelectorAll(".srow.open")).forEach(function(row){
+      if (keep[row.dataset.hash]) return;
+      row.classList.remove("open");
+      var chev = row.querySelector(".fchev.on");
+      if (chev) chev.classList.remove("on");
     });
   }
 
@@ -558,8 +590,10 @@
   }
 
   function renumber(){
-    [].slice.call(rowsEl.querySelectorAll(".srow .c-idx")).forEach(function(el, i){
-      el.textContent = pad(i);
+    [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row, i){
+      row.classList.toggle("alt", i % 2 === 1);
+      var idx = row.querySelector(".c-idx");
+      if (idx) idx.textContent = pad(i);
     });
   }
 
@@ -582,10 +616,7 @@
     paintCursor();
   }
 
-  function updateSelUI(still){
-    [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
-      row.classList.toggle("sel", !!st.sel[row.dataset.hash]);
-    });
+  function syncSelbar(still){
     var list = visible();
     var n = list.filter(function(it){ return st.sel[it.hash]; }).length;
     var all = n > 0 && n === list.length;
@@ -596,6 +627,13 @@
       selbarEl.querySelector("#selN").textContent = n;
       selbarEl.classList.toggle("show", st.selbarOn && n > 0);
     }
+  }
+
+  function updateSelUI(still){
+    [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
+      row.classList.toggle("sel", !!st.sel[row.dataset.hash]);
+    });
+    syncSelbar(still);
   }
 
   function paintCursor(){
@@ -825,6 +863,7 @@
   }
 
   function reset(){
+    st.rev++;
     st.items = [];
     st.sel = {};
     st.anchor = "";
@@ -1094,6 +1133,7 @@
       st.token = res.token;
       st.total = res.total;
       st.parsed = res.query || null;
+      st.rev++;
       setProgress();
       setChip("搜索中 0/" + res.total + "…", "busy");
       replayPending();
@@ -1258,6 +1298,7 @@
             fresh++;
           }
         });
+        st.rev++;
         if (st.field){
           renderRows();
           updateSelUI();
@@ -1321,7 +1362,7 @@
     return [].slice.call(rowsEl.querySelectorAll(".srow")).map(function(row){
       var rc = row.getBoundingClientRect();
       return {
-        h: row.dataset.hash,
+        h: row.dataset.hash, el: row,
         l: rc.left - rect.left + sx, r: rc.right - rect.left + sx,
         t: rc.top - rect.top + sy, b: rc.bottom - rect.top + sy
       };
@@ -1339,10 +1380,13 @@
     marquee.el.style.width = (r - l) + "px";
     marquee.el.style.height = (b - t) + "px";
     marquee.spans.forEach(function(sp){
-      if (sp.l < r && sp.r > l && sp.t < b && sp.b > t) st.sel[sp.h] = true;
+      var hit = sp.l < r && sp.r > l && sp.t < b && sp.b > t;
+      if (hit === !!st.sel[sp.h]) return;
+      if (hit) st.sel[sp.h] = true;
       else delete st.sel[sp.h];
+      if (sp.el) sp.el.classList.toggle("sel", hit);
     });
-    updateSelUI();
+    syncSelbar();
   }
 
   function endMarquee(e){

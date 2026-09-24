@@ -2,9 +2,9 @@
 
 <p align="center"><img src="web/logo.png" alt="Happycrate 图标" width="160" /></p>
 
-<p align="center"><strong>磁力搜索聚合与下载投递工具</strong></p>
+<p align="center"><strong>磁力搜索聚合工具</strong></p>
 
-<p align="center">10 个内置索引站 · 自定义源 · 去重合并 · 健康度 · 批量投递迅雷 · 便携免安装</p>
+<p align="center">10 个内置索引站 · 去重合并 ·</p>
 
 <p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载最新发行包</a> · <a href="LICENSE">许可证</a></p>
 
@@ -22,12 +22,8 @@
 ## 功能
 
 - **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB镜像、小草磁力、Knaben
-- **自定义源**：RSS / JSON / HTML 三种类型，填 URL 与抽取规则即可接入
 - **去重合并**：同一个种子被多个站点收录时合并成一行，各站字段取并集
-- **健康度**：每个源记录最近若干次搜索的结果，故障与「长期零结果」分开显示，持续故障会自动降权
 - **批量操作**：框选、全选、按列排序，右键批量复制磁力或标题
-- **投递迅雷**：协议拉起与 COM 接口两种方式，自动挑选可用的那个
-- **网络出口**：可填手动代理，也可跟随系统代理；设置页会真实探测代理是否转发请求
 - **外观**：浅色 / 深色主题，字号三档
 
 ## 运行

@@ -4,8 +4,6 @@
 
 <p align="center"><strong>磁力搜索聚合工具</strong></p>
 
-<p align="center">10 个内置索引站 · 去重合并 ·</p>
-
 <p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载最新发行包</a> · <a href="LICENSE">许可证</a></p>
 
 一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，选中后批量复制磁力链接，或直接投递到迅雷。后端 Python，界面 pywebview，解压即用。

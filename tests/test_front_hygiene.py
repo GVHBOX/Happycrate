@@ -401,7 +401,7 @@ class MockSourceListTest(unittest.TestCase):
     def mock_builtins(self):
         text = (ROOT / "web" / "js" / "api.js").read_text(encoding="utf-8")
         block = text.split("var MOCK = [", 1)[1].split("var db = null;", 1)[0]
-        return re.findall(r'key:"([a-z0-9_]+)"[^}]*type:"builtin"', block, re.S)
+        return re.findall(r'key:"([a-z0-9_]+)"', block)
 
     def real_builtins(self):
         from app import config

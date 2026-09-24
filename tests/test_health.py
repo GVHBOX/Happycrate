@@ -111,9 +111,8 @@ class HealthStoreTest(DataDirCase):
         keys = [r["key"] for r in a.list_sources()]
         self.assertEqual(len(keys), len(config.defaults()["sources"]),
                          "无 health 的源仍必须出现在列表里")
-        for row in a.list_sources():
-            row["health"]["empty"] = bool(row["health"]["empty"])
-            self.assertEqual(row["health"]["state"], "na" if row["key"] != "nyaa" else "ok")
+        self.assertEqual(self.read_health()["sources"]["nyaa"]["state"], "ok",
+                         "视图瘦身不影响持久层的 state")
 
 
 class DiagnosticsRootCauseTest(DataDirCase):
@@ -165,26 +164,21 @@ class DiagnosticsRootCauseTest(DataDirCase):
                          "窗口里混着的连接失败次数必须如实带出，供 agent 判断")
 
     def test_window_empty_true_when_empty_dominates(self):
-        self.feed("eztv", ["empty", "empty", "empty", "empty", "ok"])
-        row = [r for r in self.api.list_sources() if r["key"] == "eztv"][0]
-        self.assertTrue(row["health"]["empty"],
-                        "5 次里 4 次解析 0 条，1 次成功不足以洗白，仍应按改版报")
+        self.assertTrue(api_mod._window_empty(
+            ["empty", "empty", "empty", "empty", "ok"]),
+            "5 次里 4 次解析 0 条，1 次成功不足以洗白，仍应按改版报")
 
     def test_window_empty_cleared_when_success_dominates(self):
-        self.feed("bitsearch", ["empty", "empty", "ok", "ok", "ok"])
-        row = [r for r in self.api.list_sources() if r["key"] == "bitsearch"][0]
-        self.assertFalse(row["health"]["empty"],
+        self.assertFalse(api_mod._window_empty(["empty", "empty", "ok", "ok", "ok"]),
                          "成功占多数后不该再判改版")
 
     def test_view_exposes_empty_flag(self):
         self.feed("nyaa", ["empty", "empty", "empty", "empty", "empty"])
-        row = [r for r in self.api.list_sources() if r["key"] == "nyaa"][0]
-        self.assertTrue(row["health"]["empty"])
+        self.assertTrue(api_mod._window_empty(["empty"] * 5))
 
     def test_view_empty_false_for_connection_failure(self):
         self.feed("sukebei", ["err", "err", "err", "err", "err"])
-        row = [r for r in self.api.list_sources() if r["key"] == "sukebei"][0]
-        self.assertFalse(row["health"]["empty"])
+        self.assertFalse(api_mod._window_empty(["err"] * 5))
 
     def test_diagnostics_location_points_to_real_adapter(self):
         self.feed("tpb", ["empty", "empty", "empty", "empty"])

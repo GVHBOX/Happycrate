@@ -2,26 +2,26 @@
   var HC = window.HC || (window.HC = {});
 
   var MOCK = [
-    {key:"nyaa", label:"Nyaa", type:"builtin", enabled:true, timeout:15,
-     addr:"https://nyaa.si", health:{state:"ok", ms:148, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"apibay", label:"海盗湾", type:"builtin", enabled:true, timeout:15,
-     addr:"https://apibay.org", health:{state:"ok", ms:62, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"mikan", label:"蜜柑计划", type:"builtin", enabled:true, timeout:15,
-     addr:"https://mikanani.me", health:{state:"warn", ms:5230, err:"", times:["ok","ok","slow","slow","slow"]}},
-    {key:"dmhy", label:"动漫花园", type:"builtin", enabled:true, timeout:15,
-     addr:"https://share.dmhy.org", health:{state:"err", ms:0, err:"超时", times:["ok","ok","timeout","timeout","timeout"]}},
-    {key:"sukebei", label:"Sukebei", type:"builtin", enabled:true, timeout:15,
-     addr:"https://sukebei.nyaa.si", health:{state:"ok", ms:183, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"eztv", label:"EZTV", type:"builtin", enabled:true, timeout:15,
-     addr:"https://eztvx.to", health:{state:"empty", ms:94, err:"无结果", times:["ok","empty","empty","empty","empty"], empty:true}},
-    {key:"bitsearch", label:"BitSearch", type:"builtin", enabled:true, timeout:15,
-     addr:"https://bitsearch.to", health:{state:"ok", ms:41, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"tpb", label:"TPB镜像", type:"builtin", enabled:true, timeout:15,
-     addr:"https://thepiratebay10.org", health:{state:"ok", ms:112, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"xccl263", label:"小草磁力", type:"builtin", enabled:true, timeout:20,
-     addr:"https://www.xccl263.xyz", health:{state:"ok", ms:240, err:"", times:["ok","ok","ok","ok","ok"]}},
-    {key:"knaben", label:"Knaben", type:"builtin", enabled:true, timeout:15,
-     addr:"https://api.knaben.org/v1", health:{state:"ok", ms:356, err:"", times:["ok","ok","ok","ok","ok"]}}
+    {key:"nyaa", label:"Nyaa", enabled:true,
+     addr:"https://nyaa.si", health:{ms:148, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"apibay", label:"海盗湾", enabled:true,
+     addr:"https://apibay.org", health:{ms:62, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"mikan", label:"蜜柑计划", enabled:true,
+     addr:"https://mikanani.me", health:{ms:5230, err:"", outcomes:["ok","ok","slow","slow","slow"]}},
+    {key:"dmhy", label:"动漫花园", enabled:true,
+     addr:"https://share.dmhy.org", health:{ms:0, err:"超时", outcomes:["ok","ok","timeout","timeout","timeout"]}},
+    {key:"sukebei", label:"Sukebei", enabled:true,
+     addr:"https://sukebei.nyaa.si", health:{ms:183, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"eztv", label:"EZTV", enabled:true,
+     addr:"https://eztvx.to", health:{ms:94, err:"无结果", outcomes:["ok","empty","empty","empty","empty"]}},
+    {key:"bitsearch", label:"BitSearch", enabled:true,
+     addr:"https://bitsearch.to", health:{ms:41, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"tpb", label:"TPB镜像", enabled:true,
+     addr:"https://thepiratebay10.org", health:{ms:112, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"xccl263", label:"小草磁力", enabled:false,
+     addr:"https://www.xccl263.xyz", health:{ms:240, err:"", outcomes:["ok","ok","ok","ok","ok"]}},
+    {key:"knaben", label:"Knaben", enabled:true,
+     addr:"https://api.knaben.org/v1", health:{ms:356, err:"", outcomes:["ok","ok","http429","ok","http429"]}}
   ];
 
   var db = null;
@@ -52,18 +52,11 @@
         key: s.key || "",
         label: s.label || s.key || "",
         enabled: s.enabled !== false,
-        timeout: Number(s.timeout) || 15,
         addr: s.addr || "",
         health: {
-          state: (s.health && s.health.state) || "na",
           ms: (s.health && s.health.ms) || 0,
           err: (s.health && s.health.err) || "",
-          times: (s.health && s.health.times) || [],
-          outcomes: (s.health && s.health.outcomes) ||
-            (s.health && s.health.times) || [],
-          empty: !!(s.health && s.health.empty),
-          lastOk: (s.health && s.health.lastOk) || 0,
-          lastCount: (s.health && s.health.lastCount) || 0
+          outcomes: (s.health && s.health.outcomes) || []
         }
       };
     });
@@ -161,27 +154,23 @@
       }
       targets.forEach(function(s, i){
         setTimeout(function(){
-          var roll = s.health.state;
-          var outcome = roll === "err"
+          var st = HC.mergeState((s.health.outcomes || []).slice(-5));
+          var outcome = st === "err"
             ? "timeout"
-            : roll === "empty"
+            : st === "empty"
             ? "empty"
-            : roll === "warn" ? "slow" : "ok";
-          var res = roll === "err"
+            : st === "warn" ? "slow" : "ok";
+          var res = st === "err"
             ? {state:"err", ms:0, err:s.health.err || "超时", outcome:outcome}
-            : roll === "empty"
+            : st === "empty"
             ? {state:"empty", ms:s.health.ms || 90, err:"无结果", outcome:outcome}
-            : {state: roll === "warn" ? "warn" : "ok",
-               ms: roll === "warn" ? 4800 + Math.round(Math.random()*900)
-                                   : 30 + Math.round(Math.random()*260),
+            : {state: st === "warn" ? "warn" : "ok",
+               ms: st === "warn" ? 4800 + Math.round(Math.random()*900)
+                                  : 30 + Math.round(Math.random()*260),
                err:"", outcome:outcome};
-          var times = s.health.times || [];
-          var outcomes = (s.health.outcomes || times).slice();
+          var outcomes = (s.health.outcomes || []).slice();
           outcomes.push(outcome);
-          var hits = times.filter(function(t){ return t === "empty"; }).length;
-          s.health = {state:res.state, ms:res.ms, err:res.err, times:times,
-                      outcomes: outcomes.slice(-5),
-                      empty: res.state === "empty" || (hits > 0 && hits * 2 > times.length)};
+          s.health = {ms:res.ms, err:res.err, outcomes: outcomes.slice(-5)};
           if (probeOne) probeOne(s.key, res);
           left--;
           if (!left) window.__onProbeDone();
@@ -198,7 +187,8 @@
     diagnostics: function(keys){
       if (live()) return window.pywebview.api.diagnostics(keys);
       var list = seed().filter(function(s){
-        return (s.health.state === "err" || s.health.empty) &&
+        var st = HC.mergeState((s.health.outcomes || []).slice(-5));
+        return (st === "err" || st === "empty") &&
                (!keys || !keys.length || keys.indexOf(s.key) >= 0);
       });
       if (!list.length) return Promise.resolve("");
@@ -207,19 +197,20 @@
         version: "1.2.3",
         lax: [],
         sources: list.map(function(s){
-          var empty = !!(s.health.empty || (s.health.times || []).some(function(t){ return t === "empty"; }));
+          var outs = (s.health.outcomes || []).slice(-5);
+          var st = HC.mergeState(outs);
           return {
             key: s.key,
             label: s.label,
             addr: s.addr,
-            kind: empty ? "empty" : "fail",
-            state: s.health.state,
+            kind: st === "empty" ? "empty" : "fail",
+            state: st,
             err: s.health.err || "",
-            lastOk: s.health.lastOk || 0,
-            outcomes: (s.health.outcomes || s.health.times || []).slice(-5),
+            lastOk: 0,
+            outcomes: outs,
             peers: 0,
             peerHits: 0,
-            events: (s.health.times || []).slice(-5).map(function(t){
+            events: outs.map(function(t){
               return {at: 0, outcome: t, code: 0, count: 0, ms: s.health.ms || 0, round: "", err: ""};
             }),
             adapter: adapterLocation(s)
@@ -232,13 +223,16 @@
     sourceIssues: function(){
       if (live()) return window.pywebview.api.source_issues();
       var list = seed().filter(function(s){
-        return s.health.state === "err" || s.health.empty;
+        var st = HC.mergeState((s.health.outcomes || []).slice(-5));
+        return st === "err" || st === "empty";
       });
       return Promise.resolve(list.map(function(s){
+        var outs = (s.health.outcomes || []).slice(-5);
+        var st = HC.mergeState(outs);
         return {
           key: s.key, label: s.label, addr: s.addr,
-          kind: s.health.state === "err" ? "fail" : "empty",
-          detail: s.health.state === "err" ? (s.health.err || "请求失败") : "最近 5 次请求均为 0 条"
+          kind: st === "err" ? "fail" : "empty",
+          detail: st === "err" ? (s.health.err || "请求失败") : "最近 5 次请求均为 0 条"
         };
       }));
     },

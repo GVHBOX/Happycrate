@@ -131,17 +131,11 @@ def _to_view(entry: dict, health: dict | None = None) -> dict:
         "key": entry.get("key", ""),
         "label": entry.get("label", entry.get("key", "")),
         "enabled": bool(entry.get("enabled", True)),
-        "timeout": int(entry.get("timeout", 15) or 15),
         "addr": _addr_of(entry),
         "health": {
-            "state": h.get("state", "na"),
             "ms": int(h.get("ms", 0) or 0),
             "err": h.get("err", ""),
-            "times": list(h.get("times", []) or []),
             "outcomes": outcomes[-HEALTH_WINDOW:],
-            "empty": _window_empty(outcomes),
-            "lastOk": int(h.get("lastOk", 0) or 0),
-            "lastCount": int(h.get("lastCount", 0) or 0),
         },
     }
 
@@ -1005,7 +999,7 @@ class Api:
             if not view:
                 missing.append("sources 为空")
             else:
-                need = ("key", "label", "type", "enabled", "timeout", "addr", "health")
+                need = ("key", "label", "enabled", "addr", "health")
                 for field in need:
                     if field not in view[0]:
                         missing.append(field)

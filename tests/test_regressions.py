@@ -701,11 +701,13 @@ class SourceViewKeysTest(unittest.TestCase):
 
     def test_view_exposes_health_detail(self):
         health = {"state": "ok", "outcomes": ["ok", "empty"],
-                  "lastOk": 1757848402, "lastCount": 7, "events": []}
+                  "lastOk": 1757848402, "lastCount": 7, "events": [],
+                  "times": ["ok", "empty"], "empty": True}
         view = api_mod._to_view({"key": "c1", "label": "L"}, health)
         self.assertEqual(view["health"]["outcomes"], ["ok", "empty"])
-        self.assertEqual(view["health"]["lastOk"], 1757848402)
-        self.assertEqual(view["health"]["lastCount"], 7)
+        for gone in ("state", "times", "empty", "lastOk", "lastCount", "events"):
+            self.assertNotIn(gone, view["health"],
+                             f"视图层已瘦身，health.{gone} 不应再透传")
 
 
 _CDATA_HASH = "0123456789abcdef0123456789abcdef01234567"

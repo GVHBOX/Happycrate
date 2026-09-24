@@ -280,7 +280,7 @@
       var srcs = root ? root.querySelector("#heroSrcs") : null;
       if (srcs){
         srcs.innerHTML = (list || []).map(function(s){
-          var hst = s.health && s.health.state;
+          var hst = HC.mergeState((s.health && s.health.outcomes) || []);
           var dot = (hst === "err" || hst === "warn" || hst === "empty") ? " " + hst : "";
           return '<button class="srcdot' + dot +
             (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '">' +

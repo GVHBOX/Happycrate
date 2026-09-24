@@ -18,22 +18,23 @@
 
   function healthClass(s){
     if (s.probing) return "na";
-    return mergeState((s.health && s.health.outcomes) || (s.health && s.health.times) || []);
+    return mergeState((s.health && s.health.outcomes) || []);
   }
 
   function healthText(s){
     if (s.probing) return '<span class="d">·</span><span class="d">·</span><span class="d">·</span>';
     var h = s.health || {};
-    var state = mergeState(h.outcomes || h.times || []);
+    var outs = h.outcomes || [];
+    var state = mergeState(outs);
     if (state === "err"){
-      var last = (h.outcomes || h.times || []).filter(function(o){
+      var last = outs.filter(function(o){
         return o && o !== "cancel";
       }).pop() || "";
       return esc(OUTCOME_TEXT[last] || h.err || "请求失败");
     }
     if (state === "empty") return "无结果";
     if (state === "warn"){
-      var w = (h.outcomes || h.times || []).slice().reverse().find(function(o){
+      var w = outs.slice().reverse().find(function(o){
         return o && o !== "ok" && o !== "slow" && o !== "cancel";
       }) || "";
       return esc(OUTCOME_TEXT[w] || "—");
@@ -269,12 +270,10 @@
         if (!s) return;
         s.probing = false;
         s.just = true;
-        var outcomes = ((s.health && s.health.outcomes) ||
-          (s.health && s.health.times) || []).slice();
+        var outcomes = ((s.health && s.health.outcomes) || []).slice();
         outcomes.push(res.outcome || res.state);
         s.health = {
-          state: res.state, ms: res.ms, err: res.err,
-          times: s.health && s.health.times || [],
+          ms: res.ms, err: res.err,
           outcomes: outcomes.slice(-5)
         };
         store.set({probeDone: store.get().probeDone + 1});

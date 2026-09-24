@@ -6,16 +6,13 @@
 
 <p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载最新发行包</a> · <a href="LICENSE">许可证</a></p>
 
-关键词同时检索10个公开磁力索引站，结果去重合并成一张列表，选中后批量复制磁力链接
-
 <p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 
 ## 功能
 
 - **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB镜像、小草磁力、Knaben
-- **去重合并**：同一个种子被多个站点收录时合并成一行，各站字段取并集
+- **去重合并**：关键词同时检索10个公开磁力索引站，结果去重合并成一张列表，选中后批量复制磁力链接
 - **批量操作**：框选、全选、按列排序，右键批量复制磁力或标题
-- **外观**：浅色 / 深色主题，字号三档
 
 ## 运行
 

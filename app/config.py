@@ -39,6 +39,11 @@ DEFAULT_SOURCES = [
      "enabled": True, "timeout": 15, "base": "", "order": 9},
 ]
 
+PROGRESS_LOOK_DEFAULT = json.dumps({
+    "on": "#8B7FE0", "warn": "#6F5CB8", "line": "#4C3D8F",
+    "err": "#D4676E", "slot": "#E3E1F2", "gap": "#C5C1DF",
+}, separators=(",", ":"))
+
 DEFAULT_SETTINGS = {
     "version": SETTINGS_VERSION,
     "min_query_len": 2,
@@ -57,7 +62,7 @@ DEFAULT_SETTINGS = {
     "keep_duplicates": False,
     "progress_style": "segment",
     "progress_line": True,
-    "progress_look": "",
+    "progress_look": PROGRESS_LOOK_DEFAULT,
 }
 
 SETTING_SPECS = {

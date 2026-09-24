@@ -87,7 +87,8 @@
     default_downloader: "", proxy: "", user_agent: "",
     ui_font_size: 18, selbar: false, theme: "light", brand: "", auto_files: true,
     soft_deadline_ms: 3000, keep_duplicates: false, progress_style: "segment",
-    progress_line: true, progress_look: ""
+    progress_line: true,
+    progress_look: "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
   };
   var mockDefaults = Object.assign({}, mockSettings);
 

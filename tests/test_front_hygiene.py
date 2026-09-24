@@ -1,3 +1,4 @@
+import json
 import re
 import subprocess
 import sys
@@ -1108,6 +1109,22 @@ class SourceProgressVisibilityTest(unittest.TestCase):
 
 
 _PREVIEW_ONLY_LOOK_KEYS = frozenset({"hold", "step"})
+
+
+class ProgressLookDefaultTest(unittest.TestCase):
+
+    def test_backend_default_matches_aubergine_preset(self):
+        from app import config
+        got = json.loads(config.PROGRESS_LOOK_DEFAULT)
+        js = (ROOT / "web" / "js" / "views" / "settings.js").read_text(
+            encoding="utf-8")
+        m = re.search(r'aubergine:\{([^}]*)\}', js)
+        self.assertIsNotNone(m, "settings.js 里找不到藕紫预设，锚点漂移了")
+        want = dict(re.findall(r'(\w+):"(#[0-9a-fA-F]{6})"', m.group(1)))
+        self.assertEqual(got, want,
+                         "出厂默认进度条配色必须与设置页「藕紫」预设逐色一致："
+                         + repr(got) + " vs " + repr(want))
+
 
 _TEXT_CONTRAST_EXEMPT = frozenset({"t4", "t5", "t-disabled"})
 _TEXT_CONTRAST_PENDING = frozenset({"brand", "brand-active", "ok", "warn"})

@@ -510,6 +510,9 @@ class Api:
         outcome, code = classify(ok, count, err, ms)
         if outcome == OUTCOME_CANCEL:
             return self._health_store.get(key) or _blank_health()
+        if outcome == OUTCOME_EMPTY and key in sources.QUERYLESS_SOURCES:
+            logger.debug("源 %s 无关键词检索能力，0 条不计健康度", key)
+            return self._health_store.get(key) or _blank_health()
         with self._health_lock:
             h = self._health_store.data.setdefault(key, _blank_health())
             outcomes = list(h.get("outcomes") or [])

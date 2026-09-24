@@ -52,11 +52,11 @@ def has_webview2() -> bool:
     return False
 
 
-def alert(text: str) -> None:
+def alert(text: str, icon: int = 0x10) -> None:
     if sys.platform != "win32":
         print(text)
         return
-    ctypes.windll.user32.MessageBoxW(0, text, APP_TITLE, 0x10)
+    ctypes.windll.user32.MessageBoxW(0, text, APP_TITLE, icon)
 
 
 READY_TIMEOUT = 3.0
@@ -277,6 +277,7 @@ def run() -> int:
     log.setup_logging()
 
     if not single.acquire():
+        alert("Happycrate 已在运行", 0x40)
         return 0
 
     bridge = api.Api()

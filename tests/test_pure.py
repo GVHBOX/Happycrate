@@ -376,6 +376,55 @@ class SslLaxMemoryTest(unittest.TestCase):
         self.assertLessEqual(len(sources.ssl_lax_hosts()), sources._LAX_LIMIT)
 
 
+class ProbePortTest(unittest.TestCase):
+
+    def probe_with(self, addr):
+        seen = []
+
+        class FakeSock:
+            def __init__(self):
+                pass
+
+            def settimeout(self, t):
+                pass
+
+            def connect_ex(self, addr):
+                seen.append(addr)
+                return 0
+
+            def close(self):
+                pass
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        with mock.patch.object(sources.socket, "socket", FakeSock):
+            ok = sources._probe_port(addr)
+        return ok, seen
+
+    def test_omitted_port_falls_back_to_scheme_default(self):
+        ok, seen = self.probe_with("http://proxy.lan")
+        self.assertTrue(ok)
+        self.assertEqual(seen, [("proxy.lan", 80)],
+                         "代理地址省略端口时按协议默认端口探测，而不是直接报不可用")
+
+    def test_https_defaults_to_443(self):
+        ok, seen = self.probe_with("https://proxy.lan")
+        self.assertTrue(ok)
+        self.assertEqual(seen, [("proxy.lan", 443)])
+
+
+class SingleInstanceTest(unittest.TestCase):
+
+    def test_mutex_is_session_local(self):
+        from app import single
+        self.assertTrue(single.MUTEX_NAME.startswith("Local\\"),
+                        "Global 互斥会跨用户会话拦人，别的会话双击会无提示退出")
+
+
 class EztvApiTest(unittest.TestCase):
 
     def run_pages(self, payload):
@@ -413,6 +462,14 @@ class EztvApiTest(unittest.TestCase):
                    2: {"torrents": [row] * 3}}
         items, _calls = self.run_pages(payload)
         self.assertEqual(len(items), 1)
+
+    def test_cap_holds_across_pages(self):
+        payload = {p: {"torrents": [
+            {"title": f"123 p{p} n{n}", "hash": f"{p:02d}{n:038x}"}
+            for n in range(100)]} for p in range(1, 6)}
+        items, _calls = self.run_pages(payload)
+        self.assertEqual(len(items), sources.EZTV_MAX_HITS,
+                         "上限截断必须同时跳出内外两层循环，不能让后续页继续追加")
 
     def test_non_json_returns_empty_without_raising(self):
         from unittest import mock

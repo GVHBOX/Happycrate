@@ -265,8 +265,10 @@ def _probe_port(addr: str) -> bool:
         parts = urllib.parse.urlsplit(addr if "//" in addr else "//" + addr)
         host = parts.hostname or ""
         port = parts.port
-        if not host or port is None:
+        if not host:
             return False
+        if port is None:
+            port = 443 if parts.scheme == "https" else 80
         with socket.socket() as sock:
             sock.settimeout(0.5)
             return sock.connect_ex((host, port)) == 0
@@ -1030,7 +1032,7 @@ def _nyaa_family(query: str, page: int, timeout: int, batch, root: str,
     try:
         jobs = {pool.submit(_nyaa_html_page, root, p, needle, timeout, batch,
                             source_key): p
-                for p in range(1, pages + 1)}
+                for p in range(int(page), int(page) + pages)}
         for job in futures.as_completed(jobs):
             p = jobs[job]
             try:
@@ -1417,12 +1419,13 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
             seen.add(h)
             items.append(it)
             if len(items) >= EZTV_MAX_HITS:
-                items = items[:EZTV_MAX_HITS]
                 break
+        if len(items) >= EZTV_MAX_HITS:
+            break
     if failed:
         logger.warning("EZTV 有 %d 页失败，结果可能不全：%s",
                        len(failed), sorted(failed))
-    return items
+    return items[:EZTV_MAX_HITS]
 
 BITSEARCH_PAGES = 2
 BITSEARCH_PAGE_SIZE = 100
@@ -1944,6 +1947,8 @@ _BUILTIN_ADAPTERS = {
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
 PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
+
+QUERYLESS_SOURCES = frozenset({"eztv"})
 
 BUILTIN_ADAPTER_NAMES = {key: fn.__name__ for key, (_label, fn) in _BUILTIN_ADAPTERS.items()}
 

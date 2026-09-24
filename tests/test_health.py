@@ -96,6 +96,17 @@ class HealthStoreTest(DataDirCase):
         hp = self.read_health()
         self.assertIn("ok", hp["sources"]["nyaa"]["outcomes"])
 
+    def test_queryless_source_zero_result_is_not_recorded(self):
+        a = api_mod.Api()
+        a.boot()
+        a._mark("eztv", True, 0, 100, "")
+        self.assertIsNone(a._health_store.get("eztv"),
+                          "EZTV 没有关键词检索能力，0 条不是故障，不该记账")
+        a._mark("nyaa", True, 0, 100, "")
+        row = a._health_store.get("nyaa")
+        self.assertEqual(row["outcomes"], ["empty"],
+                         "有检索能力的源 0 条仍要如实记账")
+
     def test_prune_drops_removed_source(self):
         store = config.HealthStore()
         store.replace({"nyaa": {"state": "ok", "times": ["ok"]},
@@ -160,8 +171,8 @@ class DiagnosticsRootCauseTest(DataDirCase):
         self.assertGreaterEqual(row["outcomes"].count("empty"), 4)
 
     def test_empty_mixed_with_conn_error_keeps_both_facts(self):
-        self.feed("eztv", ["err", "empty", "err", "empty", "empty"])
-        row = self.row_for("eztv")
+        self.feed("sukebei", ["err", "empty", "err", "empty", "empty"])
+        row = self.row_for("sukebei")
         self.assertEqual(row["kind"], "empty")
         self.assertEqual(sum(1 for o in row["outcomes"] if o in api_mod.FATAL_OUTCOMES), 2,
                          "窗口里混着的连接失败次数必须如实带出，供 agent 判断")
@@ -249,10 +260,10 @@ class SourceIssuesTest(DataDirCase):
         self.assertTrue(row["addr"].startswith("http"))
 
     def test_empty_and_fail_are_distinguishable(self):
-        self.feed("eztv", ["empty"] * 5)
+        self.feed("mikan", ["empty"] * 5)
         self.feed("dmhy", ["err"] * 3)
         kinds = {i["key"]: i["kind"] for i in self.api.source_issues()}
-        self.assertEqual(kinds.get("eztv"), "empty")
+        self.assertEqual(kinds.get("mikan"), "empty")
         self.assertEqual(kinds.get("dmhy"), "fail")
 
     def test_issue_detail_has_no_advice_text(self):
@@ -274,16 +285,16 @@ class SourceIssuesTest(DataDirCase):
         for mark in ("ok", "ok", "empty"):
             self._mark_round("nyaa", mark, 1)
         for mark in ("empty", "empty", "empty"):
-            self._mark_round("eztv", mark, 1)
-        row = [i for i in self.api.source_issues() if i["key"] == "eztv"][0]
+            self._mark_round("tpb", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "tpb"][0]
         self.assertIn("其它", row["detail"],
                       "同伴全有结果时要点明是它自己不行：" + row["detail"])
 
     def test_empty_with_empty_peers_says_so(self):
         for mark in ("empty", "empty", "empty"):
             self._mark_round("nyaa", mark, 1)
-            self._mark_round("eztv", mark, 1)
-        row = [i for i in self.api.source_issues() if i["key"] == "eztv"][0]
+            self._mark_round("tpb", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "tpb"][0]
         self.assertIn("其它源也没有结果", row["detail"],
                       "同伴也全空时不能冤枉它一个：" + row["detail"])
 

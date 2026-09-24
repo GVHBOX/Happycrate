@@ -8,7 +8,7 @@ from . import log
 
 logger = log.get_logger(__name__)
 
-MUTEX_NAME = "happycrate_v1_SingleInstance_7d4a9e2c6b1f8053"
+MUTEX_NAME = r"Local\happycrate_v1_SingleInstance_7d4a9e2c6b1f8053"
 
 ERROR_ALREADY_EXISTS = 183
 

@@ -318,6 +318,13 @@ class SukebeiSearchTest(unittest.TestCase):
                          "RSS 硬上限 75 条，必须靠 HTML 翻页补齐")
         self.assertGreater(sources.SUKEBEI_PAGES, 1)
 
+    def test_html_pages_offset_by_page(self):
+        seen, _items = self._run(page=2)
+        pages = [re.search(r"[?&]p=(\d+)", u) for u in seen if "page=rss" not in u]
+        got = sorted(int(m.group(1)) for m in pages if m)
+        self.assertEqual(got, list(range(2, 2 + sources.SUKEBEI_PAGES)),
+                         "HTML 补页要跟随请求的页码偏移，page=2 不能再从第 1 页抓")
+
     def test_html_pages_are_sorted_by_seeders(self):
         seen, _items = self._run()
         for u in seen:

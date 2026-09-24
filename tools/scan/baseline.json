@@ -1,14 +1,14 @@
 {
  "_读我": "这里的项是「扫描器当前就会报、且已知不是缺陷」的清单，只有清单之外的新增项才会让 check-all 退出码非 0。\n已知的非缺陷：scan_adapter 里 apibay/mikan/dmhy/eztv 不读 page 是 PAGELESS_KEYS 显式契约；scan_py 的 dup_definitions 里 run/get 是通用词假活。\n这些应该由扫描器自己排除，压在基线里是权宜之计。",
  "scan_py.py": [
-  "dup_definitions|settings_path|[[\"config.py\", 118, 1], [\"paths.py\", 122, 1]]",
-  "dup_definitions|health_path|[[\"config.py\", 121, 1], [\"paths.py\", 125, 1]]",
+  "dup_definitions|settings_path|[[\"config.py\", 123, 1], [\"paths.py\", 122, 1]]",
+  "dup_definitions|health_path|[[\"config.py\", 126, 1], [\"paths.py\", 125, 1]]",
   "dup_definitions|logs_dir|[[\"log.py\", 21, 1], [\"paths.py\", 128, 3]]",
   "dup_definitions|log_path|[[\"log.py\", 24, 1], [\"paths.py\", 134, 1]]",
   "dup_definitions|run|[[\"migrate.py\", 87, 10], [\"shell.py\", 276, 14]]",
   "dup_definitions|get|[[\"runtime.py\", 11, 1], [\"sources.py\", 1948, 2]]",
-  "swallow|{\"file\": \"config.py\", \"kind\": \"except-continue\", \"line\": 144}",
-  "swallow|{\"file\": \"config.py\", \"kind\": \"except-pass\", \"line\": 167}",
+  "swallow|{\"file\": \"config.py\", \"kind\": \"except-continue\", \"line\": 149}",
+  "swallow|{\"file\": \"config.py\", \"kind\": \"except-pass\", \"line\": 172}",
   "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-pass\", \"line\": 31}",
   "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-continue\", \"line\": 41}",
   "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-pass\", \"line\": 73}",

@@ -2,7 +2,9 @@
 
 <p align="center"><img src="web/assets/app-256.png" alt="Happycrate 图标" width="160" /></p>
 
-<p align="center"><strong>磁力搜索聚合工具</strong> · <a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a> · <a href="LICENSE">MIT</a></p>
+<p align="center"><strong>磁力搜索聚合工具</strong></p>
+
+<p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a></p>
 
 <p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 
@@ -63,4 +65,3 @@ node tests/front_smoke.cjs
 - **只搜集不判断**：0 做种、老种、死链一律保留，能不能下取决于下载工具有没有存货，工具说了不算。
 - **内容来源**：不提供、不存储、不校验任何资源内容，只聚合公开索引站的公开条目。
 - **请求去向**：请求直连各索引站，不中转、不留查询记录；无账号体系，不保存站点凭据。
-- **合规**：遵守所在地法律法规，勿用于下载或传播受版权保护的内容。

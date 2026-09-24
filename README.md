@@ -1,34 +1,25 @@
-# Happycrate · 快乐箱
+<h1 align="center">Happycrate · 快乐箱</h1>
 
-一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，
-选中后批量复制磁力链接，或直接投递到迅雷。
+<p align="center"><img src="assets/app-256.png" alt="Happycrate 图标" width="160" /></p>
 
-![happycrate 工具截图](assets/readme_preview.png)
+<p align="center"><strong>磁力搜索聚合工具</strong> · <a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a> · <a href="LICENSE">MIT</a></p>
 
-## 定位
-
-**只做搜集，不做判断。**
-
-资源能不能下载，取决于下载工具的服务器有没有存货，同一条磁力在不同网盘结果不同——这件事工具说了不算。
-所以 **0 做种、老种、死链一律保留**，线索越多越好。排序只为批量复制顺手，不缩小搜集范围。
+<p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 
 ## 功能
 
 - **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB镜像、小草磁力、Knaben
-- **自定义源**：RSS / JSON / HTML 三种类型，填 URL 与抽取规则即可接入
-- **去重合并**：同一个种子被多个站点收录时合并成一行，各站字段取并集
-- **健康度**：每个源记录最近若干次搜索的结果，故障与「长期零结果」分开显示，持续故障会自动降权
+- **去重合并**：同时检索 10 个公开磁力索引站，按 info_hash 并成一张表
+- **健康度**：故障与「长期零结果」分开显示，持续故障自动沉底
 - **批量操作**：框选、全选、按列排序，右键批量复制磁力或标题
-- **投递迅雷**：协议拉起与 COM 接口两种方式，自动挑选可用的那个
-- **网络出口**：可填手动代理，也可跟随系统代理；设置页会真实探测代理是否转发请求
-- **外观**：浅色 / 深色主题，字号三档
+- **投递迅雷**：协议拉起与 COM 接口两种方式，自动挑可用的那个
 
 ## 运行
 
-下载发行包解压后双击 `happycrate.exe`，无需安装 Python。
-首次启动若提示缺少 WebView2，按弹窗里的地址装一下运行库（地址会自动复制到剪贴板）。
+从[发行页](https://github.com/GVHBOX/Happycrate/releases/latest)下载 zip 解压，双击 `happycrate.exe`，无需安装 Python。
+首次启动若提示缺少 WebView2，按弹窗里的地址装一下运行库。
 
-## 开发
+## 从源码开发
 
 需要 Python 3.11 ~ 3.13 和 Windows。
 
@@ -52,27 +43,24 @@ node tests/front_smoke.cjs
 .venv/Scripts/python -m PyInstaller happycrate.spec --noconfirm
 ```
 
-产物在 `dist/happycrate/`。`app/` 与 `web/` 是外置的，不编译进 exe，所以改了源码只需把同名文件
-复制到 `dist/happycrate/_internal/` 下对应位置，重启即生效；只有新增或删除第三方依赖时才需重新打包。
+产物在 `dist/happycrate/`。`app/`、`web/` 外置不编译进 exe，改源码把同名文件复制到
+`dist/happycrate/_internal/` 对应位置重启即生效，增删第三方依赖才需重新打包。
 
 ## 目录
 
-| 路径        | 内容                                          |
-| --------- | ------------------------------------------- |
-| `app/`    | 后端：源适配器、搜索调度、配置与健康度、下载投递、窗口外壳               |
-| `web/`    | 前端：原生 JS + CSS，无构建步骤                        |
-| `assets/` | 图标与 README 截图                               |
-| `data/`   | 运行时数据。`sources.json` 是内置源清单（纳入版本管理），其余为本地状态 |
-| `tests/`  | 单元测试与前端冒烟脚本                                 |
-| `tools/`  | 生产辅助工具：代码体检扫描器、dist 同步、护栏回归；清单见 `tools/README.md` |
-| `dist/`   | 构建产物，`happycrate.exe` 在 `dist/happycrate/` 下    |
+| 路径 | 内容 |
+| --- | --- |
+| `app/` | 后端：适配器、调度、配置、投递 |
+| `web/` | 前端：原生 JS + CSS，无构建 |
+| `assets/` | 图标与截图 |
+| `data/` | 运行时数据，`sources.json` 纳入版本管理 |
+| `tests/` | 单元测试与前端冒烟 |
+| `tools/` | 开发工具，清单见 `tools/README.md` |
+| `dist/` | 构建产物，exe 在 `dist/happycrate/` |
 
 ## 说明
 
-- 不提供、不存储、不校验任何资源内容，只聚合各公开索引站返回的公开条目。
-- 搜索请求直接发往各索引站，不做中转，不保留查询记录；不涉及账号体系，不登录、不保存任何站点的凭据。
-- 请遵守所在地法律法规，勿用于下载或传播受版权保护的内容。
-
-## 许可
-
-MIT，见 [LICENSE](LICENSE)。
+- **只搜集不判断**：0 做种、老种、死链一律保留，能不能下取决于下载工具有没有存货，工具说了不算。
+- **内容来源**：不提供、不存储、不校验任何资源内容，只聚合公开索引站的公开条目。
+- **请求去向**：请求直连各索引站，不中转、不留查询记录；无账号体系，不保存站点凭据。
+- **合规**：遵守所在地法律法规，勿用于下载或传播受版权保护的内容。

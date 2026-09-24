@@ -374,7 +374,7 @@ class SafeCallSmokeTest(unittest.TestCase):
                                       f"{name} 返回 {type(result).__name__}，期望 {expected.__name__}")
 
     def test_list_sources_have_frontend_contract_fields(self):
-        required = {"key", "label", "enabled", "timeout", "addr", "health"}
+        required = {"key", "label", "enabled", "addr", "health"}
         for row in self.api.list_sources():
             with self.subTest(key=row.get("key")):
                 self.assertTrue(required.issubset(row.keys()),
@@ -412,7 +412,7 @@ class SafeCallSmokeTest(unittest.TestCase):
                             "成功路径不能抛异常——参数名遮蔽过 query 模块")
             self.assertIn("query", res)
             self.assertEqual(res["query"].get("subject"), ["ubuntu"])
-            self.assertEqual(res["query"].get("browse"), False)
+            self.assertEqual(res["query"].get("mods"), [])
             self.assertIn("token", res)
             self.assertIn("total", res)
             self.await_search_threads(before)

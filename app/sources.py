@@ -124,13 +124,22 @@ BLOCKED_TEXT = "人机验证拦截"
 
 _CAPTCHA_SIGNS = (b"one more step", b"please complete the security check",
                   b"captcha", b"cf-browser-verification", b"just a moment",
-                  b"enable javascript and cookies")
+                  b"enable javascript and cookies", "验证码".encode())
+
+_CAPTCHA_SIGNS_STRONG = (b"one more step", b"please complete the security check",
+                         b"cf-browser-verification", b"just a moment",
+                         b"cf-chl", b"challenge-platform", b"checking your browser",
+                         b"g-recaptcha", b"hcaptcha", b"turnstile")
+
+_CAPTCHA_SIGNS_WEAK = ("captcha", "enable javascript and cookies", "验证码")
 
 def _captcha_text(text: str) -> bool:
     low = (text or "")[:4096].lower()
     if "<html" not in low and "<!doctype" not in low:
         return False
-    return any(sign.decode() in low for sign in _CAPTCHA_SIGNS)
+    if any(sign.decode("latin-1") in low for sign in _CAPTCHA_SIGNS_STRONG):
+        return True
+    return sum(1 for sign in _CAPTCHA_SIGNS_WEAK if sign in low) >= 2
 
 def _is_timeout(exc: BaseException) -> bool:
     if isinstance(exc, TimeoutError):
@@ -445,6 +454,7 @@ def _looks_like_proxy_failure(exc: BaseException) -> bool:
     return False
 
 MAX_TORRENT_BYTES = 8 * 1024 * 1024
+HTTP_BODY_LIMIT = 20 * 1024 * 1024
 
 class TooLarge(Exception):
     pass
@@ -476,7 +486,7 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
              retries: int | None = None,
              batch: int | None = None,
              binary: bool = False,
-             limit: int | None = None,
+             limit: int | None = HTTP_BODY_LIMIT,
              strict: bool = True) -> bytes | str:
     if retries is None:
         retries = _retries()
@@ -529,6 +539,9 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             raise
 
         except SearchCancelled:
+            raise
+
+        except Blocked:
             raise
 
         except Exception as exc:
@@ -1812,11 +1825,19 @@ def torrent_meta(url: str, timeout: int = 15, referer: str = "") -> list[dict]:
     if not url.lower().endswith(".torrent"):
         page = http_get(url, timeout=timeout, referer=referer,
                         limit=MAX_TORRENT_BYTES, binary=True)
-        m = re.search(rb'href="(//[^"]+\.torrent)"', page)
+        m = re.search(rb'href="((?:https?:)?//[^"]+\.torrent)"', page, re.I)
+        if not m:
+            m = re.search(rb'href="(/[^"]+\.torrent)"', page, re.I)
         if not m:
             return []
         link = m.group(1).decode("latin-1")
-        url = "https:" + link if link.startswith("//") else link
+        if link.startswith("//"):
+            url = "https:" + link
+        elif link.startswith("/"):
+            parts = urllib.parse.urlsplit(url)
+            url = f"{parts.scheme}://{parts.netloc}{link}"
+        else:
+            url = link
     data = http_get(url, timeout=timeout, referer=referer, binary=True,
                     retries=0, limit=MAX_TORRENT_BYTES)
     return decode_torrent_files(data)

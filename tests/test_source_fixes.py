@@ -141,6 +141,44 @@ class CaptchaWallTest(unittest.TestCase):
         self.assertFalse(sources._captcha_text(""))
 
 
+class BlockedBodyNotRetriedTest(unittest.TestCase):
+
+    def test_challenge_page_raises_immediately(self):
+        calls = []
+
+        class Resp:
+            def __init__(self):
+                self._body = b"<html><title>Just a moment...</title>"
+                self._sent = False
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self, size=-1):
+                if self._sent:
+                    return b""
+                self._sent = True
+                return self._body
+
+            def close(self):
+                pass
+
+        class Opener:
+            def open(self, req, timeout=None):
+                calls.append(1)
+                return Resp()
+
+        with mock.patch.object(sources, "_opener", lambda url, lax=False: Opener()):
+            with mock.patch.object(sources, "_retries", lambda: 2):
+                with self.assertRaises(sources.Blocked):
+                    sources.http_get("https://example.com/s", timeout=3)
+        self.assertEqual(len(calls), 1,
+                         "200 页里带验证码时再重试只会加重风控，必须一次就抛")
+
+
 class _Reader:
 
     def __init__(self, body):

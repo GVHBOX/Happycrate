@@ -62,14 +62,17 @@ class HealthStoreTest(DataDirCase):
         hp = self.read_health()
         self.assertIn("nyaa", hp["sources"])
         self.assertEqual(hp["sources"]["nyaa"]["ms"], 120)
-        self.assertEqual(hp["sources"]["nyaa"]["times"], ["ok"])
+        self.assertEqual(hp["sources"]["nyaa"]["outcomes"], ["ok"],
+                         "旧 times 字段应折算进 outcomes")
+        self.assertNotIn("times", hp["sources"]["nyaa"],
+                         "times 与 outcomes 等值双写已废除")
 
     def test_legacy_health_is_not_lost(self):
         self.seed_legacy("nyaa", {"state": "err", "ms": 900, "err": "返回 0 条",
                                   "times": ["empty", "empty", "empty"]})
         api_mod.Api().boot()
         hp = self.read_health()
-        self.assertEqual(hp["sources"]["nyaa"]["times"], ["empty"] * 3)
+        self.assertEqual(hp["sources"]["nyaa"]["outcomes"], ["empty"] * 3)
         self.assertEqual(hp["sources"]["nyaa"]["err"], "返回 0 条")
 
     def test_boot_is_idempotent(self):
@@ -91,7 +94,7 @@ class HealthStoreTest(DataDirCase):
         self.assertEqual(before, after,
                          "_persist_health 不应改写 sources.json（health 已独立）")
         hp = self.read_health()
-        self.assertIn("ok", hp["sources"]["nyaa"]["times"])
+        self.assertIn("ok", hp["sources"]["nyaa"]["outcomes"])
 
     def test_prune_drops_removed_source(self):
         store = config.HealthStore()
@@ -569,6 +572,14 @@ class DemoteTest(DataDirCase):
         self.assertEqual(self.order(), start,
                          "恢复后应回到原位置，而不是留在末尾之后")
 
+    def test_recovery_clears_demote_residue(self):
+        self.feed("nyaa", ["err"] * 5)
+        self.feed("nyaa", ["ok"] * 5)
+        nyaa = self.api._cfg.get("nyaa")
+        self.assertNotIn("demoteFrom", nyaa,
+                         "恢复后 demoteFrom 残留会被原样持久化进 sources.json")
+        self.assertNotIn("demoted", nyaa)
+
     def test_order_lock_disables_demotion(self):
         self.api.reorder_sources(self.order())
         self.feed("nyaa", ["err"] * 5)
@@ -601,7 +612,7 @@ class MarkThreadSafetyTest(DataDirCase):
             t.join()
         h = self.api._health_store.get("nyaa")
         self.assertIsNotNone(h)
-        self.assertEqual(len(h["times"]), config.HEALTH_WINDOW)
+        self.assertEqual(len(h["outcomes"]), config.HEALTH_WINDOW)
 
 
 if __name__ == "__main__":

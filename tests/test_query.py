@@ -24,63 +24,52 @@ class NormalizeTest(unittest.TestCase):
         self.assertEqual(query.normalize("  电影   4K  "), "电影 4k")
 
 
-class BigramsTest(unittest.TestCase):
-
-    def test_splits_cjk(self):
-        self.assertEqual(query.bigrams("流浪地球"), ["流浪", "浪地", "地球"])
-
-    def test_single_char(self):
-        self.assertEqual(query.bigrams("片"), ["片"])
-
-    def test_dedupes(self):
-        self.assertEqual(query.bigrams("球球球"), ["球球"])
-
-
 class RoleTest(unittest.TestCase):
 
     def test_browse_query_has_no_subject(self):
         r = query.parse("电影 4K")
         self.assertEqual(r["subject"], [])
-        self.assertTrue(r["browse"])
         self.assertEqual([m["role"] for m in r["mods"]], ["QUALITY"])
         self.assertIn("2160p", r["mods"][0]["forms"])
 
     def test_browse_query_with_genre_only(self):
         r = query.parse("射击游戏 3D 第三人称")
         self.assertEqual(r["subject"], [])
-        self.assertTrue(r["browse"])
 
     def test_subject_is_separated(self):
         r = query.parse("流浪地球 2160p 中字")
         self.assertEqual(r["subject"], ["流浪地球"])
-        self.assertFalse(r["browse"])
         self.assertEqual([m["role"] for m in r["mods"]], ["QUALITY"])
         self.assertEqual([s["kind"] for s in r["soft"]], ["LANG"])
 
     def test_season_is_exact(self):
         r = query.parse("进击的巨人 第12话")
-        self.assertEqual(r["season"], {"s": 0, "e": 12})
+        season = [m for m in r["mods"] if m["role"] == "SEASON"]
+        self.assertEqual(len(season), 1)
+        self.assertEqual((season[0]["s"], season[0]["e"]), (0, 12))
         self.assertEqual(r["subject"], ["进击的巨人"])
 
     def test_season_episode_pair(self):
         r = query.parse("沙丘 2024 S01E05")
-        self.assertEqual(r["season"], {"s": 1, "e": 5})
-        self.assertEqual(r["year"], 2024)
+        season = [m for m in r["mods"] if m["role"] == "SEASON"]
+        year = [m for m in r["mods"] if m["role"] == "YEAR"]
+        self.assertEqual((season[0]["s"], season[0]["e"]), (1, 5))
+        self.assertEqual(year[0]["text"], "2024")
         self.assertEqual(r["subject"], ["沙丘"])
 
     def test_season_does_not_swallow_compound_token(self):
         r = query.parse("沙丘.S01E05")
-        self.assertIsNone(r["season"])
+        self.assertEqual([m for m in r["mods"] if m["role"] == "SEASON"], [])
 
     def test_year_is_soft_not_subject(self):
         r = query.parse("沙丘 2024")
         self.assertEqual(r["subject"], ["沙丘"])
-        self.assertEqual(r["year"], 2024)
+        self.assertEqual([m["role"] for m in r["mods"]], ["YEAR"])
 
     def test_unknown_token_stays_subject(self):
         r = query.parse("阿凡达 4K")
         self.assertEqual(r["subject"], ["阿凡达"])
-        self.assertFalse(r["browse"])
+        self.assertEqual([m["role"] for m in r["mods"]], ["QUALITY"])
 
 
 class VariantTest(unittest.TestCase):
@@ -110,15 +99,16 @@ class ContractTest(unittest.TestCase):
 
     def test_parse_returns_expected_keys(self):
         r = query.parse("anything")
-        for key in ("raw", "text", "subject", "bigrams", "mods", "soft",
-                    "season", "year", "browse"):
+        for key in ("text", "tokens", "subject", "mods", "soft"):
             self.assertIn(key, r)
+        for gone in ("raw", "bigrams", "season", "year", "browse"):
+            self.assertNotIn(gone, r,
+                             f"载荷已瘦身，query.{gone} 不应再出现")
 
     def test_empty_query(self):
         r = query.parse("")
         self.assertEqual(r["subject"], [])
-        self.assertTrue(r["browse"])
-        self.assertEqual(r["bigrams"], [])
+        self.assertEqual(r["mods"], [])
 
     def test_none_query(self):
         r = query.parse(None)

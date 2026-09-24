@@ -131,18 +131,6 @@ def normalize(text) -> str:
     return s.strip()
 
 
-def bigrams(text) -> list[str]:
-    s = _SPACE_RE.sub("", str(text or ""))
-    if len(s) < 2:
-        return [s] if s else []
-    out = []
-    for i in range(len(s) - 1):
-        piece = s[i:i + 2]
-        if piece not in out:
-            out.append(piece)
-    return out
-
-
 def _uniq(values) -> list[str]:
     out = []
     for v in values:
@@ -213,14 +201,11 @@ def parse(query) -> dict:
     subject: list[str] = []
     mods: list[dict] = []
     soft: list[dict] = []
-    season = None
-    year = None
 
     tokens = [t for t in text.split(" ") if t]
     for token in tokens:
         picked = _season_of(token)
         if picked:
-            season = picked
             mods.append({"role": "SEASON", "text": token,
                          "forms": _season_forms(picked),
                          "s": picked["s"], "e": picked["e"]})
@@ -228,7 +213,6 @@ def parse(query) -> dict:
 
         m = _YEAR_RE.search(token)
         if m and len(token) <= 4:
-            year = int(m.group(0))
             mods.append({"role": "YEAR", "text": token,
                          "forms": _uniq([m.group(0)])})
             continue
@@ -257,23 +241,10 @@ def parse(query) -> dict:
             entry["kind"] = role
             soft.append(entry)
 
-    grams = []
-    for t in subject:
-        for b in bigrams(t):
-            if b not in grams:
-                grams.append(b)
-    if not subject:
-        grams = bigrams(text)
-
     return {
-        "raw": str(query or ""),
         "text": text,
         "tokens": tokens,
         "subject": subject,
-        "bigrams": grams,
         "mods": mods,
         "soft": soft,
-        "season": season,
-        "year": year,
-        "browse": not subject,
     }

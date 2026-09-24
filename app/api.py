@@ -125,8 +125,6 @@ def _addr_of(entry: dict, raw: bool = False) -> str:
 def _to_view(entry: dict, health: dict | None = None) -> dict:
     h = health or entry.get("health") or {}
     outcomes = [o for o in (h.get("outcomes") or []) if o]
-    if not outcomes:
-        outcomes = [t for t in (h.get("times") or []) if t]
     return {
         "key": entry.get("key", ""),
         "label": entry.get("label", entry.get("key", "")),
@@ -239,7 +237,7 @@ def _window_empty(outcomes: list[str]) -> bool:
 
 
 def _blank_health() -> dict:
-    return {"state": "na", "ms": 0, "err": "", "times": [], "outcomes": [],
+    return {"state": "na", "ms": 0, "err": "", "outcomes": [],
             "events": [], "lastOk": 0, "lastCount": 0}
 
 
@@ -403,36 +401,41 @@ class Api:
                 good.add(key)
 
         risen = set()
-        for entry in entries:
-            key = entry.get("key", "")
-            if key in bad and not entry.get("demoted"):
-                entry["demoted"] = True
-                entry["demoteFrom"] = int(entry.get("order", 0) or 0)
-            elif key in good and entry.get("demoted"):
-                entry.pop("demoted", None)
-                risen.add(key)
+        with self._cfg.lock:
+            for entry in entries:
+                key = entry.get("key", "")
+                if key in bad and not entry.get("demoted"):
+                    entry["demoted"] = True
+                    entry["demoteFrom"] = int(entry.get("order", 0) or 0)
+                elif key in good and entry.get("demoted"):
+                    entry.pop("demoted", None)
+                    risen.add(key)
 
-        def sort_key(item):
-            index, entry = item
-            key = entry.get("key", "")
-            if key in bad:
-                return (1, 0, index)
-            if key in risen:
-                return (0, int(entry.get("demoteFrom", index) or 0), 0)
-            return (0, index, 1)
+            def sort_key(item):
+                index, entry = item
+                key = entry.get("key", "")
+                if key in bad:
+                    return (1, 0, index)
+                if key in risen:
+                    return (0, int(entry.get("demoteFrom", index) or 0), 0)
+                return (0, index, 1)
 
-        ordered = [e for _, e in sorted(enumerate(entries), key=sort_key)]
-        if [e.get("key", "") for e in ordered] == [e.get("key", "") for e in entries]:
-            return
-        for i, entry in enumerate(ordered):
-            entry["order"] = i
-        self._cfg.data["sources"] = ordered
+            ordered = [e for _, e in sorted(enumerate(entries), key=sort_key)]
+            for entry in entries:
+                if entry.get("key", "") in risen:
+                    entry.pop("demoteFrom", None)
+            if [e.get("key", "") for e in ordered] == [e.get("key", "") for e in entries]:
+                return
+            for i, entry in enumerate(ordered):
+                entry["order"] = i
+            self._cfg.data["sources"] = ordered
         sources.reload_from_config(self._cfg)
 
     def _persist_health(self) -> None:
-        self._demote_bad()
-        self._health_store.prune([e.get("key", "") for e in self._cfg.sources])
-        self._health_store.save()
+        with self._health_lock:
+            self._demote_bad()
+            self._health_store.prune([e.get("key", "") for e in self._cfg.sources])
+            self._health_store.save()
         self._cfg.save()
 
     def _push(self, js: str) -> None:
@@ -456,14 +459,15 @@ class Api:
 
     def reorder_sources(self, keys: list[str]) -> bool:
         order = {k: i for i, k in enumerate(keys or [])}
-        entries = sorted(
-            self._cfg.sources,
-            key=lambda e: order.get(e.get("key", ""), len(order)),
-        )
-        for i, entry in enumerate(entries):
-            entry["order"] = i
-        self._cfg.data["sources"] = entries
-        self._cfg.set_order_locked(True)
+        with self._cfg.lock:
+            entries = sorted(
+                self._cfg.sources,
+                key=lambda e: order.get(e.get("key", ""), len(order)),
+            )
+            for i, entry in enumerate(entries):
+                entry["order"] = i
+            self._cfg.data["sources"] = entries
+            self._cfg.set_order_locked(True)
         self._cfg.save()
         sources.reload_from_config(self._cfg)
         return True
@@ -511,7 +515,6 @@ class Api:
             outcomes = list(h.get("outcomes") or [])
             outcomes.append(outcome)
             h["outcomes"] = outcomes[-HEALTH_WINDOW:]
-            h["times"] = (list(h.get("times") or []) + [outcome])[-HEALTH_WINDOW:]
             events = list(h.get("events") or [])
             events.append({
                 "at": int(time.time()),
@@ -553,8 +556,9 @@ class Api:
         except Exception as exc:
             logger.warning("测速收尾时出错：%s: %s", type(exc).__name__, exc)
         finally:
-            self._persist_health()
-            self._push("window.__onProbeDone && window.__onProbeDone()")
+            if token == self._probe_token:
+                self._persist_health()
+                self._push("window.__onProbeDone && window.__onProbeDone()")
 
     def _source_stamp(self) -> str:
         parts = []
@@ -613,11 +617,11 @@ class Api:
         token = sources.start_batch()
         self._search_token = token
         threading.Thread(
-            target=self._search_worker, args=(token, text, keys, start_page),
+            target=self._search_worker, args=(token, text, keys, start_page, parsed),
             daemon=True
         ).start()
         return {"ok": True, "token": token, "total": len(keys), "error": "",
-                "query": parsed, "page": start_page}
+                "query": parsed}
 
     def cancel_search(self, token=0) -> bool:
         try:
@@ -653,12 +657,13 @@ class Api:
         return {"ok": True, "files": files, "error": ""}
 
     def _search_worker(self, token: int, text: str, keys: list[str],
-                       page: int = 1) -> None:
+                       page: int = 1, parsed: dict | None = None) -> None:
         min_len = int(self._settings.get("min_query_len", 2) or 2)
         rows: list[dict] = []
         index_of: dict[str, int] = {}
         tally = {"raw": 0, "dup": 0}
-        parsed = query.parse(text)
+        if not isinstance(parsed, dict):
+            parsed = query.parse(text)
         subject = parsed.get("subject") or []
         fuzzy_keys = set()
         keep_dup = self._settings.get("keep_duplicates", False) is True
@@ -841,11 +846,13 @@ class Api:
             "source_counts": dict(source_counts),
         })
 
-        self._persist_health()
+        try:
+            self._persist_health()
+        except Exception as exc:
+            logger.warning("健康度落盘失败：%s: %s", type(exc).__name__, exc)
         payload = json.dumps(
             {"token": token, "total": len(rows), "errors": errors,
              "raw": tally["raw"], "dup": tally["dup"],
-             "fuzzy": sorted(fuzzy_keys),
              "relaxed": "、".join(relaxed_used),
              "kept": keep_dup}, ensure_ascii=False
         )
@@ -1011,7 +1018,6 @@ class Api:
         d, label = store.data_dir_info()
         return {
             "version": __version__,
-            "title": APP_TITLE,
             "dataDir": d,
             "mode": label,
             "logFile": log.current_log_file(),
@@ -1077,10 +1083,8 @@ class Api:
             return False
 
     def downloaders(self) -> list[dict]:
-        out = []
-        for d in downloaders.all_downloaders():
-            out.append({"key": d.key, "label": d.label, "available": bool(d.available())})
-        return out
+        return [{"key": d.key, "label": d.label}
+                for d in downloaders.all_downloaders()]
 
     def deliver(self, magnets, key: str = "") -> dict:
         items = [str(m) for m in (magnets or []) if m]
@@ -1104,5 +1108,4 @@ class Api:
         return {
             "ok": bool(result.ok),
             "message": result.message(),
-            "method": result.method or target.label,
         }

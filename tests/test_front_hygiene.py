@@ -342,8 +342,13 @@ class DuplicateRequestTest(unittest.TestCase):
         self.assertNotIn(
             "onLive(refreshSources)", src,
             "onLive 在已 live 时立即回调，mount 里的直接调用会撞成两次请求")
-        self.assertIn("onLive(loadSourcesOnce)", src,
-                      "两条路径要走同一个去重入口")
+        self.assertEqual(
+            src.count("HC.api.onLive("), 1,
+            "mount 只许挂一个 onLive——多一条就是 mock 模式下多一条轮询、"
+            "live 后多一次重复请求")
+        self.assertIn(
+            "loadSourcesOnce();", src,
+            "live 回调里仍要走 loadSourcesOnce 去重入口，不能直接调 refreshSources")
 
 
 class A11yTest(unittest.TestCase):

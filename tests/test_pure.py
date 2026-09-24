@@ -1,6 +1,7 @@
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -427,6 +428,66 @@ class EztvApiTest(unittest.TestCase):
                              "官方文档：limit 上限 100")
         self.assertLessEqual(sources.EZTV_PAGES, 100,
                              "官方文档：page 上限 100")
+
+
+TORRENT_PAGE_URL = "https://mikanani.me/Home/Episode/xyz"
+
+
+class TorrentMetaLinkTest(unittest.TestCase):
+
+    def calls_for(self, page):
+        calls = []
+
+        def fake_get(url, **kw):
+            calls.append(url)
+            if url == TORRENT_PAGE_URL:
+                return page
+            return b"not bencode"
+
+        with mock.patch.object(sources, "http_get", side_effect=fake_get):
+            sources.torrent_meta(TORRENT_PAGE_URL)
+        return calls
+
+    def test_root_relative_download_link_resolved(self):
+        calls = self.calls_for(b'<a href="/Download/202301/x.torrent">dl</a>')
+        self.assertEqual(calls[-1], "https://mikanani.me/Download/202301/x.torrent",
+                         "mikan 的下载链是根相对路径，认不出就永远拿不到文件清单")
+
+    def test_protocol_relative_link_kept(self):
+        calls = self.calls_for(b'<a href="//mirror.example.org/x.torrent">dl</a>')
+        self.assertEqual(calls[-1], "https://mirror.example.org/x.torrent")
+
+    def test_absolute_link_kept(self):
+        calls = self.calls_for(b'<a href="https://share.dmhy.org/download/x.torrent">dl</a>')
+        self.assertEqual(calls[-1], "https://share.dmhy.org/download/x.torrent")
+
+    def test_no_link_makes_single_request(self):
+        calls = self.calls_for(b"<html><body>empty</body></html>")
+        self.assertEqual(len(calls), 1)
+
+
+class SettingsTwoPhaseTest(unittest.TestCase):
+
+    def test_partial_rejection_applies_nothing(self):
+        s = config.Settings()
+        before = dict(s.data)
+        rejected = s.update(timeout=9999, retries=2)
+        self.assertTrue(rejected)
+        self.assertEqual(s.data["retries"], before["retries"],
+                         "两个字段一好一坏时，好字段也不能进内存——"
+                         "否则之后任意一次保存都会把被拒绝的修改带进盘")
+        self.assertEqual(s.data["timeout"], before["timeout"])
+
+    def test_all_valid_applies_everything(self):
+        s = config.Settings()
+        rejected = s.update(timeout=30, retries=2)
+        self.assertEqual(rejected, [])
+        self.assertEqual(s.data["timeout"], 30)
+        self.assertEqual(s.data["retries"], 2)
+
+    def test_unknown_key_is_rejected(self):
+        s = config.Settings()
+        self.assertEqual(len(s.update(no_such_key=1)), 1)
 
 
 if __name__ == "__main__":

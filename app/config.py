@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import tempfile
+import threading
 import time
 
 from . import log, paths
@@ -244,6 +245,8 @@ def validate_source(src: dict, existing_keys=None) -> list[str]:
 
 class Config:
 
+    lock = threading.RLock()
+
     def __init__(self, path=None):
         self.path = path or config_path()
         self.data = defaults()
@@ -251,12 +254,13 @@ class Config:
 
     def load(self) -> Config:
         raw, is_default, broken = _load_json(self.path, defaults())
-        self.broken = broken
-        if is_default:
-            self.data = defaults()
-        else:
-            self.data = self._migrate(raw)
-        self._normalize()
+        with self.lock:
+            self.broken = broken
+            if is_default:
+                self.data = defaults()
+            else:
+                self.data = self._migrate(raw)
+            self._normalize()
         return self
 
     def _migrate(self, raw) -> dict:
@@ -280,59 +284,61 @@ class Config:
         return {str(k).strip() for k in raw if str(k).strip()}
 
     def _normalize(self):
-        srcs = self.data.get("sources")
-        if not isinstance(srcs, list):
-            srcs = []
+        with self.lock:
+            srcs = self.data.get("sources")
+            if not isinstance(srcs, list):
+                srcs = []
 
-        retired = self.retired_keys()
-        cleaned: list[dict] = []
-        seen_keys: set[str] = set()
-        for item in srcs:
-            if not isinstance(item, dict):
-                continue
-            key = (item.get("key") or "").strip()
-            if not key or key in seen_keys:
-                continue
-            if key in RETIRED_SOURCES:
-                logger.info("数据源 %s 已下线，从配置中移除", key)
-                continue
-            seen_keys.add(key)
-            entry = dict(item)
-            entry["key"] = key
-            entry.setdefault("label", key)
-            entry.setdefault("type", "builtin")
-            entry.setdefault("enabled", True)
-            entry["timeout"] = clamp_timeout(entry.get("timeout", 15))
-            entry.setdefault("base", "")
-            try:
-                entry["order"] = int(entry.get("order", 0) or 0)
-            except (TypeError, ValueError, OverflowError):
-                entry["order"] = 0
-            cleaned.append(entry)
-
-        for default in DEFAULT_SOURCES:
-            key = default.get("key", "")
-            if key and key not in seen_keys and key not in retired:
+            retired = self.retired_keys()
+            cleaned: list[dict] = []
+            seen_keys: set[str] = set()
+            for item in srcs:
+                if not isinstance(item, dict):
+                    continue
+                key = (item.get("key") or "").strip()
+                if not key or key in seen_keys:
+                    continue
+                if key in RETIRED_SOURCES:
+                    logger.info("数据源 %s 已下线，从配置中移除", key)
+                    continue
                 seen_keys.add(key)
-                fresh = dict(default)
-                fresh["order"] = len(cleaned)
-                cleaned.append(fresh)
-                logger.info("数据源 %s 为新增内置源，已加入配置", key)
+                entry = dict(item)
+                entry["key"] = key
+                entry.setdefault("label", key)
+                entry.setdefault("type", "builtin")
+                entry.setdefault("enabled", True)
+                entry["timeout"] = clamp_timeout(entry.get("timeout", 15))
+                entry.setdefault("base", "")
+                try:
+                    entry["order"] = int(entry.get("order", 0) or 0)
+                except (TypeError, ValueError, OverflowError):
+                    entry["order"] = 0
+                cleaned.append(entry)
 
-        cleaned.sort(key=lambda e: e.get("order", 0))
-        for i, entry in enumerate(cleaned):
-            entry["order"] = i
+            for default in DEFAULT_SOURCES:
+                key = default.get("key", "")
+                if key and key not in seen_keys and key not in retired:
+                    seen_keys.add(key)
+                    fresh = dict(default)
+                    fresh["order"] = len(cleaned)
+                    cleaned.append(fresh)
+                    logger.info("数据源 %s 为新增内置源，已加入配置", key)
 
-        self.data["version"] = SOURCES_VERSION
-        self.data["sources"] = cleaned
+            cleaned.sort(key=lambda e: e.get("order", 0))
+            for i, entry in enumerate(cleaned):
+                entry["order"] = i
+
+            self.data["version"] = SOURCES_VERSION
+            self.data["sources"] = cleaned
 
     def save(self) -> bool:
-        self._normalize()
-        payload = dict(self.data)
-        payload["sources"] = [
-            {k: v for k, v in entry.items() if k != "health"}
-            for entry in self.sources
-        ]
+        with self.lock:
+            self._normalize()
+            payload = dict(self.data)
+            payload["sources"] = [
+                {k: v for k, v in entry.items() if k != "health"}
+                for entry in self.sources
+            ]
         return atomic_write_json(self.path, payload)
 
     @property
@@ -352,42 +358,47 @@ class Config:
         return [e["key"] for e in self.sources]
 
     def set_enabled(self, key: str, on: bool) -> bool:
-        entry = self.get(key)
-        if entry is None:
-            return False
-        entry["enabled"] = bool(on)
+        with self.lock:
+            entry = self.get(key)
+            if entry is None:
+                return False
+            entry["enabled"] = bool(on)
         return True
 
     def update(self, key: str, **fields) -> bool:
-        entry = self.get(key)
-        if entry is None:
-            return False
-        entry.update(fields)
+        with self.lock:
+            entry = self.get(key)
+            if entry is None:
+                return False
+            entry.update(fields)
         return True
 
     def order_locked(self) -> bool:
         return bool(self.data.get("orderLocked"))
 
     def strip_health(self) -> bool:
-        removed = False
-        for entry in self.sources:
-            if "health" in entry:
-                entry.pop("health", None)
-                removed = True
+        with self.lock:
+            removed = False
+            for entry in self.sources:
+                if "health" in entry:
+                    entry.pop("health", None)
+                    removed = True
         return removed
 
     def set_order_locked(self, on: bool) -> None:
-        if on:
-            self.data["orderLocked"] = True
-            for entry in self.sources:
-                entry.pop("demoted", None)
-                entry.pop("demoteFrom", None)
-        else:
-            self.data.pop("orderLocked", None)
+        with self.lock:
+            if on:
+                self.data["orderLocked"] = True
+                for entry in self.sources:
+                    entry.pop("demoted", None)
+                    entry.pop("demoteFrom", None)
+            else:
+                self.data.pop("orderLocked", None)
 
     def reset_defaults(self) -> None:
-        self.data = defaults()
-        self._normalize()
+        with self.lock:
+            self.data = defaults()
+            self._normalize()
 
 class Settings:
 
@@ -471,9 +482,18 @@ class Settings:
 
     def update(self, **fields) -> list[str]:
         rejected = []
+        coerced: dict = {}
         for key, value in fields.items():
-            if not self.set(key, value):
+            if key not in SETTING_SPECS:
                 rejected.append(self.reason(key))
+                continue
+            v = self._coerce(key, value)
+            if v is None:
+                rejected.append(self.reason(key))
+                continue
+            coerced[key] = v
+        if not rejected:
+            self.data.update(coerced)
         return rejected
 
     def reset_defaults(self) -> None:
@@ -565,7 +585,6 @@ class HealthStore:
             "state": str(value.get("state", "na") or "na"),
             "ms": HealthStore._safe_int(value.get("ms"), 0),
             "err": str(value.get("err", "") or ""),
-            "times": [str(t) for t in (value.get("times") or [])][-HEALTH_WINDOW:],
             "outcomes": outcomes,
             "events": events,
             "lastOk": HealthStore._safe_int(value.get("lastOk"), 0),

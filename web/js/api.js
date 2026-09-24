@@ -333,10 +333,9 @@
       });
       var toks = text.toLowerCase().split(/\s+/).filter(Boolean);
       var parsed = {
-        raw: text, text: text.toLowerCase(), tokens: toks,
-        subject: toks.slice(), bigrams: [],
-        mods: [], soft: [], season: null, year: null,
-        browse: toks.length === 0
+        text: text.toLowerCase(), tokens: toks,
+        subject: toks.slice(),
+        mods: [], soft: []
       };
       return Promise.resolve({ok:true, token:token, total:keys.length,
                               error:"", query:parsed});
@@ -351,7 +350,7 @@
     deliver: function(magnets, key){
       if (live()) return window.pywebview.api.deliver(magnets || [], key || "");
       return Promise.resolve({
-        ok: true, message: "已提交 " + (magnets || []).length + " 个任务（mock）", method: "mock"
+        ok: true, message: "已提交 " + (magnets || []).length + " 个任务（mock）"
       });
     },
 

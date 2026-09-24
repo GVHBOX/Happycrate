@@ -10,13 +10,6 @@
 
 <p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 
-## 定位
-
-**只做搜集，不做判断。**
-
-资源能不能下载，取决于下载工具的服务器有没有存货，同一条磁力在不同网盘结果不同——这件事工具说了不算。
-所以 **0 做种、老种、死链一律保留**，线索越多越好。排序只为批量复制顺手，不缩小搜集范围。
-
 ## 功能
 
 - **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB镜像、小草磁力、Knaben

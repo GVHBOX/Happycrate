@@ -1,9 +1,16 @@
-# Happycrate · 快乐箱
+<h1 align="center">Happycrate · 快乐箱</h1>
 
-一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，
-选中后批量复制磁力链接，或直接投递到迅雷。
+<p align="center"><img src="web/logo.png" alt="Happycrate 图标" width="160" /></p>
 
-![happycrate 工具截图](assets/readme_preview.png)
+<p align="center"><strong>磁力搜索聚合与下载投递工具</strong></p>
+
+<p align="center">10 个内置索引站 · 自定义源 · 去重合并 · 健康度 · 批量投递迅雷 · 便携免安装</p>
+
+<p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载最新发行包</a> · <a href="LICENSE">许可证</a></p>
+
+一次输入关键词，同时检索 10 个公开磁力索引站，结果按 info_hash 去重合并成一张表，选中后批量复制磁力链接，或直接投递到迅雷。后端 Python，界面 pywebview，解压即用。
+
+<p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 
 ## 定位
 
@@ -25,10 +32,11 @@
 
 ## 运行
 
-下载发行包解压后双击 `happycrate.exe`，无需安装 Python。
-首次启动若提示缺少 WebView2，按弹窗里的地址装一下运行库（地址会自动复制到剪贴板）。
+1. 从[发行页](https://github.com/GVHBOX/Happycrate/releases/latest)下载最新一版的 zip 并解压。
+2. 双击 `happycrate.exe`，无需安装 Python。
+3. 首次启动若提示缺少 WebView2，按弹窗里的地址装一下运行库，地址会自动复制到剪贴板。
 
-## 开发
+## 从源码开发
 
 需要 Python 3.11 ~ 3.13 和 Windows。
 
@@ -69,10 +77,10 @@ node tests/front_smoke.cjs
 
 ## 说明
 
-- 不提供、不存储、不校验任何资源内容，只聚合各公开索引站返回的公开条目。
-- 搜索请求直接发往各索引站，不做中转，不保留查询记录；不涉及账号体系，不登录、不保存任何站点的凭据。
-- 请遵守所在地法律法规，勿用于下载或传播受版权保护的内容。
+- **内容来源**：不提供、不存储、不校验任何资源内容，只聚合各公开索引站返回的公开条目。
+- **请求去向**：搜索请求直接发往各索引站，不做中转，不保留查询记录；不涉及账号体系，不登录、不保存任何站点的凭据。
+- **合规**：请遵守所在地法律法规，勿用于下载或传播受版权保护的内容。
 
-## 许可
+## 许可证
 
 MIT，见 [LICENSE](LICENSE)。

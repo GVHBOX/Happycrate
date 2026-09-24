@@ -4,7 +4,7 @@
 
 <p align="center"><strong>磁力搜索聚合工具</strong></p>
 
-<p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载最新发行包</a> · <a href="LICENSE">许可证</a></p>
+<p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a> · <a href="LICENSE">许可证</a></p>
 
 <p align="center"><img src="assets/readme_preview.png" alt="Happycrate 主界面" width="880" /></p>
 

@@ -15,6 +15,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from functools import partial
 from datetime import datetime, timedelta, timezone
 
 from . import log
@@ -141,14 +142,17 @@ def _captcha_text(text: str) -> bool:
         return True
     return sum(1 for sign in _CAPTCHA_SIGNS_WEAK if sign in low) >= 2
 
+def _is_timeout_text(err: str) -> bool:
+    low = (err or "").lower()
+    return "timed out" in low or "timeout" in low or "超时" in (err or "")
+
 def _is_timeout(exc: BaseException) -> bool:
     if isinstance(exc, TimeoutError):
         return True
     reason = getattr(exc, "reason", None)
     if isinstance(reason, TimeoutError):
         return True
-    text = _error_text(exc).lower()
-    return "timed out" in text or "timeouterror" in text
+    return _is_timeout_text(_error_text(exc))
 
 _CAPTCHA_SCAN_BYTES = 8192
 
@@ -402,10 +406,6 @@ _OVERSEAS_KEYS = frozenset({
     "nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb",
 })
 
-def _is_timeout_text(err: str) -> bool:
-    low = (err or "").lower()
-    return "timed out" in low or "timeout" in low or "超时" in (err or "")
-
 NET_FAIL_TEXT = "网络请求失败"
 NET_TIMEOUT_TEXT = "网络请求超时"
 
@@ -504,7 +504,6 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
         hdrs.update(headers)
 
     attempt = 0
-    last_exc: Exception | None = None
     use_lax = ssl_known_lax(url)
 
     while attempt <= max(0, retries):
@@ -528,7 +527,6 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             raise
 
         except urllib.error.HTTPError as exc:
-            last_exc = exc
             if exc.code in (403, 429) and _captcha_wall(exc):
                 logger.warning("被验证码拦截：%s", log_url(url))
                 raise Blocked(BLOCKED_TEXT) from exc
@@ -547,7 +545,6 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
             raise
 
         except Exception as exc:
-            last_exc = exc
             if _cert_failure(exc):
                 if not use_lax:
                     _demote_ssl(url, exc)
@@ -567,10 +564,6 @@ def http_get(url: str, timeout: int = 15, referer: str = "",
                 continue
             logger.debug("请求失败：%s (%s: %s)", log_url(url), type(exc).__name__, exc)
             raise
-
-    if last_exc:
-        raise last_exc
-    raise RuntimeError(f"请求失败：{url}")
 
 def _decode(raw: bytes) -> str:
     for enc in ("utf-8", "gb18030", "big5"):
@@ -754,6 +747,14 @@ def _unescape(text: str) -> str:
         s = re.sub(r"<!\[CDATA\[(.*?)\]\]>", r"\1", s, flags=re.S)
     return _html.unescape(s).strip()
 
+_TAG_RE = re.compile(r"<[^>]+>")
+
+def _cell_text(cell: str, gap: str = "", unescape: bool = False) -> str:
+    text = _TAG_RE.sub(gap, cell)
+    if unescape:
+        text = _unescape(text)
+    return re.sub(r"\s+", " ", text).strip()
+
 def _tags(chunk: str, *names) -> list[str]:
     out: list[str] = []
     for name in names:
@@ -816,6 +817,37 @@ DEFAULT_BASES = {
     "xccl263": "https://www.xccl263.xyz",
     "knaben": "https://api.knaben.org/v1",
 }
+
+def _gather_pages(jobs: dict, workers: int, label: str) -> tuple[dict, dict]:
+    collected: dict = {}
+    failed: dict = {}
+    pool = futures.ThreadPoolExecutor(
+        max_workers=max(1, min(len(jobs), workers)))
+    try:
+        futs = {pool.submit(fn): key for key, fn in jobs.items()}
+        for fut in futures.as_completed(futs):
+            key = futs[fut]
+            try:
+                collected[key] = fut.result()
+            except Exception as exc:
+                failed[key] = exc
+                logger.debug("%s 第 %s 页失败：%s", label, key, exc)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+    return collected, failed
+
+def _collect_pages(pages: dict[int, list[dict]], seen: set[str],
+                   items: list[dict], max_hits: int) -> list[dict]:
+    for p in sorted(pages):
+        for it in pages[p]:
+            h = it["info_hash"]
+            if h in seen:
+                continue
+            seen.add(h)
+            items.append(it)
+            if len(items) >= max_hits:
+                return items
+    return items
 
 def base_of(entry_key: str, base: str = "") -> str:
     return _base_of(base, DEFAULT_BASES.get(entry_key, ""))
@@ -903,23 +935,13 @@ def _apibay_one_cat(root: str, cat: int, query: str, timeout: int,
     return _apibay_rows(text, "apibay")
 
 def _apibay_by_cat(query: str, root: str, timeout: int, batch) -> list[dict]:
-    pool = futures.ThreadPoolExecutor(
-        max_workers=min(len(APIBAY_CATS), APIBAY_WORKERS))
+    collected, _failed = _gather_pages(
+        {c: partial(_apibay_one_cat, root, c, query, timeout, batch)
+         for c in APIBAY_CATS},
+        APIBAY_WORKERS, "apibay")
     merged: list[dict] = []
-    try:
-        jobs = {pool.submit(_apibay_one_cat, root, c, query, timeout, batch): c
-                for c in APIBAY_CATS}
-        pages: dict[int, list[dict]] = {}
-        for job in futures.as_completed(jobs):
-            cat = jobs[job]
-            try:
-                pages[cat] = job.result()
-            except Exception as exc:
-                logger.debug("apibay 分类 %d 失败：%s", cat, exc)
-        for cat in sorted(pages):
-            merged.extend(pages[cat])
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    for cat in sorted(collected):
+        merged.extend(collected[cat])
     return merged
 
 def _search_apibay(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
@@ -961,13 +983,9 @@ SUKEBEI_RSS_PAGE = 75
 
 _SUKEBEI_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.I | re.S)
 _SUKEBEI_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
-_SUKEBEI_TAG_RE = re.compile(r"<[^>]+>")
 _SUKEBEI_HASH_RE = re.compile(r"btih:([0-9a-fA-F]{40})")
 _SUKEBEI_TITLE_RE = re.compile(r'href="/view/\d+"[^>]*title="([^"]{2,400})"')
 _SUKEBEI_FETCH_RE = re.compile(r'href="(/download/\d+\.torrent)"')
-
-def _sukebei_cell_text(cell: str) -> str:
-    return re.sub(r"\s+", " ", _SUKEBEI_TAG_RE.sub(" ", cell)).strip()
 
 def _parse_sukebei_html(page_text: str, root: str,
                         source_key: str = "sukebei") -> list[dict]:
@@ -980,14 +998,14 @@ def _parse_sukebei_html(page_text: str, root: str,
         if len(cells) < 8:
             continue
         titled = _SUKEBEI_TITLE_RE.search(row)
-        title = _unescape(titled.group(1)) if titled else _sukebei_cell_text(cells[1])
+        title = _unescape(titled.group(1)) if titled else _cell_text(cells[1], gap=" ")
         it = _mk(
             title=title, info_hash=mag.group(1).lower(),
-            size=parse_size(_sukebei_cell_text(cells[3])),
-            added=_ts_from_naive_cn(_sukebei_cell_text(cells[4]))
-            or _ts_from_iso(_sukebei_cell_text(cells[4])),
-            seeders=_to_int(_sukebei_cell_text(cells[5])),
-            leechers=_to_int(_sukebei_cell_text(cells[6])),
+            size=parse_size(_cell_text(cells[3], gap=" ")),
+            added=_ts_from_naive_cn(_cell_text(cells[4], gap=" "))
+            or _ts_from_iso(_cell_text(cells[4], gap=" ")),
+            seeders=_to_int(_cell_text(cells[5], gap=" ")),
+            leechers=_to_int(_cell_text(cells[6], gap=" ")),
             source=source_key,
         )
         fetch = _SUKEBEI_FETCH_RE.search(row)
@@ -1027,34 +1045,16 @@ def _nyaa_family(query: str, page: int, timeout: int, batch, root: str,
         return items
 
     needle = urllib.parse.quote(query)
-    collected: dict[int, list[dict]] = {}
-    pool = futures.ThreadPoolExecutor(max_workers=min(pages, workers))
-    try:
-        jobs = {pool.submit(_nyaa_html_page, root, p, needle, timeout, batch,
-                            source_key): p
-                for p in range(int(page), int(page) + pages)}
-        for job in futures.as_completed(jobs):
-            p = jobs[job]
-            try:
-                collected[p] = job.result()
-            except Exception as exc:
-                logger.debug("%s 第 %d 页失败：%s", source_key, p, exc)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    collected, _failed = _gather_pages(
+        {p: partial(_nyaa_html_page, root, p, needle, timeout, batch,
+                    source_key)
+         for p in range(int(page), int(page) + pages)},
+        workers, source_key)
 
     if not collected and not items and rss_failed is not None:
         raise rss_failed
 
-    for p in sorted(collected):
-        for it in collected[p]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= max_hits:
-                return items
-    return items
+    return _collect_pages(collected, seen, items, max_hits)
 
 def _search_sukebei(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     return _nyaa_family(
@@ -1092,11 +1092,6 @@ MIKAN_ROW_RE = re.compile(r"<tr[^>]*js-search-results-row[^>]*>(.*?)</tr>",
 MIKAN_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
 MIKAN_MAGNET_RE = re.compile(
     r'data-magnet="magnet:\?xt=urn:btih:([0-9a-fA-F]{40})', re.I)
-MIKAN_TAG_RE = re.compile(r"<[^>]+>")
-
-def _mikan_cell_text(cell: str) -> str:
-    return re.sub(r"\s+", " ", _unescape(MIKAN_TAG_RE.sub(" ", cell))).strip()
-
 _MIKAN_EMPTY_SIGNS = ("没有找到", "未找到", "找不到", "no results", "not found")
 
 def _mikan_empty(page_text: str) -> bool:
@@ -1118,10 +1113,10 @@ def _parse_mikan_html(page_text: str, root: str) -> list[dict]:
             continue
         seen.add(h)
         it = _mk(
-            title=_mikan_cell_text(cells[1]),
+            title=_cell_text(cells[1], gap=" ", unescape=True),
             info_hash=h,
-            size=parse_size(_mikan_cell_text(cells[2])),
-            added=_cn_date(_mikan_cell_text(cells[3])),
+            size=parse_size(_cell_text(cells[2], gap=" ", unescape=True)),
+            added=_cn_date(_cell_text(cells[3], gap=" ", unescape=True)),
             source="mikan",
         )
         it["fetch"] = {"url": f"{root}/Home/Episode/{h}"}
@@ -1185,12 +1180,8 @@ _DMHY_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.I | re.S)
 _DMHY_CELL_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.I | re.S)
 _DMHY_HASH_RE = re.compile(r"btih:([0-9a-fA-F]{40})", re.I)
 _DMHY_HASH_B32_RE = re.compile(r"btih:([A-Za-z2-7]{32})")
-_DMHY_TAG_RE = re.compile(r"<[^>]+>")
 _DMHY_HIDDEN_DATE_RE = re.compile(
     r'<span[^>]*style="display:\s*none;?"[^>]*>\s*(\d{4}/\d{2}/\d{2} \d{2}:\d{2})', re.I)
-
-def _dmhy_cell_text(cell: str) -> str:
-    return re.sub(r"\s+", " ", _DMHY_TAG_RE.sub("", cell)).strip()
 
 def _dmhy_pub_date(row: str) -> float | None:
     m = _DMHY_HIDDEN_DATE_RE.search(row)
@@ -1199,13 +1190,13 @@ def _dmhy_pub_date(row: str) -> float | None:
     return _ts_from_cn_slash(m.group(1))
 
 def _dmhy_size(cell: str) -> int:
-    text = _dmhy_cell_text(cell)
+    text = _cell_text(cell)
     if not text or text in ("-", "&nbsp;"):
         return 0
     return parse_size(text)
 
 def _dmhy_count(cell: str) -> int | None:
-    text = _dmhy_cell_text(cell)
+    text = _cell_text(cell)
     return int(text) if text.isdigit() else None
 
 def _parse_dmhy_list(page_text: str, root: str) -> tuple[list[dict], int, bool]:
@@ -1242,7 +1233,7 @@ def _parse_dmhy_list(page_text: str, root: str) -> tuple[list[dict], int, bool]:
 
         link = re.search(r'href="(/topics/view/[^"]+)"[^>]*>(.*?)</a>',
                          cells[2], re.I | re.S)
-        title = _unescape(_DMHY_TAG_RE.sub("", link.group(2))) if link else ""
+        title = _unescape(_TAG_RE.sub("", link.group(2))) if link else ""
 
         it = _mk(
             title=title, info_hash=h,
@@ -1275,21 +1266,10 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     needle = urllib.parse.quote(query)
     seen: set[str] = set()
     items: list[dict] = []
-    pages: dict[int, tuple[list[dict], int, bool]] = {}
-    failed: dict[int, Exception] = {}
-    pool = futures.ThreadPoolExecutor(max_workers=DMHY_WORKERS)
-    try:
-        jobs = {pool.submit(_dmhy_page, root, p, needle, timeout, batch): p
-                for p in range(1, DMHY_PAGES + 1)}
-        for job in futures.as_completed(jobs):
-            p = jobs[job]
-            try:
-                pages[p] = job.result()
-            except Exception as exc:
-                failed[p] = exc
-                logger.debug("DMHY 第 %d 页失败：%s", p, exc)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    pages, failed = _gather_pages(
+        {p: partial(_dmhy_page, root, p, needle, timeout, batch)
+         for p in range(1, DMHY_PAGES + 1)},
+        DMHY_WORKERS, "DMHY")
 
     for p in sorted(pages):
         items.extend(_merge_dmhy(pages[p][0], seen))
@@ -1306,8 +1286,6 @@ def _search_dmhy(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
         return []
     if failed:
         raise next(iter(failed.values()))
-    if pages and any(v[1] for v in pages.values()):
-        return []
     return _search_dmhy_rss(query, timeout, root, batch)
 
 def _search_dmhy_rss(query, timeout, root, batch) -> list[dict]:
@@ -1390,20 +1368,10 @@ def _search_eztv(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
 
     if len(first) >= EZTV_PAGE_SIZE:
         rest = list(range(2, EZTV_PAGES + 1))
-        pool = futures.ThreadPoolExecutor(max_workers=min(EZTV_WORKERS, len(rest)))
-        try:
-            jobs = {pool.submit(_eztv_page, root, p, timeout, batch): p
-                    for p in rest}
-            for job in futures.as_completed(jobs):
-                p = jobs[job]
-                try:
-                    pages[p] = job.result()
-                except Exception as exc:
-                    failed[p] = exc
-                    logger.debug("EZTV 第 %d 页失败：%s", p, exc)
-        finally:
-            pool.shutdown(wait=False, cancel_futures=True)
-
+        collected, failed = _gather_pages(
+            {p: partial(_eztv_page, root, p, timeout, batch) for p in rest},
+            EZTV_WORKERS, "EZTV")
+        pages.update(collected)
         if failed and len(failed) >= len(rest):
             raise next(iter(failed.values()))
 
@@ -1472,38 +1440,16 @@ def _search_bitsearch(query, page=1, timeout=15, base="", batch=None) -> list[di
     first_page = max(1, int(page))
     seen: set[str] = set()
     items: list[dict] = []
-    ok_pages = 0
-    last_exc: Exception | None = None
 
     targets = list(range(first_page, first_page + BITSEARCH_PAGES))
-    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), BITSEARCH_WORKERS))
-    try:
-        jobs = {pool.submit(_bitsearch_page, root, p, query, timeout, batch): p
-                for p in targets}
-        pages: dict[int, list[dict]] = {}
-        for job in futures.as_completed(jobs):
-            p = jobs[job]
-            try:
-                pages[p] = job.result()
-            except Exception as exc:
-                last_exc = exc
-                logger.debug("BitSearch 第 %d 页失败：%s", p, exc)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    pages, failed = _gather_pages(
+        {p: partial(_bitsearch_page, root, p, query, timeout, batch)
+         for p in targets},
+        BITSEARCH_WORKERS, "BitSearch")
+    items = _collect_pages(pages, seen, items, BITSEARCH_MAX_HITS)
 
-    for p in sorted(pages):
-        ok_pages += 1
-        for it in pages[p]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= BITSEARCH_MAX_HITS:
-                return items
-
-    if not ok_pages and last_exc is not None:
-        raise last_exc
+    if not pages and failed:
+        raise next(iter(failed.values()))
     return items
 
 KNABEN_PAGE_SIZE = 300
@@ -1557,46 +1503,20 @@ def _search_knaben(query, page=1, timeout=15, base="", batch=None) -> list[dict]
 
     seen: set[str] = set()
     items: list[dict] = []
-    pages: dict[int, list[dict]] = {}
-    last_exc: Exception | None = None
 
-    pool = futures.ThreadPoolExecutor(
-        max_workers=min(len(starts), KNABEN_WORKERS))
-    try:
-        jobs = {pool.submit(_knaben_page, root, query, start, timeout, batch): start
-                for start in starts}
-        for job in futures.as_completed(jobs):
-            start = jobs[job]
-            try:
-                pages[start] = job.result()
-            except Exception as exc:
-                last_exc = exc
-                logger.debug("Knaben from=%d 失败：%s", start, exc)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    pages, failed = _gather_pages(
+        {start: partial(_knaben_page, root, query, start, timeout, batch)
+         for start in starts},
+        KNABEN_WORKERS, "Knaben")
+    items = _collect_pages(pages, seen, items, KNABEN_MAX_HITS)
 
-    if not pages and last_exc is not None:
-        raise last_exc
-
-    for start in sorted(pages):
-        for it in pages[start]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= KNABEN_MAX_HITS:
-                return items
+    if not pages and failed:
+        raise next(iter(failed.values()))
     return items
 
 _TPB_MONTH_DAY_RE = re.compile(r"^(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})$")
 _TPB_TODAY_RE = re.compile(r"^today\s+(\d{1,2}):(\d{2})$", re.I)
 _TPB_YDAY_RE = re.compile(r"^y-?day\s+(\d{1,2}):(\d{2})$", re.I)
-_TPB_TAG_RE = re.compile(r"<[^>]+>")
-
-def _tpb_cell_text(cell: str) -> str:
-    return re.sub(r"\s+", " ", _unescape(_TPB_TAG_RE.sub("", cell))).strip()
-
 def _tpb_added(text: str) -> float | None:
     raw = (text or "").strip()
     if not raw:
@@ -1652,7 +1572,6 @@ def _tpb_parse(text: str) -> list[dict]:
                            re.I)
     re_title = re.compile(r'href="[^"]*/torrent/\d+/([^"]+)"[^>]*>(.*?)</a>',
                           re.I | re.S)
-    re_tag = re.compile(r"<[^>]+>")
 
     items: list[dict] = []
     seen: set[str] = set()
@@ -1665,9 +1584,9 @@ def _tpb_parse(text: str) -> list[dict]:
             continue
         seen.add(h)
         t = re_title.search(row)
-        title = _unescape(re_tag.sub("", t.group(2))) if t else ""
+        title = _unescape(_TAG_RE.sub("", t.group(2))) if t else ""
 
-        cells = [_tpb_cell_text(c) for c in re_cell.findall(row)]
+        cells = [_cell_text(c, unescape=True) for c in re_cell.findall(row)]
         size = parse_size(cells[4]) if len(cells) > 4 else 0
         seeders = _to_int(cells[5]) if len(cells) > 5 else None
         leechers = _to_int(cells[6]) if len(cells) > 6 else None
@@ -1684,19 +1603,6 @@ def _tpb_fetch(root: str, query: str, page: int, timeout: int, batch,
                retries: int = 0):
     url = f"{root}/search/{urllib.parse.quote(query)}/{int(page)}/99/0"
     return http_get(url, timeout=timeout, retries=retries, batch=batch)
-
-def _collect_pages(pages: dict[int, list[dict]], seen: set[str],
-                   items: list[dict], max_hits: int) -> list[dict]:
-    for p in sorted(pages):
-        for it in pages[p]:
-            h = it["info_hash"]
-            if h in seen:
-                continue
-            seen.add(h)
-            items.append(it)
-            if len(items) >= max_hits:
-                return items
-    return items
 
 def _search_tpb_mirror(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     if base:
@@ -1752,24 +1658,15 @@ def _tpb_more_pages(root: str, query: str, page: int, timeout: int, batch,
     if len(first) < TPB_PAGE_SIZE:
         return items
 
-    pages: dict[int, list[dict]] = {}
-    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), TPB_WORKERS))
-    try:
-        jobs = {pool.submit(_tpb_fetch, root, query, p, timeout, batch): p
-                for p in targets}
-        for job in futures.as_completed(jobs):
-            p = jobs[job]
-            try:
-                text = job.result()
-            except Exception as exc:
-                logger.debug("TPB 第 %d 页失败：%s", p, exc)
-                continue
-            if _TPB_RESULT_MARK not in text:
-                continue
-            pages[p] = _tpb_parse(text)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
+    def _tpb_page(p: int):
+        text = _tpb_fetch(root, query, p, timeout, batch)
+        if _TPB_RESULT_MARK not in text:
+            return None
+        return _tpb_parse(text)
 
+    collected, _failed = _gather_pages(
+        {p: partial(_tpb_page, p) for p in targets}, TPB_WORKERS, "TPB")
+    pages = {p: rows for p, rows in collected.items() if rows}
     return _collect_pages(pages, seen, items, TPB_MAX_HITS)
 
 _BENCODE_MAX_DEPTH = 32
@@ -1908,36 +1805,28 @@ def _xccl263_page(root: str, p: int, query: str, timeout: int, batch):
 def _search_xccl263(query, page=1, timeout=15, base="", batch=None) -> list[dict]:
     root = _base_of(base, DEFAULT_BASES["xccl263"])
     first = max(1, int(page))
-    last_exc: Exception | None = None
     pages: dict[int, list[dict]] = {}
 
     targets = list(range(first, first + XCCL_PAGES))
-    pool = futures.ThreadPoolExecutor(max_workers=min(len(targets), XCCL_WORKERS))
-    try:
-        jobs = {pool.submit(_xccl263_page, root, p, query, timeout, batch): p
-                for p in targets}
-        for job in futures.as_completed(jobs):
-            p = jobs[job]
-            try:
-                pages[p] = job.result()
-            except Exception as exc:
-                last_exc = exc
-                logger.debug("小草磁力第 %d 页失败：%s", p, exc)
-    finally:
-        pool.shutdown(wait=False, cancel_futures=True)
-
-    if not pages and last_exc is not None:
-        raise last_exc
-
+    pages, failed = _gather_pages(
+        {p: partial(_xccl263_page, root, p, query, timeout, batch)
+         for p in targets},
+        XCCL_WORKERS, "小草磁力")
+    if not pages and failed:
+        raise next(iter(failed.values()))
     return _collect_pages(pages, set(), [], XCCL_MAX_HITS)
 
+def _pageless(fn):
+    fn.pageless = True
+    return fn
+
 _BUILTIN_ADAPTERS = {
-    "apibay": ("海盗湾", _search_apibay),
+    "apibay": ("海盗湾", _pageless(_search_apibay)),
     "nyaa": ("Nyaa", _search_nyaa),
-    "mikan": ("蜜柑计划", _search_mikan),
-    "dmhy": ("动漫花园", _search_dmhy),
+    "mikan": ("蜜柑计划", _pageless(_search_mikan)),
+    "dmhy": ("动漫花园", _pageless(_search_dmhy)),
     "sukebei": ("Sukebei", _search_sukebei),
-    "eztv": ("EZTV", _search_eztv),
+    "eztv": ("EZTV", _pageless(_search_eztv)),
     "bitsearch": ("BitSearch", _search_bitsearch),
     "knaben": ("Knaben", _search_knaben),
     "tpb": ("TPB镜像", _search_tpb_mirror),
@@ -1946,7 +1835,9 @@ _BUILTIN_ADAPTERS = {
 
 BUILTIN_KEYS = frozenset(_BUILTIN_ADAPTERS)
 
-PAGELESS_KEYS = frozenset({"apibay", "mikan", "dmhy", "eztv"})
+PAGELESS_KEYS = frozenset(
+    key for key, (_label, fn) in _BUILTIN_ADAPTERS.items()
+    if getattr(fn, "pageless", False))
 
 QUERYLESS_SOURCES = frozenset({"eztv"})
 

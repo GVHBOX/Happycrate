@@ -43,9 +43,50 @@ def find_legacy() -> Path | None:
     return None
 
 
-def run(settings) -> dict:
+def _merge_legacy_sources(legacy, cfg) -> int:
+    if cfg is None:
+        return 0
+    try:
+        raw = json.loads((legacy / "sources.json").read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    entries = raw.get("sources") if isinstance(raw, dict) else None
+    if not isinstance(entries, list):
+        return 0
+
+    carried = 0
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        key = str(entry.get("key") or "").strip()
+        current = cfg.get(key)
+        if current is None:
+            continue
+        if "enabled" in entry:
+            current["enabled"] = bool(entry.get("enabled"))
+            carried += 1
+        base = str(entry.get("base") or "").strip()
+        if base:
+            current["base"] = base
+        try:
+            current["order"] = int(entry.get("order", 0) or 0)
+        except (TypeError, ValueError):
+            pass
+        try:
+            timeout = int(entry.get("timeout", 0) or 0)
+        except (TypeError, ValueError):
+            timeout = 0
+        if 1 <= timeout <= 120:
+            current["timeout"] = timeout
+    if carried:
+        cfg._normalize()
+        logger.info("已从旧配置恢复 %d 个数据源的启停与设置", carried)
+    return carried
+
+
+def run(settings, cfg=None) -> dict:
     report = {
-        "done": False, "source": "", "settings": 0, "error": "",
+        "done": False, "source": "", "settings": 0, "sources": 0, "error": "",
     }
 
     if settings.data.get(MARK):
@@ -70,6 +111,11 @@ def run(settings) -> dict:
                     settings.data[key] = coerced
                     report["settings"] += 1
 
+    try:
+        report["sources"] = _merge_legacy_sources(legacy, cfg)
+    except Exception as exc:
+        logger.warning("旧数据源配置迁移失败：%s: %s", type(exc).__name__, exc)
+
     settings.data[MARK] = {
         "path": str(legacy),
         "at": datetime.now().isoformat(timespec="seconds"),
@@ -79,8 +125,8 @@ def run(settings) -> dict:
         settings.save()
         report["done"] = True
         report["source"] = str(legacy)
-        logger.info("已迁移旧配置：%d 项设置（来自 %s）",
-                    report["settings"], legacy)
+        logger.info("已迁移旧配置：%d 项设置、%d 个数据源（来自 %s）",
+                    report["settings"], report["sources"], legacy)
     except Exception as exc:
         report["error"] = f"保存失败：{type(exc).__name__}"
         logger.warning("迁移后保存失败：%s", exc)

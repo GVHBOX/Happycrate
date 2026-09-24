@@ -28,7 +28,7 @@ input, textarea{
   -webkit-user-select:text;
   cursor:text;
 }
-.iconbtn svg, .op svg, .btn svg, .tb-btn svg, .mi svg, .tile svg, .cb svg{
+.iconbtn svg, .btn svg, .tb-btn svg, .mi svg, .tile svg, .cb svg{
   width:calc(var(--icon-md)*var(--frs)); height:calc(var(--icon-md)*var(--frs));
   stroke-width:var(--icon-sw);
 }
@@ -78,7 +78,6 @@ input, textarea{
 .app.settings .card + .card{margin-top:12px}
 
 :focus-visible{outline:var(--focus-ring); outline-offset:var(--focus-offset)}
-.srow.sel:focus-visible{outline:none; box-shadow:var(--focus-ring-strong)}
 
 .card{
   background:var(--panel);
@@ -165,7 +164,7 @@ input, textarea{
 }
 .btn-brand .ripple{background:rgba(255,255,255,.4)}
 .btn-danger .ripple{background:rgba(255,255,255,.4)}
-.op .ripple,.iconbtn .ripple,.mi .ripple{background:var(--ripple)}
+.iconbtn .ripple,.mi .ripple{background:var(--ripple)}
 
 .bar{
   height:var(--h-bar);
@@ -246,18 +245,6 @@ input, textarea{
   transition:height .2s var(--e), transform var(--d-spring) var(--spring);
 }
 
-.indicator{
-  height:2px; background:var(--brand);
-  border-radius:1px; margin:0 var(--sp-6);
-  position:relative;
-}
-.indicator::before{
-  content:""; position:absolute;
-  left:-3px; top:-3px;
-  width:8px; height:8px; border-radius:50%;
-  background:var(--brand);
-}
-
 .handle{
   position:relative;
   width:calc(28px*var(--frs)); height:calc(16px*var(--frs));
@@ -308,7 +295,6 @@ input, textarea{
 .cb:hover{border-color:var(--brand-line); transform:scale(1.14)}
 .cb:active{transform:scale(var(--s-press-icon)); transition:transform var(--d-press) var(--e-out)}
 .cb.on{border-color:var(--brand); background:var(--brand); animation:cbPop var(--d-state) var(--e)}
-.cb[disabled]{opacity:.35; cursor:not-allowed}
 
 .namecell{min-width:0}
 .name{
@@ -340,26 +326,6 @@ input, textarea{
 .hd.err{background:var(--err-bar); animation:breathe 2s var(--e) infinite}
 .hd.na{background:var(--track-off)}
 .hd.empty{background:var(--empty)}
-
-.ops{display:flex; gap:var(--sp-1); justify-content:flex-end}
-.op{
-  width:calc(24px*var(--frc)); height:calc(24px*var(--frc));
-  font-size:var(--fc-md);
-  border-radius:var(--r-sm);
-  border:0; background:transparent;
-  color:var(--t3);
-  display:grid; place-items:center;
-  cursor:pointer;
-  position:relative; overflow:hidden;
-  transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e),
-             transform .32s var(--spring);
-}
-.op:hover{background:var(--shell); color:var(--t1); transform:scale(1.08)}
-.op:active{transform:scale(var(--s-press-icon)); transition:transform var(--d-press) var(--e-out)}
-.op[disabled]{color:var(--t-disabled); cursor:not-allowed}
-.op[disabled]:hover{background:transparent}
-.op.danger{color:var(--danger)}
-.op.danger:hover{background:var(--danger-soft); color:var(--danger)}
 
 .dfoot{
   height:var(--h-foot);
@@ -407,7 +373,6 @@ input, textarea{
   animation:fade .16s both;
   padding:24px;
 }
-.backdrop[hidden]{display:none}
 .modal{
   width:var(--w-modal); max-width:100%; max-height:88vh;
   background:var(--panel);
@@ -440,12 +405,6 @@ input, textarea{
 .input::placeholder{color:var(--t5)}
 .input.mono{font-family:var(--font-mono)}
 .input.err{box-shadow:0 0 0 2px rgba(239,68,68,.34)}
-.ferr{
-  font:400 var(--fs-xs)/1.5 var(--font);
-  color:var(--danger);
-  min-height:0;
-  transition:opacity .18s var(--e);
-}
 .mfoot{
   height:var(--h-foot);
   display:flex; align-items:center;
@@ -511,25 +470,12 @@ input, textarea{
   grid-template-columns:repeat(3,1fr);
   gap:10px; margin-top:var(--sp-3);
 }
-.mapgrid .cell label{
-  font:400 var(--fc-2xs)/1 var(--font);
-  color:var(--t4); display:block; margin-bottom:var(--sp-1);
-}
 .mapgrid .input{
   height:calc(32px*var(--frs)); border-radius:var(--r-tile);
   padding:0 10px;
   font:400 var(--fc-xs)/1 var(--font-mono);
   margin:var(--sp-3) 0 0;
 }
-.idchip{
-  display:inline-flex; align-items:center;
-  height:calc(20px*var(--frs)); padding:0 var(--sp-3);
-  border-radius:var(--r-chip);
-  background:var(--shell); color:var(--t3);
-  box-shadow:inset 0 0 0 1px var(--border);
-  font:500 var(--fs-xs)/1 var(--font-mono);
-}
-
 .toasts{
   position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px;
@@ -635,8 +581,6 @@ input, textarea{
 .js-na{color:var(--empty)}
 .js-err{color:var(--err)}
 
-.hidden{display:none !important}
-
 .marquee{position:absolute; z-index:var(--z-marquee); pointer-events:none; border-radius:2px;
   background:rgba(var(--brand-rgb),.12); border:1px solid rgba(var(--brand-rgb),.55)}
 
@@ -661,12 +605,8 @@ input, textarea{
     rgba(255,255,255,var(--prog-alpha)) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
   animation:segflow var(--prog-flow) linear infinite}
 .progress .seg.warned{background:var(--prog-warn)}
-.progress .seg.warned::after{opacity:1;
-  background:repeating-linear-gradient(var(--prog-ang),
-    rgba(0,0,0,.28) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
-  animation:segflow var(--prog-flow) linear infinite}
 .progress .seg.err{background:var(--prog-err)}
-.progress .seg.err::after{opacity:1;
+.progress .seg.warned::after,.progress .seg.err::after{opacity:1;
   background:repeating-linear-gradient(var(--prog-ang),
     rgba(0,0,0,.28) 0 var(--prog-sw), transparent var(--prog-sw) var(--prog-cycle));
   animation:segflow var(--prog-flow) linear infinite}
@@ -1088,7 +1028,6 @@ body.dark .selbar .sbtn:hover{background:rgba(255,255,255,.16)}
 body.dark .selbar .sbtn.primary{color:#fff}
 body.dark .selbar .sclose{color:rgba(255,255,255,.6)}
 body.dark .selbar .sclose:hover{background:rgba(255,255,255,.12); color:#fff}
-body.dark .sw::after{background:var(--knob)}
 
 .badge b,.health .ms,.stepper .val,.srow .c-idx,.srow .c-size,.srow .c-time,.srow .c-seed,
 .fline .fsize,.scount,.selbar .st b,.stile b{font-variant-numeric:tabular-nums}

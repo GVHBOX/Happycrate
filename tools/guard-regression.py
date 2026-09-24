@@ -18,16 +18,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PY = str(ROOT / ".venv" / "Scripts" / "python.exe")
 
-IMPORT_CLEAR = (
-    "            self._cfg.save()\n"
-    "            sources.reload_from_config(self._cfg)\n"
-    "            self._cache_clear()\n"
-    '            return {"ok": True, "added": added, "updated": updated,'
-    ' "message": msg}'
-)
-IMPORT_NO_CLEAR = IMPORT_CLEAR.replace(
-    "            self._cache_clear()\n", "")
-
 CASES = [
     (
         "高亮回退：hlTitle 又在转义串上匹配",
@@ -102,13 +92,6 @@ CASES = [
         '                state = "ok" if count else "empty"',
         '                state = "ok"',
         "tests/test_front_hygiene.py",
-    ),
-    (
-        "缓存失效回退：导入源后不清缓存",
-        "app/api.py",
-        IMPORT_CLEAR,
-        IMPORT_NO_CLEAR,
-        "tests/test_contract.py",
     ),
     (
         "日志脱敏回退：log_url 又原样返回带查询串的 URL",

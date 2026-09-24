@@ -1,40 +1,38 @@
 {
  "_读我": "这里的项是「扫描器当前就会报、且已知不是缺陷」的清单，只有清单之外的新增项才会让 check-all 退出码非 0。\n已知的非缺陷：scan_adapter 里 apibay/mikan/dmhy/eztv 不读 page 是 PAGELESS_KEYS 显式契约；scan_py 的 dup_definitions 里 run/get 是通用词假活。\n这些应该由扫描器自己排除，压在基线里是权宜之计。",
  "scan_py.py": [
-  "dup_definitions|settings_path|[[\"config.py\", 121, 1], [\"paths.py\", 122, 1]]",
-  "dup_definitions|health_path|[[\"config.py\", 124, 1], [\"paths.py\", 125, 1]]",
+  "dup_definitions|settings_path|[[\"config.py\", 118, 1], [\"paths.py\", 122, 1]]",
+  "dup_definitions|health_path|[[\"config.py\", 121, 1], [\"paths.py\", 125, 1]]",
   "dup_definitions|logs_dir|[[\"log.py\", 21, 1], [\"paths.py\", 128, 3]]",
   "dup_definitions|log_path|[[\"log.py\", 24, 1], [\"paths.py\", 134, 1]]",
-  "dup_definitions|run|[[\"migrate.py\", 46, 9], [\"shell.py\", 276, 14]]",
-  "dup_definitions|get|[[\"runtime.py\", 11, 1], [\"sources.py\", 2057, 2]]",
-  "swallow|{\"file\": \"config.py\", \"kind\": \"except-continue\", \"line\": 147}",
-  "swallow|{\"file\": \"config.py\", \"kind\": \"except-pass\", \"line\": 170}",
+  "dup_definitions|run|[[\"migrate.py\", 87, 10], [\"shell.py\", 276, 14]]",
+  "dup_definitions|get|[[\"runtime.py\", 11, 1], [\"sources.py\", 1948, 2]]",
+  "swallow|{\"file\": \"config.py\", \"kind\": \"except-continue\", \"line\": 144}",
+  "swallow|{\"file\": \"config.py\", \"kind\": \"except-pass\", \"line\": 167}",
   "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-pass\", \"line\": 31}",
   "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-continue\", \"line\": 41}",
+  "swallow|{\"file\": \"migrate.py\", \"kind\": \"except-pass\", \"line\": 73}",
   "swallow|{\"file\": \"shell.py\", \"kind\": \"except-pass\", \"line\": 251}",
   "swallow|{\"file\": \"shell.py\", \"kind\": \"except-pass\", \"line\": 263}",
   "swallow|{\"file\": \"shell.py\", \"kind\": \"except-continue\", \"line\": 50}",
   "swallow|{\"file\": \"single.py\", \"kind\": \"except-pass\", \"line\": 78}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-pass\", \"line\": 710}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 579}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 663}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 697}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 741}",
-  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 1233}"
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-pass\", \"line\": 703}",
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 572}",
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 656}",
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 690}",
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 734}",
+  "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 1224}"
  ],
  "scan_api.py": [
-  "backend_never_called|{\"args\": [], \"line\": 357, \"name\": \"boot\"}"
+  "backend_never_called|{\"args\": [], \"line\": 354, \"name\": \"boot\"}"
  ],
  "scan_bloat.py": [
-  "dup_blocks|h = it[\"info_hash\"]\nif h in seen:\ncontinue\nseen.add(h)\nitems.append(it)\nif len(items) >= max_hits:\nreturn items|[\"sources.py:1050\", \"sources.py:1692\"]",
-  "dup_blocks|if h in seen:\ncontinue\nseen.add(h)\nitems.append(it)\nif len(items) >= max_hits:\nreturn items\nreturn items|[\"sources.py:1051\", \"sources.py:1693\"]",
-  "dup_blocks|continue\nseen.add(h)\nitems.append(it)\nif len(items) >= max_hits:\nreturn items\nreturn items\n|[\"sources.py:1052\", \"sources.py:1694\"]",
-  "dup_blocks|if not isinstance(rows, list):\nreturn []\n\nout: list[dict] = []\nfor row in rows:\nif not isinstance(row, dict):\ncontinue|[\"sources.py:1360\", \"sources.py:1449\"]"
+  "dup_blocks|if not isinstance(rows, list):\nreturn []\n\nout: list[dict] = []\nfor row in rows:\nif not isinstance(row, dict):\ncontinue|[\"sources.py:1338\", \"sources.py:1417\"]"
  ],
  "scan_adapter.py": [
-  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 21, \"line\": 925, \"name\": \"_search_apibay\", \"unused_args\": [\"page\"]}",
-  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 22, \"line\": 1133, \"name\": \"_search_mikan\", \"unused_args\": [\"page\"]}",
-  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 39, \"line\": 1273, \"name\": \"_search_dmhy\", \"unused_args\": [\"page\"]}",
-  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 48, \"line\": 1381, \"name\": \"_search_eztv\", \"unused_args\": [\"page\"]}"
+  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 21, \"line\": 947, \"name\": \"_search_apibay\", \"unused_args\": [\"page\"]}",
+  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 22, \"line\": 1128, \"name\": \"_search_mikan\", \"unused_args\": [\"page\"]}",
+  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 26, \"line\": 1264, \"name\": \"_search_dmhy\", \"unused_args\": [\"page\"]}",
+  "{\"args\": [\"query\", \"page\", \"timeout\", \"base\", \"batch\"], \"len\": 38, \"line\": 1359, \"name\": \"_search_eztv\", \"unused_args\": [\"page\"]}"
  ]
 }

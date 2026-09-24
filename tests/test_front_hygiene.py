@@ -213,7 +213,7 @@ class CssHygieneTest(unittest.TestCase):
             for cls in part.split():
                 if cls.startswith("."):
                     hosts.add(cls[1:])
-        need = {"btn", "op", "iconbtn", "mi", "cb", "gobtn", "chipbtn", "tb-btn",
+        need = {"btn", "iconbtn", "mi", "cb", "gobtn", "chipbtn", "tb-btn",
                 "sbtn", "sclose", "fchev", "srcdot"}
         missing = sorted(need - hosts)
         self.assertEqual(
@@ -1110,7 +1110,7 @@ class SourceProgressVisibilityTest(unittest.TestCase):
 _PREVIEW_ONLY_LOOK_KEYS = frozenset({"hold", "step"})
 
 _TEXT_CONTRAST_EXEMPT = frozenset({"t4", "t5", "t-disabled"})
-_TEXT_CONTRAST_PENDING = frozenset({"brand", "brand-active", "ok", "warn", "danger"})
+_TEXT_CONTRAST_PENDING = frozenset({"brand", "brand-active", "ok", "warn"})
 _PENDING_REASON = ("这几项都是「按填充调出来的饱和度」被拿去当文字用："
                    "ok / warn / danger 的浅色值对白底只有 2.94~3.76，"
                    "brand / brand-active 的暗色值对浮层底只有 3.24~4.08。"

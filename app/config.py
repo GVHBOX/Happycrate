@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import shutil
 import tempfile
 import threading
@@ -14,8 +13,6 @@ logger = log.get_logger(__name__)
 
 SOURCES_VERSION = 1
 SETTINGS_VERSION = 1
-
-_KEY_RE = re.compile(r"^[A-Za-z0-9_]+$")
 
 RETIRED_SOURCES = frozenset({"btdig", "apibay_adult"})
 
@@ -204,45 +201,6 @@ def settings_defaults() -> dict:
         for k, v in DEFAULT_SETTINGS.items()
     }
 
-def validate_source(src: dict, existing_keys=None) -> list[str]:
-    errs: list[str] = []
-    if not isinstance(src, dict):
-        return ["配置项格式错误"]
-
-    key = str(src.get("key") or "").strip()
-    if not key:
-        errs.append("key 不能为空")
-    elif not _KEY_RE.match(key):
-        errs.append("key 只能包含字母数字下划线，且不能为空")
-    elif existing_keys and key in set(existing_keys):
-        errs.append(f"key 已存在：{key}")
-
-    label = str(src.get("label") or "").strip()
-    if not label:
-        errs.append("名称不能为空")
-
-    stype = str(src.get("type") or "builtin").strip()
-    if stype != "builtin":
-        errs.append(f"不支持的源类型：{stype}")
-
-    timeout = src.get("timeout", 15)
-    try:
-        timeout = int(timeout)
-        if not (1 <= timeout <= 120):
-            errs.append("超时需在 1-120 秒之间")
-    except (TypeError, ValueError, OverflowError):
-        errs.append("超时必须是整数")
-
-    from . import sources as sourcesmod
-    if key and key not in sourcesmod.BUILTIN_KEYS:
-        errs.append(f"未知内置源 key：{key}")
-    base = str(src.get("base") or "").strip()
-    if base and not base.lower().startswith(("http://", "https://")):
-        errs.append("URL 覆盖必须以 http:// 或 https:// 开头")
-
-    return errs
-
-
 class Config:
 
     lock = threading.RLock()
@@ -277,19 +235,12 @@ class Config:
                            version, SOURCES_VERSION)
         return raw
 
-    def retired_keys(self) -> set[str]:
-        raw = self.data.get("retiredBuiltins")
-        if not isinstance(raw, list):
-            return set()
-        return {str(k).strip() for k in raw if str(k).strip()}
-
     def _normalize(self):
         with self.lock:
             srcs = self.data.get("sources")
             if not isinstance(srcs, list):
                 srcs = []
 
-            retired = self.retired_keys()
             cleaned: list[dict] = []
             seen_keys: set[str] = set()
             for item in srcs:
@@ -317,7 +268,7 @@ class Config:
 
             for default in DEFAULT_SOURCES:
                 key = default.get("key", "")
-                if key and key not in seen_keys and key not in retired:
+                if key and key not in seen_keys:
                     seen_keys.add(key)
                     fresh = dict(default)
                     fresh["order"] = len(cleaned)
@@ -394,11 +345,6 @@ class Config:
                     entry.pop("demoteFrom", None)
             else:
                 self.data.pop("orderLocked", None)
-
-    def reset_defaults(self) -> None:
-        with self.lock:
-            self.data = defaults()
-            self._normalize()
 
 class Settings:
 
@@ -495,9 +441,6 @@ class Settings:
         if not rejected:
             self.data.update(coerced)
         return rejected
-
-    def reset_defaults(self) -> None:
-        self.data = settings_defaults()
 
 
 HEALTH_WINDOW = 5

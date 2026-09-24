@@ -115,10 +115,7 @@ _NET_SIGNS = ("urlerror", "gaierror", "getaddrinfo", "name or service not known"
 
 
 def _addr_of(entry: dict, raw: bool = False) -> str:
-    if entry.get("addr"):
-        value = str(entry["addr"])
-    else:
-        value = sources.base_of(entry.get("key", ""), entry.get("base") or "")
+    value = sources.base_of(entry.get("key", ""), entry.get("base") or "")
     return str(value) if raw else _redact(value)
 
 
@@ -179,7 +176,7 @@ def classify(ok: bool, count: int, err: str, ms: int = 0) -> tuple[str, int]:
         return OUTCOME_4XX, code
     if code >= 500:
         return OUTCOME_5XX, code
-    if "timed out" in low or "timeout" in low or "timeouterror" in low:
+    if sources._is_timeout_text(err or ""):
         return OUTCOME_TIMEOUT, 0
 
     if _PROXY_SIGN_RE.search(str(err or "")):
@@ -361,7 +358,7 @@ class Api:
         self._settings.load()
         runtime.replace(dict(self._settings.data))
         try:
-            self._migration = migrate.run(self._settings)
+            self._migration = migrate.run(self._settings, self._cfg)
         except Exception as exc:
             self._migration = {"done": False, "error": f"{type(exc).__name__}: {exc}"}
             logger.warning("旧配置迁移跳过：%s", exc)

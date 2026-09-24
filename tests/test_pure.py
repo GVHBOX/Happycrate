@@ -113,35 +113,6 @@ class DecodeTorrentFilesTest(unittest.TestCase):
         self.assertEqual(sources.decode_torrent_files(b"d8:announce"), [])
 
 
-class ValidateSourceTest(unittest.TestCase):
-
-    def test_empty_dict_rejected(self):
-        self.assertTrue(config.validate_source({}))
-
-    def test_builtin_unknown_key(self):
-        errs = config.validate_source({"key": "ghost", "label": "G",
-                                       "type": "builtin", "timeout": 15})
-        self.assertTrue(any("未知内置源" in e for e in errs))
-
-    def test_builtin_known_key(self):
-        self.assertEqual(config.validate_source({"key": "nyaa", "label": "N",
-                                                 "type": "builtin", "timeout": 15}), [])
-
-    def test_builtin_bad_base(self):
-        errs = config.validate_source({"key": "nyaa", "label": "N",
-                                       "type": "builtin", "base": "ftp://x"})
-        self.assertTrue(any("http" in e for e in errs))
-
-    def test_custom_type_is_rejected(self):
-        errs = config.validate_source({"key": "c1", "label": "C", "type": "json",
-                                       "url": "https://a.example/s?q={query}"})
-        self.assertTrue(any("不支持的源类型" in e for e in errs))
-
-    def test_bad_timeout(self):
-        errs = config.validate_source({"key": "nyaa", "label": "N",
-                                       "type": "builtin", "timeout": 999})
-        self.assertTrue(any("超时" in e for e in errs))
-
 
 class DedupeTest(unittest.TestCase):
 

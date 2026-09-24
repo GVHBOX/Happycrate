@@ -152,6 +152,8 @@
 
   function dragRows(container, opts){
     var ctx = null;
+    var dragRow = null;
+    var cancelled = false;
 
     container.addEventListener("pointerdown", function(e){
       var handle = e.target.closest("[data-drag]");
@@ -159,58 +161,161 @@
       if (opts && opts.blocked && opts.blocked()) return;
       var row = handle.closest(".row");
       if (!row) return;
+      var rect = row.getBoundingClientRect();
       ctx = {
         row: row,
         key: row.dataset.key,
         startY: e.clientY,
+        grabDy: e.clientY - rect.top,
         dy: 0,
         active: false,
-        target: null
+        target: null,
+        ph: null,
+        top0: rect.top,
+        rowH: rect.height
       };
+      dragRow = row;
+      cancelled = false;
       row.setPointerCapture(e.pointerId);
+      e.preventDefault();
     });
 
     container.addEventListener("pointermove", function(e){
-      if (!ctx) return;
+      if (!ctx || cancelled) return;
       ctx.dy = e.clientY - ctx.startY;
-      if (!ctx.active && Math.abs(ctx.dy) < 4) return;
+      if (!ctx.active && Math.abs(ctx.dy) < 6) return;
       if (!ctx.active){
         ctx.active = true;
+        var rect = ctx.row.getBoundingClientRect();
+        ctx.row.style.width = rect.width + "px";
+        ctx.row.style.top = rect.top + "px";
         ctx.row.classList.add("dragging");
+        ctx.rowH = rect.height;
+        var ph = document.createElement("div");
+        ph.style.height = rect.height + "px";
+        ph.className = "placeholder";
+        container.insertBefore(ph, ctx.row);
+        ctx.ph = ph;
       }
-      ctx.row.style.transform = "translateY(" + ctx.dy + "px)";
-
-      var rows = [].slice.call(container.querySelectorAll(".row")).filter(function(r){
-        return r !== ctx.row;
-      });
-      var target = rows.length;
-      for (var i = 0; i < rows.length; i++){
-        var rc = rows[i].getBoundingClientRect();
-        if (e.clientY < rc.top + rc.height / 2){ target = i; break; }
+      ctx.row.style.top = (ctx.top0 + ctx.dy) + "px";
+      var pointerMid = e.clientY - ctx.grabDy + ctx.rowH / 2;
+      var movers = rowList(ctx.row);
+      var phNow = phIndexInDOM(ctx.ph, ctx.row);
+      var phIdx = movers.length;
+      for (var i = 0; i < movers.length; i++){
+        var mid = movers[i].getBoundingClientRect().top + movers[i].offsetHeight / 2;
+        if (pointerMid < mid){ phIdx = i; break; }
       }
-      ctx.target = target;
-
-      [].slice.call(container.querySelectorAll(".indicator")).forEach(function(x){ x.remove(); });
-      var ind = document.createElement("div");
-      ind.className = "indicator";
-      if (target >= rows.length) container.appendChild(ind);
-      else container.insertBefore(ind, rows[target]);
+      if (phIdx !== phNow) slidePlaceholder(container, ctx.ph, phIdx, movers);
     });
 
-    function finish(){
-      if (!ctx) return;
-      var done = ctx;
-      ctx = null;
-      done.row.style.transform = "";
-      done.row.classList.remove("dragging");
-      [].slice.call(container.querySelectorAll(".indicator")).forEach(function(x){ x.remove(); });
-      if (done.active && done.target != null && opts && opts.onDrop){
-        opts.onDrop(done.key, done.target);
+    function phIndexInDOM(ph, dragRowEl){
+      var n = 0, el = ph.previousElementSibling;
+      while (el){
+        if (el.classList.contains("row") && el !== dragRowEl) n++;
+        el = el.previousElementSibling;
+      }
+      return n;
+    }
+
+    function flipMove(movers, place){
+      var before = new Map();
+      movers.forEach(function(r){ before.set(r, r.getBoundingClientRect().top); });
+      place();
+      movers.forEach(function(r){
+        var dy = before.get(r) - r.getBoundingClientRect().top;
+        if (Math.abs(dy) > 1){
+          r.style.transition = "none";
+          r.style.transform = "translateY(" + dy + "px)";
+          void r.offsetHeight;
+          r.style.transition = "";
+          r.style.transform = "";
+        } else {
+          r.style.transition = "";
+        }
+      });
+    }
+
+    function slidePlaceholder(containerEl, ph, to, movers){
+      var phBefore = ph.getBoundingClientRect().top;
+      flipMove(movers, function(){
+        if (to <= 0) containerEl.insertBefore(ph, movers[0] || null);
+        else if (to >= movers.length) containerEl.appendChild(ph);
+        else containerEl.insertBefore(ph, movers[to]);
+      });
+      var phDy = phBefore - ph.getBoundingClientRect().top;
+      if (Math.abs(phDy) > 1){
+        ph.style.transition = "none";
+        ph.style.transform = "translateY(" + phDy + "px)";
+        void ph.offsetHeight;
+        ph.style.transition = "";
+        ph.style.transform = "";
       }
     }
 
-    container.addEventListener("pointerup", finish);
-    container.addEventListener("pointercancel", finish);
+    function rowList(exclude){
+      return [].slice.call(container.querySelectorAll(".row")).filter(function(r){
+        return r !== exclude;
+      });
+    }
+
+    function finish(commit){
+      if (!ctx || cancelled) { ctx = null; dragRow = null; return; }
+      var d = ctx;
+      ctx = null;
+      if (!d.active){
+        dragRow = null;
+        return;
+      }
+      d.row.style.width = "";
+      var dropTo = -1;
+      if (d.ph && d.ph.isConnected){
+        dropTo = phIndexInDOM(d.ph, d.row);
+        var phRect = d.ph.getBoundingClientRect();
+        var rowRect = d.row.getBoundingClientRect();
+        d.row.style.top = (rowRect.top + phRect.top - rowRect.top) + "px";
+        d.row.style.transition = "top .26s var(--spring), box-shadow .2s var(--e)";
+        d.ph.style.height = "0px";
+        d.ph.style.marginTop = "0px";
+        d.ph.style.marginBottom = "0px";
+        var movers = rowList(d.row);
+        flipMove(movers, function(){
+          container.insertBefore(d.row, d.ph);
+        });
+        setTimeout(function(){
+          d.row.style.top = "";
+          d.row.style.transition = "";
+          d.row.style.width = "";
+          d.row.classList.remove("dragging");
+          if (d.ph) d.ph.remove();
+          if (commit && dropTo >= 0 && opts && opts.onDrop){
+            opts.onDrop(d.key, dropTo);
+          }
+        }, 270);
+        return;
+      }
+      d.row.style.top = "";
+      d.row.classList.remove("dragging");
+      if (d.ph) d.ph.remove();
+      if (commit && dropTo >= 0 && opts && opts.onDrop){
+        opts.onDrop(d.key, dropTo);
+      }
+    }
+
+    container.addEventListener("pointerup", function(){ finish(true); });
+    container.addEventListener("pointercancel", function(){ finish(false); });
+    document.addEventListener("keydown", function(e){
+      if (e.key !== "Escape" || !dragRow) return;
+      cancelled = true;
+      var d = ctx;
+      ctx = null;
+      dragRow = null;
+      if (!d) return;
+      d.row.style.top = "";
+      d.row.style.width = "";
+      d.row.classList.remove("dragging");
+      if (d.ph) d.ph.remove();
+    });
   }
 
   HC.motion = {

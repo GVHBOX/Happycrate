@@ -1,6 +1,26 @@
 (function(){
   var HC = window.HC || (window.HC = {});
 
+  var FATAL = ["timeout", "net", "http403", "http5xx", "blocked", "http451", "err"];
+
+  function mergeState(outcomes){
+    var recent = (outcomes || []).filter(function(o){
+      return o && o !== "cancel";
+    }).slice(-5);
+    if (!recent.length) return "na";
+    var fatal = recent.filter(function(o){ return FATAL.indexOf(o) >= 0; }).length;
+    if (fatal >= 3 || FATAL.indexOf(recent[recent.length - 1]) >= 0) return "err";
+    var last = recent[recent.length - 1];
+    if (last === "empty") return "empty";
+    if (["http429", "http4xx", "parse", "shape", "unknown"].indexOf(last) >= 0) return "warn";
+    if (last === "ok" || last === "slow"){
+      var empties = recent.filter(function(o){ return o === "empty"; }).length;
+      if (empties && empties * 2 > recent.length) return "empty";
+      return "ok";
+    }
+    return "na";
+  }
+
   var state = {
     sources: [],
     filter: "",
@@ -35,11 +55,15 @@
     },
 
     badCount: function(){
-      return state.sources.filter(function(s){ return s.health.state === "err"; }).length;
+      return state.sources.filter(function(s){
+        return s.enabled && mergeState((s.health && s.health.outcomes) || []) === "err";
+      }).length;
     },
 
     emptyCount: function(){
-      return state.sources.filter(function(s){ return s.health.state === "empty"; }).length;
+      return state.sources.filter(function(s){
+        return s.enabled && mergeState((s.health && s.health.outcomes) || []) === "empty";
+      }).length;
     },
 
     enabledCount: function(){
@@ -54,4 +78,5 @@
   }
 
   HC.store = store;
+  HC.mergeState = mergeState;
 })();

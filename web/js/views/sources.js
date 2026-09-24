@@ -18,16 +18,27 @@
 
   function healthClass(s){
     if (s.probing) return "na";
-    return s.health.state || "na";
+    return mergeState((s.health && s.health.outcomes) || (s.health && s.health.times) || []);
   }
 
   function healthText(s){
     if (s.probing) return '<span class="d">·</span><span class="d">·</span><span class="d">·</span>';
-    var h = s.health;
-    if (h.state === "err") return esc(h.err || "异常");
-    if (h.state === "empty") return esc(h.err || "无结果");
-    if (h.err && h.state !== "na") return esc(h.err);
-    if (h.state === "na" || !h.ms) return "—";
+    var h = s.health || {};
+    var state = mergeState(h.outcomes || h.times || []);
+    if (state === "err"){
+      var last = (h.outcomes || h.times || []).filter(function(o){
+        return o && o !== "cancel";
+      }).pop() || "";
+      return esc(OUTCOME_TEXT[last] || h.err || "请求失败");
+    }
+    if (state === "empty") return "无结果";
+    if (state === "warn"){
+      var w = (h.outcomes || h.times || []).slice().reverse().find(function(o){
+        return o && o !== "ok" && o !== "slow" && o !== "cancel";
+      }) || "";
+      return esc(OUTCOME_TEXT[w] || "—");
+    }
+    if (state === "na" || !h.ms) return "—";
     return h.ms >= 1000 ? (h.ms / 1000).toFixed(1) + "s" : h.ms + "ms";
   }
 
@@ -56,6 +67,15 @@
     err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn",
     http451: "err", blocked: "err", shape: "warn", unknown: "warn"
   };
+
+  var OUTCOME_TEXT = {
+    timeout: "超时", net: "无法连接", http403: "403 拒绝", http429: "429 限流",
+    http5xx: "服务异常", http4xx: "请求被拒", parse: "解析失败",
+    http451: "451 地区受限", blocked: "代理拦截", shape: "结果页结构不符",
+    unknown: "请求失败", empty: "无结果", err: "请求失败"
+  };
+
+  var mergeState = HC.mergeState || function(outcomes){ return "na"; };
 
   function highlightJson(text){
     return esc(text).replace(
@@ -249,7 +269,14 @@
         if (!s) return;
         s.probing = false;
         s.just = true;
-        s.health = {state: res.state, ms: res.ms, err: res.err, times: s.health.times};
+        var outcomes = ((s.health && s.health.outcomes) ||
+          (s.health && s.health.times) || []).slice();
+        outcomes.push(res.outcome || res.state);
+        s.health = {
+          state: res.state, ms: res.ms, err: res.err,
+          times: s.health && s.health.times || [],
+          outcomes: outcomes.slice(-5)
+        };
         store.set({probeDone: store.get().probeDone + 1});
       });
     };
@@ -260,21 +287,31 @@
       var key = sw.dataset.sw, s = store.byKey(key);
       if (!s) return;
       s.enabled = !s.enabled;
+      s.just = false;
       sw.classList.toggle("off", !s.enabled);
-      sw.closest(".row").classList.toggle("off", !s.enabled);
+      sw.setAttribute("aria-pressed", String(s.enabled));
+      var row = sw.closest(".row");
+      row.classList.toggle("off", !s.enabled);
+      var st = s.enabled ? healthClass(s) : "na";
+      var ms = row.querySelector(".ms"), hd = row.querySelector(".hd");
+      if (ms){
+        ms.className = "ms " + st;
+        ms.innerHTML = healthText(s);
+      }
+      if (hd) hd.className = "hd " + st;
       api.toggleSource(key, s.enabled);
       updateStatus();
     });
 
     M.dragRows(rowsEl, {
       blocked: function(){ return !!store.get().filter.trim(); },
-      onDrop: function(key, target){
+      onDrop: function(key, dropTo){
         var st = store.get();
         var from = st.sources.findIndex(function(s){ return s.key === key; });
         if (from < 0) return;
         var next = st.sources.slice();
         var item = next.splice(from, 1)[0];
-        var to = target > from ? target - 1 : target;
+        var to = Math.max(0, Math.min(next.length, dropTo));
         next.splice(to, 0, item);
         store.set({sources: next});
         api.reorderSources(next.map(function(s){ return s.key; }));

@@ -9,7 +9,7 @@
     {key:"mikan", label:"蜜柑计划", type:"builtin", enabled:true, timeout:15,
      addr:"https://mikanani.me", health:{state:"warn", ms:5230, err:"", times:["ok","ok","slow","slow","slow"]}},
     {key:"dmhy", label:"动漫花园", type:"builtin", enabled:true, timeout:15,
-     addr:"https://share.dmhy.org", health:{state:"err", ms:0, err:"超时", times:["ok","ok","err","err","err"]}},
+     addr:"https://share.dmhy.org", health:{state:"err", ms:0, err:"超时", times:["ok","ok","timeout","timeout","timeout"]}},
     {key:"sukebei", label:"Sukebei", type:"builtin", enabled:true, timeout:15,
      addr:"https://sukebei.nyaa.si", health:{state:"ok", ms:183, err:"", times:["ok","ok","ok","ok","ok"]}},
     {key:"eztv", label:"EZTV", type:"builtin", enabled:true, timeout:15,
@@ -59,7 +59,8 @@
           ms: (s.health && s.health.ms) || 0,
           err: (s.health && s.health.err) || "",
           times: (s.health && s.health.times) || [],
-          outcomes: (s.health && s.health.outcomes) || [],
+          outcomes: (s.health && s.health.outcomes) ||
+            (s.health && s.health.times) || [],
           empty: !!(s.health && s.health.empty),
           lastOk: (s.health && s.health.lastOk) || 0,
           lastCount: (s.health && s.health.lastCount) || 0
@@ -161,17 +162,25 @@
       targets.forEach(function(s, i){
         setTimeout(function(){
           var roll = s.health.state;
-          var res = roll === "err"
-            ? {state:"err", ms:0, err:s.health.err || "超时"}
+          var outcome = roll === "err"
+            ? "timeout"
             : roll === "empty"
-            ? {state:"empty", ms:s.health.ms || 90, err:"无结果"}
+            ? "empty"
+            : roll === "warn" ? "slow" : "ok";
+          var res = roll === "err"
+            ? {state:"err", ms:0, err:s.health.err || "超时", outcome:outcome}
+            : roll === "empty"
+            ? {state:"empty", ms:s.health.ms || 90, err:"无结果", outcome:outcome}
             : {state: roll === "warn" ? "warn" : "ok",
                ms: roll === "warn" ? 4800 + Math.round(Math.random()*900)
                                    : 30 + Math.round(Math.random()*260),
-               err:""};
+               err:"", outcome:outcome};
           var times = s.health.times || [];
+          var outcomes = (s.health.outcomes || times).slice();
+          outcomes.push(outcome);
           var hits = times.filter(function(t){ return t === "empty"; }).length;
           s.health = {state:res.state, ms:res.ms, err:res.err, times:times,
+                      outcomes: outcomes.slice(-5),
                       empty: res.state === "empty" || (hits > 0 && hits * 2 > times.length)};
           if (probeOne) probeOne(s.key, res);
           left--;

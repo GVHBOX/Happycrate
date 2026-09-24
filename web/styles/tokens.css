@@ -141,7 +141,7 @@
 
   --fr:1;
   --frc:clamp(0.9, calc(var(--fr) * 0.9 + 0.1), 1.6);
-  --fcd:clamp(1, calc(var(--fr) * 0.55 + 0.45), 1.3);
+  --fcd:var(--fr);
   --frs:clamp(0.94, calc(1 + (var(--fr) - 1) / 3), 1.3);
   --h-row:calc(58px*var(--frs));
   --h-head:calc(56px*var(--frs));

@@ -546,7 +546,8 @@ class Api:
             outcome, code = classify(ok, count, err, ms)
             text = outcome_text(outcome, code)
             h = self._mark(src.key, ok, count, ms, err)
-            payload = json.dumps({"key": src.key, "state": h["state"], "ms": h["ms"], "err": text},
+            payload = json.dumps({"key": src.key, "state": h["state"], "ms": h["ms"], "err": text,
+                                  "outcome": outcome},
                                  ensure_ascii=False)
             self._push(f"window.__onProbe && window.__onProbe({payload})")
 

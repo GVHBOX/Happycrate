@@ -40,7 +40,7 @@
     items: [], sel: {}, anchor: "",
     field: "", desc: false,
     busy: false, settled: false, searched: false, hero: true,
-    token: 0, done: 0, total: 0,
+    token: 0, done: 0, total: 0, startSeq: 0,
     errors: {}, names: {},
     rawTotal: 0, dupCount: 0,
     enabledCount: 0, totalSources: 0,
@@ -301,7 +301,7 @@
           setChip("搜索中…", "busy");
         }
       }
-    });
+    }).catch(function(err){ console.warn("listSources failed", err); });
   }
 
   function chipIdle(){
@@ -819,6 +819,8 @@
     if (overCap(magnets.length)) return;
     HC.api.deliver(magnets).then(function(r){
       flash(r.message || (r.ok ? "已提交" : "投递失败"), r.ok ? "ok" : "err");
+    }).catch(function(err){
+      HC.motion.toast("投递失败：" + String(err && err.message ? err.message : err), "err");
     });
   }
 
@@ -1015,6 +1017,7 @@
   }
 
   function abortSearch(msg){
+    st.startSeq++;
     st.busy = false;
     st.token = 0;
     st.pending = [];
@@ -1034,12 +1037,14 @@
     }
     if (st.busy){
       HC.api.cancelSearch(st.token);
+      st.startSeq++;
       st.busy = false;
       st.token = 0;
       st.pending = [];
       Object.keys(st.strip).forEach(function(k){
         if (st.strip[k].state === "pending" || st.strip[k].state === "busy") st.strip[k] = {state:"cancel"};
       });
+      if (Object.keys(st.strip).length) st.searched = true;
       paintStrip();
       goBtn.textContent = "搜索";
       goBtn.classList.remove("stop");
@@ -1078,7 +1083,10 @@
     setChip("搜索中…", "busy");
     goBtn.textContent = "停止";
     goBtn.classList.add("stop");
+    st.startSeq++;
+    var seq = st.startSeq;
     HC.api.startSearch(q).then(function(res){
+      if (seq !== st.startSeq) return;
       if (!res || !res.ok){
         abortSearch(res && res.error);
         return;
@@ -1355,6 +1363,7 @@
       if (e.button !== 0) return;
       justMarqueed = false;
       if (e.shiftKey || e.ctrlKey || e.metaKey) return;
+      if (e.target.closest(".fpanel, .fchev, button, a, input, textarea")) return;
       var rect = rowsEl.getBoundingClientRect();
       if (e.clientX > rect.right - (rowsEl.offsetWidth - rowsEl.clientWidth)) return;
       rowsEl.classList.add("mq-ing");
@@ -1689,8 +1698,8 @@
     });
 
     HC.api.getSettings().then(applySettings);
-    HC.api.onLive(loadSourcesOnce);
     HC.api.onLive(function(){
+      loadSourcesOnce();
       HC.api.getSettings().then(applySettings);
     });
 

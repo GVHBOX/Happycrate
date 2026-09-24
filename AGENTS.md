@@ -136,7 +136,7 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 | 位置 | 性质 | 说明 |
 | --- | --- | --- |
 | `happycrate.bat` | 启动器 | 无参数跑 `dist` 里的 exe；`dev` 最小化跑源码；`web` 起本地服务器 8123 |
-| `tests/` | 测试 | 单元测试（599 项）· `front_smoke.cjs` 等 6 个源码校验 · `e2e/hc-e2e-test.mjs` 端到端 |
+| `tests/` | 测试 | 单元测试（项数以 check-all 实测为准）· `front_smoke.cjs` 等 6 个源码校验 · `e2e/hc-e2e-test.mjs` 端到端 |
 | `tools/` | 生产工具 | **一键全检** · 代码体检扫描器 · dist 同步 · 护栏回归 · 提交前检查。**清单见 `tools/README.md`** |
 
 `tools/` 里的东西是长期资产：**不许以「清理」「整理」为名删除或重写**。
@@ -150,7 +150,7 @@ Windows 路径（`D:\...`）引用，不要用 `/d/...` 这种 shell 风格路�
 .venv/Scripts/python.exe tools/check-all.py
 # --full 加 E2E · --guard 加反向注入 · --update-baseline 重设已知项基线
 
-# 单元测试（599 项）
+# 单元测试（项数以 check-all 输出为准，别在本文件写死）
 .venv/Scripts/python.exe -m unittest discover -s tests -p "test_*.py"
 
 # 只跑某几条反向注入（全量 38 条要 5min，--list 看名字，--case 过滤）

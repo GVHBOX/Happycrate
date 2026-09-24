@@ -128,6 +128,7 @@
       ta.style.position = "fixed";
       ta.style.opacity = "0";
       document.body.appendChild(ta);
+      ta.focus();
       ta.select();
       var ok = document.execCommand("copy");
       ta.remove();
@@ -149,6 +150,14 @@
       delete btn.dataset.morphing;
     }, 1100);
   }
+
+  var dragEscCancel = null;
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape" || !dragEscCancel) return;
+    var fn = dragEscCancel;
+    dragEscCancel = null;
+    fn();
+  });
 
   function dragRows(container, opts){
     var ctx = null;
@@ -176,9 +185,22 @@
       };
       dragRow = row;
       cancelled = false;
+      dragEscCancel = cancelDrag;
       row.setPointerCapture(e.pointerId);
       e.preventDefault();
     });
+
+    function cancelDrag(){
+      cancelled = true;
+      var d = ctx;
+      ctx = null;
+      dragRow = null;
+      if (!d) return;
+      d.row.style.top = "";
+      d.row.style.width = "";
+      d.row.classList.remove("dragging");
+      if (d.ph) d.ph.remove();
+    }
 
     container.addEventListener("pointermove", function(e){
       if (!ctx || cancelled) return;
@@ -260,6 +282,7 @@
     }
 
     function finish(commit){
+      if (dragEscCancel === cancelDrag) dragEscCancel = null;
       if (!ctx || cancelled) { ctx = null; dragRow = null; return; }
       var d = ctx;
       ctx = null;
@@ -304,18 +327,6 @@
 
     container.addEventListener("pointerup", function(){ finish(true); });
     container.addEventListener("pointercancel", function(){ finish(false); });
-    document.addEventListener("keydown", function(e){
-      if (e.key !== "Escape" || !dragRow) return;
-      cancelled = true;
-      var d = ctx;
-      ctx = null;
-      dragRow = null;
-      if (!d) return;
-      d.row.style.top = "";
-      d.row.style.width = "";
-      d.row.classList.remove("dragging");
-      if (d.ph) d.ph.remove();
-    });
   }
 
   HC.motion = {

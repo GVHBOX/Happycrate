@@ -931,6 +931,31 @@
 
     root.querySelector("#btnClose").onclick = tryClose;
 
+    if (mount._clkKey) document.removeEventListener("click", mount._clkKey, true);
+    mount._clkKey = function(e){
+      if (!root || !root.isConnected) return;
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      if (snapshot() === baseline) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var href = a.getAttribute("href");
+      HC.motion.confirm("有未保存的改动", "放弃并离开", function(){
+        lookStop();
+        location.hash = href;
+      });
+    };
+    document.addEventListener("click", mount._clkKey, true);
+
+    if (mount._hashKey) document.removeEventListener("hashchange", mount._hashKey);
+    mount._hashKey = function(){
+      lookStop();
+      if (mount._clkKey) document.removeEventListener("click", mount._clkKey, true);
+      if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
+      document.removeEventListener("hashchange", mount._hashKey);
+    };
+    document.addEventListener("hashchange", mount._hashKey);
+
     if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
     mount._docKey = function(e){
       if (e.key !== "Escape") return;

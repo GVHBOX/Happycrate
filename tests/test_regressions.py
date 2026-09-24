@@ -614,27 +614,6 @@ class AutoOrderToggleTest(unittest.TestCase):
                          "解锁后坏源应被排到最后")
 
 
-class SaveSourceGuardTest(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpdir = tempfile.mkdtemp(prefix="hc-save-")
-        self.api = api_mod.Api()
-        self.api._cfg = config.Config(path=Path(self.tmpdir) / "sources.json")
-        self.api._cfg.load()
-        self.api._settings = config.Settings(path=Path(self.tmpdir) / "settings.json")
-        self.api._settings.load()
-        self.api._health_store = config.HealthStore(path=Path(self.tmpdir) / "health.json")
-        sources.reload_from_config(self.api._cfg)
-
-    def test_editing_missing_key_is_rejected(self):
-        result = self.api.save_source({
-            "key": "typo_key", "label": "L", "timeout": 15,
-        })
-        self.assertFalse(result.get("ok"),
-                         "明确是编辑但 key 不存在时，应当报错而不是静默新建")
-        self.assertTrue(result.get("errors"))
-
-
 class FilesCapTest(unittest.TestCase):
 
     def test_inline_files_are_not_truncated_to_eight(self):

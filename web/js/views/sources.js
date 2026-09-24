@@ -7,20 +7,12 @@
 
   var ICON = {
     drag:'<svg width="12" height="16" viewBox="-2 0 16 16" fill="none"><circle cx="3" cy="3" r="1.2" fill="currentColor"/><circle cx="9" cy="3" r="1.2" fill="currentColor"/><circle cx="3" cy="8" r="1.2" fill="currentColor"/><circle cx="9" cy="8" r="1.2" fill="currentColor"/><circle cx="3" cy="13" r="1.2" fill="currentColor"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/></svg>',
-    edit:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M9.6 2.1l2.2 2.2L5.2 10.9H3V8.7l6.6-6.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
-    trash:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.5 4h9M5.4 4V2.8h3.2V4M3.6 4l.6 7.2h5.6L10.4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    check:'<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     info:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.3v3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="4.3" r=".8" fill="currentColor"/></svg>',
-    refresh:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.4 6.2a4.6 4.6 0 1 1 1.3 4.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M1.6 2.6v3.9h3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     bolt:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7.7 1.4L3.1 7.8h3.2l-.5 4.8 4.9-6.6H7.4l.3-4.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
     load:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="25 8" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 2.6v8.8M2.6 7h8.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     close:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     list:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/><circle cx="2.3" cy="8" r="1" fill="currentColor"/><circle cx="2.3" cy="11.6" r="1" fill="currentColor"/></svg>',
-    export:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 9.4V2.4M4.2 5.2L7 2.4l2.8 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
-    import:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M7 2.4v7M4.2 6.6L7 9.4l2.8-2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.4 9.4v1.4a1 1 0 0 0 1 1h7.2a1 1 0 0 0 1-1V9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     copy:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M9.4 4.6V3.6a1 1 0 0 0-1-1H3.6a1 1 0 0 0-1 1v4.8a1 1 0 0 0 1 1h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
-    save:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     chev:'<svg width="10" height="10" viewBox="-3 -3 16 16" fill="none"><path d="M2 3.5 L5 6.5 L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
@@ -40,153 +32,22 @@
   }
 
   function rowHtml(s, i, st){
-    var col2 = st.batch
-      ? '<button class="cb ' + (store.isChecked(s.key) ? "on" : "") + '" aria-pressed="' + (store.isChecked(s.key) ? "true" : "false") + '" data-check="' + esc(s.key) + '">' +
-        (store.isChecked(s.key) ? ICON.check : "") + '</button>'
-      : '<button class="sw ' + (s.enabled ? "" : "off") + '" aria-pressed="' + (s.enabled ? "true" : "false") + '" aria-label="' + esc(s.label) + '" data-sw="' + esc(s.key) +
-        '"></button>';
-
-    var ops = '<button class="op" data-edit="' + esc(s.key) + '" title="编辑">' + ICON.edit + '</button>';
-    if (st.batch){
-      ops += '<button class="op danger" data-del="' + esc(s.key) + '" title="删除">' + ICON.trash + '</button>';
-    }
-
-    var cls = "row" + (s.enabled ? "" : " off") +
-              (st.batch && store.isChecked(s.key) ? " sel" : "");
     var anim = st.firstPaint
       ? "animation:rowIn .3s var(--land) both " + Math.min(i, 10) * 28 + "ms;"
       : "";
 
-    return '<div class="' + cls + '" data-key="' + esc(s.key) + '" style="' + anim + '">' +
+    return '<div class="row' + (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '" style="' + anim + '">' +
       '<span class="handle" data-drag="' + esc(s.key) + '">' + ICON.drag + '</span>' +
-      '<span>' + col2 + '</span>' +
+      '<span><button class="sw ' + (s.enabled ? "" : "off") + '" aria-pressed="' + (s.enabled ? "true" : "false") + '" aria-label="' + esc(s.label) + '" data-sw="' + esc(s.key) + '"></button></span>' +
       '<span class="namecell"><span class="name">' + esc(s.label) + '</span>' +
         '<div class="addr">' + esc(s.addr) + '</div></span>' +
       '<span class="health"><span class="ms ' + healthClass(s) + (s.just ? " up" : "") + '">' +
         healthText(s) + '</span><span class="hd ' + healthClass(s) + '"></span></span>' +
-      '<span class="ops">' + ops + '</span></div>';
+      '</div>';
   }
 
   var openModal = HC.motion.openModal;
   var closeModal = HC.motion.closeModal;
-
-  function stepper(btnRoot, valEl, min, max){
-    btnRoot.querySelectorAll("[data-step]").forEach(function(b){
-      b.onclick = function(){
-        var v = parseInt(valEl.textContent, 10) + parseInt(b.dataset.step, 10);
-        valEl.textContent = Math.max(min, Math.min(max, v));
-      };
-    });
-  }
-
-  var STEP_BTN = {
-    minus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
-  };
-
-  function showErr(m, msg, okMsg){
-    var el = m.querySelector("#fErr");
-    if (!el) return;
-    if (okMsg){
-      el.style.color = "var(--ok)";
-      el.textContent = okMsg;
-      setTimeout(function(){ el.textContent = ""; el.style.color = ""; }, 2600);
-      return;
-    }
-    el.style.color = "";
-    el.textContent = msg || "";
-    var input = m.querySelector(".input");
-    if (msg && input){
-      input.classList.add("err");
-      setTimeout(function(){ input.classList.remove("err"); }, 1400);
-    }
-  }
-
-  function editorSource(existing){
-    if (!existing) return;
-    var d = Object.assign({key:"", label:"", timeout:15, addr:""}, existing);
-
-    api.sourceAddr(d.key).then(function(a){
-      if (a) d = Object.assign({}, d, {addr: a});
-      return d.key;
-    }).then(function(newKey){
-      var m = openModal(
-        '<div class="dhead"><div class="tile">' + ICON.edit + '</div>' +
-        '<div class="dtitle">编辑</div>' +
-        '<div class="spacer"></div><button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
-        '<div class="div"></div>' +
-        '<div class="mbody">' +
-          '<div style="display:flex;align-items:center;gap:8px">' +
-            '<span style="font:500 var(--fs-md)/1 inherit">标识</span>' +
-            '<span class="idchip">' + esc(newKey) + '</span></div>' +
-          '<div class="field"><label>名称</label>' +
-            '<input class="input" id="fLabel" value="' + esc(d.label) + '" placeholder="我的源"></div>' +
-          '<div class="field"><label>镜像地址</label>' +
-            '<input class="input mono" id="fUrl" value="' + esc(d.addr) + '" placeholder="https://e.com"></div>' +
-          '<div class="field"><label>超时（秒）</label>' +
-            '<div class="stepper">' +
-              '<button data-step="-1">' + STEP_BTN.minus + '</button>' +
-              '<span class="val" id="fTo">' + d.timeout + '</span>' +
-              '<button data-step="1">' + STEP_BTN.plus + '</button>' +
-            '</div></div>' +
-          '<div class="ferr" id="fErr"></div>' +
-        '</div>' +
-        '<div class="mfoot"><div class="spacer"></div>' +
-          '<button class="btn btn-ghost" data-close>取消</button>' +
-          '<button class="btn btn-ghost" id="mTest">测试</button>' +
-          '<button class="btn btn-brand" id="mSave">' + ICON.save + '保存</button></div>',
-        true
-      );
-
-      stepper(m, m.querySelector("#fTo"), 1, 120);
-
-      function collect(){
-        return {
-          key: newKey,
-          label: m.querySelector("#fLabel").value.trim(),
-          addr: m.querySelector("#fUrl").value.trim(),
-          timeout: parseInt(m.querySelector("#fTo").textContent, 10),
-          enabled: existing.enabled
-        };
-      }
-
-      m.querySelector("#mTest").onclick = function(){
-        var btn = this;
-        btn.classList.add("busy");
-        var entry = collect();
-        var hard = HC.validateSource(entry);
-        if (hard.length){
-          btn.classList.remove("busy");
-          showErr(m, hard[0]);
-          return;
-        }
-        api.testSource(entry).then(function(r){
-          btn.classList.remove("busy");
-          if (!r.ok){ showErr(m, (r.errors && r.errors[0]) || "测试失败"); return; }
-          if (r.count === 0){
-            showErr(m, "返回 0 条");
-            return;
-          }
-          showErr(m, "", "测试通过 · 返回 " + r.count + " 条结果");
-        }).catch(function(e){
-          btn.classList.remove("busy");
-          showErr(m, String(e && e.message ? e.message : e));
-        });
-      };
-
-      m.querySelector("#mSave").onclick = function(){
-        var entry = collect();
-        api.saveSource(entry).then(function(r){
-          if (!r.ok){ showErr(m, (r.errors && r.errors[0]) || "保存失败"); return; }
-          closeModal();
-          reload();
-          M.toast("已保存 " + entry.label, "ok");
-        }).catch(function(e){
-          showErr(m, String(e && e.message ? e.message : e));
-        });
-      };
-    });
-  }
 
   var SEMANTIC = {
     ok: "ok", slow: "ok", http429: "warn", http4xx: "warn",
@@ -252,7 +113,7 @@
     });
   }
 
-  var root = null, rowsEl = null, anchor = -1, autoOrder = true;
+  var root = null, rowsEl = null, autoOrder = true;
 
   function paintAuto(){
     var b = root && root.querySelector("#btnAuto");
@@ -288,12 +149,6 @@
     var list = store.visible();
     var badge = store.badCount();
 
-    root.querySelector("#hCol2").textContent = st.batch ? "选择" : "启用";
-    root.querySelector("#groupDaily").classList.toggle("hidden", st.batch);
-    root.querySelector("#groupBatch").classList.toggle("hidden", !st.batch);
-    root.querySelector("#groupBatchOps").classList.toggle("hidden", !st.batch);
-    root.querySelector(".search").classList.toggle("hidden", st.batch);
-
     var statusEl = root.querySelector("#status");
     if (st.probing){
       statusEl.innerHTML = "正在测速… " + st.probeDone + "/" + st.probeTotal;
@@ -306,60 +161,12 @@
         (badge ? ' · <a class="badlink" href="#">' + badge + " 个异常</a>" : "") +
         (emptyN ? ' · <span class="muted">' + emptyN + " 个无结果</span>" : "");
     }
-
-    root.querySelector("#batchInfo").textContent = "已选 " + st.checked.length + " 项";
-    root.querySelector("#btnDel").disabled = st.checked.length === 0;
   }
 
   function render(){
     if (!root) return;
     renderRows();
     updateStatus();
-  }
-
-  function rowIndexOf(row){
-    return [].slice.call(rowsEl.querySelectorAll(".row")).indexOf(row);
-  }
-
-  function setChecked(key, on){
-    var has = store.isChecked(key);
-    if (on && !has) store.get().checked.push(key);
-    if (!on && has){
-      var i = store.get().checked.indexOf(key);
-      store.get().checked.splice(i, 1);
-    }
-  }
-
-  function paintChecks(){
-    var st = store.get();
-    [].slice.call(rowsEl.querySelectorAll(".cb")).forEach(function(cb){
-      var key = cb.dataset.check;
-      var on = store.isChecked(key);
-      cb.classList.toggle("on", on);
-      cb.innerHTML = on ? ICON.check : "";
-      cb.closest(".row").classList.toggle("sel", on);
-    });
-    root.querySelector("#batchInfo").textContent = "已选 " + st.checked.length + " 项";
-    root.querySelector("#btnDel").disabled = st.checked.length === 0;
-  }
-
-  function onCheckClick(cb, e){
-    var row = cb.closest(".row");
-    var key = cb.dataset.check;
-    var idx = rowIndexOf(row);
-    var list = store.visible();
-
-    if (e.shiftKey && anchor >= 0){
-      store.get().checked = [];
-      var a = Math.min(anchor, idx), b = Math.max(anchor, idx);
-      list.slice(a, b + 1).forEach(function(s){
-        setChecked(s.key, true);
-      });
-    } else {
-      setChecked(key, !store.isChecked(key));
-      anchor = idx;
-    }
-    paintChecks();
   }
 
   function mount(mountEl){
@@ -372,29 +179,18 @@
           '<button class="iconbtn" id="btnClose" title="关闭">' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
         '<div class="bar">' +
-          '<div class="group" id="groupDaily">' +
+          '<div class="group">' +
             '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
             '<button class="btn btn-ghost" id="btnAuto">自动排序</button>' +
-            '<button class="btn btn-ghost" id="btnBatch">批量操作</button>' +
-          '</div>' +
-          '<div class="group hidden" id="groupBatch">' +
-            '<button class="btn btn-brand" id="btnBatchDone">' + ICON.check + '完成</button>' +
-            '<span class="status" id="batchInfo">已选 0 项</span>' +
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="search"><svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
             '<circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.4"/>' +
             '<path d="M9.6 9.6L12.6 12.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' +
             '<input id="search" placeholder="搜索源名称或地址" autocomplete="off"></div>' +
-          '<div class="group hidden" id="groupBatchOps">' +
-            '<button class="btn btn-ghost" id="btnDel">删除</button>' +
-            '<button class="btn btn-ghost" id="btnReset">' + ICON.refresh + '恢复默认</button>' +
-            '<button class="btn btn-ghost" id="btnExport">' + ICON.export + '导出</button>' +
-            '<button class="btn btn-ghost" id="btnImport">' + ICON.import + '导入</button>' +
-          '</div>' +
         '</div>' +
-        '<div class="thead"><span></span><span id="hCol2">启用</span><span>数据源</span>' +
-          '<span class="r">状态</span><span class="r">操作</span></div>' +
+        '<div class="thead"><span></span><span>启用</span><span>数据源</span>' +
+          '<span class="r">状态</span></div>' +
         '<div class="rows" id="rows"></div>' +
         '<div class="dfoot"><div class="dot"></div><span class="status" id="status"></span>' +
           '<div class="spacer"></div>' +
@@ -432,15 +228,6 @@
       api.setAutoOrder(autoOrder);
     };
 
-    root.querySelector("#btnBatch").onclick = function(){
-      anchor = -1;
-      store.set({batch: true, checked: []});
-    };
-    root.querySelector("#btnBatchDone").onclick = function(){
-      anchor = -1;
-      store.set({batch: false, checked: []});
-    };
-
     root.querySelector("#btnProbe").onclick = function(){
       var st = store.get();
       if (st.probing) return;
@@ -469,51 +256,18 @@
 
     rowsEl.addEventListener("click", function(e){
       var sw = e.target.closest("[data-sw]");
-      if (sw){
-        var key = sw.dataset.sw, s = store.byKey(key);
-        if (!s) return;
-        s.enabled = !s.enabled;
-        sw.classList.toggle("off", !s.enabled);
-        sw.closest(".row").classList.toggle("off", !s.enabled);
-        api.toggleSource(key, s.enabled);
-        updateStatus();
-        return;
-      }
-
-      var cb = e.target.closest("[data-check]");
-      if (cb && !cb.disabled){
-        onCheckClick(cb, e);
-        return;
-      }
-
-      var ed = e.target.closest("[data-edit]");
-      if (ed){
-        editorSource(store.byKey(ed.dataset.edit));
-        return;
-      }
-
-      var del = e.target.closest("[data-del]");
-      if (del && !del.disabled){
-        var dk = del.dataset.del, ds = store.byKey(dk);
-        var label = ds ? ds.label : dk;
-        M.confirm("删除 " + label + "？", "删除", function(){
-          api.removeSource(dk).then(function(ok){
-            if (!ok){ M.toast("删除失败"); return; }
-            reload();
-            M.toast("已删除 " + label, "ok");
-          });
-        });
-      }
-    });
-
-    rowsEl.addEventListener("dblclick", function(e){
-      var row = e.target.closest(".row");
-      if (!row || store.get().batch) return;
-      editorSource(store.byKey(row.dataset.key));
+      if (!sw) return;
+      var key = sw.dataset.sw, s = store.byKey(key);
+      if (!s) return;
+      s.enabled = !s.enabled;
+      sw.classList.toggle("off", !s.enabled);
+      sw.closest(".row").classList.toggle("off", !s.enabled);
+      api.toggleSource(key, s.enabled);
+      updateStatus();
     });
 
     M.dragRows(rowsEl, {
-      blocked: function(){ return store.get().batch || !!store.get().filter.trim(); },
+      blocked: function(){ return !!store.get().filter.trim(); },
       onDrop: function(key, target){
         var st = store.get();
         var from = st.sources.findIndex(function(s){ return s.key === key; });
@@ -524,39 +278,17 @@
         next.splice(to, 0, item);
         store.set({sources: next});
         api.reorderSources(next.map(function(s){ return s.key; }));
-        autoOrder = false;
-        paintAuto();
-        M.toast("已调整顺序", "ok");
       }
     });
 
     if (mount._docKey) document.removeEventListener("keydown", mount._docKey);
     mount._docKey = function(e){
-      if (e.key === "Escape"){
-        if (!root || !root.isConnected) return;
-        if (document.querySelector(".backdrop")){ closeModal(); return; }
-        var tag = (e.target && e.target.tagName) || "";
-        if (tag === "INPUT" || tag === "TEXTAREA") return;
-        if (store.get().batch){
-          anchor = -1;
-          store.set({batch: false, checked: []});
-          return;
-        }
-        location.hash = "search";
-        return;
-      }
-      if (!root || !store.get().batch) return;
-      if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")){
-        var tag = (e.target && e.target.tagName) || "";
-        if (tag === "INPUT" || tag === "TEXTAREA") return;
-        if (document.querySelector(".backdrop")) return;
-        e.preventDefault();
-        store.get().checked = [];
-        store.visible().forEach(function(s){
-          setChecked(s.key, true);
-        });
-        paintChecks();
-      }
+      if (e.key !== "Escape") return;
+      if (!root || !root.isConnected) return;
+      if (document.querySelector(".backdrop")){ closeModal(); return; }
+      var tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      location.hash = "search";
     };
     document.addEventListener("keydown", mount._docKey);
 
@@ -565,52 +297,6 @@
       e.preventDefault();
       showBadModal();
     });
-
-    root.querySelector("#btnDel").onclick = function(){
-      var st = store.get();
-      if (!st.checked.length) return;
-      var n = st.checked.length;
-      var keys = st.checked.slice();
-      M.confirm("删除 " + n + " 个源？", "删除", function(){
-        Promise.all(keys.map(function(k){ return api.removeSource(k); })).then(function(){
-          store.set({checked: []});
-          anchor = -1;
-          reload();
-          M.toast("已删除 " + n + " 个源", "ok");
-        }).catch(function(err){
-          M.toast(err && err.message ? err.message : String(err), "err");
-        });
-      });
-    };
-
-    root.querySelector("#btnReset").onclick = function(){
-      M.confirm("恢复默认会清掉排序与启用状态？", "恢复", function(){
-        api.resetSources().then(function(){
-          store.set({filter: "", checked: []});
-          anchor = -1;
-          root.querySelector("#search").value = "";
-          reload();
-          M.toast("已恢复默认配置", "ok");
-        });
-      });
-    };
-    root.querySelector("#btnExport").onclick = function(){
-      api.exportSources().then(function(r){
-        M.toast(r.ok ? "已导出 " + r.path : "导出失败", "ok");
-      });
-    };
-    root.querySelector("#btnImport").onclick = function(){
-      api.importSources().then(function(r){
-        if (r.ok){
-          reload();
-          M.toast("已导入 · 新增 " + r.added + " 个，更新 " + r.updated + " 个", "ok");
-        } else {
-          M.toast(r.error || "导入失败", "long");
-        }
-      }, function(e){
-        M.toast("导入失败：" + ((e && e.message) || e || "未知错误"), "long");
-      });
-    };
 
     root.querySelector("#btnClose").onclick = function(){
       location.hash = "search";
@@ -621,5 +307,5 @@
     reload();
   }
 
-  HC.views.sources = { mount: mount, reload: reload };
+  HC.views.sources = {mount: mount};
 })();

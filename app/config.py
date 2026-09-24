@@ -279,14 +279,6 @@ class Config:
             return set()
         return {str(k).strip() for k in raw if str(k).strip()}
 
-    def _retire(self, key: str) -> None:
-        if not any(d.get("key") == key for d in DEFAULT_SOURCES):
-            return
-        current = [str(k) for k in (self.data.get("retiredBuiltins") or []) if str(k)]
-        if key not in current:
-            current.append(key)
-            self.data["retiredBuiltins"] = current
-
     def _normalize(self):
         srcs = self.data.get("sources")
         if not isinstance(srcs, list):
@@ -373,27 +365,6 @@ class Config:
         entry.update(fields)
         return True
 
-    def add_source(self, src: dict) -> tuple[bool, list[str]]:
-        errs = validate_source(src, existing_keys=self.all_keys())
-        if errs:
-            return False, errs
-        item = dict(src)
-        item.setdefault("enabled", True)
-        item.setdefault("timeout", 15)
-        item["order"] = max([e.get("order", 0) for e in self.sources] or [0]) + 1
-        self.sources.append(item)
-        self._normalize()
-        return True, []
-
-    def remove_source(self, key: str) -> bool:
-        entry = self.get(key)
-        if entry is None:
-            return False
-        self.data["sources"] = [e for e in self.sources if e.get("key") != key]
-        self._retire(key)
-        self._normalize()
-        return True
-
     def order_locked(self) -> bool:
         return bool(self.data.get("orderLocked"))
 
@@ -417,73 +388,6 @@ class Config:
     def reset_defaults(self) -> None:
         self.data = defaults()
         self._normalize()
-
-    def export_to(self, path) -> bool:
-        try:
-            payload = dict(self.data)
-            payload["sources"] = [
-                {k: v for k, v in entry.items() if k != "health"}
-                for entry in self.sources
-            ]
-            with open(path, "w", encoding="utf-8") as fh:
-                json.dump(payload, fh, ensure_ascii=False, indent=2)
-            return True
-        except OSError as exc:
-            logger.error("导出配置失败：%s", exc)
-            return False
-
-    def import_from(self, path) -> tuple[bool, str, int, int]:
-        try:
-            with open(path, encoding="utf-8") as fh:
-                raw = json.load(fh)
-        except Exception as exc:
-            return False, f"读取失败：{exc}", 0, 0
-
-        if isinstance(raw, dict):
-            srcs = raw.get("sources")
-        else:
-            srcs = raw
-        if not isinstance(srcs, list) or not srcs:
-            return False, "文件里没有 sources 列表", 0, 0
-
-        self.data.pop("orderLocked", None)
-        if isinstance(raw, dict) and isinstance(raw.get("retiredBuiltins"), list):
-            for key in raw["retiredBuiltins"]:
-                self._retire(str(key).strip())
-        builtin_ok = {"enabled", "timeout", "base", "label"}
-        updated = 0
-        skipped: list[str] = []
-
-        for src in srcs:
-            if not isinstance(src, dict):
-                skipped.append("(不是对象)")
-                continue
-            key = str(src.get("key") or "").strip()
-            if not key:
-                skipped.append("(缺少 key)")
-                continue
-            cur = self.get(key)
-
-            if cur is None:
-                skipped.append(f"{key} (不是内置源)")
-                continue
-
-            patch = {f: src[f] for f in builtin_ok if f in src}
-            if "timeout" in patch:
-                patch["timeout"] = clamp_timeout(patch["timeout"])
-            errs = validate_source({**cur, **patch})
-            if errs:
-                skipped.append(f"{key} ({errs[0]})")
-                continue
-            cur.update(patch)
-            updated += 1
-
-        self._normalize()
-
-        msg = f"更新 {updated} 个"
-        if skipped:
-            msg += f"，跳过 {len(skipped)} 个：{'；'.join(skipped[:3])}"
-        return True, msg, 0, updated
 
 class Settings:
 

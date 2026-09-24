@@ -142,32 +142,6 @@
       return Promise.resolve(true);
     },
 
-    saveSource: function(entry){
-      if (live()) return window.pywebview.api.save_source(entry);
-      var list = seed();
-      var errors = validate(entry);
-      if (errors.length) return Promise.resolve({ok:false, errors:errors});
-      var hit = list.filter(function(s){ return s.key === entry.key; })[0];
-      if (hit){
-        for (var k in entry) if (k !== "key") hit[k] = entry[k];
-      } else {
-        var item = {};
-        for (var j in entry) item[j] = entry[j];
-        item.health = {state:"na", ms:0, err:"", times:[], empty:false};
-        list.push(item);
-      }
-      return Promise.resolve({ok:true, errors:[]});
-    },
-
-    removeSource: function(key){
-      if (live()) return window.pywebview.api.remove_source(key);
-      var list = seed();
-      var hit = list.filter(function(s){ return s.key === key; })[0];
-      if (!hit) return Promise.resolve(false);
-      db = list.filter(function(s){ return s.key !== key; });
-      return Promise.resolve(true);
-    },
-
     probeSources: function(keys, onOne){
       probeOne = onOne || null;
       if (live()){
@@ -207,43 +181,9 @@
       return Promise.resolve(targets.length);
     },
 
-    testSource: function(entry){
-      if (live()) return window.pywebview.api.test_source(entry);
-      var errors = validate(entry);
-      if (errors.length) return Promise.resolve({ok:false, count:0, ms:0, errors:errors});
-      return new Promise(function(res){
-        setTimeout(function(){
-          res({ok: true, ms: 620, errors: [],
-               count: 3 + Math.floor(Math.random()*20)});
-        }, 700);
-      });
-    },
-
-    resetSources: function(){
-      if (live()) return window.pywebview.api.reset_sources();
-      db = clone(MOCK);
-      return Promise.resolve(true);
-    },
-
     setAutoOrder: function(on){
       if (live()) return window.pywebview.api.set_auto_order(on);
       return Promise.resolve(true);
-    },
-
-    exportSources: function(){
-      if (live()) return window.pywebview.api.export_sources();
-      return Promise.resolve({ok:true, path:"happycrate-sources.json"});
-    },
-
-    importSources: function(){
-      if (live()) return window.pywebview.api.import_sources();
-      return Promise.resolve({ok:true, added:1, updated:8, message:"新增 1 个，更新 8 个"});
-    },
-
-    sourceAddr: function(key){
-      if (live()) return window.pywebview.api.source_addr(key);
-      var hit = seed().filter(function(s){ return s.key === key; })[0];
-      return Promise.resolve(hit ? (hit.addr || "") : "");
     },
 
     diagnostics: function(keys){
@@ -541,14 +481,6 @@
     return bad;
   }
 
-  function validate(e){
-    var errs = [];
-    if (!e.label) errs.push("名称不能为空");
-    var t = Number(e.timeout);
-    if (!t || t < 1 || t > 120) errs.push("超时需在 1-120 秒之间");
-    return errs;
-  }
-
   function adapterName(key){
     var MAP = {
       apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
@@ -589,7 +521,6 @@
   }
 
   HC.api = api;
-  HC.validateSource = validate;
   HC.esc = esc;
   HC.MAGNET_CAP = MAGNET_CAP;
 })();

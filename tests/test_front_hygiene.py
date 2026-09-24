@@ -385,8 +385,6 @@ class A11yTest(unittest.TestCase):
         src = (ROOT / "web" / "js" / "views" / "sources.js").read_text(encoding="utf-8")
         start = src.find("function rowHtml(")
         body = src[start:start + 900]
-        self.assertRegex(body, r'class="cb [\s\S]{0,120}aria-pressed=',
-                         "批量复选按钮缺状态语义")
         self.assertRegex(body, r'class="sw [\s\S]{0,120}aria-pressed=',
                          "源启停开关缺状态语义")
         settings = (ROOT / "web" / "js" / "views" / "settings.js").read_text(encoding="utf-8")

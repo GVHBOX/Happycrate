@@ -4,8 +4,6 @@
   var state = {
     sources: [],
     filter: "",
-    batch: false,
-    checked: [],
     probing: false,
     firstPaint: true,
     probeDone: 0,
@@ -46,9 +44,7 @@
 
     enabledCount: function(){
       return state.sources.filter(function(s){ return s.enabled; }).length;
-    },
-
-    isChecked: function(key){ return state.checked.indexOf(key) >= 0; }
+    }
   };
 
   function emit(){

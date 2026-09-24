@@ -115,36 +115,6 @@ class HealthStoreTest(DataDirCase):
             row["health"]["empty"] = bool(row["health"]["empty"])
             self.assertEqual(row["health"]["state"], "na" if row["key"] != "nyaa" else "ok")
 
-    def test_export_strips_health(self):
-        self.seed_legacy("nyaa", {"state": "ok", "ms": 50, "err": "", "times": ["ok"]})
-        cfg = config.Config().load()
-        out = Path(self.tmp) / "export.json"
-        cfg.export_to(out)
-        payload = json.loads(out.read_text(encoding="utf-8"))
-        self.assertFalse(any("health" in e for e in payload["sources"]))
-
-    def test_import_ignores_incoming_health(self):
-        self.seed_legacy("nyaa", {"state": "ok", "ms": 50, "err": "", "times": ["ok"]})
-        incoming = Path(self.tmp) / "incoming.json"
-        incoming.write_text(json.dumps({
-            "sources": [
-                {"key": "nyaa", "label": "Nyaa", "type": "builtin",
-                 "health": {"state": "err", "ms": 999, "times": ["err"]}},
-                {"key": "brandnew", "label": "新源", "type": "html",
-                 "url": "https://example.org/?q={query}",
-                 "health": {"state": "err", "ms": 999, "times": ["err"]}},
-            ]
-        }, ensure_ascii=False), encoding="utf-8")
-        cfg = config.Config().load()
-        ok, msg, added, updated = cfg.import_from(incoming)
-        self.assertTrue(ok, msg)
-        self.assertEqual((added, updated), (0, 1), msg)
-        self.assertIsNone(cfg.get("brandnew"),
-                          "只认内置源，外来自定义源不能被加进来")
-        kept = cfg.get("nyaa")
-        self.assertEqual(kept["health"]["ms"], 50,
-                         "同 key 的导入不该覆盖本机自己的健康度")
-
 
 class DiagnosticsRootCauseTest(DataDirCase):
 

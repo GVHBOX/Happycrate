@@ -31,12 +31,7 @@ SAFE_CALLS = {
 }
 
 MUTATING_CALLS = {
-    "save_source": (({"key": "custom1", "label": "C1", "type": "json",
-                      "url": "https://a.example/s?q={query}", "listPath": "data.list",
-                      "map": {"title": "title"}, "timeout": 15},), dict),
-    "remove_source": (("custom1",), bool),
     "reorder_sources": ((["nyaa", "apibay"],), bool),
-    "reset_sources": ((), bool),
 }
 
 
@@ -122,18 +117,6 @@ class CredentialHygieneTest(unittest.TestCase):
         self.assertNotIn("secret", report,
                          "诊断会被复制到剪贴板并贴给别人，不能带出代理/源密码")
 
-    def test_edit_keeps_credentials_on_save(self):
-        raw = self.api.source_addr("nyaa")
-        self.assertEqual(raw, self.url,
-                         "编辑源时必须拿到原始地址，否则用户点一下保存"
-                         "就把自己的密码覆盖成 ***")
-        result = self.api.save_source({
-            "key": "nyaa", "label": "Nyaa", "addr": raw, "timeout": 15,
-        })
-        self.assertTrue(result.get("ok"), result.get("errors"))
-        self.assertEqual(self.api._cfg.get("nyaa").get("base"), self.url,
-                         "保存后配置里的地址必须还是完整的")
-
 
 import re
 import unittest
@@ -144,8 +127,7 @@ from app import api as api_mod
 class CacheInvalidationContractTest(unittest.TestCase):
 
     CONFIG_MUTATORS = (
-        "toggle_source", "save_source", "remove_source",
-        "reset_sources", "import_sources", "save_settings",
+        "toggle_source", "save_settings",
     )
 
     ORDER_ONLY = ("reorder_sources", "set_auto_order")
@@ -469,29 +451,6 @@ class MutatingCallSmokeTest(unittest.TestCase):
                 self.assertIsInstance(result, expected,
                                       f"{name} 返回 {type(result).__name__}，期望 {expected.__name__}")
 
-    def test_save_source_roundtrip(self):
-        entry = {"key": "nyaa", "label": "Nyaa 镜像", "timeout": 20,
-                 "addr": "https://mirror.example"}
-        self.assertTrue(self.api.save_source(entry).get("ok"))
-        saved = [s for s in self.api.list_sources() if s["key"] == "nyaa"]
-        self.assertEqual(len(saved), 1)
-        self.assertEqual(saved[0]["label"], "Nyaa 镜像")
-        self.assertEqual(saved[0]["timeout"], 20)
-        self.assertEqual(saved[0]["addr"], "https://mirror.example")
-
-    def test_save_source_rejects_invalid(self):
-        result = self.api.save_source({"key": "nyaa", "label": "",
-                                       "timeout": 15})
-        self.assertFalse(result.get("ok"))
-        self.assertTrue(result.get("errors"))
-
-    def test_save_source_rejects_unknown_key(self):
-        result = self.api.save_source({"key": "nonexistent", "label": "X",
-                                       "timeout": 15})
-        self.assertFalse(result.get("ok"),
-                         "不存在的新增源路径已移除，只能编辑既有内置源")
-        self.assertTrue(result.get("errors"))
-
     def test_reorder_locks_manual_order(self):
         self.api.reorder_sources(["nyaa", "apibay"])
         self.assertTrue(self.api._cfg.order_locked())
@@ -525,15 +484,25 @@ class UnreachableCodeTest(unittest.TestCase):
             + repr(found))
 
 
-class BuiltinEditorCoverageTest(unittest.TestCase):
+class SwitchOnlyPanelTest(unittest.TestCase):
 
-    def test_editor_offers_name_mirror_and_timeout(self):
+    def test_sources_panel_has_no_edit_or_batch_left(self):
         text = (ROOT / "web" / "js" / "views" / "sources.js").read_text(
             encoding="utf-8")
-        for field in ("fLabel", "fUrl", "fTo"):
-            with self.subTest(field=field):
-                self.assertIn(field, text,
-                              "内置源编辑器必须能改名称、镜像地址与超时")
+        for gone in ("editorSource", "btnBatch", "btnDel", "btnReset",
+                     "btnExport", "btnImport", "data-edit", "data-del",
+                     "data-check"):
+            with self.subTest(gone=gone):
+                self.assertNotIn(gone, text,
+                                 "数据源面板只保留开关，这些都不该再回来")
+
+    def test_sources_panel_keeps_switch_and_probe(self):
+        text = (ROOT / "web" / "js" / "views" / "sources.js").read_text(
+            encoding="utf-8")
+        for kept in ("data-sw", "btnProbe", "btnAuto", "search"):
+            with self.subTest(kept=kept):
+                self.assertIn(kept, text,
+                              "开关、测速、自动排序、搜索仍然要在")
 
 
 if __name__ == "__main__":

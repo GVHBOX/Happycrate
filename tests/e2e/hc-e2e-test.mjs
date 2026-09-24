@@ -530,57 +530,40 @@ async function runOnce(exe, profileDir, pageUrl) {
     await evaluate("location.hash = 'sources'", page);
     await waitFor(async () => (await evaluate("document.querySelectorAll('#rows .row').length", page)) >= 10, 6000, 150, "sources-mount");
     const srcCount = await evaluate("document.querySelectorAll('#rows .row').length", page);
-    const bb = centerOf(await rectOf("#btnBatch", 0));
-    await realClick(bb.x, bb.y);
-    await waitFor(async () => !!(await evaluate("document.querySelector('#rows .cb')", page)), 4000, 150, "batch-mode");
-    const cb0 = centerOf(await rectOf("#rows .cb", 0));
-    await realClick(cb0.x, cb0.y);
-    await waitFor(async () => (await evaluate("document.querySelector('#batchInfo').textContent", page)) === "已选 1 项", 3000, 100, "checked1");
-    const bd = centerOf(await rectOf("#btnDel", 0));
-    await realClick(bd.x, bd.y);
-    await waitFor(async () => !!(await evaluate("document.querySelector('.backdrop')", page)), 3000, 100, "confirm-modal");
-    const confirmText = await evaluate("(document.querySelector('.backdrop .dtitle')||{}).textContent || ''", page);
-    const cancelBtn = centerOf(await rectOf(".backdrop [data-close]", 0));
-    await realClick(cancelBtn.x, cancelBtn.y);
-    await sleep(320);
-    const afterCancel = await evaluate("document.querySelectorAll('#rows .row').length", page);
-    const modalClosed = await evaluate("!document.querySelector('.backdrop')", page);
-    await realClick(bd.x, bd.y);
-    await waitFor(async () => !!(await evaluate("document.querySelector('#mOk')", page)), 3000, 100, "confirm-again");
-    const okBtn = centerOf(await rectOf("#mOk", 0));
-    await realClick(okBtn.x, okBtn.y);
-    await waitFor(async () => (await evaluate("document.querySelectorAll('#rows .row').length", page)) === srcCount - 1, 5000, 150, "deleted");
-    check("delete-needs-confirm", modalClosed && afterCancel === srcCount && /删除 1 个源/.test(confirmText), "text=" + confirmText + " cancelKept=" + afterCancel);
 
-    await key("Escape", 27);
-    await sleep(300);
-    check("esc-exits-batch-mode", !!(await evaluate("document.getElementById('groupBatchOps') && document.getElementById('groupBatchOps').classList.contains('hidden')", page)));
+    const switchCount = await evaluate("document.querySelectorAll('#rows .sw').length", page);
+    check("every-row-has-a-switch", switchCount === srcCount,
+      "sw=" + switchCount + " rows=" + srcCount);
 
-    const editAlwaysVisible = await evaluate("document.querySelectorAll('#rows .op[data-edit]').length", page);
-    const delOnlyBatch = await evaluate("document.querySelectorAll('#rows .op[data-del]').length", page);
-    check("edit-reachable-without-batch", editAlwaysVisible === srcCount - 1 && delOnlyBatch === 0,
-      "edit=" + editAlwaysVisible + " del=" + delOnlyBatch + " expect=" + (srcCount - 1));
-
-    const editBtnRect = centerOf(await rectOf("#rows .op[data-edit]", 0));
-    await realClick(editBtnRect.x, editBtnRect.y);
-    await waitFor(async () => !!(await evaluate("document.querySelector('.backdrop #fLabel')", page)), 4000, 150, "builtin-editor");
-    const builtinEditor = await evaluate(`JSON.stringify({
-      hasTypesBox: !!document.querySelector("#fType"),
-      hasAddrLabel: !!document.querySelector("#fAddrLabel"),
-      labels: [].slice.call(document.querySelectorAll(".mbody .field > label"))
-        .map(function(l){ return l.textContent; })
+    const removedControls = await evaluate(`JSON.stringify({
+      batch: document.querySelectorAll('#btnBatch').length,
+      del: document.querySelectorAll('#btnDel').length,
+      reset: document.querySelectorAll('#btnReset').length,
+      exp: document.querySelectorAll('#btnExport').length,
+      imp: document.querySelectorAll('#btnImport').length,
+      edit: document.querySelectorAll('#rows .op[data-edit]').length
     })`, page);
-    const be = JSON.parse(builtinEditor);
-    check("builtin-editor-shows-mirror-only",
-      be.hasTypesBox === false && be.hasAddrLabel === false &&
-      be.labels.join(",") === "名称,镜像地址,超时（秒）",
-      builtinEditor);
-    await evaluate("document.querySelector('.backdrop [data-close]').click()", page);
-    await sleep(400);
+    const rc = JSON.parse(removedControls);
+    check("panel-is-switch-only",
+      rc.batch + rc.del + rc.reset + rc.exp + rc.imp + rc.edit === 0,
+      removedControls);
 
-    const addBtnCount = await evaluate("document.querySelectorAll('#btnAdd').length", page);
-    check("custom-source-button-removed", addBtnCount === 0,
-      "btnAdd=" + addBtnCount);
+    const probeBtn = await evaluate("!!document.querySelector('#btnProbe')", page);
+    const autoBtn = await evaluate("!!document.querySelector('#btnAuto')", page);
+    const searchBox = await evaluate("!!document.querySelector('#search')", page);
+    check("panel-keeps-probe-auto-search",
+      probeBtn && autoBtn && searchBox,
+      "probe=" + probeBtn + " auto=" + autoBtn + " search=" + searchBox);
+
+    const firstSw = centerOf(await rectOf("#rows .sw", 0));
+    await realClick(firstSw.x, firstSw.y);
+    await sleep(300);
+    const firstOff = await evaluate("document.querySelector('#rows .row').classList.contains('off')", page);
+    await realClick(firstSw.x, firstSw.y);
+    await sleep(300);
+    const firstBackOn = await evaluate("!document.querySelector('#rows .row').classList.contains('off')", page);
+    check("switch-toggles-source", firstOff && firstBackOn,
+      "off=" + firstOff + " backOn=" + firstBackOn);
 
     await evaluate('location.hash = "search"', page);
     await sleep(400);
@@ -659,7 +642,7 @@ async function runOnce(exe, profileDir, pageUrl) {
     const markTag = await evaluate("(document.querySelector('.brandmark')||{}).tagName + '|' + ((document.querySelector('.brandmark')||{}).src || '')", page);
     check("logo-returns-to-hero", heroBack, "hero=" + heroBack);
     check("hero-brandmark-icon", markTag.indexOf("IMG") === 0 && markTag.indexOf("app-256.png") > 0, markTag);
-    await search("ubuntu", 16);
+    await search("ubuntu", 24);
 
     const errs = await evaluate("window.__errs", page);
     check("no-window-errors", Array.isArray(errs) && errs.length === 0, (errs || []).join(" | "));

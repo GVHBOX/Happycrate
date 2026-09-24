@@ -122,13 +122,6 @@ def _addr_of(entry: dict, raw: bool = False) -> str:
     return str(value) if raw else _redact(value)
 
 
-def _base_field(key: str, addr: str) -> str:
-    addr = (addr or "").strip().rstrip("/")
-    if not addr or addr == sources.base_of(key, ""):
-        return ""
-    return addr
-
-
 def _to_view(entry: dict, health: dict | None = None) -> dict:
     h = health or entry.get("health") or {}
     outcomes = [o for o in (h.get("outcomes") or []) if o]
@@ -459,10 +452,6 @@ class Api:
     def list_sources(self) -> list[dict]:
         return [_to_view(e, self._health_store.get(e.get("key", ""))) for e in self._cfg.sources]
 
-    def source_addr(self, key: str) -> str:
-        entry = self._cfg.get(str(key or "").strip())
-        return _addr_of(entry, raw=True) if entry else ""
-
     def toggle_source(self, key: str, on: bool) -> bool:
         if not self._cfg.set_enabled(key, bool(on)):
             return False
@@ -492,61 +481,6 @@ class Api:
         self._cfg.save()
         sources.reload_from_config(self._cfg)
         return True
-
-    def save_source(self, entry: dict) -> dict:
-        item = dict(entry or {})
-        key = str(item.get("key") or "").strip()
-        if not key:
-            return {"ok": False, "errors": ["缺少数据源标识"]}
-        current = self._cfg.get(key)
-        if current is None:
-            return {"ok": False, "errors": [f"找不到数据源 {key}"]}
-
-        payload = {
-            "label": item["label"] if "label" in item else current.get("label"),
-            "base": _base_field(key, _addr_of(item, raw=True) or current.get("base", "")),
-            "timeout": item.get("timeout", current.get("timeout", 15)),
-            "enabled": bool(item.get("enabled", current.get("enabled", True))),
-        }
-        errs = config.validate_source({**current, **payload})
-        if errs:
-            return {"ok": False, "errors": errs}
-        self._cfg.update(key, **payload)
-        self._cfg.save()
-        sources.reload_from_config(self._cfg)
-        self._cache_clear()
-        return {"ok": True, "errors": []}
-
-    def remove_source(self, key: str) -> bool:
-        if not self._cfg.remove_source(key):
-            return False
-        self._health_store.drop(key)
-        self._cfg.save()
-        self._health_store.save()
-        sources.reload_from_config(self._cfg)
-        self._cache_clear()
-        return True
-
-    def test_source(self, entry: dict) -> dict:
-        item = dict(entry or {})
-        key = str(item.get("key") or "").strip()
-        src = sources.get(key)
-        if not src:
-            return {"ok": False, "count": 0, "errors": ["找不到这个源"]}
-        base = _base_field(key, _addr_of(item, raw=True))
-        draft = sources.Source(
-            key=src.key, label=src.label, func=src.func, enabled=True,
-            timeout=int(item.get("timeout") or src.timeout),
-            base=base or sources.base_of(key, ""),
-        )
-        ok, ms, count, err = draft.probe()
-        outcome, code = classify(ok, count, err, ms)
-        return {
-            "ok": ok,
-            "count": count if ok else 0,
-            "ms": ms,
-            "errors": [] if ok else [outcome_text(outcome, code) or "请求失败"],
-        }
 
     def probe_sources(self, keys: list[str] | None = None) -> int:
         targets = [
@@ -914,33 +848,6 @@ class Api:
              "kept": keep_dup}, ensure_ascii=False
         )
         self._push(f"window.__onSearchDone && window.__onSearchDone({payload})")
-
-    def reset_sources(self) -> bool:
-        self._cfg.reset_defaults()
-        self._cfg.save()
-        self._health_store.replace({})
-        self._health_store.save()
-        sources.reload_from_config(self._cfg)
-        self._cache_clear()
-        return True
-
-    def export_sources(self) -> dict:
-        target = os.path.join(str(paths.data_dir()), "happycrate-sources.json")
-        if self._cfg.export_to(target):
-            return {"ok": True, "path": target}
-        return {"ok": False, "path": ""}
-
-    def import_sources(self) -> dict:
-        target = os.path.join(str(paths.data_dir()), "happycrate-sources.json")
-        if not os.path.isfile(target):
-            return {"ok": False, "error": "没有找到可导入的文件"}
-        ok, msg, added, updated = self._cfg.import_from(target)
-        if ok:
-            self._cfg.save()
-            sources.reload_from_config(self._cfg)
-            self._cache_clear()
-            return {"ok": True, "added": added, "updated": updated, "message": msg}
-        return {"ok": False, "error": msg}
 
     def diagnostics(self, keys: list[str] | None = None) -> str:
         report = self._diagnostic_report(keys)

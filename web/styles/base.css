@@ -78,7 +78,7 @@ input, textarea{
 .app.settings .card + .card{margin-top:12px}
 
 :focus-visible{outline:var(--focus-ring); outline-offset:var(--focus-offset)}
-.row.sel:focus-visible, .srow.sel:focus-visible{outline:none; box-shadow:var(--focus-ring-strong)}
+.srow.sel:focus-visible{outline:none; box-shadow:var(--focus-ring-strong)}
 
 .card{
   background:var(--panel);
@@ -193,7 +193,7 @@ input, textarea{
 
 .thead{
   display:grid;
-  grid-template-columns:var(--cw-drag) var(--cw-check) minmax(0,1fr) var(--cw-health) var(--cw-ops);
+  grid-template-columns:var(--cw-drag) var(--cw-check) minmax(0,1fr) var(--cw-health);
   gap:var(--sp-4);
   align-items:center;
   height:var(--h-thead);
@@ -207,7 +207,7 @@ input, textarea{
 
 .row{
   display:grid;
-  grid-template-columns:var(--cw-drag) var(--cw-check) minmax(0,1fr) var(--cw-health) var(--cw-ops);
+  grid-template-columns:var(--cw-drag) var(--cw-check) minmax(0,1fr) var(--cw-health);
   gap:var(--sp-4);
   align-items:center;
   height:var(--h-row);
@@ -225,7 +225,6 @@ input, textarea{
 .row:last-child{border-bottom:0}
 .row.off .name,.row.off .addr{color:var(--t5)}
 .row.off .sw{background:var(--track-off)}
-.row.sel{background:var(--brand-soft)}
 .row.dragging{
   z-index:var(--z-drag);
   box-shadow:var(--sh-drag);
@@ -297,8 +296,6 @@ input, textarea{
 .cb:active{transform:scale(var(--s-press-icon)); transition:transform var(--d-press) var(--e-out)}
 .cb.on{border-color:var(--brand); background:var(--brand); animation:cbPop var(--d-state) var(--e)}
 .cb[disabled]{opacity:.35; cursor:not-allowed}
-.bar .cb{width:calc(18px*var(--frs)); height:calc(18px*var(--frs))}
-.bar .cb svg{width:calc(var(--icon-sm)*var(--frs)); height:calc(var(--icon-sm)*var(--frs))}
 
 .namecell{min-width:0}
 .name{

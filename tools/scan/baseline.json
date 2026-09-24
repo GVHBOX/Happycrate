@@ -23,7 +23,7 @@
   "swallow|{\"file\": \"sources.py\", \"kind\": \"except-continue\", \"line\": 1218}"
  ],
  "scan_api.py": [
-  "backend_never_called|{\"args\": [], \"line\": 372, \"name\": \"boot\"}"
+  "backend_never_called|{\"args\": [], \"line\": 365, \"name\": \"boot\"}"
  ],
  "scan_bloat.py": [
   "dup_blocks|h = it[\"info_hash\"]\nif h in seen:\ncontinue\nseen.add(h)\nitems.append(it)\nif len(items) >= max_hits:\nreturn items|[\"sources.py:1035\", \"sources.py:1676\"]",

@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+*.spec
+!happycrate.spec
+.scratch/
+.workbuddy/
+data/*
+!data/sources.json
+
+# 根目录构建产物（测试用）
+/happycrate.exe
+/_internal/
+.zcodeignore

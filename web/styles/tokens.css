@@ -1,0 +1,337 @@
+:root{
+  --page:#FFFFFF;
+  --brand:#4A45E3;
+  --brand-on:#fff;
+  --brand-hover:#3D38C9;
+  --brand-active:#332FAE;
+  --brand-soft:#EDECFE;
+  --brand-line:#C3C1F7;
+  --brand-rgb:74,69,227;
+  --brand-ring:rgba(var(--brand-rgb),.28);
+  --brand-opt-default:#4A45E3;
+  --brand-opt-teal:#0B7F75;
+  --brand-opt-slate:#5B6B8C;
+  --brand-opt-lilac:#766CBE;
+  --brand-stripe:#3A36B8;
+
+  --shell:#F4F5F8;
+  --shell-hover:#EEF0F3;
+  --panel:#FFFFFF;
+  --head:#FAFAFC;
+  --divider:#EAEBF0;
+  --rowline:#F1F2F5;
+  --border:#E2E5EC;
+  --line:var(--border);
+  --hover:#F4F6FB;
+  --hover-alt:#E8EBF4;
+  --pressed:#E9ECF4;
+  --row-alt:#F7F8FA;
+
+  --t1:#1E1F2E;
+  --t2:#2B2D42;
+  --t3:#676E7E;
+  --t4:#8A90A0;
+  --t5:#9AA1B5;
+  --t-disabled:#C4C7D0;
+  --track-off:#D3D7E0;
+  --track:rgba(13,13,31,.22);
+
+  --ok:#16A34A;
+  --warn:#CA8A04;
+  --prog-warn:#6F5CB8;
+  --prog-warn-stripe:#5A48A0;
+  --prog-line:#4C3D8F;
+  --prog-err:#D4676E;
+  --prog-on:var(--brand);
+  --prog-on-stripe:var(--brand-stripe);
+  --prog-slot:#D5D2E6;
+  --prog-gap:#BFBBDB;
+  --prog-h:10px;
+  --prog-radius:2.5px;
+  --prog-gapx:4px;
+  --prog-skew:-16deg;
+  --prog-flow:.7s;
+  --prog-ang:-55deg;
+  --prog-sw:4px;
+  --prog-cycle:9px;
+  --prog-alpha:.16;
+  --prog-glow:8px;
+  --prog-pulse:.55s;
+  --prog-dlw:2px;
+  --prog-dlout:4px;
+  --err:#DC2626;
+  --empty:#5F6C7E;
+  --danger:#D73D3D;
+  --danger-soft:#FDECEC;
+  --err-rgb:220,38,38;
+  --err-bar:#DC2626;
+  --err-line:#F3C9C9;
+  --err-wash:rgba(220,38,38,.04);
+
+  --ok-soft:#E8F7EE;
+  --warn-soft:#FBF3DC;
+  --warn-line:#EFDFAE;
+  --ok-strong:#166534;
+  --warn-strong:#854D0E;
+  --err-strong:var(--err);
+  --surface-solid:#fff;
+  --inv-bg:var(--t1);
+  --inv-fg:#fff;
+  --inv-ok:#7CE0A3;
+  --inv-err:#F87171;
+
+  --ink:#0D0D1F;
+  --ink-8:rgba(13,13,31,.08);
+  --ink-13:rgba(13,13,31,.13);
+  --ink-38:rgba(13,13,31,.38);
+
+  --r-card:16px;
+  --r-menu:12px;
+  --r-ctrl:10px;
+  --r-tile:var(--r-ctrl);
+  --r-chip:var(--r-ctrl);
+  --r-sm:var(--r-ctrl);
+  --r-xs:4px;
+  --r-pill:999px;
+
+  --focus-offset:2px;
+  --focus-ring:2px solid var(--brand);
+
+  --float-bg:#FFFFFF;
+  --float-bd:rgba(13,13,31,.10);
+  --knob:#FFFFFF;
+  --line-strong:#C9CAD3;
+
+  --icon-sm:14px;
+  --icon-md:16px;
+  --icon-lg:18px;
+  --icon-sw:1.5;
+
+  --sh-card:0 16px 40px -6px rgba(13,13,31,.16), 0 2px 8px rgba(13,13,31,.05);
+  --sh-modal:0 24px 64px rgba(13,13,31,.3);
+  --sh-menu:0 12px 32px rgba(13,13,31,.16), 0 0 0 1px rgba(13,13,31,.04);
+  --sh-toast:0 10px 30px rgba(13,13,31,.3);
+  --sh-drag:0 10px 28px rgba(13,13,31,.18);
+  --sh-btn:0 1px 2px rgba(13,13,31,.14);
+  --sh-btn-hover:0 8px 20px rgba(var(--brand-rgb),.38);
+  --sh-btn-active:0 2px 6px rgba(var(--brand-rgb),.28);
+  --sh-seg:0 1px 3px rgba(13,13,31,.08);
+  --sh-lift:0 4px 12px rgba(13,13,31,.14);
+
+  --s-press-btn:.95;
+  --s-press-chip:.92;
+  --s-press-icon:.9;
+  --ripple:var(--ink-13);
+
+  --z-marquee:5;
+  --z-drag:20;
+  --z-hero:30;
+  --z-menu:40;
+  --z-tip:45;
+  --z-selbar:46;
+  --z-backdrop:60;
+  --z-toast:80;
+
+  --sp-1:calc(4px*var(--frs));
+  --sp-2:calc(6px*var(--frs));
+  --sp-3:calc(8px*var(--frs));
+  --sp-4:calc(12px*var(--frs));
+  --sp-5:calc(16px*var(--frs));
+  --sp-6:calc(20px*var(--frs));
+
+  --fr:1;
+  --frc:clamp(0.9, calc(var(--fr) * 0.9 + 0.1), 1.6);
+  --fcd:var(--fr);
+  --frs:clamp(0.94, calc(1 + (var(--fr) - 1) / 3), 1.3);
+  --h-row:calc(58px*var(--frs));
+  --gutter:12px;
+  --h-head:calc(56px*var(--frs));
+  --h-bar:calc(52px*var(--frs));
+  --h-ctrl:calc(36px*var(--frs));
+  --h-thead:calc(38px*var(--frs));
+  --h-foot:calc(52px*var(--frs));
+  --sw-w:calc(34px*var(--frs));
+  --sw-h:calc(20px*var(--frs));
+  --sw-knob:calc(20px*var(--frs) - 6px);
+  --sw-move:calc(14px*var(--frs));
+  --digits:3;
+
+  --fs-lg:calc(15px*var(--fr));
+  --fs-md:calc(13px*var(--fr));
+  --fs-sm:calc(12px*var(--fr));
+  --fs-xs:calc(11px*var(--fr));
+  --fs-2xs:calc(10px*var(--fr));
+
+  --fc-md:calc(13px*var(--fcd));
+  --fc-sm:calc(12px*var(--fcd));
+  --fc-xs:calc(11px*var(--fcd));
+
+  --cw-drag:calc(28px*var(--frc));
+  --cw-check:calc(44px*var(--frc));
+  --cw-health:calc(92px*var(--frc));
+  --cw-idx:calc(40px*var(--frc));
+  --cw-size:calc(76px*var(--frc));
+  --cw-time:calc(88px*var(--frc));
+  --cw-seed:calc(72px*var(--frc));
+  --cw-src:calc(88px*var(--frc));
+  --w-modal:calc(520px*var(--fr));
+  --w-modal-wide:calc(640px*var(--fr));
+
+  --font:"Noto Sans SC","Microsoft YaHei UI","PingFang SC",-apple-system,sans-serif;
+  --font-num:"Inter","Segoe UI",sans-serif;
+  --font-mono:"Inter",ui-monospace,"Cascadia Code",monospace;
+}
+
+body.dark{
+  --page:#131419;
+  --brand:#5B56EE;
+  --brand-stripe:#4944C8;
+  --brand-hover:#6E69F4;
+  --brand-active:#807CF8;
+  --brand-soft:rgba(91,86,238,.20);
+  --brand-line:#4A45A8;
+  --brand-rgb:91,86,238;
+  --brand-ring:rgba(91,86,238,.42);
+  --brand-opt-default:#5B56EE;
+
+  --shell:#23242D;
+  --shell-hover:#2A2B36;
+  --panel:#1B1C24;
+  --head:#1F2028;
+  --divider:#2B2D38;
+  --rowline:#252732;
+  --border:#34364A;
+  --line:var(--divider);
+  --hover:#232637;
+  --hover-alt:#2A2E42;
+  --pressed:#2A2E42;
+  --row-alt:#1E202A;
+
+  --t1:#E7E9F2;
+  --t2:#C6CAD9;
+  --t3:#9095A9;
+  --t4:#71758A;
+  --t5:#5C6074;
+  --t-disabled:#4B4F60;
+  --track-off:#3A3D4C;
+  --track:rgba(255,255,255,.22);
+  --empty:#8B97A8;
+
+  --err:#F87171;
+  --err-rgb:248,113,113;
+  --err-bar:#F87171;
+  --err-line:rgba(248,113,113,.38);
+  --err-wash:rgba(248,113,113,.06);
+
+  --danger-soft:rgba(239,68,68,.15);
+
+  --ok-soft:rgba(22,163,74,.16);
+  --warn-soft:rgba(202,138,4,.18);
+  --warn-line:rgba(202,138,4,.42);
+  --warn:#E0A81E;
+  --prog-warn:#A79BF0;
+  --prog-warn-stripe:#6B5DB4;
+  --prog-line:#BCAEF6;
+  --prog-err:#D9737C;
+  --prog-on:var(--brand);
+  --prog-on-stripe:var(--brand-stripe);
+  --prog-slot:#3A3A4E;
+  --prog-gap:#2A2C38;
+  --ok-strong:#4ADE80;
+  --warn-strong:#FCD34D;
+  --err-strong:#F87171;
+  --surface-solid:#34364A;
+  --inv-bg:#EDF0F8;
+  --inv-fg:#111318;
+  --inv-ok:#15803D;
+  --inv-err:#DC2626;
+
+  --ink-8:rgba(255,255,255,.07);
+  --ink-13:rgba(255,255,255,.13);
+  --ink-38:rgba(255,255,255,.38);
+
+  --focus-ring:2px solid #8B96FB;
+
+  --float-bg:#2A2C36;
+  --float-bd:rgba(255,255,255,.10);
+  --knob:#E7E9F2;
+  --line-strong:#545868;
+
+  --sh-card:0 16px 40px -6px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);
+  --sh-modal:0 24px 64px rgba(0,0,0,.55);
+  --sh-menu:0 12px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+  --sh-toast:0 10px 30px rgba(0,0,0,.5);
+  --sh-drag:0 10px 28px rgba(0,0,0,.5);
+  --sh-btn:0 1px 2px rgba(0,0,0,.4);
+  --sh-seg:0 1px 3px rgba(0,0,0,.35);
+  --sh-lift:0 4px 12px rgba(0,0,0,.45);
+}
+
+body[data-brand="teal"]{
+  --brand:#0B7F75;
+  --brand-stripe:#096A61;
+  --brand-hover:#096961;
+  --brand-active:#07524B;
+  --brand-soft:#E6F7F5;
+  --brand-line:#99E2DB;
+  --brand-rgb:11,127,117;
+  --brand-ring:rgba(11,127,117,.28);
+}
+
+body.dark[data-brand="teal"]{
+  --brand-on:#111318;
+  --brand:#14B8A6;
+  --brand-stripe:#0F9488;
+  --brand-hover:#2CCBB9;
+  --brand-active:#45D6C6;
+  --brand-soft:rgba(20,184,166,.18);
+  --brand-line:#2C7A72;
+  --brand-rgb:20,184,166;
+  --brand-ring:rgba(20,184,166,.42);
+}
+
+body[data-brand="slate"]{
+  --brand:#5B6B8C;
+  --brand-stripe:#4A5878;
+  --brand-hover:#4B5975;
+  --brand-active:#3E4A61;
+  --brand-soft:#EDF0F5;
+  --brand-line:#C3CCDA;
+  --brand-rgb:91,107,140;
+  --brand-ring:rgba(91,107,140,.36);
+}
+
+body[data-brand="lilac"]{
+  --brand:#766CBE;
+  --brand-stripe:#5F569D;
+  --brand-hover:#6A5CD0;
+  --brand-active:#5B4FC0;
+  --brand-soft:#EFECFD;
+  --brand-line:#C9C2F5;
+  --brand-rgb:118,108,190;
+  --brand-ring:rgba(118,108,190,.28);
+}
+
+body.dark[data-brand="lilac"]{
+  --brand-on:#111318;
+  --brand:#8F82DC;
+  --brand-stripe:#7B6DCE;
+  --brand-hover:#9A8DE6;
+  --brand-active:#A298EC;
+  --brand-soft:rgba(143,130,220,.20);
+  --brand-line:#6B5DB4;
+  --brand-rgb:143,130,220;
+  --brand-ring:rgba(143,130,220,.42);
+}
+
+body.dark[data-brand="slate"]{
+  --brand-on:#111318;
+  --brand:#7C8CAC;
+  --brand-stripe:#6B7A98;
+  --brand-hover:#90A0BE;
+  --brand-active:#A3B1CC;
+  --brand-soft:rgba(120,140,175,.18);
+  --brand-line:#4E5A70;
+  --brand-rgb:124,140,172;
+  --brand-ring:rgba(124,140,172,.50);
+}

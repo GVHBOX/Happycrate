@@ -1,0 +1,31 @@
+[project]
+name = "happycrate"
+version = "1.0.0"
+description = "磁力搜索聚合与下载投递工具"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "pywebview==5.4",
+    "pythonnet==3.1.0",
+    "pywin32==312; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=6.0",
+]
+dev = [
+    "mypy>=1.11",
+]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+check_untyped_defs = true
+files = ["app", "main.py"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app", "app.downloaders"]

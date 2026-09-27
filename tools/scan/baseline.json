@@ -1,0 +1,6 @@
+{
+ "_读我": "这里的项是「扫描器当前就会报、且已知不是缺陷」的清单，只有清单之外的新增项才会让 check-all 退出码非 0。\n已经改成由扫描器自己排除的（不再压在这里）：\n· scan_adapter 的 unused page —— 读源码里的 _pageless 标记，与 PAGELESS_KEYS 同一个真相源；\n· scan_py 的 dup_definitions —— 只在同一个文件内判重，跨文件同名（run/get）不再算重复；\n· scan_api 的 boot —— 由 scan/api_contract.py 解析 Python 侧调用点（app/shell.py 的 bridge.boot()）；\n· swallow —— 循环内跳候选、或失败后还有后续处理的，归到 swallow_try_next（可查但不计数），只有真静默吞的才算问题。",
+ "scan_py.py": [
+  "swallow|{\"file\": \"shell.py\", \"kind\": \"except-pass\", \"line\": 254}"
+ ]
+}

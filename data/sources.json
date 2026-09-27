@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+    },
+    {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+    },
+    {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+    },
+    {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+    },
+    {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+    },
+    {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+    },
+    {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+    },
+    {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+    },
+    {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+    },
+    {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+    },
+    {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+    },
+    {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+    }
+  ]
+}

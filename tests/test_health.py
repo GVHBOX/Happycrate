@@ -1,0 +1,707 @@
+import itertools
+import json
+import os
+import random
+import shutil
+import subprocess
+import sys
+import tempfile
+import threading
+import unittest
+from pathlib import Path
+from unittest import mock
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app import api as api_mod
+from app import config, paths
+from tests import SearchThreadMixin
+
+
+class DataDirCase(unittest.TestCase):
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="hc-health-")
+        self.old_env = os.environ.get("HAPPYCRATE_DATA_DIR")
+        os.environ["HAPPYCRATE_DATA_DIR"] = self.tmp
+        paths._cache = None
+
+    def tearDown(self):
+        if self.old_env is None:
+            os.environ.pop("HAPPYCRATE_DATA_DIR", None)
+        else:
+            os.environ["HAPPYCRATE_DATA_DIR"] = self.old_env
+        paths._cache = None
+
+    def sources_file(self) -> Path:
+        return Path(self.tmp) / "sources.json"
+
+    def health_file(self) -> Path:
+        return Path(self.tmp) / "health.json"
+
+    def seed_legacy(self, key: str, health: dict) -> dict:
+        data = config.defaults()
+        for entry in data["sources"]:
+            if entry.get("key") == key:
+                entry["health"] = health
+                break
+        else:
+            raise AssertionError(f"默认源里没有 {key}")
+        self.sources_file().write_text(
+            json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        return data
+
+    def read_health(self) -> dict:
+        return json.loads(self.health_file().read_text(encoding="utf-8"))
+
+
+class HealthStoreTest(DataDirCase):
+
+    def test_health_moves_out_of_sources_json(self):
+        self.seed_legacy("nyaa", {"state": "ok", "ms": 120, "err": "", "times": ["ok"]})
+        api_mod.Api().boot()
+        cfg = json.loads(self.sources_file().read_text(encoding="utf-8"))
+        self.assertFalse(any("health" in e for e in cfg["sources"]),
+                         "sources.json 不应再含 health（否则每次搜索都产生 git diff）")
+        hp = self.read_health()
+        self.assertIn("nyaa", hp["sources"])
+        self.assertEqual(hp["sources"]["nyaa"]["ms"], 120)
+        self.assertEqual(hp["sources"]["nyaa"]["outcomes"], ["ok"],
+                         "旧 times 字段应折算进 outcomes")
+        self.assertNotIn("times", hp["sources"]["nyaa"],
+                         "times 与 outcomes 等值双写已废除")
+
+    def test_legacy_health_is_not_lost(self):
+        self.seed_legacy("nyaa", {"state": "err", "ms": 900, "err": "返回 0 条",
+                                  "times": ["empty", "empty", "empty"]})
+        api_mod.Api().boot()
+        hp = self.read_health()
+        self.assertEqual(hp["sources"]["nyaa"]["outcomes"], ["empty"] * 3)
+        self.assertEqual(hp["sources"]["nyaa"]["err"], "返回 0 条")
+
+    def test_boot_is_idempotent(self):
+        self.seed_legacy("nyaa", {"state": "ok", "ms": 50, "err": "", "times": ["ok", "ok"]})
+        api_mod.Api().boot()
+        first = self.read_health()
+        api_mod.Api().boot()
+        second = self.read_health()
+        self.assertEqual(first, second)
+
+    def test_search_does_not_dirty_sources_json(self):
+        self.seed_legacy("nyaa", {"state": "ok", "ms": 50, "err": "", "times": ["ok"]})
+        a = api_mod.Api()
+        a.boot()
+        before = self.sources_file().read_text(encoding="utf-8")
+        a._mark("nyaa", True, 3, 77, "")
+        a._persist_health()
+        after = self.sources_file().read_text(encoding="utf-8")
+        self.assertEqual(before, after,
+                         "_persist_health 不应改写 sources.json（health 已独立）")
+        hp = self.read_health()
+        self.assertIn("ok", hp["sources"]["nyaa"]["outcomes"])
+
+    def test_queryless_source_zero_result_is_not_recorded(self):
+        a = api_mod.Api()
+        a.boot()
+        a._mark("eztv", True, 0, 100, "")
+        self.assertIsNone(a._health_store.get("eztv"),
+                          "EZTV 没有关键词检索能力，0 条不是故障，不该记账")
+        a._mark("nyaa", True, 0, 100, "")
+        row = a._health_store.get("nyaa")
+        self.assertEqual(row["outcomes"], ["empty"],
+                         "有检索能力的源 0 条仍要如实记账")
+
+    def test_prune_drops_removed_source(self):
+        store = config.HealthStore()
+        store.replace({"nyaa": {"state": "ok", "times": ["ok"]},
+                       "ghost": {"state": "err", "times": ["err"]}})
+        store.prune(["nyaa"])
+        self.assertNotIn("ghost", store.all())
+        self.assertIn("nyaa", store.all())
+
+    def test_prune_spares_sources_that_never_had_health(self):
+        self.seed_legacy("nyaa", {"state": "ok", "ms": 50, "err": "", "times": ["ok"]})
+        a = api_mod.Api()
+        a.boot()
+        hp = self.read_health()
+        self.assertEqual(set(hp["sources"]), {"nyaa"},
+                         "没有历史记录的源不应被凭空造出 health 条目")
+        keys = [r["key"] for r in a.list_sources()]
+        self.assertEqual(len(keys), len(config.defaults()["sources"]),
+                         "无 health 的源仍必须出现在列表里")
+        self.assertEqual(self.read_health()["sources"]["nyaa"]["state"], "ok",
+                         "视图瘦身不影响持久层的 state")
+
+
+class DiagnosticsRootCauseTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def feed(self, key, marks):
+        for mark in marks:
+            if mark == "ok":
+                self.api._mark(key, True, 5, 100, "")
+            elif mark == "empty":
+                self.api._mark(key, True, 0, 100, "返回 0 条")
+            else:
+                self.api._mark(key, False, 0, 100, "HTTP 503")
+
+    def row_for(self, key):
+        for row in self.api._diagnostic_report()["sources"]:
+            if row["key"] == key:
+                return row
+        return None
+
+    def block_for(self, text, key):
+        return json.dumps(self.row_for(key) or {}, ensure_ascii=False)
+
+    def test_empty_window_reports_no_content_not_mirror(self):
+        self.feed("nyaa", ["ok", "empty", "empty", "empty", "empty", "empty"])
+        row = self.row_for("nyaa")
+        self.assertIsNotNone(row)
+        self.assertEqual(row["kind"], "empty",
+                         "连得上只是没内容，不能与连接失败混为一类")
+        self.assertEqual(row["outcomes"][-1], "empty")
+        self.assertTrue(row["adapter"].startswith("app/sources.py"),
+                        "无结果要能定位到适配器，供后续改解析")
+
+    def test_last_success_does_not_mask_empty_history(self):
+        self.feed("mikan", ["empty", "empty", "empty", "empty", "empty", "ok"])
+        row = self.row_for("mikan")
+        self.assertIsNotNone(row, "末次成功后仍应按窗口里的 empty 出现在报告里")
+        self.assertGreaterEqual(row["outcomes"].count("empty"), 4)
+
+    def test_empty_mixed_with_conn_error_keeps_both_facts(self):
+        self.feed("sukebei", ["err", "empty", "err", "empty", "empty"])
+        row = self.row_for("sukebei")
+        self.assertEqual(row["kind"], "empty")
+        self.assertEqual(sum(1 for o in row["outcomes"] if o in api_mod.FATAL_OUTCOMES), 2,
+                         "窗口里混着的连接失败次数必须如实带出，供 agent 判断")
+
+    def test_window_empty_true_when_empty_dominates(self):
+        self.assertTrue(api_mod._window_empty(
+            ["empty", "empty", "empty", "empty", "ok"]),
+            "5 次里 4 次解析 0 条，1 次成功不足以洗白，仍应按改版报")
+
+    def test_window_empty_cleared_when_success_dominates(self):
+        self.assertFalse(api_mod._window_empty(["empty", "empty", "ok", "ok", "ok"]),
+                         "成功占多数后不该再判改版")
+
+    def test_view_exposes_empty_flag(self):
+        self.feed("nyaa", ["empty", "empty", "empty", "empty", "empty"])
+        self.assertTrue(api_mod._window_empty(["empty"] * 5))
+
+    def test_view_empty_false_for_connection_failure(self):
+        self.feed("sukebei", ["err", "err", "err", "err", "err"])
+        self.assertFalse(api_mod._window_empty(["err"] * 5))
+
+    def test_diagnostics_location_points_to_real_adapter(self):
+        self.feed("tpb", ["empty", "empty", "empty", "empty"])
+        row = self.row_for("tpb")
+        self.assertEqual(row["adapter"], "app/sources.py :: _search_tpb_mirror")
+
+    def test_diagnostics_carries_per_attempt_detail(self):
+        self.feed("tpb", ["empty", "empty"])
+        row = self.row_for("tpb")
+        self.assertTrue(row["events"], "诊断要带每次的码/条数/耗时，供 agent 判断")
+        ev = row["events"][-1]
+        for field in ("outcome", "code", "count", "ms", "round"):
+            self.assertIn(field, ev)
+
+    def test_diagnostics_is_structured_not_prose(self):
+        self.feed("tpb", ["empty", "empty"])
+        report = self.api._diagnostic_report()
+        self.assertIn("at", report)
+        self.assertIn("version", report)
+        self.assertIsInstance(report["sources"], list)
+        for label in ("现象", "明细", "建议", "位置", "地址"):
+            self.assertNotIn(label, json.dumps(report, ensure_ascii=False),
+                             "给 agent 的诊断不该用中文标签做字段名")
+
+    def test_diagnostics_empty_when_nothing_wrong(self):
+        self.feed("nyaa", ["ok", "ok"])
+        self.assertEqual(self.api.diagnostics(), "",
+                         "没有异常时不产生任何诊断文本")
+
+
+class SourceIssuesTest(SearchThreadMixin, DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def feed(self, key, marks):
+        for mark in marks:
+            if mark == "ok":
+                self.api._mark(key, True, 5, 100, "")
+            elif mark == "empty":
+                self.api._mark(key, True, 0, 100, "")
+            else:
+                self.api._mark(key, False, 0, 100, "HTTP 500")
+
+    def test_clean_sources_yield_no_issues(self):
+        self.feed("nyaa", ["ok", "ok"])
+        self.assertEqual(self.api.source_issues(), [])
+
+    def test_failing_source_is_reported_without_internals(self):
+        self.feed("bitsearch", ["err"] * 3)
+        row = [i for i in self.api.source_issues() if i["key"] == "bitsearch"][0]
+        self.assertEqual(row["kind"], "fail")
+        self.assertTrue(row["detail"])
+        blob = json.dumps(row, ensure_ascii=False)
+        for leak in (".py", "app/", "http5xx", "outcome", "round", "现象", "建议"):
+            self.assertNotIn(leak, blob,
+                             f"给界面看的字段不该出现内部细节或标签：{leak}")
+
+    def test_issue_rows_carry_label_and_addr(self):
+        self.feed("mikan", ["empty"] * 5)
+        row = [i for i in self.api.source_issues() if i["key"] == "mikan"][0]
+        self.assertEqual(row["label"], "蜜柑计划")
+        self.assertTrue(row["addr"].startswith("http"))
+
+    def test_empty_and_fail_are_distinguishable(self):
+        self.feed("mikan", ["empty"] * 5)
+        self.feed("dmhy", ["err"] * 3)
+        kinds = {i["key"]: i["kind"] for i in self.api.source_issues()}
+        self.assertEqual(kinds.get("mikan"), "empty")
+        self.assertEqual(kinds.get("dmhy"), "fail")
+
+    def test_issue_detail_has_no_advice_text(self):
+        self.feed("bitsearch", ["err"] * 3)
+        self.feed("mikan", ["empty"] * 5)
+        for row in self.api.source_issues():
+            blob = json.dumps(row, ensure_ascii=False)
+            for banned in ("试试", "建议", "可以", "应该", "需要"):
+                self.assertNotIn(banned, blob,
+                                 f"界面只写事实与原因，不写怎么用/怎么修：{banned}")
+
+    def test_diagnostics_still_available_for_agent(self):
+        self.feed("bitsearch", ["err"] * 3)
+        text = self.api.diagnostics()
+        self.assertIn("app/sources.py :: _search_bitsearch", text,
+                      "面向 AI 的详细诊断必须保留")
+
+    def test_empty_with_healthy_peers_says_so(self):
+        for mark in ("ok", "ok", "empty"):
+            self._mark_round("nyaa", mark, 1)
+        for mark in ("empty", "empty", "empty"):
+            self._mark_round("tpb", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "tpb"][0]
+        self.assertIn("其它", row["detail"],
+                      "同伴全有结果时要点明是它自己不行：" + row["detail"])
+
+    def test_empty_with_empty_peers_says_so(self):
+        for mark in ("empty", "empty", "empty"):
+            self._mark_round("nyaa", mark, 1)
+            self._mark_round("tpb", mark, 1)
+        row = [i for i in self.api.source_issues() if i["key"] == "tpb"][0]
+        self.assertIn("其它源也没有结果", row["detail"],
+                      "同伴也全空时不能冤枉它一个：" + row["detail"])
+
+    def test_diag_row_carries_last_count(self):
+        health = {"state": "ok", "outcomes": ["ok"], "lastOk": 11, "lastCount": 42}
+        row = self.api._diag_row({"key": "nyaa", "label": "Nyaa"}, health, "fail")
+        self.assertEqual(row["lastCount"], 42,
+                         "agent 要能分清「这源从没成功过」和「昨天还有 42 条」")
+
+    def test_search_records_query_for_diagnostics(self):
+        before = self.search_threads()
+        with mock.patch.object(api_mod.core, "search",
+                               return_value=(api_mod.core.SearchResult(), None)):
+            self.api.start_search("赛博朋克 边缘行者")
+            self.assertEqual(self.api._last_query, "赛博朋克 边缘行者",
+                             "诊断报告要不带关键词，agent 得回头问用户搜了什么")
+            self.await_search_threads(before)
+
+    def test_report_carries_query_and_counts(self):
+        report = self.api._diagnostic_report()
+        for field in ("lastQuery", "counts"):
+            self.assertIn(field, report,
+                          f"诊断顶层缺 {field}，agent 拿不到「人 + 词 + 源 + 时间」")
+
+    def _mark_round(self, key, mark, round_id):
+        if mark == "empty":
+            self.api._mark(key, True, 0, 100, "", round_id=str(round_id))
+        elif mark == "err":
+            self.api._mark(key, False, 0, 100, "HTTP 500", round_id=str(round_id))
+        else:
+            self.api._mark(key, True, 5, 100, "", round_id=str(round_id))
+
+
+class OutcomeClassificationTest(unittest.TestCase):
+
+    def check(self, ok, count, err, ms=0):
+        return api_mod.classify(ok, count, err, ms)
+
+    def test_zero_result_is_empty_not_error(self):
+        self.assertEqual(self.check(True, 0, ""), ("empty", 0),
+                         "连上了只是没内容，不是故障")
+
+    def test_http_codes_are_split(self):
+        self.assertEqual(self.check(False, 0, "HTTP Error 403: Forbidden"),
+                         ("http403", 403))
+        self.assertEqual(self.check(False, 0, "HTTP Error 429: Too Many Requests"),
+                         ("http429", 429))
+        self.assertEqual(self.check(False, 0, "HTTP Error 503: Unavailable"),
+                         ("http5xx", 503))
+        self.assertEqual(self.check(False, 0, "HTTP Error 404: Not Found"),
+                         ("http4xx", 404))
+
+    def test_legal_block_is_its_own_outcome(self):
+        self.assertEqual(self.check(False, 0, "HTTP Error 451: Unavailable"),
+                         ("http451", 451),
+                         "451 是地区封锁，换线路就能解决，不能和源站 403 混为一谈")
+        self.assertEqual(api_mod.OUTCOME_STATE["http451"], "err")
+        self.assertEqual(api_mod.outcome_text("http451", 451), "451 地区受限")
+        self.assertNotIn("http451", api_mod.FATAL_OUTCOMES,
+                         "降级解决不了地区封锁，不该把一个好源排到后面")
+
+    def test_proxy_tunnel_failure_is_network_not_source(self):
+        msg = "URLError: <urlopen error Tunnel connection failed: 502 Bad Gateway>"
+        self.assertEqual(self.check(False, 0, msg), ("net", 0),
+                         "代理返回的 502 不代表源站故障")
+
+    def test_proxy_failure_text_is_distinct(self):
+        self.assertEqual(api_mod.outcome_text("http403", 451), "HTTP 451 拒绝")
+        self.assertEqual(api_mod.outcome_text("http5xx", 503), "HTTP 503")
+
+    def test_timeout_and_network_are_distinct(self):
+        self.assertEqual(self.check(False, 0, "URLError: timed out"),
+                         ("timeout", 0))
+        self.assertEqual(self.check(False, 0, "socket.timeout: timed out"),
+                         ("timeout", 0))
+        self.assertEqual(self.check(False, 0, "URLError: getaddrinfo failed"),
+                         ("net", 0))
+
+    def test_slow_but_successful_is_not_error(self):
+        self.assertEqual(self.check(True, 12, "", 9000), ("slow", 0))
+        self.assertEqual(self.check(True, 12, "", 300), ("ok", 0))
+
+    def test_slow_source_reads_as_healthy_not_flagged(self):
+        from app import api as api_mod
+        self.assertEqual(api_mod.OUTCOME_STATE["slow"], "ok",
+                         "慢但拿到结果的源不该标成需要提醒的黄点")
+        self.assertEqual(api_mod._state_of(["ok", "ok", "slow"]), "ok")
+
+    def test_cancelled_search_is_flagged(self):
+        self.assertEqual(self.check(False, 0, "已停止"), ("cancel", 0))
+
+    def test_parse_failure_is_not_network(self):
+        msg = "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+        self.assertEqual(self.check(False, 0, msg), ("parse", 0),
+                         "源站改版是解析问题，报成网络故障会把用户引去查代理")
+        self.assertEqual(self.check(False, 0, "ValueError: 无法解析 RSS"),
+                         ("parse", 0))
+
+    def test_parse_outcome_is_warn_not_error(self):
+        self.assertEqual(api_mod.OUTCOME_STATE["parse"], "warn")
+        self.assertEqual(api_mod.outcome_text("parse", 0), "解析失败")
+        self.assertNotIn("parse", api_mod.FATAL_OUTCOMES,
+                         "解析失败不该参与自动降级，降级解决不了改版")
+
+    def test_network_failures_stay_network(self):
+        self.assertEqual(self.check(False, 0, "URLError: getaddrinfo failed"),
+                         ("net", 0))
+        self.assertEqual(
+            self.check(False, 0, "URLError: [WinError 10061] 目标计算机积极拒绝，无法连接。"),
+            ("net", 0))
+        self.assertEqual(
+            self.check(False, 0, "URLError: <urlopen error Tunnel connection failed: 502 Bad Gateway>"),
+            ("net", 0),
+            "代理层 502 必须仍是 net，不能被 parse 分支截胡")
+
+
+    def test_bare_numbers_in_text_are_not_status_codes(self):
+        self.assertNotEqual(self.check(False, 0, "RuntimeError: 解析到第 451 行失败")[0],
+                            "http451", "错误文本里的三位数不是 HTTP 状态码")
+        self.assertNotEqual(self.check(False, 0, "ValueError: 重试了 500 次仍失败")[0],
+                            "http5xx", "错误文本里的三位数不是 HTTP 状态码")
+        self.assertEqual(self.check(False, 0, "HTTP Error 503: Unavailable"),
+                         ("http5xx", 503))
+
+    def test_shape_mismatch_is_not_network_failure(self):
+        outcome, _code = self.check(
+            False, 0, "ShapeError: TPB 镜像 https://piratebayproxy.live 返回的不是搜索结果页")
+        self.assertEqual(outcome, "shape",
+                         "页面结构变了不是网络故障，别让用户去查代理")
+        self.assertNotIn("shape", api_mod.FATAL_OUTCOMES,
+                         "结构不符不该把源排到后面")
+
+    def test_unrecognized_is_unknown_not_network(self):
+        outcome, _code = self.check(False, 0, "RuntimeError: boom")
+        self.assertEqual(outcome, "unknown",
+                         "认不出的异常不要冒充网络故障")
+        self.assertEqual(api_mod.outcome_text(outcome), "请求失败")
+
+
+class OutcomeStateTest(unittest.TestCase):
+
+    def state(self, outcomes):
+        return api_mod._state_of(outcomes)
+
+    def test_empty_is_never_red(self):
+        self.assertEqual(self.state(["empty"] * 5), "empty",
+                         "无结果必须是灰，红色只留给故障和超时")
+
+    def test_timeout_and_net_are_red(self):
+        self.assertEqual(self.state(["timeout"]), "err")
+        self.assertEqual(self.state(["net"]), "err")
+        self.assertEqual(self.state(["http403"]), "err")
+        self.assertEqual(self.state(["http5xx"]), "err")
+
+    def test_rate_limit_is_warn(self):
+        self.assertEqual(self.state(["http429"]), "warn",
+                         "限流会自己恢复，是提示不是故障")
+
+    def test_mostly_empty_with_one_success_warns(self):
+        self.assertEqual(self.state(["empty", "empty", "empty", "empty", "ok"]),
+                         "warn", "时有时无值得提醒，但不该红")
+
+    def test_three_fatal_in_window_is_red_even_if_last_ok(self):
+        self.assertEqual(
+            self.state(["timeout", "timeout", "timeout", "ok", "ok"]), "err")
+
+    def test_single_empty_between_successes_is_not_flagged(self):
+        self.assertEqual(self.state(["ok", "ok", "ok", "ok", "empty"]), "empty")
+        self.assertFalse(api_mod._window_empty(["ok", "ok", "ok", "ok", "empty"]),
+                         "偶发一次没结果不该被当成改版")
+
+
+class RelativeJudgementTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def feed_round(self, token, results):
+        for key, count in results.items():
+            self.api._mark(key, True, count, 100, "", round_id=str(token))
+
+    def row_for(self, key):
+        for row in self.api._diagnostic_report()["sources"]:
+            if row["key"] == key:
+                return row
+        return None
+
+    def block_for(self, text, key):
+        return json.dumps(self.row_for(key) or {}, ensure_ascii=False)
+
+    def test_lonely_empty_source_is_suspicious(self):
+        self.feed_round(1, {"nyaa": 0, "mikan": 5, "dmhy": 8})
+        row = self.row_for("nyaa")
+        self.assertEqual(row["peers"], 2, "同轮应看到两个同伴源")
+        self.assertEqual(row["peerHits"], 2,
+                         "同轮别人都有结果，只有它没有，才指向源本身")
+
+    def test_all_sources_empty_blames_query(self):
+        self.feed_round(1, {"nyaa": 0, "mikan": 0, "dmhy": 0})
+        row = self.row_for("nyaa")
+        self.assertEqual(row["peers"], 2)
+        self.assertEqual(row["peerHits"], 0,
+                         "全都搜不到时是关键字问题，不该把源标成故障")
+
+    def test_round_id_is_recorded(self):
+        self.feed_round(77, {"nyaa": 0})
+        ev = self.api._health_store.get("nyaa")["events"][-1]
+        self.assertEqual(ev["round"], "77")
+
+
+class HealthEventTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def test_events_record_code_count_and_ms(self):
+        self.api._mark("nyaa", True, 42, 260, "")
+        h = self.api._health_store.get("nyaa")
+        ev = h["events"][-1]
+        self.assertEqual(ev["outcome"], "ok")
+        self.assertEqual(ev["count"], 42)
+        self.assertEqual(ev["ms"], 260)
+        self.assertTrue(ev["at"] > 0)
+
+    def test_last_ok_tracks_most_recent_success(self):
+        self.api._mark("nyaa", True, 5, 100, "")
+        h = self.api._health_store.get("nyaa")
+        self.assertTrue(h["lastOk"] > 0)
+        first = h["lastOk"]
+        self.api._mark("nyaa", True, 0, 100, "")
+        self.assertEqual(self.api._health_store.get("nyaa")["lastOk"], first,
+                         "无结果不该刷新上次成功时间")
+
+    def test_cancel_is_not_written_to_health(self):
+        self.api._mark("nyaa", True, 3, 100, "")
+        before = list(self.api._health_store.get("nyaa")["outcomes"])
+        self.api._mark("nyaa", False, 0, 0, "已停止")
+        self.assertEqual(self.api._health_store.get("nyaa")["outcomes"], before,
+                         "用户主动停止不该污染健康度")
+
+    def test_events_window_is_bounded(self):
+        for _ in range(60):
+            self.api._mark("nyaa", True, 1, 10, "")
+        h = self.api._health_store.get("nyaa")
+        self.assertEqual(len(h["events"]), config.EVENT_WINDOW)
+        self.assertEqual(len(h["outcomes"]), config.HEALTH_WINDOW)
+
+    def test_legacy_record_without_events_still_loads(self):
+        store = config.HealthStore()
+        store.replace({"nyaa": {"state": "err", "ms": 90, "err": "超时",
+                                "times": ["err", "err"]}})
+        row = store.get("nyaa")
+        self.assertEqual(row["outcomes"], ["err", "err"],
+                         "旧记录没有 outcomes 时应从 times 推断")
+        self.assertEqual(row["events"], [])
+        self.assertEqual(row["lastOk"], 0)
+
+
+class DemoteTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def order(self):
+        return [e["key"] for e in sorted(self.api._cfg.sources,
+                                         key=lambda x: x.get("order", 0))]
+
+    def feed(self, key, marks):
+        for mark in marks:
+            if mark == "ok":
+                self.api._mark(key, True, 5, 100, "")
+            elif mark == "empty":
+                self.api._mark(key, True, 0, 100, "返回 0 条")
+            else:
+                self.api._mark(key, False, 0, 100, "HTTP 503")
+        self.api._persist_health()
+
+    def test_three_of_five_bad_demotes(self):
+        start = self.order()
+        self.feed("nyaa", ["err", "err", "err", "ok", "ok"])
+        self.assertEqual(self.order()[-1], "nyaa",
+                         "5 次里坏 3 次即应沉底，不必等到全坏")
+        self.assertEqual(sorted(self.order()), sorted(start),
+                         "排序不应增删源")
+
+    def test_two_of_five_bad_does_not_demote(self):
+        self.feed("nyaa", ["err", "err", "ok", "ok", "ok"])
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "只坏 2 次不该沉底")
+
+    def test_insufficient_history_does_not_demote(self):
+        self.feed("nyaa", ["err", "err"])
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "窗口没攒满 5 次前不该动顺序")
+
+    def test_full_recovery_restores_original_slot(self):
+        start = self.order()
+        self.feed("nyaa", ["err"] * 5)
+        self.assertEqual(self.order()[-1], "nyaa")
+        self.feed("nyaa", ["ok"] * 5)
+        self.assertEqual(self.order(), start,
+                         "恢复后应回到原位置，而不是留在末尾之后")
+
+    def test_recovery_clears_demote_residue(self):
+        self.feed("nyaa", ["err"] * 5)
+        self.feed("nyaa", ["ok"] * 5)
+        nyaa = self.api._cfg.get("nyaa")
+        self.assertNotIn("demoteFrom", nyaa,
+                         "恢复后 demoteFrom 残留会被原样持久化进 sources.json")
+        self.assertNotIn("demoted", nyaa)
+
+    def test_order_lock_disables_demotion(self):
+        self.api.reorder_sources(self.order())
+        self.feed("nyaa", ["err"] * 5)
+        self.assertNotEqual(self.order()[-1], "nyaa",
+                            "用户手动排过序就不该再自动调整")
+
+    def test_demote_is_idempotent(self):
+        self.feed("nyaa", ["err"] * 5)
+        once = self.order()
+        self.feed("nyaa", ["err"] * 2)
+        self.assertEqual(self.order(), once)
+
+
+class MarkThreadSafetyTest(DataDirCase):
+
+    def setUp(self):
+        super().setUp()
+        self.api = api_mod.Api()
+        self.api.boot()
+
+    def test_concurrent_marks_keep_window_at_limit(self):
+        threads = [
+            threading.Thread(target=self.api._mark,
+                             args=("nyaa", True, 1, 10, ""))
+            for _ in range(40)
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        h = self.api._health_store.get("nyaa")
+        self.assertIsNotNone(h)
+        self.assertEqual(len(h["outcomes"]), config.HEALTH_WINDOW)
+
+
+OUTCOMES = ("ok", "slow", "empty", "timeout", "net", "http403", "http5xx",
+            "http451", "blocked", "cancel", "http429", "http4xx", "parse",
+            "shape", "unknown")
+
+STATE_CASES = 8000
+
+
+class StateRuleParityTest(unittest.TestCase):
+
+    def node(self):
+        for name in ("node", "node.exe"):
+            hit = shutil.which(name)
+            if hit:
+                return hit
+        return None
+
+    def cases(self):
+        seqs = []
+        for n in (1, 2, 3):
+            seqs.extend(itertools.product(OUTCOMES, repeat=n))
+        rnd = random.Random(20260926)
+        while len(seqs) < STATE_CASES:
+            n = rnd.choice((4, 5))
+            seqs.append(tuple(rnd.choice(OUTCOMES) for _ in range(n)))
+        return [{"seq": list(s), "py": api_mod._state_of(list(s))} for s in seqs]
+
+    def test_frontend_rule_matches_backend(self):
+        exe = self.node()
+        if not exe:
+            self.skipTest("本机没有 node，跳过前后端规则比对")
+        script = ROOT / "tests" / "state_rule_check.cjs"
+        self.assertTrue(script.is_file(), f"缺失：{script}")
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = Path(tmp) / "cases.json"
+            payload.write_text(json.dumps(self.cases()), encoding="utf-8")
+            proc = subprocess.run([exe, str(script), str(payload)],
+                                  cwd=str(ROOT), capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace", timeout=120)
+            out = (proc.stdout or "") + (proc.stderr or "")
+        line = [l for l in out.splitlines() if l.strip().startswith("{")]
+        self.assertTrue(line, "比对脚本没输出 JSON：" + out)
+        data = json.loads(line[-1])
+        self.assertGreater(data.get("total", 0), 3000, "用例太少，护栏覆盖不足")
+        self.assertEqual(
+            data.get("bad"), 0,
+            "store.js 的 mergeState 与后端 _state_of 判定不一致 —— "
+            "同一批健康数据，界面徽标和诊断报告会给出两种结论："
+            + json.dumps(data.get("samples") or [], ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    unittest.main()

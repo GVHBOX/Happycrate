@@ -1,0 +1,40 @@
+:root{
+  --e:cubic-bezier(.2,.7,.2,1);
+  --e-out:cubic-bezier(.2,.8,.3,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --land:cubic-bezier(.16,1,.3,1);
+
+  --d-hover:160ms;
+  --d-press:90ms;
+  --d-release:160ms;
+  --d-state:200ms;
+  --d-spring:340ms;
+  --d-push:240ms;
+  --d-ripple:460ms;
+}
+
+@keyframes pop{from{opacity:0; transform:translateY(12px) scale(.95)}}
+@keyframes menuIn{from{opacity:0; transform:scale(.9) translateY(-8px)}}
+@keyframes miIn{from{opacity:0; transform:translateX(-8px)}}
+@keyframes fade{from{opacity:0}}
+@keyframes ripple{to{transform:scale(1); opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fly{from{transform:translateY(.1em)} to{transform:translateY(-.1em)}}
+@keyframes latIn{from{opacity:0; transform:translateY(-7px) scale(.9)}}
+@keyframes cbPop{50%{transform:scale(1.18)}}
+@keyframes blink{0%,60%,100%{opacity:.25} 30%{opacity:1}}
+@keyframes breathe{0%,100%{opacity:1} 50%{opacity:.35}}
+@keyframes rowIn{from{opacity:0; transform:translateY(10px)}}
+@keyframes barSlide{from{transform:scaleX(0)}}
+@keyframes countPop{0%{transform:scale(1)} 45%{transform:scale(1.12)} 100%{transform:scale(1)}}
+@keyframes shimmer{from{background-position:-320px 0} to{background-position:calc(320px + 100%) 0}}
+@keyframes fadeOut{to{opacity:0}}
+@keyframes popOut{to{opacity:0; transform:translateY(10px) scale(.97)}}
+@keyframes menuOut{to{opacity:0; transform:scale(.9) translateY(-8px)}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+html.static *{animation:none !important; transition:none !important}
+@keyframes heroOut{to{opacity:0; transform:translateY(-18px) scale(.985)}}
+@keyframes cardRise{from{opacity:0; transform:translateY(10px)}}

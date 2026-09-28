@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>1080p :: Sukebei</title>
+
+		<meta name="viewport" content="width=480px">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<link rel="shortcut icon" type="image/png" href="/static/favicon.png">
+		<link rel="icon" type="image/png" href="/static/favicon.png">
+		<link rel="mask-icon" href="/static/pinned-tab.svg" color="#3582F7">
+		<link rel="alternate" type="application/rss+xml" href="https://sukebei.nyaa.si/?page=rss&amp;q=1080p&amp;c=0_0&amp;f=0" />
+
+		<meta property="og:site_name" content="Sukebei">
+		<meta property="og:title" content="1080p :: Sukebei">
+		<meta property="og:image" content="/static/img/avatar/default.png">
+<meta property="og:description" content="Search for '1080p'">
+
+		<!-- Bootstrap core CSS -->
+		<!--
+			Note: This has been customized at http://getbootstrap.com/customize/ to
+			set the column breakpoint to tablet mode, instead of mobile. This is to
+			make the navbar not look awful on tablets.
+		-->
+		<link href="/static/css/bootstrap.min.css?t=1608007394" rel="stylesheet" id="bsThemeLink">
+		<link href="/static/css/bootstrap-xl-mod.css?t=1608007394" rel="stylesheet">
+		<!--
+			This theme changer script needs to be inline and right under the above stylesheet link to prevent FOUC (Flash Of Unstyled Content)
+			Development version is commented out in static/js/main.js at the bottom of the file
+		-->
+		<script>function toggleDarkMode(){"dark"===localStorage.getItem("theme")?setThemeLight():setThemeDark()}function setThemeDark(){bsThemeLink.href="/static/css/bootstrap-dark.min.css?t=1608007394",localStorage.setItem("theme","dark"),document.body!==null&&document.body.classList.add('dark')}function setThemeLight(){bsThemeLink.href="/static/css/bootstrap.min.css?t=1608007394",localStorage.setItem("theme","light"),document.body!==null&&document.body.classList.remove('dark')}if("undefined"!=typeof Storage){var bsThemeLink=document.getElementById("bsThemeLink");"dark"===localStorage.getItem("theme")&&setThemeDark()}</script>
+		<script>window.markdown_proxy_images=true;</script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css" integrity="sha256-an4uqLnVJ2flr7w0U74xiF4PJjO2N5Df91R2CUmCLCA=" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+
+		<!-- Custom styles for this template -->
+		<link href="/static/css/main.css?t=1683698371" rel="stylesheet">
+
+		<!-- Core JavaScript -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js" integrity="sha256-3WZyZQOe+ql3pLo90lrkRtALrlniGdnf//gRpW0UQks=" crossorigin="anonymous"></script>
+		<!-- Modified to not apply border-radius to selectpickers and stuff so our navbar looks cool -->
+		<script src="/static/js/bootstrap-select.min.js?t=1625086430"></script>
+		<script src="/static/js/main.min.js?t=1683698372"></script>
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<link rel="search" type="application/opensearchdescription+xml" title="Sukebei (Nyaa.si)" href="/static/search-sukebei.xml">
+	</head>
+	<body>
+		<!-- Fixed navbar -->
+		<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">Sukebei</a>
+				</div><!--/.navbar-header -->
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li ><a href="/upload">Upload</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								Info
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li ><a href="/rules">Rules</a></li>
+								<li ><a href="/help">Help</a></li>
+							</ul>
+						</li>
+						<li><a href="/?page=rss&amp;q=1080p&amp;c=0_0&amp;f=0">RSS</a></li>
+						<li><a href="https://twitter.com/NyaaV2">Twitter</a></li>
+						<li><a href="//nyaa.si">Fun</a></li>
+						<li class="hidden-md"><a href="https://theporndude.com/?ref=sukebei" referrerpolicy="origin" rel="noopener nofollow">ThePornDude</a></li>
+						<!--li><a href="https://example.com/" style="color:red;" referrerpolicy="origin" rel="noopener nofollow">Placeholder</a></li-->
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle visible-lg visible-sm visible-xs" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-user fa-fw"></i>
+								Guest
+								<span class="caret"></span>
+							</a>
+							<a href="#" class="dropdown-toggle hidden-lg hidden-sm hidden-xs" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-user fa-fw"></i>
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="/login">
+										<i class="fa fa-sign-in fa-fw"></i>
+										Login
+									</a>
+								</li>
+								<li>
+									<a href="/register">
+										<i class="fa fa-pencil fa-fw"></i>
+										Register
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+
+
+
+					<div class="search-container visible-xs visible-sm">
+						<form class="navbar-form navbar-right form" action="/" method="get">
+
+							<input type="text" class="form-control" name="q" placeholder="Search..." value="1080p">
+							<br>
+
+							<select class="form-control" title="Filter" data-width="120px" name="f">
+								<option value="0" title="No filter" selected>No filter</option>
+								<option value="1" title="No remakes" >No remakes</option>
+								<option value="2" title="Trusted only" >Trusted only</option>
+							</select>
+
+							<br>
+
+							<select class="form-control" title="Category" data-width="200px" name="c">
+								<option value="0_0" title="All categories" selected>
+									All categories
+								</option>
+								<option value="1_0" title="Art" >
+									Art
+								</option>
+								<option value="1_1" title="Art - Anime" >
+									- Anime
+								</option>
+								<option value="1_2" title="Art - Doujinshi" >
+									- Doujinshi
+								</option>
+								<option value="1_3" title="Art - Games" >
+									- Games
+								</option>
+								<option value="1_4" title="Art - Manga" >
+									- Manga
+								</option>
+								<option value="1_5" title="Art - Pictures" >
+									- Pictures
+								</option>
+								<option value="2_0" title="Real Life" >
+									Real Life
+								</option>
+								<option value="2_1" title="Real Life - Pictures" >
+									- Photobooks and Pictures
+								</option>
+								<option value="2_2" title="Real Life - Videos" >
+									- Videos
+								</option>
+							</select>
+
+							<br>
+
+							<button class="btn btn-primary form-control" type="submit">
+								<i class="fa fa-search fa-fw"></i> Search
+							</button>
+						</form>
+					</div><!--/.search-container -->
+
+					<form class="navbar-form navbar-right form" action="/" method="get">
+						<div class="input-group search-container hidden-xs hidden-sm">
+							<div class="input-group-btn nav-filter" id="navFilter-criteria">
+								<select class="selectpicker show-tick" title="Filter" data-width="120px" name="f">
+									<option value="0" title="No filter" selected>No filter</option>
+									<option value="1" title="No remakes" >No remakes</option>
+									<option value="2" title="Trusted only" >Trusted only</option>
+								</select>
+							</div>
+
+							<div class="input-group-btn nav-filter" id="navFilter-category">
+								<!--
+									On narrow viewports, there isn't enough room to fit the full stuff in the selectpicker, so we show a full-width one on wide viewports, but squish it on narrow ones.
+								-->
+								<select class="selectpicker show-tick" title="Category" data-width="130px" name="c">
+									<option value="0_0" title="All categories" selected>
+										All categories
+									</option>
+									<option value="1_0" title="Art" >
+										Art
+									</option>
+									<option value="1_1" title="Art - Anime" >
+										- Anime
+									</option>
+									<option value="1_2" title="Art - Doujinshi" >
+										- Doujinshi
+									</option>
+									<option value="1_3" title="Art - Games" >
+										- Games
+									</option>
+									<option value="1_4" title="Art - Manga" >
+										- Manga
+									</option>
+									<option value="1_5" title="Art - Pictures" >
+										- Pictures
+									</option>
+									<option value="2_0" title="Real Life" >
+										Real Life
+									</option>
+									<option value="2_1" title="Real Life - Pictures" >
+										- Photobooks and Pictures
+									</option>
+									<option value="2_2" title="Real Life - Videos" >
+										- Videos
+									</option>
+								</select>
+							</div>
+							<input type="text" class="form-control search-bar" name="q" placeholder="Search..." value="1080p" />
+							<div class="input-group-btn search-btn">
+								<button class="btn btn-primary" type="submit">
+									<i class="fa fa-search fa-fw"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div><!--/.nav-collapse -->
+			</div><!--/.container -->
+		</nav>
+
+		<div class="container">
+<style type="text/css">
+	#e71bf691-4eb4-453f-8f11-6f40280c18f6 {
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: -16px;
+		margin-bottom: 4px;
+	}
+
+	.ts-outstream-video video {
+		max-height: 240px !important;
+	}
+	#ec01fd54-016b-41b4-bec9-b9b93f9b3b77 {
+		margin-bottom: 1em;
+	}
+</style>
+
+<script src="//cdn.tsyndicate.com/sdk/v1/outstream.video.js"></script>
+<script src="//cdn.tsyndicate.com/sdk/v1/video.instant.message.js"></script>
+
+<div id="e71bf691-4eb4-453f-8f11-6f40280c18f6"></div>
+
+<script type="text/javascript">
+	if (window.matchMedia("(max-width: 767px)").matches) {
+		document.write('<scr' + 'ipt src="//cdn.tsyndicate.com/sdk/v1/ms.js" data-ts-spot="2kw3qyTDqutsG6b3EDO9mIIE0sdBs8JN" data-ts-container-id="e71bf691-4eb4-453f-8f11-6f40280c18f6" data-ts-native-settings=\'{"cols":1,"rows":2,"titlePosition":"none","adsByPosition":"none","type":"img-left","styles":{"container":{"width":"100%","padding-top":"5px"},"thumb":{"border-radius":"4px","background":"rgba(255,255,255,1)"},"headlineLink":{"padding-top":"10px","font-size":"12px","font-weight":"bold","max-height":"64px"},"brandnameLabel":{"position":"absolute","bottom":"10px"},"brandnameLink":{"color":"#444"},"image":{"padding-bottom":"100%"}}}\' data-ts-wrapper-styles=\'{"display":"flex","flexDirection":"column","justifyContent":"space-around","alignItems":"center"}\' async defer></scr' + 'ipt>');
+	} else {
+		document.write('<scr' + 'ipt src="//cdn.tsyndicate.com/sdk/v1/ms.js" data-ts-spot="nq5nhSQztcZiNXgCMng6vD1TqGFnd84i" data-ts-container-id="e71bf691-4eb4-453f-8f11-6f40280c18f6" data-ts-native-settings=\'{"cols":5,"rows":1,"titlePosition":"none","adsByPosition":"none","type":"label-under","styles":{"container":{"width":"100%","padding-top":"11px"},"thumb":{"border-radius":"4px"},"label":{"height":"80px","background":"rgba(255,255,255,0.65)"},"headlineLink":{"padding-top":"5px","font-size":"12px","font-weight":"bold","min-height":"45px"},"brandnameLink":{"color":"#444"}}}\' async defer></scr' + 'ipt>');
+	}
+
+	TSVideoInstantMessage({
+		spot: "29544ccbaa25446f923741cf263429f9",
+		width: "5%",
+		mobileWidth: "20%",
+		displayMode: "capped",
+		cappedAction: "click",
+		cappedValueInMinutes: 10,
+		showCTAButton: true,
+		hideOnComplete: false
+	});
+</script>
+
+
+
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover table-striped torrent-list">
+		<thead>
+			<tr>
+				<th class="hdr-category text-center" style="width:80px;">Category</th>
+				<th class="hdr-name" style="width:auto;">Name</th>
+				<th class="hdr-comments sorting text-center" title="Comments" style="width:50px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=comments&amp;o=desc"></a><i class="fa fa-comments-o"></i></th>
+				<th class="hdr-link text-center" style="width:70px;">Link</th>
+				<th class="hdr-size sorting text-center" style="width:100px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=size&amp;o=desc"></a>Size</th>
+				<th class="hdr-date sorting text-center" title="In UTC" style="width:140px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=id&amp;o=desc"></a>Date</th>
+
+				<th class="hdr-seeders sorting_desc text-center" title="Seeders" style="width:50px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=seeders&amp;o=asc"></a><i class="fa fa-arrow-up" aria-hidden="true"></i></th>
+				<th class="hdr-leechers sorting text-center" title="Leechers" style="width:50px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=leechers&amp;o=desc"></a><i class="fa fa-arrow-down" aria-hidden="true"></i></th>
+				<th class="hdr-downloads sorting text-center" title="Completed downloads" style="width:50px;"><a href="/?q=1080p&amp;c=0_0&amp;f=0&amp;s=downloads&amp;o=desc"></a><i class="fa fa-check" aria-hidden="true"></i></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491569" title="[Abysswalker]  Oniisan... Ohitori desu ka? (お兄さん…おひとりですか？) [1080p][WEB-DL]">[Abysswalker]  Oniisan... Ohitori desu ka? (お兄さん…おひとりですか？) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491569.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:97b28de1ba82bcf0c6d0d6e3fa065a9b830a9b8b&amp;dn=%5BAbysswalker%5D%20%20Oniisan...%20Ohitori%20desu%20ka%3F%20%28%E3%81%8A%E5%85%84%E3%81%95%E3%82%93%E2%80%A6%E3%81%8A%E3%81%B2%E3%81%A8%E3%82%8A%E3%81%A7%E3%81%99%E3%81%8B%EF%BC%9F%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">655.7 MiB</td>
+				<td class="text-center" data-timestamp="1768175664">2026-01-11 23:54</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">3049</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4578237" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [03][1080P][简繁内封]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [03][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4578237.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:89fecbf0001d54db5c40d884addfd9178c876495&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B03%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">155.0 MiB</td>
+				<td class="text-center" data-timestamp="1777014001">2026-04-24 07:00</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">1735</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4307834" title="Show Time! S01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Showtime! Uta no Oneesan datte Shitai)">Show Time! S01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Showtime! Uta no Oneesan datte Shitai)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4307834.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:d819c6de3ae608efdb73e7836e1d67328f50414d&amp;dn=Show%20Time%21%20S01%20UNCENSORED%20English%20Hardsub%201080p%20WEB%20x264%20AAC%20-%20TMD-Group%20%28OceanVeil%29%20%28Showtime%21%20Uta%20no%20Oneesan%20datte%20Shitai%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">524.2 MiB</td>
+				<td class="text-center" data-timestamp="1747130293">2025-05-13 09:58</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">6800</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4238193" title="[DiabloTripleA] Tsurupeta Shugo Kishi Elfina Ochiru [WEBRip] [HD 1080p] [EngSub]">[DiabloTripleA] Tsurupeta Shugo Kishi Elfina Ochiru [WEBRip] [HD 1080p] [EngSub]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4238193.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:5f4d7c474c195b09cb720cf9ad4af81369240968&amp;dn=%5BDiabloTripleA%5D%20Tsurupeta%20Shugo%20Kishi%20Elfina%20Ochiru%20%5BWEBRip%5D%20%5BHD%201080p%5D%20%5BEngSub%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.7 GiB</td>
+				<td class="text-center" data-timestamp="1736626496">2025-01-11 20:14</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3725</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4691658" title="[Abysswalker Clips] Oyome-sama Honey Days - 02 (およめさま HONEY DAYS) [1080p][WEB-DL]">[Abysswalker Clips] Oyome-sama Honey Days - 02 (およめさま HONEY DAYS) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4691658.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:62f67ac889efe363a4af670fee1323e6c263eef3&amp;dn=%5BAbysswalker%20Clips%5D%20Oyome-sama%20Honey%20Days%20-%2002%20%28%E3%81%8A%E3%82%88%E3%82%81%E3%81%95%E3%81%BE%20HONEY%20DAYS%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">103.2 MiB</td>
+				<td class="text-center" data-timestamp="1787512343">2026-08-23 19:12</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1471</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4623566" title="【种族骑士团】[Front Innocent / フロントイノセント][OVA][BDrip][1080P][简日双语][无修正]">【种族骑士团】[Front Innocent / フロントイノセント][OVA][BDrip][1080P][简日双语][无修正]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4623566.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:f7def4ee56e83e20d39c60793bafd75e57a9b5f0&amp;dn=%E3%80%90%E7%A7%8D%E6%97%8F%E9%AA%91%E5%A3%AB%E5%9B%A2%E3%80%91%5BFront%20Innocent%20%2F%20%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A4%E3%83%8E%E3%82%BB%E3%83%B3%E3%83%88%5D%5BOVA%5D%5BBDrip%5D%5B1080P%5D%5B%E7%AE%80%E6%97%A5%E5%8F%8C%E8%AF%AD%5D%5B%E6%97%A0%E4%BF%AE%E6%AD%A3%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">584.8 MiB</td>
+				<td class="text-center" data-timestamp="1781280480">2026-06-12 16:08</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2238</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4582933" title="[桜都字幕组] 有栖川煉原来是女孩子啊。 / Arisugawa Ren tte Honto wa Onna Nanda yo ne. [01-08 Fin][1080P][简繁内封]">[桜都字幕组] 有栖川煉原来是女孩子啊。 / Arisugawa Ren tte Honto wa Onna Nanda yo ne. [01-08 Fin][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4582933.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:f00a1ae086e74c58a962136ff53415148dfe8c9f&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E6%9C%89%E6%A0%96%E5%B7%9D%E7%85%89%E5%8E%9F%E6%9D%A5%E6%98%AF%E5%A5%B3%E5%AD%A9%E5%AD%90%E5%95%8A%E3%80%82%20%2F%20Arisugawa%20Ren%20tte%20Honto%20wa%20Onna%20Nanda%20yo%20ne.%20%5B01-08%20Fin%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">666.1 MiB</td>
+				<td class="text-center" data-timestamp="1777483843">2026-04-29 17:30</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">1179</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4317023#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4317023" title="Ookami-san wa Taberaretai / I Want to be His Prey v2 (Uncensored) [BD 1080p] [English / Español Subs]">Ookami-san wa Taberaretai / I Want to be His Prey v2 (Uncensored) [BD 1080p] [English / Español Subs]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4317023.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:df4863732225d860e2c9365c96d2764827e339d0&amp;dn=Ookami-san%20wa%20Taberaretai%20%2F%20I%20Want%20to%20be%20His%20Prey%20v2%20%28Uncensored%29%20%5BBD%201080p%5D%20%5BEnglish%20%2F%20Espa%C3%B1ol%20Subs%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">942.4 MiB</td>
+				<td class="text-center" data-timestamp="1748613211">2025-05-30 13:53</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4645</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4612139" title="[HentaiHub] Reika wa Karei na Boku no Joou The Animation EP03 1080p PP WEB-DL AAC2.0 H.264 | Reika wa Karei na Boku no Joou THE ANIMATION - 03 [Raw]">[HentaiHub] Reika wa Karei na Boku no Joou The Animation EP03 1080p PP WEB-DL AAC2.0 H.264 | Reika wa Karei na Boku no Joou THE ANIMATION - 03 [Raw]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4612139.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:cbee431db6bf8732ece9e2666687854fb26ca7d1&amp;dn=%5BHentaiHub%5D%20Reika%20wa%20Karei%20na%20Boku%20no%20Joou%20The%20Animation%20EP03%201080p%20PP%20WEB-DL%20AAC2.0%20H.264%20%7C%20Reika%20wa%20Karei%20na%20Boku%20no%20Joou%20THE%20ANIMATION%20-%2003%20%5BRaw%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">680.0 MiB</td>
+				<td class="text-center" data-timestamp="1780211723">2026-05-31 07:15</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2005</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4623562" title="【种族骑士团】[甜美姐姐！~居然在朋友家里做了这种事！~ / アマネェ！～トモダチンチでこんな事になるなんて！～ / Amanee!][OVA][BDrip][1080P][简日双语][无修正][V3]">【种族骑士团】[甜美姐姐！~居然在朋友家里做了这种事！~ / アマネェ！～トモダチンチでこんな事になるなんて！～ / Amanee!][OVA][BDrip][1080P][简日双语][无修正][V3]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4623562.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:89c408085dfa7ec5c0e8df78e5a341d2243104e8&amp;dn=%E3%80%90%E7%A7%8D%E6%97%8F%E9%AA%91%E5%A3%AB%E5%9B%A2%E3%80%91%5B%E7%94%9C%E7%BE%8E%E5%A7%90%E5%A7%90%EF%BC%81~%E5%B1%85%E7%84%B6%E5%9C%A8%E6%9C%8B%E5%8F%8B%E5%AE%B6%E9%87%8C%E5%81%9A%E4%BA%86%E8%BF%99%E7%A7%8D%E4%BA%8B%EF%BC%81~%20%2F%20%E3%82%A2%E3%83%9E%E3%83%8D%E3%82%A7%EF%BC%81%EF%BD%9E%E3%83%88%E3%83%A2%E3%83%80%E3%83%81%E3%83%B3%E3%83%81%E3%81%A7%E3%81%93%E3%82%93%E3%81%AA%E4%BA%8B%E3%81%AB%E3%81%AA%E3%82%8B%E3%81%AA%E3%82%93%E3%81%A6%EF%BC%81%EF%BD%9E%20%2F%20Amanee%21%5D%5BOVA%5D%5BBDrip%5D%5B1080P%5D%5B%E7%AE%80%E6%97%A5%E5%8F%8C%E8%AF%AD%5D%5B%E6%97%A0%E4%BF%AE%E6%AD%A3%5D%5BV3%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">423.9 MiB</td>
+				<td class="text-center" data-timestamp="1781280416">2026-06-12 16:06</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">1829</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4493734" title="[KyokuSai] いくものがかり The Animation 上巻 / Ikumonogakari The Animation - 01 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] いくものがかり The Animation 上巻 / Ikumonogakari The Animation - 01 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4493734.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:f41db6d7cdacf4346da5e5720fecc612d6cf602b&amp;dn=%5BKyokuSai%5D%20%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%81%8C%E3%81%8B%E3%82%8A%20The%20Animation%20%E4%B8%8A%E5%B7%BB%20%2F%20Ikumonogakari%20The%20Animation%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">571.6 MiB</td>
+				<td class="text-center" data-timestamp="1768416439">2026-01-14 18:47</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">5061</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4345208#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4345208" title="[LR] Etsuraku no Tane (悦楽の胤) [Uncensored] [1080p] [BDRip] [English Subs]">[LR] Etsuraku no Tane (悦楽の胤) [Uncensored] [1080p] [BDRip] [English Subs]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4345208.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:81351ee8a045bb8fbea1cb2c6e47da944f5d03b4&amp;dn=%5BLR%5D%20Etsuraku%20no%20Tane%20%28%E6%82%A6%E6%A5%BD%E3%81%AE%E8%83%A4%29%20%5BUncensored%5D%20%5B1080p%5D%20%5BBDRip%5D%20%5BEnglish%20Subs%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">919.3 MiB</td>
+				<td class="text-center" data-timestamp="1752760361">2025-07-17 13:52</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">10747</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4448157" title="[Abysswalker] Shinshou Genmukan (真章 幻夢館) [1080p][WEB-DL]">[Abysswalker] Shinshou Genmukan (真章 幻夢館) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4448157.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:e844f608107df1157767bee17ebe7988a2b9fb0a&amp;dn=%5BAbysswalker%5D%20Shinshou%20Genmukan%20%28%E7%9C%9F%E7%AB%A0%20%E5%B9%BB%E5%A4%A2%E9%A4%A8%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">2.5 GiB</td>
+				<td class="text-center" data-timestamp="1764347468">2025-11-28 16:31</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3697</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4493768" title="[KyokuSai] いくものがかり The Animation 下巻 / Ikumonogakari The Animation - 02 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] いくものがかり The Animation 下巻 / Ikumonogakari The Animation - 02 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4493768.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:be2054d0d312445332cf5be3cc575300d1619c3e&amp;dn=%5BKyokuSai%5D%20%E3%81%84%E3%81%8F%E3%82%82%E3%81%AE%E3%81%8C%E3%81%8B%E3%82%8A%20The%20Animation%20%E4%B8%8B%E5%B7%BB%20%2F%20Ikumonogakari%20The%20Animation%20-%2002%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">570.6 MiB</td>
+				<td class="text-center" data-timestamp="1768421005">2026-01-14 20:03</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4909</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4685714" title="[桜都字幕组] 关于同组的染谷同学是性感女优这件事。 / Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi. [05][1080P][繁体内嵌]">[桜都字幕组] 关于同组的染谷同学是性感女优这件事。 / Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi. [05][1080P][繁体内嵌]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4685714.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:cdeb94eb03b058ffac473caae64bd99b388a486a&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E5%85%B3%E4%BA%8E%E5%90%8C%E7%BB%84%E7%9A%84%E6%9F%93%E8%B0%B7%E5%90%8C%E5%AD%A6%E6%98%AF%E6%80%A7%E6%84%9F%E5%A5%B3%E4%BC%98%E8%BF%99%E4%BB%B6%E4%BA%8B%E3%80%82%20%2F%20Onaji%20Zemi%20no%20Someya-san%20ga%20Sexy%20Joyuu%20Datta%20Hanashi.%20%5B05%5D%5B1080P%5D%5B%E7%B9%81%E4%BD%93%E5%86%85%E5%B5%8C%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">79.4 MiB</td>
+				<td class="text-center" data-timestamp="1786982347">2026-08-17 15:59</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">2</td>
+				<td class="text-center">1308</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4494536" title="[Abysswalker] Sei Dorei Gakuen 2 (聖奴隷学園2) [1080p][WEB-DL]">[Abysswalker] Sei Dorei Gakuen 2 (聖奴隷学園2) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4494536.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:c56381276d844ab31aed239d164e4c4e7a246d31&amp;dn=%5BAbysswalker%5D%20Sei%20Dorei%20Gakuen%202%20%28%E8%81%96%E5%A5%B4%E9%9A%B7%E5%AD%A6%E5%9C%922%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">2.3 GiB</td>
+				<td class="text-center" data-timestamp="1768505011">2026-01-15 19:23</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">3209</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4716938" title="[桜都字幕组] 不擅交际的未亡人雪女与诅咒戒指 / Hitozukiai ga Nigate na Miboujin no Yukionna-san to Noroi no Yubiwa [01][1080P][简体内嵌]">[桜都字幕组] 不擅交际的未亡人雪女与诅咒戒指 / Hitozukiai ga Nigate na Miboujin no Yukionna-san to Noroi no Yubiwa [01][1080P][简体内嵌]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4716938.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:a7fd02a3623d1ba5d042446883f701e40783cb7f&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E4%B8%8D%E6%93%85%E4%BA%A4%E9%99%85%E7%9A%84%E6%9C%AA%E4%BA%A1%E4%BA%BA%E9%9B%AA%E5%A5%B3%E4%B8%8E%E8%AF%85%E5%92%92%E6%88%92%E6%8C%87%20%2F%20Hitozukiai%20ga%20Nigate%20na%20Miboujin%20no%20Yukionna-san%20to%20Noroi%20no%20Yubiwa%20%5B01%5D%5B1080P%5D%5B%E7%AE%80%E4%BD%93%E5%86%85%E5%B5%8C%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">166.1 MiB</td>
+				<td class="text-center" data-timestamp="1789827248">2026-09-19 14:14</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">759</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4339050" title="Marry Me, Let&#39;s Have a Baby! S01E01 UNCENSORED English Dub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Dekichau made Kon)">Marry Me, Let&#39;s Have a Baby! S01E01 UNCENSORED English Dub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Dekichau made Kon)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4339050.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:7a0d9a1c560b7f9101518e3263b7dfbd7c02cb6d&amp;dn=Marry%20Me%2C%20Let%27s%20Have%20a%20Baby%21%20S01E01%20UNCENSORED%20English%20Dub%201080p%20WEB%20x264%20AAC%20-%20TMD-Group%20%28OceanVeil%29%20%28Dekichau%20made%20Kon%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">59.8 MiB</td>
+				<td class="text-center" data-timestamp="1751816888">2025-07-06 15:48</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4353</td>
+			</tr>
+			<tr class="danger">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/3995920#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/3995920" title="[Ironclad] Rin x Sen + Ran-Sem Cross Mix [BD.1080p.AV1]">[Ironclad] Rin x Sen + Ran-Sem Cross Mix [BD.1080p.AV1]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/3995920.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:e36afaaf5da3335a1225ce34ee83440a7cb5aa03&amp;dn=%5BIronclad%5D%20Rin%20x%20Sen%20%2B%20Ran-Sem%20Cross%20Mix%20%5BBD.1080p.AV1%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">739.2 MiB</td>
+				<td class="text-center" data-timestamp="1699592531">2023-11-10 05:02</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">7542</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4492382" title="[Abysswalker] Inkou Kyoushi no Saimin Seikatsu Shidouroku (淫行教師の催眠セイ活指導録) [720p][1080p][WEB-DL]">[Abysswalker] Inkou Kyoushi no Saimin Seikatsu Shidouroku (淫行教師の催眠セイ活指導録) [720p][1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4492382.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:c0142eb414346ba6dfa8459e72beaab18c5f45b1&amp;dn=%5BAbysswalker%5D%20Inkou%20Kyoushi%20no%20Saimin%20Seikatsu%20Shidouroku%20%28%E6%B7%AB%E8%A1%8C%E6%95%99%E5%B8%AB%E3%81%AE%E5%82%AC%E7%9C%A0%E3%82%BB%E3%82%A4%E6%B4%BB%E6%8C%87%E5%B0%8E%E9%8C%B2%29%20%5B720p%5D%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">2.2 GiB</td>
+				<td class="text-center" data-timestamp="1768244948">2026-01-12 19:09</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">3</td>
+				<td class="text-center">2618</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4448163" title="[Abysswalker] Toromitsu Musume no Hitou Service Torottoro Churu Churu Gohoushi Sasete Kudasai (トロみつ娘の秘湯サービス ~とろッとろちゅるちゅるご奉仕させてください~) [1080p][WEB-DL]">[Abysswalker] Toromitsu Musume no Hitou Service Torottoro Churu Churu Gohoushi Sasete Kudasai (トロみつ娘の秘湯サービス ~とろッとろちゅるちゅるご奉仕させてください~) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4448163.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:6b586feec754e491b52378600d54ccb83b828f76&amp;dn=%5BAbysswalker%5D%20Toromitsu%20Musume%20no%20Hitou%20Service%20Torottoro%20Churu%20Churu%20Gohoushi%20Sasete%20Kudasai%20%28%E3%83%88%E3%83%AD%E3%81%BF%E3%81%A4%E5%A8%98%E3%81%AE%E7%A7%98%E6%B9%AF%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%20~%E3%81%A8%E3%82%8D%E3%83%83%E3%81%A8%E3%82%8D%E3%81%A1%E3%82%85%E3%82%8B%E3%81%A1%E3%82%85%E3%82%8B%E3%81%94%E5%A5%89%E4%BB%95%E3%81%95%E3%81%9B%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84~%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">910.3 MiB</td>
+				<td class="text-center" data-timestamp="1764348042">2025-11-28 16:40</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4373</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4476619#comments" class="comments" title="2 comments">
+						<i class="fa fa-comments-o"></i>2</a>
+					<a href="/view/4476619" title="[Abysswalker] Meijyou (迷情) (Miqing) (Meijou) [1080p][WEB-DL][Dual Audio]">[Abysswalker] Meijyou (迷情) (Miqing) (Meijou) [1080p][WEB-DL][Dual Audio]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4476619.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:7707430bd4790a3021037429f460696759df05ee&amp;dn=%5BAbysswalker%5D%20Meijyou%20%28%E8%BF%B7%E6%83%85%29%20%28Miqing%29%20%28Meijou%29%20%5B1080p%5D%5BWEB-DL%5D%5BDual%20Audio%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">4.1 GiB</td>
+				<td class="text-center" data-timestamp="1766867810">2025-12-27 20:36</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">1</td>
+				<td class="text-center">5411</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4705742" title="[Doomdos] - Shin Ruri-iro no Yuki Part One - 01 [1080p OV WEB-DL]">[Doomdos] - Shin Ruri-iro no Yuki Part One - 01 [1080p OV WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4705742.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:6b8d9b2742844dc1cc50e3a7984e50ed0e25287f&amp;dn=%5BDoomdos%5D%20-%20Shin%20Ruri-iro%20no%20Yuki%20Part%20One%20-%2001%20%5B1080p%20OV%20WEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">422.3 MiB</td>
+				<td class="text-center" data-timestamp="1788792125">2026-09-07 14:42</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">3</td>
+				<td class="text-center">1145</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4349485" title="[Abysswalker] Kyonyuu JK ga Ojisan Chinpo to Jupo Jupo Iyarashii Sex Shitemasu. (巨乳J○がオジさんチ○ポとじゅぽじゅぽいやらしいセックスしてます.) [1080p][WEB-DL]">[Abysswalker] Kyonyuu JK ga Ojisan Chinpo to Jupo Jupo Iyarashii Sex Shitemasu. (巨乳J○がオジさんチ○ポとじゅぽじゅぽいやらしいセックスしてます.) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4349485.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:e7bd8d0c70f10a970f31c5c5e0bca9c54c112668&amp;dn=%5BAbysswalker%5D%20Kyonyuu%20JK%20ga%20Ojisan%20Chinpo%20to%20Jupo%20Jupo%20Iyarashii%20Sex%20Shitemasu.%20%28%E5%B7%A8%E4%B9%B3J%E2%97%8B%E3%81%8C%E3%82%AA%E3%82%B8%E3%81%95%E3%82%93%E3%83%81%E2%97%8B%E3%83%9D%E3%81%A8%E3%81%98%E3%82%85%E3%81%BD%E3%81%98%E3%82%85%E3%81%BD%E3%81%84%E3%82%84%E3%82%89%E3%81%97%E3%81%84%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9%E3%81%97%E3%81%A6%E3%81%BE%E3%81%99.%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">711.6 MiB</td>
+				<td class="text-center" data-timestamp="1753367571">2025-07-24 14:32</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">6499</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4317938#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4317938" title="[極彩花夢] 妻を同窓会にいかせたら 1-2 [1080P][WEBRip][HEVC 10bit]">[極彩花夢] 妻を同窓会にいかせたら 1-2 [1080P][WEBRip][HEVC 10bit]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4317938.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:034f6dcf270c4e99b8797df0029c6eda32993683&amp;dn=%5B%E6%A5%B5%E5%BD%A9%E8%8A%B1%E5%A4%A2%5D%20%E5%A6%BB%E3%82%92%E5%90%8C%E7%AA%93%E4%BC%9A%E3%81%AB%E3%81%84%E3%81%8B%E3%81%9B%E3%81%9F%E3%82%89%201-2%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.0 GiB</td>
+				<td class="text-center" data-timestamp="1748753097">2025-06-01 04:44</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4871</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491562" title="[Abysswalker] Muma no Machi Cornelica (夢魔の街コルネリカ) [1080p][WEB-DL]">[Abysswalker] Muma no Machi Cornelica (夢魔の街コルネリカ) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491562.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:d0bb9f54cade11c3f2dc3180da1410c43a4760a1&amp;dn=%5BAbysswalker%5D%20Muma%20no%20Machi%20Cornelica%20%28%E5%A4%A2%E9%AD%94%E3%81%AE%E8%A1%97%E3%82%B3%E3%83%AB%E3%83%8D%E3%83%AA%E3%82%AB%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">4.2 GiB</td>
+				<td class="text-center" data-timestamp="1768174850">2026-01-11 23:40</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2198</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4565939" title="[HentaiHub] Mou Ichido, Shite Mitai EP01 1080p PP WEB-DL AAC2.0 H.264 | Mou Ichido, Shitemitai. - 01 [Raw]">[HentaiHub] Mou Ichido, Shite Mitai EP01 1080p PP WEB-DL AAC2.0 H.264 | Mou Ichido, Shitemitai. - 01 [Raw]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4565939.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:6ef34667579102de907f6dd80f0df405c597c072&amp;dn=%5BHentaiHub%5D%20Mou%20Ichido%2C%20Shite%20Mitai%20EP01%201080p%20PP%20WEB-DL%20AAC2.0%20H.264%20%7C%20Mou%20Ichido%2C%20Shitemitai.%20-%2001%20%5BRaw%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.2 GiB</td>
+				<td class="text-center" data-timestamp="1775863082">2026-04-10 23:18</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1870</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4579254" title="[Doll House] My Sister [WEB 1080p] [3D Hentai] [English / Español Subs] [DECEN]">[Doll House] My Sister [WEB 1080p] [3D Hentai] [English / Español Subs] [DECEN]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4579254.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:7e6f0dd3cf88b4721809a44c2a246f9fcde751f2&amp;dn=%5BDoll%20House%5D%20My%20Sister%20%5BWEB%201080p%5D%20%5B3D%20Hentai%5D%20%5BEnglish%20%2F%20Espa%C3%B1ol%20Subs%5D%20%5BDECEN%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">749.9 MiB</td>
+				<td class="text-center" data-timestamp="1777126793">2026-04-25 14:19</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4057</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/2620925#comments" class="comments" title="4 comments">
+						<i class="fa fa-comments-o"></i>4</a>
+					<a href="/view/2620925" title="[VCB-Studio] Sono Hanabira ni Kuchizuke o / その花びらにくちづけを Blu-ray版 あなたと恋人つなぎ 10-bit 1080p HEVC BDRip [Fin]">[VCB-Studio] Sono Hanabira ni Kuchizuke o / その花びらにくちづけを Blu-ray版 あなたと恋人つなぎ 10-bit 1080p HEVC BDRip [Fin]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/2620925.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:6730ae55a808ea88f40f405a50fe2f35b12c1105&amp;dn=%5BVCB-Studio%5D%20Sono%20Hanabira%20ni%20Kuchizuke%20o%20%2F%20%E3%81%9D%E3%81%AE%E8%8A%B1%E3%81%B3%E3%82%89%E3%81%AB%E3%81%8F%E3%81%A1%E3%81%A5%E3%81%91%E3%82%92%20Blu-ray%E7%89%88%20%E3%81%82%E3%81%AA%E3%81%9F%E3%81%A8%E6%81%8B%E4%BA%BA%E3%81%A4%E3%81%AA%E3%81%8E%2010-bit%201080p%20HEVC%20BDRip%20%5BFin%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">517.8 MiB</td>
+				<td class="text-center" data-timestamp="1545905570">2018-12-27 10:12</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">5099</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4591921" title="[260430][156952973][Ginhaha] Suguha Animations 1080P Full Video">[260430][156952973][Ginhaha] Suguha Animations 1080P Full Video</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4591921.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:a9d22c8e746213952c437ba940d0201d1a2e91c8&amp;dn=%5B260430%5D%5B156952973%5D%5BGinhaha%5D%20Suguha%20Animations%201080P%20Full%20Video&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.5 GiB</td>
+				<td class="text-center" data-timestamp="1778327773">2026-05-09 11:56</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">2</td>
+				<td class="text-center">3628</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4322953#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4322953" title="[Abysswalker] Taimanin Asagi 3 (対魔忍アサギ3) [1080p][WEB-DL]">[Abysswalker] Taimanin Asagi 3 (対魔忍アサギ3) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4322953.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:dedfad6ec638b2d9da9e8a732c6f52d5fd2124a0&amp;dn=%5BAbysswalker%5D%20Taimanin%20Asagi%203%20%28%E5%AF%BE%E9%AD%94%E5%BF%8D%E3%82%A2%E3%82%B5%E3%82%AE3%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">5.0 GiB</td>
+				<td class="text-center" data-timestamp="1749503171">2025-06-09 21:06</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">4</td>
+				<td class="text-center">4387</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4392341" title="[極彩花夢] 無人駅 The Animation 1番ホーム / Mujin Eki The Animation - 01 [1080P][WEBRip][HEVC 10bit AAC]">[極彩花夢] 無人駅 The Animation 1番ホーム / Mujin Eki The Animation - 01 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4392341.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:70b0196f180842fc9d1611bdb1a0c94d3f42512b&amp;dn=%5B%E6%A5%B5%E5%BD%A9%E8%8A%B1%E5%A4%A2%5D%20%E7%84%A1%E4%BA%BA%E9%A7%85%20The%20Animation%201%E7%95%AA%E3%83%9B%E3%83%BC%E3%83%A0%20%2F%20Mujin%20Eki%20The%20Animation%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1008.6 MiB</td>
+				<td class="text-center" data-timestamp="1758948587">2025-09-27 04:49</td>
+
+				<td class="text-center">15</td>
+				<td class="text-center">0</td>
+				<td class="text-center">9160</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/3826957" title="[Eroteca] Master Piece The Animation - 01 (マスターピース THE ANIMATION 第1巻) - [Raw] [1080P]">[Eroteca] Master Piece The Animation - 01 (マスターピース THE ANIMATION 第1巻) - [Raw] [1080P]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/3826957.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:2e8a969122d745839f3df20930e0f8c61053b4aa&amp;dn=%5BEroteca%5D%20Master%20Piece%20The%20Animation%20-%2001%20%28%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC%E3%83%94%E3%83%BC%E3%82%B9%20THE%20ANIMATION%20%E7%AC%AC1%E5%B7%BB%29%20-%20%5BRaw%5D%20%5B1080P%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.1 GiB</td>
+				<td class="text-center" data-timestamp="1675980459">2023-02-09 22:07</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">5675</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4501736" title="[KyokuSai] 勇者姫ミリア 第一話 史上最悪の勇者爆誕！ ナマイキ勇者をわからせろ！ / Yuusha-hime Miria - 01 [1080P][WEBRip][HEVC 10bit WMA]">[KyokuSai] 勇者姫ミリア 第一話 史上最悪の勇者爆誕！ ナマイキ勇者をわからせろ！ / Yuusha-hime Miria - 01 [1080P][WEBRip][HEVC 10bit WMA]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4501736.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:bde9b784a315ddc1fd6ba3c53883859e43393142&amp;dn=%5BKyokuSai%5D%20%E5%8B%87%E8%80%85%E5%A7%AB%E3%83%9F%E3%83%AA%E3%82%A2%20%E7%AC%AC%E4%B8%80%E8%A9%B1%20%E5%8F%B2%E4%B8%8A%E6%9C%80%E6%82%AA%E3%81%AE%E5%8B%87%E8%80%85%E7%88%86%E8%AA%95%EF%BC%81%20%E3%83%8A%E3%83%9E%E3%82%A4%E3%82%AD%E5%8B%87%E8%80%85%E3%82%92%E3%82%8F%E3%81%8B%E3%82%89%E3%81%9B%E3%82%8D%EF%BC%81%20%2F%20Yuusha-hime%20Miria%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20WMA%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">416.6 MiB</td>
+				<td class="text-center" data-timestamp="1769266338">2026-01-24 14:52</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3839</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4448224" title="[KyokuSai] OVA 夏妻 #1 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] OVA 夏妻 #1 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4448224.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:9fdcac407785eaa53c79401d618b08dc4c638a46&amp;dn=%5BKyokuSai%5D%20OVA%20%E5%A4%8F%E5%A6%BB%20%231%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">433.4 MiB</td>
+				<td class="text-center" data-timestamp="1764357868">2025-11-28 19:24</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2648</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4138256#comments" class="comments" title="4 comments">
+						<i class="fa fa-comments-o"></i>4</a>
+					<a href="/view/4138256" title="[極彩花夢] 夜色未央！ / Yoasobi Gurashi! [01][1080P][WEBRip][HEVC 10bit][中日英内封][UNC]">[極彩花夢] 夜色未央！ / Yoasobi Gurashi! [01][1080P][WEBRip][HEVC 10bit][中日英内封][UNC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4138256.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:f8fc299e9d53b4a1b1c490d925305bf8d7b182d0&amp;dn=%5B%E6%A5%B5%E5%BD%A9%E8%8A%B1%E5%A4%A2%5D%20%E5%A4%9C%E8%89%B2%E6%9C%AA%E5%A4%AE%EF%BC%81%20%2F%20Yoasobi%20Gurashi%21%20%5B01%5D%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%5D%5B%E4%B8%AD%E6%97%A5%E8%8B%B1%E5%86%85%E5%B0%81%5D%5BUNC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">315.3 MiB</td>
+				<td class="text-center" data-timestamp="1719851478">2024-07-01 16:31</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">15079</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4635992" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [11][1080P][简繁内封]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [11][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4635992.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:cf1d0e48ead57b58ef65d3537d0c7e73364e7a7c&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B11%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">123.4 MiB</td>
+				<td class="text-center" data-timestamp="1782405906">2026-06-25 16:45</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">1</td>
+				<td class="text-center">1350</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4566468" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [01][1080P][简体内嵌]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [01][1080P][简体内嵌]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4566468.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:91fefed380b67a9e8c1e27dc2ffde2ef14d1ecdb&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B01%5D%5B1080P%5D%5B%E7%AE%80%E4%BD%93%E5%86%85%E5%B5%8C%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">130.8 MiB</td>
+				<td class="text-center" data-timestamp="1775910030">2026-04-11 12:20</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3678</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4457645" title="[geckyzz] Room of Guilty Pleasure - S01E01 (ギルティホール; Guilty Hole) [UNCENSORED, OVEIL.WEB-DL 1080P AVC, AAC, HARD SUB (en)][85FAD3D9]">[geckyzz] Room of Guilty Pleasure - S01E01 (ギルティホール; Guilty Hole) [UNCENSORED, OVEIL.WEB-DL 1080P AVC, AAC, HARD SUB (en)][85FAD3D9]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4457645.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:244c67ab7678a6689302280e491eac99a2b58fc0&amp;dn=%5Bgeckyzz%5D%20Room%20of%20Guilty%20Pleasure%20-%20S01E01%20%28%E3%82%AE%E3%83%AB%E3%83%86%E3%82%A3%E3%83%9B%E3%83%BC%E3%83%AB%3B%20Guilty%20Hole%29%20%5BUNCENSORED%2C%20OVEIL.WEB-DL%201080P%20AVC%2C%20AAC%2C%20HARD%20SUB%20%28en%29%5D%5B85FAD3D9%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">81.0 MiB</td>
+				<td class="text-center" data-timestamp="1765130055">2025-12-07 17:54</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">1</td>
+				<td class="text-center">6085</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4345207#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4345207" title="[LR] Tsuma ga Onsen de Circle Nakama no Nikubenki ni Natta no Desu ga... Anime Edition (妻が温泉でサークル仲間の肉便器になったのですが... Anime Edition) [Uncensored] [1080p] [BDRip] [English Subs]">[LR] Tsuma ga Onsen de Circle Nakama no Nikubenki ni Natta no Desu ga... Anime Edition (妻が温泉でサークル仲間の肉便器になったのですが... Anime Edition) [Uncensored] [1080p] [BDRip] [English Subs]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4345207.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:5d608d705fff98856979bd9505bb79fb61d8976b&amp;dn=%5BLR%5D%20Tsuma%20ga%20Onsen%20de%20Circle%20Nakama%20no%20Nikubenki%20ni%20Natta%20no%20Desu%20ga...%20Anime%20Edition%20%28%E5%A6%BB%E3%81%8C%E6%B8%A9%E6%B3%89%E3%81%A7%E3%82%B5%E3%83%BC%E3%82%AF%E3%83%AB%E4%BB%B2%E9%96%93%E3%81%AE%E8%82%89%E4%BE%BF%E5%99%A8%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C...%20Anime%20Edition%29%20%5BUncensored%5D%20%5B1080p%5D%20%5BBDRip%5D%20%5BEnglish%20Subs%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">933.2 MiB</td>
+				<td class="text-center" data-timestamp="1752760354">2025-07-17 13:52</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">8359</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4494179#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4494179" title="[KyokuSai] 巨乳ドスケベ学園 上巻 乙女クラブの秘密 / Kyonyuu Dosukebe Gakuen - 01 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] 巨乳ドスケベ学園 上巻 乙女クラブの秘密 / Kyonyuu Dosukebe Gakuen - 01 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4494179.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:9657e9d2ba60d9bc5d1f686fa807a69984bda340&amp;dn=%5BKyokuSai%5D%20%E5%B7%A8%E4%B9%B3%E3%83%89%E3%82%B9%E3%82%B1%E3%83%99%E5%AD%A6%E5%9C%92%20%E4%B8%8A%E5%B7%BB%20%E4%B9%99%E5%A5%B3%E3%82%AF%E3%83%A9%E3%83%96%E3%81%AE%E7%A7%98%E5%AF%86%20%2F%20Kyonyuu%20Dosukebe%20Gakuen%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">388.8 MiB</td>
+				<td class="text-center" data-timestamp="1768484668">2026-01-15 13:44</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3780</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4610664" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [08][1080P][简繁内封]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [08][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4610664.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:eaa94fd8c9c06b46d0c9e2907440d34d4a3827d1&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B08%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">128.5 MiB</td>
+				<td class="text-center" data-timestamp="1780073084">2026-05-29 16:44</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">1</td>
+				<td class="text-center">1657</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4338622" title="[Abysswalker] Ijirare: Fukushuu Saimin (イジラレ~復讐催眠~) [720p][1080p][WEB-DL]">[Abysswalker] Ijirare: Fukushuu Saimin (イジラレ~復讐催眠~) [720p][1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4338622.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:f01289b1b369d4a50843bc5196c70fcca67ca633&amp;dn=%5BAbysswalker%5D%20Ijirare%3A%20Fukushuu%20Saimin%20%28%E3%82%A4%E3%82%B8%E3%83%A9%E3%83%AC~%E5%BE%A9%E8%AE%90%E5%82%AC%E7%9C%A0~%29%20%5B720p%5D%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">6.8 GiB</td>
+				<td class="text-center" data-timestamp="1751760158">2025-07-06 00:02</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">4</td>
+				<td class="text-center">4325</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=2_2" title="Real Life - Videos">
+						<img src="/static/img/icons/sukebei/2_2.png" alt="Real Life - Videos" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4660207" title="[HD Uncensored] ExploitedTeens Sakura Lin (18-07-2026) 1080p">[HD Uncensored] ExploitedTeens Sakura Lin (18-07-2026) 1080p</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4660207.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:891bfbc3d9fb77afd3042e30689f4b96a231a464&amp;dn=%5BHD%20Uncensored%5D%20ExploitedTeens%20Sakura%20Lin%20%2818-07-2026%29%201080p&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">517.7 MiB</td>
+				<td class="text-center" data-timestamp="1784618421">2026-07-21 07:20</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">306</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=2_2" title="Real Life - Videos">
+						<img src="/static/img/icons/sukebei/2_2.png" alt="Real Life - Videos" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4500314" title="[fantia][ぶんコス (ぶんちゃん)] 百合動画💜番犬姉妹が二人で慰めあい♡スマホで撮影されながら見せつけオナニー♡ [1080p.AV1]">[fantia][ぶんコス (ぶんちゃん)] 百合動画💜番犬姉妹が二人で慰めあい♡スマホで撮影されながら見せつけオナニー♡ [1080p.AV1]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4500314.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:43f75dd09e35b9e657aae773a934827a8d86f3a0&amp;dn=%5Bfantia%5D%5B%E3%81%B6%E3%82%93%E3%82%B3%E3%82%B9%20%28%E3%81%B6%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%29%5D%20%E7%99%BE%E5%90%88%E5%8B%95%E7%94%BB%F0%9F%92%9C%E7%95%AA%E7%8A%AC%E5%A7%89%E5%A6%B9%E3%81%8C%E4%BA%8C%E4%BA%BA%E3%81%A7%E6%85%B0%E3%82%81%E3%81%82%E3%81%84%E2%99%A1%E3%82%B9%E3%83%9E%E3%83%9B%E3%81%A7%E6%92%AE%E5%BD%B1%E3%81%95%E3%82%8C%E3%81%AA%E3%81%8C%E3%82%89%E8%A6%8B%E3%81%9B%E3%81%A4%E3%81%91%E3%82%AA%E3%83%8A%E3%83%8B%E3%83%BC%E2%99%A1%20%5B1080p.AV1%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">108.4 MiB</td>
+				<td class="text-center" data-timestamp="1769121202">2026-01-22 22:33</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2368</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4623564" title="【种族骑士团】[姐恋 喜欢・讨厌・最喜欢了。 / 姉恋 スキ・キライ・ダイスキ。 / Ane Koi - Suki Kirai Daisuki][OVA][BDrip][1080P][简日双语][无修正]">【种族骑士团】[姐恋 喜欢・讨厌・最喜欢了。 / 姉恋 スキ・キライ・ダイスキ。 / Ane Koi - Suki Kirai Daisuki][OVA][BDrip][1080P][简日双语][无修正]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4623564.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:844cb76dbfd650604abd0f299d6c9bd2561f2395&amp;dn=%E3%80%90%E7%A7%8D%E6%97%8F%E9%AA%91%E5%A3%AB%E5%9B%A2%E3%80%91%5B%E5%A7%90%E6%81%8B%20%E5%96%9C%E6%AC%A2%E3%83%BB%E8%AE%A8%E5%8E%8C%E3%83%BB%E6%9C%80%E5%96%9C%E6%AC%A2%E4%BA%86%E3%80%82%20%2F%20%E5%A7%89%E6%81%8B%20%E3%82%B9%E3%82%AD%E3%83%BB%E3%82%AD%E3%83%A9%E3%82%A4%E3%83%BB%E3%83%80%E3%82%A4%E3%82%B9%E3%82%AD%E3%80%82%20%2F%20Ane%20Koi%20-%20Suki%20Kirai%20Daisuki%5D%5BOVA%5D%5BBDrip%5D%5B1080P%5D%5B%E7%AE%80%E6%97%A5%E5%8F%8C%E8%AF%AD%5D%5B%E6%97%A0%E4%BF%AE%E6%AD%A3%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">620.3 MiB</td>
+				<td class="text-center" data-timestamp="1781280456">2026-06-12 16:07</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1974</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491525" title="[Abysswalker] Enkou JK Bitch Gal: Ojisan to Namapako Seikatsu (エンコ―J●ビッチギャル オジサンとなまパコ性活) [1080p][WEB-DL]">[Abysswalker] Enkou JK Bitch Gal: Ojisan to Namapako Seikatsu (エンコ―J●ビッチギャル オジサンとなまパコ性活) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491525.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:dff1fd1d374b67adf805accb6877936eecfe098b&amp;dn=%5BAbysswalker%5D%20Enkou%20JK%20Bitch%20Gal%3A%20Ojisan%20to%20Namapako%20Seikatsu%20%28%E3%82%A8%E3%83%B3%E3%82%B3%E2%80%95J%E2%97%8F%E3%83%93%E3%83%83%E3%83%81%E3%82%AE%E3%83%A3%E3%83%AB%20%E3%82%AA%E3%82%B8%E3%82%B5%E3%83%B3%E3%81%A8%E3%81%AA%E3%81%BE%E3%83%91%E3%82%B3%E6%80%A7%E6%B4%BB%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.2 GiB</td>
+				<td class="text-center" data-timestamp="1768170107">2026-01-11 22:21</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2624</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4128305" title="[DiabloTripleA] Kemonokko Tsuushin The Animation 01-03 [WEBRip] [HD 1080p] [EngSub]">[DiabloTripleA] Kemonokko Tsuushin The Animation 01-03 [WEBRip] [HD 1080p] [EngSub]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4128305.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:759ade9b9605fe71aa60b09f1d2c38380c45801f&amp;dn=%5BDiabloTripleA%5D%20Kemonokko%20Tsuushin%20The%20Animation%2001-03%20%5BWEBRip%5D%20%5BHD%201080p%5D%20%5BEngSub%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">4.2 GiB</td>
+				<td class="text-center" data-timestamp="1718320934">2024-06-13 23:22</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">1</td>
+				<td class="text-center">7296</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4378106" title="Marry Me, Let&#39;s Have a Baby! S01E08 UNCENSORED English Dub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Dekichau made Kon)">Marry Me, Let&#39;s Have a Baby! S01E08 UNCENSORED English Dub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Dekichau made Kon)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4378106.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:9c22d44f617252923d5ec2664f86ed354b155315&amp;dn=Marry%20Me%2C%20Let%27s%20Have%20a%20Baby%21%20S01E08%20UNCENSORED%20English%20Dub%201080p%20WEB%20x264%20AAC%20-%20TMD-Group%20%28OceanVeil%29%20%28Dekichau%20made%20Kon%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">66.4 MiB</td>
+				<td class="text-center" data-timestamp="1757316945">2025-09-08 07:35</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1768</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4381431" title="[HentaiHub] Room of Guilty Pleasure S01E01 1080p UNCENSORED OV WEB-DL AAC2.0 H.264 (Guilty Hole, English-Sub)">[HentaiHub] Room of Guilty Pleasure S01E01 1080p UNCENSORED OV WEB-DL AAC2.0 H.264 (Guilty Hole, English-Sub)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4381431.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:86c51631f9620ae539300bd47fa1c82985873de1&amp;dn=%5BHentaiHub%5D%20Room%20of%20Guilty%20Pleasure%20S01E01%201080p%20UNCENSORED%20OV%20WEB-DL%20AAC2.0%20H.264%20%28Guilty%20Hole%2C%20English-Sub%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">81.0 MiB</td>
+				<td class="text-center" data-timestamp="1757683489">2025-09-12 13:24</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">5271</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4351675" title="[極彩花夢] 元カレとはできなかったセックスしてもいいですか？ [1080P][WEBRip][HEVC 10bit AAC]">[極彩花夢] 元カレとはできなかったセックスしてもいいですか？ [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4351675.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:d1bb0dacd3fdceb1c87a622dca03bc824d742807&amp;dn=%5B%E6%A5%B5%E5%BD%A9%E8%8A%B1%E5%A4%A2%5D%20%E5%85%83%E3%82%AB%E3%83%AC%E3%81%A8%E3%81%AF%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9%E3%81%97%E3%81%A6%E3%82%82%E3%81%84%E3%81%84%E3%81%A7%E3%81%99%E3%81%8B%EF%BC%9F%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">812.9 MiB</td>
+				<td class="text-center" data-timestamp="1753726152">2025-07-28 18:09</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4799</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4392903" title="[極彩花夢] 無人駅 The Animation 2番ホーム / Mujin Eki The Animation - 02 [1080P][WEBRip][HEVC 10bit AAC]">[極彩花夢] 無人駅 The Animation 2番ホーム / Mujin Eki The Animation - 02 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4392903.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:ce51a0d85c0e052d2c50a21d9ce3328fd3090c34&amp;dn=%5B%E6%A5%B5%E5%BD%A9%E8%8A%B1%E5%A4%A2%5D%20%E7%84%A1%E4%BA%BA%E9%A7%85%20The%20Animation%202%E7%95%AA%E3%83%9B%E3%83%BC%E3%83%A0%20%2F%20Mujin%20Eki%20The%20Animation%20-%2002%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.1 GiB</td>
+				<td class="text-center" data-timestamp="1758989527">2025-09-27 16:12</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">14105</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4422945#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/4422945" title="[Abysswalker] Onii-chan, Asa made Zutto Gyutte Shite! (お兄ちゃん, 朝までずっとギュッてして!) [1080p][WEB-DL]">[Abysswalker] Onii-chan, Asa made Zutto Gyutte Shite! (お兄ちゃん, 朝までずっとギュッてして!) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4422945.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:0da64132b00199d6c6c5a3c98d625b60e12b39e4&amp;dn=%5BAbysswalker%5D%20Onii-chan%2C%20Asa%20made%20Zutto%20Gyutte%20Shite%21%20%28%E3%81%8A%E5%85%84%E3%81%A1%E3%82%83%E3%82%93%2C%20%E6%9C%9D%E3%81%BE%E3%81%A7%E3%81%9A%E3%81%A3%E3%81%A8%E3%82%AE%E3%83%A5%E3%83%83%E3%81%A6%E3%81%97%E3%81%A6%21%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">4.7 GiB</td>
+				<td class="text-center" data-timestamp="1761932677">2025-10-31 17:44</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">3</td>
+				<td class="text-center">4202</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4513589" title="[KyokuSai] ツンツンメイドはエロエロです 上巻 ご主人様を躾けてあげる / Tsun Tsun Maid wa Ero Ero desu - 01 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] ツンツンメイドはエロエロです 上巻 ご主人様を躾けてあげる / Tsun Tsun Maid wa Ero Ero desu - 01 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4513589.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:de1bd1b84ed40027599f002f59aef6d8564c40e8&amp;dn=%5BKyokuSai%5D%20%E3%83%84%E3%83%B3%E3%83%84%E3%83%B3%E3%83%A1%E3%82%A4%E3%83%89%E3%81%AF%E3%82%A8%E3%83%AD%E3%82%A8%E3%83%AD%E3%81%A7%E3%81%99%20%E4%B8%8A%E5%B7%BB%20%E3%81%94%E4%B8%BB%E4%BA%BA%E6%A7%98%E3%82%92%E8%BA%BE%E3%81%91%E3%81%A6%E3%81%82%E3%81%92%E3%82%8B%20%2F%20Tsun%20Tsun%20Maid%20wa%20Ero%20Ero%20desu%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">323.0 MiB</td>
+				<td class="text-center" data-timestamp="1770546380">2026-02-08 10:26</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4306</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4494524" title="[Abysswalker] Hajimete no Orusuban (はじめてのおるすばん) [1080p][WEB-DL]">[Abysswalker] Hajimete no Orusuban (はじめてのおるすばん) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4494524.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:39f86dfcf73de09e3667a033f7dfe5001aa25c1e&amp;dn=%5BAbysswalker%5D%20Hajimete%20no%20Orusuban%20%28%E3%81%AF%E3%81%98%E3%82%81%E3%81%A6%E3%81%AE%E3%81%8A%E3%82%8B%E3%81%99%E3%81%B0%E3%82%93%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.2 GiB</td>
+				<td class="text-center" data-timestamp="1768503358">2026-01-15 18:55</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3096</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4315431" title="Crazy Over His Fingers The Two of Us Alone After the Salon Closes S01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Ore no Yubi de Midarero.: Heitengo Futarikiri no Salon de...)">Crazy Over His Fingers The Two of Us Alone After the Salon Closes S01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (Ore no Yubi de Midarero.: Heitengo Futarikiri no Salon de...)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4315431.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:779c8b6dd66a46e9ccf2beb323ccad38d7c588b2&amp;dn=Crazy%20Over%20His%20Fingers%20The%20Two%20of%20Us%20Alone%20After%20the%20Salon%20Closes%20S01%20UNCENSORED%20English%20Hardsub%201080p%20WEB%20x264%20AAC%20-%20TMD-Group%20%28OceanVeil%29%20%28Ore%20no%20Yubi%20de%20Midarero.%3A%20Heitengo%20Futarikiri%20no%20Salon%20de...%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">446.3 MiB</td>
+				<td class="text-center" data-timestamp="1748374752">2025-05-27 19:39</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">4171</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4448227" title="[KyokuSai] OVA 夏妻 #2 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] OVA 夏妻 #2 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4448227.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:2f31eed5d9925abf16dd80c4c103507966e6b088&amp;dn=%5BKyokuSai%5D%20OVA%20%E5%A4%8F%E5%A6%BB%20%232%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">513.1 MiB</td>
+				<td class="text-center" data-timestamp="1764359758">2025-11-28 19:55</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3238</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491496" title="[Abysswalker] Boku ni Sexfriend ga Dekita Riyuu (僕にセフレが出来た理由) (Sefure) [720p][1080p][WEB-DL]">[Abysswalker] Boku ni Sexfriend ga Dekita Riyuu (僕にセフレが出来た理由) (Sefure) [720p][1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491496.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:5591698ab8056044e44e005eece2864db6fd3ccc&amp;dn=%5BAbysswalker%5D%20Boku%20ni%20Sexfriend%20ga%20Dekita%20Riyuu%20%28%E5%83%95%E3%81%AB%E3%82%BB%E3%83%95%E3%83%AC%E3%81%8C%E5%87%BA%E6%9D%A5%E3%81%9F%E7%90%86%E7%94%B1%29%20%28Sefure%29%20%5B720p%5D%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">7.5 GiB</td>
+				<td class="text-center" data-timestamp="1768169247">2026-01-11 22:07</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">6</td>
+				<td class="text-center">1956</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=2_2" title="Real Life - Videos">
+						<img src="/static/img/icons/sukebei/2_2.png" alt="Real Life - Videos" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4717100" title="OnlyFans - Lucy Mochi - オタク系アジア人義理の妹、怒らせてセックスに持ち込む（レイジ・ベイト） 1080p">OnlyFans - Lucy Mochi - オタク系アジア人義理の妹、怒らせてセックスに持ち込む（レイジ・ベイト） 1080p</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4717100.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:b2059e301c8a0fb3de5219e42e4d5af92f0126b9&amp;dn=OnlyFans%20-%20Lucy%20Mochi%20-%20%E3%82%AA%E3%82%BF%E3%82%AF%E7%B3%BB%E3%82%A2%E3%82%B8%E3%82%A2%E4%BA%BA%E7%BE%A9%E7%90%86%E3%81%AE%E5%A6%B9%E3%80%81%E6%80%92%E3%82%89%E3%81%9B%E3%81%A6%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9%E3%81%AB%E6%8C%81%E3%81%A1%E8%BE%BC%E3%82%80%EF%BC%88%E3%83%AC%E3%82%A4%E3%82%B8%E3%83%BB%E3%83%99%E3%82%A4%E3%83%88%EF%BC%89%201080p&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.6 GiB</td>
+				<td class="text-center" data-timestamp="1789854320">2026-09-19 21:45</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">7</td>
+				<td class="text-center">359</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4348747#comments" class="comments" title="2 comments">
+						<i class="fa fa-comments-o"></i>2</a>
+					<a href="/view/4348747" title="Kanojo ga Separate o Matou Riyuu OVA 01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (The Reason My Girlfriend Wears a Two-Piece Track Uniform)">Kanojo ga Separate o Matou Riyuu OVA 01 UNCENSORED English Hardsub 1080p WEB x264 AAC - TMD-Group (OceanVeil) (The Reason My Girlfriend Wears a Two-Piece Track Uniform)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4348747.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:3ca4e7b5d2f2deedf20a7cec8328b6141aa97daf&amp;dn=Kanojo%20ga%20Separate%20o%20Matou%20Riyuu%20OVA%2001%20UNCENSORED%20English%20Hardsub%201080p%20WEB%20x264%20AAC%20-%20TMD-Group%20%28OceanVeil%29%20%28The%20Reason%20My%20Girlfriend%20Wears%20a%20Two-Piece%20Track%20Uniform%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">127.8 MiB</td>
+				<td class="text-center" data-timestamp="1753257972">2025-07-23 08:06</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">8583</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4607954" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [07][1080P][简繁内封]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [07][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4607954.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:da01a9b19f828019917e8377c323fb0bcaacbe7f&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B07%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">145.7 MiB</td>
+				<td class="text-center" data-timestamp="1779788335">2026-05-26 09:38</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">6</td>
+				<td class="text-center">1528</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4694896" title="[桜都字幕组] 关于同组的染谷同学是性感女优这件事。 / Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi. [07][1080P][繁体内嵌]">[桜都字幕组] 关于同组的染谷同学是性感女优这件事。 / Onaji Zemi no Someya-san ga Sexy Joyuu Datta Hanashi. [07][1080P][繁体内嵌]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4694896.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:dbfd03fe9b6b9dfcbd0dff29c11e68592df75c01&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E5%85%B3%E4%BA%8E%E5%90%8C%E7%BB%84%E7%9A%84%E6%9F%93%E8%B0%B7%E5%90%8C%E5%AD%A6%E6%98%AF%E6%80%A7%E6%84%9F%E5%A5%B3%E4%BC%98%E8%BF%99%E4%BB%B6%E4%BA%8B%E3%80%82%20%2F%20Onaji%20Zemi%20no%20Someya-san%20ga%20Sexy%20Joyuu%20Datta%20Hanashi.%20%5B07%5D%5B1080P%5D%5B%E7%B9%81%E4%BD%93%E5%86%85%E5%B5%8C%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">114.6 MiB</td>
+				<td class="text-center" data-timestamp="1787843952">2026-08-27 15:19</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1610</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4598861" title="[桜都字幕组] 草莓哀歌~散漫嚣张的妹妹与无法释怀的哥哥~ / Ichigo Aika： Zatsu de Namaiki na Imouto to Warikirenai Ani [01-12 Fin][1080P][简繁内封]">[桜都字幕组] 草莓哀歌~散漫嚣张的妹妹与无法释怀的哥哥~ / Ichigo Aika： Zatsu de Namaiki na Imouto to Warikirenai Ani [01-12 Fin][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4598861.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:1de17fd1d4905ab24118c9090d1be7cd60dbe2bd&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%8D%89%E8%8E%93%E5%93%80%E6%AD%8C~%E6%95%A3%E6%BC%AB%E5%9A%A3%E5%BC%A0%E7%9A%84%E5%A6%B9%E5%A6%B9%E4%B8%8E%E6%97%A0%E6%B3%95%E9%87%8A%E6%80%80%E7%9A%84%E5%93%A5%E5%93%A5~%20%2F%20Ichigo%20Aika%EF%BC%9A%20Zatsu%20de%20Namaiki%20na%20Imouto%20to%20Warikirenai%20Ani%20%5B01-12%20Fin%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.0 GiB</td>
+				<td class="text-center" data-timestamp="1778933989">2026-05-16 12:19</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">5</td>
+				<td class="text-center">1540</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4648481" title="[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [01-12 Fin][1080P][繁体内嵌]">[桜都字幕组] 这样高大的女孩子你喜欢吗？ / Ookii Onnanoko wa Suki Desuka？ [01-12 Fin][1080P][繁体内嵌]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4648481.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:8298b6ddb294a1d9b247bff2b7c8b2be53f054ae&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%BF%99%E6%A0%B7%E9%AB%98%E5%A4%A7%E7%9A%84%E5%A5%B3%E5%AD%A9%E5%AD%90%E4%BD%A0%E5%96%9C%E6%AC%A2%E5%90%97%EF%BC%9F%20%2F%20Ookii%20Onnanoko%20wa%20Suki%20Desuka%EF%BC%9F%20%5B01-12%20Fin%5D%5B1080P%5D%5B%E7%B9%81%E4%BD%93%E5%86%85%E5%B5%8C%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.5 GiB</td>
+				<td class="text-center" data-timestamp="1783528964">2026-07-08 16:42</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">20</td>
+				<td class="text-center">1313</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4462344" title="[HentaiHub] Ichigo Aika Strawberry Elegy S01E01 1080p UNCENSORED OV WEB-DL AAC2.0 H.264 (Ichigo Aika: Zatsu de Namaiki na Imouto to Warikirenai Ani, English-Sub)">[HentaiHub] Ichigo Aika Strawberry Elegy S01E01 1080p UNCENSORED OV WEB-DL AAC2.0 H.264 (Ichigo Aika: Zatsu de Namaiki na Imouto to Warikirenai Ani, English-Sub)</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4462344.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:2d5d1d9bcb038d3d6cb9607ec629e571df3475a0&amp;dn=%5BHentaiHub%5D%20Ichigo%20Aika%20Strawberry%20Elegy%20S01E01%201080p%20UNCENSORED%20OV%20WEB-DL%20AAC2.0%20H.264%20%28Ichigo%20Aika%3A%20Zatsu%20de%20Namaiki%20na%20Imouto%20to%20Warikirenai%20Ani%2C%20English-Sub%29&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">46.0 MiB</td>
+				<td class="text-center" data-timestamp="1765530983">2025-12-12 09:16</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">6847</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4594734" title="[メリー・ジェーン] 夜這いする七人の孕女 下巻「当主の花嫁」 [WEB-DL][1080P]">[メリー・ジェーン] 夜這いする七人の孕女 下巻「当主の花嫁」 [WEB-DL][1080P]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4594734.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:9fbb0bc355ddb12f6d11067a07899b53e4c62bbe&amp;dn=%5B%E3%83%A1%E3%83%AA%E3%83%BC%E3%83%BB%E3%82%B8%E3%82%A7%E3%83%BC%E3%83%B3%5D%20%E5%A4%9C%E9%80%99%E3%81%84%E3%81%99%E3%82%8B%E4%B8%83%E4%BA%BA%E3%81%AE%E5%AD%95%E5%A5%B3%20%E4%B8%8B%E5%B7%BB%E3%80%8C%E5%BD%93%E4%B8%BB%E3%81%AE%E8%8A%B1%E5%AB%81%E3%80%8D%20%5BWEB-DL%5D%5B1080P%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">536.5 MiB</td>
+				<td class="text-center" data-timestamp="1778586133">2026-05-12 11:42</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">1</td>
+				<td class="text-center">4276</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491566" title="[Abysswalker] Natsuyasumi Ake no Kanojo wa... (夏休み明けの彼女は...) [1080p][WEB-DL]">[Abysswalker] Natsuyasumi Ake no Kanojo wa... (夏休み明けの彼女は...) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491566.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:03497ed694bfea5197d17e1993fd2c5814e4de9e&amp;dn=%5BAbysswalker%5D%20Natsuyasumi%20Ake%20no%20Kanojo%20wa...%20%28%E5%A4%8F%E4%BC%91%E3%81%BF%E6%98%8E%E3%81%91%E3%81%AE%E5%BD%BC%E5%A5%B3%E3%81%AF...%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.6 GiB</td>
+				<td class="text-center" data-timestamp="1768175250">2026-01-11 23:47</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3152</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4547069" title="[桜都字幕组] 草莓哀歌~散漫嚣张的妹妹与无法释怀的哥哥~ / Ichigo Aika： Zatsu de Namaiki na Imouto to Warikirenai Ani [10][1080P][简繁内封]">[桜都字幕组] 草莓哀歌~散漫嚣张的妹妹与无法释怀的哥哥~ / Ichigo Aika： Zatsu de Namaiki na Imouto to Warikirenai Ani [10][1080P][简繁内封]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4547069.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:e9bc052e574977a148175a0f16b2f7eb0b742f9a&amp;dn=%5B%E6%A1%9C%E9%83%BD%E5%AD%97%E5%B9%95%E7%BB%84%5D%20%E8%8D%89%E8%8E%93%E5%93%80%E6%AD%8C~%E6%95%A3%E6%BC%AB%E5%9A%A3%E5%BC%A0%E7%9A%84%E5%A6%B9%E5%A6%B9%E4%B8%8E%E6%97%A0%E6%B3%95%E9%87%8A%E6%80%80%E7%9A%84%E5%93%A5%E5%93%A5~%20%2F%20Ichigo%20Aika%EF%BC%9A%20Zatsu%20de%20Namaiki%20na%20Imouto%20to%20Warikirenai%20Ani%20%5B10%5D%5B1080P%5D%5B%E7%AE%80%E7%B9%81%E5%86%85%E5%B0%81%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">85.8 MiB</td>
+				<td class="text-center" data-timestamp="1774090347">2026-03-21 10:52</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">1752</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4280599" title="[Abysswalker] Shikkoku no Shaga The Animation (漆黒のシャガ THE ANIMATION) [1080P][WEB-DL]">[Abysswalker] Shikkoku no Shaga The Animation (漆黒のシャガ THE ANIMATION) [1080P][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4280599.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:b2760c370b77a84b1e0e1dfd28f364f7306ddb0d&amp;dn=%5BAbysswalker%5D%20Shikkoku%20no%20Shaga%20The%20Animation%20%28%E6%BC%86%E9%BB%92%E3%81%AE%E3%82%B7%E3%83%A3%E3%82%AC%20THE%20ANIMATION%29%20%5B1080P%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">7.3 GiB</td>
+				<td class="text-center" data-timestamp="1743199117">2025-03-28 21:58</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">2</td>
+				<td class="text-center">5711</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491484" title="[Abysswalker] Baka na Imouto o Rikou ni Suru no wa Ore no XX Dake na Ken ni Tsuite (バカな妹を利口にするのは俺のxxだけな件について) [1080p][WEB-DL]">[Abysswalker] Baka na Imouto o Rikou ni Suru no wa Ore no XX Dake na Ken ni Tsuite (バカな妹を利口にするのは俺のxxだけな件について) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491484.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:29c3f1c9b1bc180e42a56db2ae80056a00cbf8e2&amp;dn=%5BAbysswalker%5D%20Baka%20na%20Imouto%20o%20Rikou%20ni%20Suru%20no%20wa%20Ore%20no%20XX%20Dake%20na%20Ken%20ni%20Tsuite%20%28%E3%83%90%E3%82%AB%E3%81%AA%E5%A6%B9%E3%82%92%E5%88%A9%E5%8F%A3%E3%81%AB%E3%81%99%E3%82%8B%E3%81%AE%E3%81%AF%E4%BF%BA%E3%81%AExx%E3%81%A0%E3%81%91%E3%81%AA%E4%BB%B6%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">4.4 GiB</td>
+				<td class="text-center" data-timestamp="1768168658">2026-01-11 21:57</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2417</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4499004" title="[KyokuSai] Brandish 第1話 カワユイ男の子ゲーットぉ / Brandish - 01 [1080P][WEBRip][HEVC 10bit AAC]">[KyokuSai] Brandish 第1話 カワユイ男の子ゲーットぉ / Brandish - 01 [1080P][WEBRip][HEVC 10bit AAC]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4499004.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:7c3f1926b30cf0e2cc27fb69020435a78f77ab8d&amp;dn=%5BKyokuSai%5D%20Brandish%20%E7%AC%AC1%E8%A9%B1%20%E3%82%AB%E3%83%AF%E3%83%A6%E3%82%A4%E7%94%B7%E3%81%AE%E5%AD%90%E3%82%B2%E3%83%BC%E3%83%83%E3%83%88%E3%81%89%20%2F%20Brandish%20-%2001%20%5B1080P%5D%5BWEBRip%5D%5BHEVC%2010bit%20AAC%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">376.2 MiB</td>
+				<td class="text-center" data-timestamp="1768989409">2026-01-21 09:56</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">2585</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4338623" title="[Abysswalker] Joshi Luck! (じょしラク!) [720p][1080p][WEB-DL]">[Abysswalker] Joshi Luck! (じょしラク!) [720p][1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4338623.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:8c6a935d92e92972dd136a604447c6d307d554f9&amp;dn=%5BAbysswalker%5D%20Joshi%20Luck%21%20%28%E3%81%98%E3%82%87%E3%81%97%E3%83%A9%E3%82%AF%21%29%20%5B720p%5D%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">10.6 GiB</td>
+				<td class="text-center" data-timestamp="1751760703">2025-07-06 00:11</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">5</td>
+				<td class="text-center">2879</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/4491581" title="[Abysswalker] Taimanin Asagi: Toraware no Niku Ningyou (対魔忍アサギ~捕らわれの肉人形~) [1080p][WEB-DL]">[Abysswalker] Taimanin Asagi: Toraware no Niku Ningyou (対魔忍アサギ~捕らわれの肉人形~) [1080p][WEB-DL]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/4491581.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:6370aa1990e8a92a90192c0c06e8a21137010224&amp;dn=%5BAbysswalker%5D%20Taimanin%20Asagi%3A%20Toraware%20no%20Niku%20Ningyou%20%28%E5%AF%BE%E9%AD%94%E5%BF%8D%E3%82%A2%E3%82%B5%E3%82%AE~%E6%8D%95%E3%82%89%E3%82%8F%E3%82%8C%E3%81%AE%E8%82%89%E4%BA%BA%E5%BD%A2~%29%20%5B1080p%5D%5BWEB-DL%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">747.9 MiB</td>
+				<td class="text-center" data-timestamp="1768177201">2026-01-12 00:20</td>
+
+				<td class="text-center">14</td>
+				<td class="text-center">0</td>
+				<td class="text-center">3744</td>
+			</tr>
+			<tr class="default">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/3826958" title="[Eroteca] Master Piece The Animation - 02 (マスターピース THE ANIMATION 第2巻) - [Raw] [1080P]">[Eroteca] Master Piece The Animation - 02 (マスターピース THE ANIMATION 第2巻) - [Raw] [1080P]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/3826958.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:1bd292fc17191c6be9634ca9eaef521a3c3c93b1&amp;dn=%5BEroteca%5D%20Master%20Piece%20The%20Animation%20-%2002%20%28%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%BC%E3%83%94%E3%83%BC%E3%82%B9%20THE%20ANIMATION%20%E7%AC%AC2%E5%B7%BB%29%20-%20%5BRaw%5D%20%5B1080P%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.1 GiB</td>
+				<td class="text-center" data-timestamp="1675980537">2023-02-09 22:08</td>
+
+				<td class="text-center">13</td>
+				<td class="text-center">0</td>
+				<td class="text-center">5554</td>
+			</tr>
+			<tr class="success">
+				<td>
+					<a href="/?c=1_1" title="Art - Anime">
+						<img src="/static/img/icons/sukebei/1_1.png" alt="Art - Anime" class="category-icon">
+					</a>
+				</td>
+				<td colspan="2">
+					<a href="/view/2458552#comments" class="comments" title="1 comment">
+						<i class="fa fa-comments-o"></i>1</a>
+					<a href="/view/2458552" title="[RH] Shoujo-tachi no Sadism (Too Hot For Teacher) [Uncensored] [Dual Audio] [BDRip] [Hi10] [1080p]">[RH] Shoujo-tachi no Sadism (Too Hot For Teacher) [Uncensored] [Dual Audio] [BDRip] [Hi10] [1080p]</a>
+				</td>
+				<td class="text-center">
+					<a href="/download/2458552.torrent"><i class="fa fa-fw fa-download"></i></a>
+					<a href="magnet:?xt=urn:btih:9de734bec0f6457ce2e7301cac489fefbd2b1814&amp;dn=%5BRH%5D%20Shoujo-tachi%20no%20Sadism%20%28Too%20Hot%20For%20Teacher%29%20%5BUncensored%5D%20%5BDual%20Audio%5D%20%5BBDRip%5D%20%5BHi10%5D%20%5B1080p%5D&amp;tr=http%3A%2F%2Fsukebei.tracker.wf%3A8888%2Fannounce&amp;tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&amp;tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&amp;tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce"><i class="fa fa-fw fa-magnet"></i></a>
+				</td>
+				<td class="text-center">1.8 GiB</td>
+				<td class="text-center" data-timestamp="1521963393">2018-03-25 07:36</td>
+
+				<td class="text-center">13</td>
+				<td class="text-center">0</td>
+				<td class="text-center">9852</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div class="center">
+	<div class="pagination-page-info">Displaying results 301-375 out of 1000 results.<br>
+Please refine your search results if you can't find what you were looking for.</div>
+	<ul class="pagination"><li class="previous"><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=4">&laquo;</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc">1</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=2">2</a></li><li class="disabled"><a>...</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=3">3</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=4">4</a></li><li class="active"><a>5</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=6">6</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=7">7</a></li><li class="disabled"><a>...</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=13">13</a></li><li><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=14">14</a></li><li class="next"><a href="/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=6">&raquo;</a></li></ul>
+</div>
+<div id="ec01fd54-016b-41b4-bec9-b9b93f9b3b77"></div>
+
+<script type="text/javascript">
+	if (window.matchMedia("(max-width: 767px)").matches) {
+		TSOutstreamVideo({
+			spot: "7f441172bc05461f9d0d9005040c3bce",
+			containerId: "ec01fd54-016b-41b4-bec9-b9b93f9b3b77",
+			cookieExpires: "4",
+		});
+	} else {
+		TSOutstreamVideo({
+			spot: "afe96650c80f4056aa2d7584888ba58a",
+			containerId: "ec01fd54-016b-41b4-bec9-b9b93f9b3b77",
+			cookieExpires: "4",
+		});
+	}
+</script>		</div> <!-- /container -->
+
+		<footer style="text-align: center;">
+			<p>Dark Mode: <a href="#" id="themeToggle">Toggle</a></p>
+		</footer>
+	</body>
+</html>

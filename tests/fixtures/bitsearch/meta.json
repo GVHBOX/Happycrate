@@ -1,0 +1,26 @@
+{
+  "key": "bitsearch",
+  "query": "ubuntu",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 1571,
+  "fetched_at": "2026-09-28T09:31:18+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-bitsearch-to-api-v1-search-q-ubuntu-sort-seeders-page-1-limi-e15b4f.json",
+      "url": "https://bitsearch.to/api/v1/search?q=ubuntu&sort=seeders&page=1&limit=100",
+      "request_body": null,
+      "bytes": 28684,
+      "sha1": "b64fe65f4fc8cd95fededf41ae7e963fce4230bd"
+    },
+    {
+      "n": 2,
+      "file": "02-bitsearch-to-api-v1-search-q-ubuntu-sort-seeders-page-2-limi-db46fc.json",
+      "url": "https://bitsearch.to/api/v1/search?q=ubuntu&sort=seeders&page=2&limit=100",
+      "request_body": null,
+      "bytes": 28395,
+      "sha1": "b477de617ebc15c22b88eaad25768ba21dcf3dac"
+    }
+  ]
+}

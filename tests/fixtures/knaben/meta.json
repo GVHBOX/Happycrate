@@ -1,0 +1,66 @@
+{
+  "key": "knaben",
+  "query": "ubuntu",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 4280,
+  "fetched_at": "2026-09-28T09:31:16+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 900}",
+      "bytes": 66,
+      "sha1": "8e40fd9f515a5c74ca9f144e3493b74e839e3eac"
+    },
+    {
+      "n": 2,
+      "file": "02-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 1200}",
+      "bytes": 66,
+      "sha1": "8e40fd9f515a5c74ca9f144e3493b74e839e3eac"
+    },
+    {
+      "n": 3,
+      "file": "03-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 1500}",
+      "bytes": 66,
+      "sha1": "8e40fd9f515a5c74ca9f144e3493b74e839e3eac"
+    },
+    {
+      "n": 4,
+      "file": "04-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 1800}",
+      "bytes": 66,
+      "sha1": "8e40fd9f515a5c74ca9f144e3493b74e839e3eac"
+    },
+    {
+      "n": 5,
+      "file": "05-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 600}",
+      "bytes": 383639,
+      "sha1": "02848c8e5687108758137e54ef9d2e136b366955"
+    },
+    {
+      "n": 6,
+      "file": "06-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 300}",
+      "bytes": 477147,
+      "sha1": "6ec2b56802cc3e4e62d71f7e7f889b1e3354e5f6"
+    },
+    {
+      "n": 7,
+      "file": "07-api-knaben-org-v1-b0740c.json",
+      "url": "https://api.knaben.org/v1",
+      "request_body": "{\"query\": \"ubuntu\", \"order_by\": \"seeders\", \"size\": 300, \"from\": 0}",
+      "bytes": 434125,
+      "sha1": "cb074778c17d56d8e3209a02e02ad59bcda7a9e1"
+    }
+  ]
+}

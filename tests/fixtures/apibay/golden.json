@@ -1,0 +1,2369 @@
+{
+  "count": 236,
+  "err": "",
+  "items": [
+    {
+      "added": 1652877231,
+      "info_hash": "2c6b6858d61da9543d4231a71db4b1c9264b0685",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:2c6b6858d61da9543d4231a71db4b1c9264b0685&dn=Ubuntu%2022.04%20LTS",
+      "seeders": 31,
+      "size": 3654957056,
+      "source": "apibay",
+      "title": "Ubuntu 22.04 LTS"
+    },
+    {
+      "added": 1765526528,
+      "info_hash": "232cd67eb3ffbd7c37bf9ec3ee887417e5ae1ee6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:232cd67eb3ffbd7c37bf9ec3ee887417e5ae1ee6&dn=Clinton%20D.%2C%20Negus%20C.%20Ubuntu%20Linux%20Bible%2011ed%202025",
+      "seeders": 27,
+      "size": 8554738,
+      "source": "apibay",
+      "title": "Clinton D., Negus C. Ubuntu Linux Bible 11ed 2025"
+    },
+    {
+      "added": 1673585163,
+      "info_hash": "ba77b012352d816702c1baab26f6b39660fc9b39",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:ba77b012352d816702c1baab26f6b39660fc9b39&dn=Ubuntu%20Linux%20Administration%3A%20Networking",
+      "seeders": 13,
+      "size": 298682283,
+      "source": "apibay",
+      "title": "Ubuntu Linux Administration: Networking"
+    },
+    {
+      "added": 1531492876,
+      "info_hash": "29f629d0586efe2f2327ecd7dbc63797437aacde",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:29f629d0586efe2f2327ecd7dbc63797437aacde&dn=Udemy%20-%20The%20Complete%20Ubuntu%20Linux%20Server%20Administration%20Course",
+      "seeders": 12,
+      "size": 1112120097,
+      "source": "apibay",
+      "title": "Udemy - The Complete Ubuntu Linux Server Administration Course"
+    },
+    {
+      "added": 1691981536,
+      "info_hash": "c426b415d030710df9335daa38b2b12dbd0d48fb",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:c426b415d030710df9335daa38b2b12dbd0d48fb&dn=Linux%20Command%20Line%20%28Hands-On%29%20Ubuntu%20Linux%20%26%20Linux%20Scripting",
+      "seeders": 11,
+      "size": 2464274774,
+      "source": "apibay",
+      "title": "Linux Command Line (Hands-On) Ubuntu Linux & Linux Scripting"
+    },
+    {
+      "added": 1657946886,
+      "info_hash": "7f1fb6ea6582d26dc1dede2918555115c15e379a",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:7f1fb6ea6582d26dc1dede2918555115c15e379a&dn=Linux%20Ubuntu%20System%20Administration",
+      "seeders": 9,
+      "size": 2747029803,
+      "source": "apibay",
+      "title": "Linux Ubuntu System Administration"
+    },
+    {
+      "added": 1609604656,
+      "info_hash": "22b8f63218f1e726ec2f1fb9b38239f95fc6a629",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:22b8f63218f1e726ec2f1fb9b38239f95fc6a629&dn=Mastering%20Ubuntu%20Server%2C%203rd%20Edition",
+      "seeders": 8,
+      "size": 20501290,
+      "source": "apibay",
+      "title": "Mastering Ubuntu Server, 3rd Edition"
+    },
+    {
+      "added": 1554129476,
+      "info_hash": "54004a7a4119358d61e4dc98db2785c936f0de60",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:54004a7a4119358d61e4dc98db2785c936f0de60&dn=Ubuntu%20MATE%2016.04.6%20LTS%20desktop%20amd64",
+      "seeders": 7,
+      "size": 1781137408,
+      "source": "apibay",
+      "title": "Ubuntu MATE 16.04.6 LTS desktop amd64"
+    },
+    {
+      "added": 1664093844,
+      "info_hash": "d2e30f9d9759f618f9a5e1b7243a80bcc5cc0761",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d2e30f9d9759f618f9a5e1b7243a80bcc5cc0761&dn=LaCroix%20J.%20Mastering%20Ubuntu%20Server...Linux%20Server...4ed%202022",
+      "seeders": 7,
+      "size": 23640927,
+      "source": "apibay",
+      "title": "LaCroix J. Mastering Ubuntu Server...Linux Server...4ed 2022"
+    },
+    {
+      "added": 1566296214,
+      "info_hash": "d540fc48eb12f2833163eed6421d449dd8f1ce1f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d540fc48eb12f2833163eed6421d449dd8f1ce1f&dn=Ubuntu%20desktop%2019.04%20%2864bit%29",
+      "seeders": 6,
+      "size": 2097152000,
+      "source": "apibay",
+      "title": "Ubuntu desktop 19.04 (64bit)"
+    },
+    {
+      "added": 1637923506,
+      "info_hash": "f1fcdc1462d36530f526c1d9402eec9100b7ba18",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f1fcdc1462d36530f526c1d9402eec9100b7ba18&dn=Ubuntu%2021.10%20Desktop%20%2864-bit%29",
+      "seeders": 6,
+      "size": 3116482560,
+      "source": "apibay",
+      "title": "Ubuntu 21.10 Desktop (64-bit)"
+    },
+    {
+      "added": 1660191969,
+      "info_hash": "07da867f2c85bb15370db3f760ba8780c1fe7b71",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:07da867f2c85bb15370db3f760ba8780c1fe7b71&dn=Hardening%20Ubuntu%20Server",
+      "seeders": 6,
+      "size": 455848601,
+      "source": "apibay",
+      "title": "Hardening Ubuntu Server"
+    },
+    {
+      "added": 1754304670,
+      "info_hash": "7b6cae55db21441f06ea00a25c2a21e11752eee2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7b6cae55db21441f06ea00a25c2a21e11752eee2&dn=VanDine%20K.%20The%20Ultimate%20Ubuntu%20Handbook.%20A%20complete%20guide%20to%20Ubuntu%2024.04%2C..2025",
+      "seeders": 6,
+      "size": 11526650,
+      "source": "apibay",
+      "title": "VanDine K. The Ultimate Ubuntu Handbook. A complete guide to Ubuntu 24.04,..2025"
+    },
+    {
+      "added": 1544873670,
+      "info_hash": "f33ca2c8a4255b223005e90548142e94487d1e0f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f33ca2c8a4255b223005e90548142e94487d1e0f&dn=Aerial%20Africa%20Series%201%202of6%20Spirit%20of%20Ubuntu%201080p%20x264%20AAC%20HDTV",
+      "seeders": 5,
+      "size": 1615532575,
+      "source": "apibay",
+      "title": "Aerial Africa Series 1 2of6 Spirit of Ubuntu 1080p x264 AAC HDTV"
+    },
+    {
+      "added": 1554129335,
+      "info_hash": "41491dc2b345789da067f7abae8b29bbb8c14e9b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:41491dc2b345789da067f7abae8b29bbb8c14e9b&dn=Ubuntu%20MATE%2016.04.6%20LTS%20desktop%20i386",
+      "seeders": 5,
+      "size": 1786396672,
+      "source": "apibay",
+      "title": "Ubuntu MATE 16.04.6 LTS desktop i386"
+    },
+    {
+      "added": 1609394345,
+      "info_hash": "dbbb12ae6aca79abe6fe24ce4cbfabd1d6736fd2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:dbbb12ae6aca79abe6fe24ce4cbfabd1d6736fd2&dn=Ubuntu%20Linux%20Fundamentals%20Linux%20Server%20Administration%20Basics",
+      "seeders": 5,
+      "size": 4591420171,
+      "source": "apibay",
+      "title": "Ubuntu Linux Fundamentals Linux Server Administration Basics"
+    },
+    {
+      "added": 1643554897,
+      "info_hash": "176cbe7776207f31c47a883a08547bee23eed942",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:176cbe7776207f31c47a883a08547bee23eed942&dn=Linux%20and%20Unix%20Command%20Line%20Basics%20for%20Bash%2C%20Z%20Shell%20and%20Ubuntu",
+      "seeders": 5,
+      "size": 236960609,
+      "source": "apibay",
+      "title": "Linux and Unix Command Line Basics for Bash, Z Shell and Ubuntu"
+    },
+    {
+      "added": 1393670908,
+      "info_hash": "7c7dca2ac0d7d5c3526fb21fd52b260e6967719e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7c7dca2ac0d7d5c3526fb21fd52b260e6967719e&dn=Infiniteskills%20-%20Learning%20Ubuntu%20Linux",
+      "seeders": 4,
+      "size": 850069062,
+      "source": "apibay",
+      "title": "Infiniteskills - Learning Ubuntu Linux"
+    },
+    {
+      "added": 1387919313,
+      "info_hash": "d2aa08ab08325a1d9b62ea9eb7f4585148101a00",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d2aa08ab08325a1d9b62ea9eb7f4585148101a00&dn=Ubuntu%20Linux%20Toolbox%201000%2B%20Commands%20for%20Ubuntu%20and%20Debian%20Power",
+      "seeders": 3,
+      "size": 2611630,
+      "source": "apibay",
+      "title": "Ubuntu Linux Toolbox 1000+ Commands for Ubuntu and Debian Power"
+    },
+    {
+      "added": 1616858021,
+      "info_hash": "f97d29b85756d8f9fbd3ee9eca7ffa593792e277",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f97d29b85756d8f9fbd3ee9eca7ffa593792e277&dn=Udemy%20-%20UBUNTU%20Linux%20Server",
+      "seeders": 3,
+      "size": 1759917195,
+      "source": "apibay",
+      "title": "Udemy - UBUNTU Linux Server"
+    },
+    {
+      "added": 1658644279,
+      "info_hash": "031559c252dd0e335cfe72f18cc0997b8e9a4e0e",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:031559c252dd0e335cfe72f18cc0997b8e9a4e0e&dn=Practical%20Ubuntu%20Linux%20Server%20administration",
+      "seeders": 3,
+      "size": 1237691473,
+      "source": "apibay",
+      "title": "Practical Ubuntu Linux Server administration"
+    },
+    {
+      "added": 1461605970,
+      "info_hash": "5f90af9933d5613520487fafbaae79f91d1711ed",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:5f90af9933d5613520487fafbaae79f91d1711ed&dn=Udemy%20-%20Ubuntu%20Linux%20-%20Go%20from%20Beginner%20to%20Power%20User",
+      "seeders": 2,
+      "size": 2614286298,
+      "source": "apibay",
+      "title": "Udemy - Ubuntu Linux - Go from Beginner to Power User"
+    },
+    {
+      "added": 1571013815,
+      "info_hash": "1e3a1ac6517caa3766d7d249d0cc1b02988f76e5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1e3a1ac6517caa3766d7d249d0cc1b02988f76e5&dn=Ubuntu%20Unleashed%202019%20Edition",
+      "seeders": 2,
+      "size": 22441032,
+      "source": "apibay",
+      "title": "Ubuntu Unleashed 2019 Edition"
+    },
+    {
+      "added": 1603452312,
+      "info_hash": "218fa115b35a1107161a8c569c01cd32aa52c7a7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:218fa115b35a1107161a8c569c01cd32aa52c7a7&dn=Ubuntu%2018.04%20Essentials%20-%20%28BookRAR%29",
+      "seeders": 2,
+      "size": 21219534,
+      "source": "apibay",
+      "title": "Ubuntu 18.04 Essentials - (BookRAR)"
+    },
+    {
+      "added": 1610697330,
+      "info_hash": "bd6db35e9f99b030e76d279e0e99042ccbc0ec72",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:bd6db35e9f99b030e76d279e0e99042ccbc0ec72&dn=Everyday%20Ubuntu%20by%20Nompumelelo%20Mungi%20Ngomane%20EPUB",
+      "seeders": 2,
+      "size": 33316703,
+      "source": "apibay",
+      "title": "Everyday Ubuntu by Nompumelelo Mungi Ngomane EPUB"
+    },
+    {
+      "added": 1613319711,
+      "info_hash": "61a059660f394d48cecbb9f98ca5923abaf1525f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:61a059660f394d48cecbb9f98ca5923abaf1525f&dn=Clinton%20D.%2C%20Negus%20C.%20Ubuntu%20Linux%20Bible%202021",
+      "seeders": 2,
+      "size": 17470103,
+      "source": "apibay",
+      "title": "Clinton D., Negus C. Ubuntu Linux Bible 2021"
+    },
+    {
+      "added": 1623644948,
+      "info_hash": "c1f6cb9cbe4ff50609328612c210f3608c540a97",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:c1f6cb9cbe4ff50609328612c210f3608c540a97&dn=Deploying%20a%20Secure%20Virtual%20Private%20Server%20with%20Ubuntu%2020.04",
+      "seeders": 2,
+      "size": 2196312131,
+      "source": "apibay",
+      "title": "Deploying a Secure Virtual Private Server with Ubuntu 20.04"
+    },
+    {
+      "added": 1626930810,
+      "info_hash": "959dc1c0074c4305cffa43c87a4d9d1dad3939cf",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:959dc1c0074c4305cffa43c87a4d9d1dad3939cf&dn=Building%20an%20Ubuntu%20Server",
+      "seeders": 2,
+      "size": 602597547,
+      "source": "apibay",
+      "title": "Building an Ubuntu Server"
+    },
+    {
+      "added": 1656449236,
+      "info_hash": "d2d76adeed33ff6a1a1106f9e74aaadf8fa85b20",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d2d76adeed33ff6a1a1106f9e74aaadf8fa85b20&dn=Linux%20Shell%20Commands%20for%20Absolute%20Beginners%20using%20Ubuntu%2020x",
+      "seeders": 2,
+      "size": 7887341394,
+      "source": "apibay",
+      "title": "Linux Shell Commands for Absolute Beginners using Ubuntu 20x"
+    },
+    {
+      "added": 1663837520,
+      "info_hash": "a90bcb990aebef0ae66e9ee16ee9c3cee6cc7d35",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a90bcb990aebef0ae66e9ee16ee9c3cee6cc7d35&dn=Ubuntu%20Linux%20Administration%3A%20Essential%20Commands",
+      "seeders": 2,
+      "size": 453977728,
+      "source": "apibay",
+      "title": "Ubuntu Linux Administration: Essential Commands"
+    },
+    {
+      "added": 1676447820,
+      "info_hash": "9c99fe40b79721dc56a93c881b5d7853f2dff9fe",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:9c99fe40b79721dc56a93c881b5d7853f2dff9fe&dn=Ubuntu%20Linux%20Administration%3A%20Service%20Configuration",
+      "seeders": 2,
+      "size": 516757384,
+      "source": "apibay",
+      "title": "Ubuntu Linux Administration: Service Configuration"
+    },
+    {
+      "added": 1683465259,
+      "info_hash": "3abd948f77ccc121133a993a05def3afe38e9d99",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3abd948f77ccc121133a993a05def3afe38e9d99&dn=Ubuntu%20Server%2022.04%20Fundamentals",
+      "seeders": 2,
+      "size": 1053575457,
+      "source": "apibay",
+      "title": "Ubuntu Server 22.04 Fundamentals"
+    },
+    {
+      "added": 1745301840,
+      "info_hash": "af9eaf6e76516ab7b09b7b9af134e0a609c2300b",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:af9eaf6e76516ab7b09b7b9af134e0a609c2300b&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%202160p%20MAX%20WEB-DL%20DD%205%201%20H%20265-playW",
+      "seeders": 2,
+      "size": 8629495056,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 2160p MAX WEB-DL DD 5 1 H 265-playW"
+    },
+    {
+      "added": 1746013944,
+      "info_hash": "904414656400a1e19f9c655799f51cda1c63f6ac",
+      "leechers": 6,
+      "magnet": "magnet:?xt=urn:btih:904414656400a1e19f9c655799f51cda1c63f6ac&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%201080p%20MAX%20WEB-DL%20DDP5%201%20H%20264-STC",
+      "seeders": 2,
+      "size": 2353214352,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 1080p MAX WEB-DL DDP5 1 H 264-STC"
+    },
+    {
+      "added": 1313514828,
+      "info_hash": "be778fa69a5b1e0bedcc826569bc2db392a3cf83",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:be778fa69a5b1e0bedcc826569bc2db392a3cf83&dn=Ubuntu%20Linux%20%286%20Ebook%202006%29%20%5BPDF%20CHM%20Eng%5D%20TNT%20Village",
+      "seeders": 1,
+      "size": 92091871,
+      "source": "apibay",
+      "title": "Ubuntu Linux (6 Ebook 2006) [PDF CHM Eng] TNT Village"
+    },
+    {
+      "added": 1345916566,
+      "info_hash": "14ffe5dd23188fd5cb53a1d47f1289db70abf31e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:14ffe5dd23188fd5cb53a1d47f1289db70abf31e&dn=ubuntu%2012.04.1%20%2832%20bit%29",
+      "seeders": 1,
+      "size": 729067520,
+      "source": "apibay",
+      "title": "ubuntu 12.04.1 (32 bit)"
+    },
+    {
+      "added": 1345916681,
+      "info_hash": "c35d501d9a5a822dddad825fa94306bcfe522693",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c35d501d9a5a822dddad825fa94306bcfe522693&dn=ubuntu%2012.04.1%20desktop%20%2864%20bit%29",
+      "seeders": 1,
+      "size": 728018944,
+      "source": "apibay",
+      "title": "ubuntu 12.04.1 desktop (64 bit)"
+    },
+    {
+      "added": 1394302177,
+      "info_hash": "5191b146a56451f5677e4ed10f7b3b54c3692b4f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:5191b146a56451f5677e4ed10f7b3b54c3692b4f&dn=The%20Official%20Ubuntu%20Book%20-%207th%20Edition.pdf%20Gooner",
+      "seeders": 1,
+      "size": 11159927,
+      "source": "apibay",
+      "title": "The Official Ubuntu Book - 7th Edition.pdf Gooner"
+    },
+    {
+      "added": 1501496163,
+      "info_hash": "e2a66377db499043c002dc70a0356c23be139881",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e2a66377db499043c002dc70a0356c23be139881&dn=Ubuntu%20Unleashed%202017%20Edition%2C%2012th%20Edition%20by%20Matthew%20Helmke%20-",
+      "seeders": 1,
+      "size": 89637095,
+      "source": "apibay",
+      "title": "Ubuntu Unleashed 2017 Edition, 12th Edition by Matthew Helmke -"
+    },
+    {
+      "added": 1503851282,
+      "info_hash": "6f1dbbbda4aa9a32258b4ae13f73fcf628d9f98c",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:6f1dbbbda4aa9a32258b4ae13f73fcf628d9f98c&dn=Beginning%20Ubuntu%20for%20Windows%20and%20Mac%20Users%20Start%20your%20Journey%20in",
+      "seeders": 1,
+      "size": 12359634,
+      "source": "apibay",
+      "title": "Beginning Ubuntu for Windows and Mac Users Start your Journey in"
+    },
+    {
+      "added": 1594122862,
+      "info_hash": "b5d8cb506fac60d0fcc0adefd7d1c2391f2e2972",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b5d8cb506fac60d0fcc0adefd7d1c2391f2e2972&dn=Ubuntu%20MATE%2018.04.4%20LTS%20i386%20%2832-bit%29",
+      "seeders": 1,
+      "size": 1964244992,
+      "source": "apibay",
+      "title": "Ubuntu MATE 18.04.4 LTS i386 (32-bit)"
+    },
+    {
+      "added": 1594122956,
+      "info_hash": "545e7abb9380c5cc4addae47ddab31886ce3b6d0",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:545e7abb9380c5cc4addae47ddab31886ce3b6d0&dn=Ubuntu%20MATE%2018.04.4%20LTS%20amd64%20%2864-bit%29",
+      "seeders": 1,
+      "size": 1964244992,
+      "source": "apibay",
+      "title": "Ubuntu MATE 18.04.4 LTS amd64 (64-bit)"
+    },
+    {
+      "added": 1626844470,
+      "info_hash": "e6e51b5eeeb5dd38729f39b14bee9e3f8cc97d72",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e6e51b5eeeb5dd38729f39b14bee9e3f8cc97d72&dn=Self-hosting%20with%20Ubuntu%20Linux%3A%20Creating%20an%20Email%20server",
+      "seeders": 1,
+      "size": 682056993,
+      "source": "apibay",
+      "title": "Self-hosting with Ubuntu Linux: Creating an Email server"
+    },
+    {
+      "added": 1637138876,
+      "info_hash": "216f340d75288b01d5d2759aca6df71673f0e365",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:216f340d75288b01d5d2759aca6df71673f0e365&dn=Jorgensen%20E.%20x86-64%20Assembly%20Language%20Programming...Ubuntu%202020",
+      "seeders": 1,
+      "size": 2552044,
+      "source": "apibay",
+      "title": "Jorgensen E. x86-64 Assembly Language Programming...Ubuntu 2020"
+    },
+    {
+      "added": 1641803369,
+      "info_hash": "7d68f48453860c34c090ed496400f96c0107cb75",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7d68f48453860c34c090ed496400f96c0107cb75&dn=Mohr%20N.%20Ubuntu.%20The%20Complete%20Guide%2011ed%202021",
+      "seeders": 1,
+      "size": 11912755,
+      "source": "apibay",
+      "title": "Mohr N. Ubuntu. The Complete Guide 11ed 2021"
+    },
+    {
+      "added": 1642261004,
+      "info_hash": "a49adcdc2df3c70241648995d1e5bab1058343e4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a49adcdc2df3c70241648995d1e5bab1058343e4&dn=Ubuntu%3A%20The%20Complete%20Guide%2C%2011th%20Edition%20%282021%29%20PDF",
+      "seeders": 1,
+      "size": 11913687,
+      "source": "apibay",
+      "title": "Ubuntu: The Complete Guide, 11th Edition (2021) PDF"
+    },
+    {
+      "added": 1643716029,
+      "info_hash": "41ecf122721c39ac41bd186bf5794c0fb9b19ddf",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:41ecf122721c39ac41bd186bf5794c0fb9b19ddf&dn=The%20Ubuntu%20Linux%20Desktop%20User%20Guide",
+      "seeders": 1,
+      "size": 1337954011,
+      "source": "apibay",
+      "title": "The Ubuntu Linux Desktop User Guide"
+    },
+    {
+      "added": 1659760653,
+      "info_hash": "89090d6a232e3bb1153d6a015cfdc63b5d114cbc",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:89090d6a232e3bb1153d6a015cfdc63b5d114cbc&dn=Linux%20Format%20Presents%202022%20Ubuntu.%20The%20Complete%20Guide%2012ed%202022",
+      "seeders": 1,
+      "size": 36372825,
+      "source": "apibay",
+      "title": "Linux Format Presents 2022 Ubuntu. The Complete Guide 12ed 2022"
+    },
+    {
+      "added": 1665726124,
+      "info_hash": "28036e2627f2731e40758ec93a318acba0b85f02",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:28036e2627f2731e40758ec93a318acba0b85f02&dn=Bin%20U.%20Mastering%20Ubuntu%20A%20Beginner%27s%20Guide%202023",
+      "seeders": 1,
+      "size": 24264296,
+      "source": "apibay",
+      "title": "Bin U. Mastering Ubuntu A Beginner's Guide 2023"
+    },
+    {
+      "added": 1671185736,
+      "info_hash": "f3f07079efeca1d1e801c2d87ba7ec023834a51e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f3f07079efeca1d1e801c2d87ba7ec023834a51e&dn=Haines%20N.%20Beginning%20Ubuntu%20for%20Windows%20and%20Mac%20Users...3ed%202023",
+      "seeders": 1,
+      "size": 12452984,
+      "source": "apibay",
+      "title": "Haines N. Beginning Ubuntu for Windows and Mac Users...3ed 2023"
+    },
+    {
+      "added": 1684268851,
+      "info_hash": "3ea6ee57cd9df4b502774e30b7e7020f11ef8a7d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3ea6ee57cd9df4b502774e30b7e7020f11ef8a7d&dn=Ubuntu%20Server%2022.04%20Fundamentals",
+      "seeders": 1,
+      "size": 1045003016,
+      "source": "apibay",
+      "title": "Ubuntu Server 22.04 Fundamentals"
+    },
+    {
+      "added": 1687523229,
+      "info_hash": "7bb0cb5f5380c11d7a54b96936bc7a4d3a69a0a6",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:7bb0cb5f5380c11d7a54b96936bc7a4d3a69a0a6&dn=Partridge%20M.%20Ubuntu%2018.04%20LTS%20After%20Install%20Self%20Help%20Guide%202022",
+      "seeders": 1,
+      "size": 34352208,
+      "source": "apibay",
+      "title": "Partridge M. Ubuntu 18.04 LTS After Install Self Help Guide 2022"
+    },
+    {
+      "added": 1687523910,
+      "info_hash": "4b80b2942f48be151ac4df0adbd472c3dcf457b3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4b80b2942f48be151ac4df0adbd472c3dcf457b3&dn=Partridge%20M.%20Ubuntu%2020.04%20LTS%20After%20Install%20Self%20Help%20Guide%202021",
+      "seeders": 1,
+      "size": 17926760,
+      "source": "apibay",
+      "title": "Partridge M. Ubuntu 20.04 LTS After Install Self Help Guide 2021"
+    },
+    {
+      "added": 1727574888,
+      "info_hash": "8471a0e3c14fcc2206e7e76dfee3992039edfc0f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8471a0e3c14fcc2206e7e76dfee3992039edfc0f&dn=Ubuntu%20Linux%20Toolbox%2C%202nd%20Edition%20By%20Christopher%20Negus",
+      "seeders": 1,
+      "size": 2574613,
+      "source": "apibay",
+      "title": "Ubuntu Linux Toolbox, 2nd Edition By Christopher Negus"
+    },
+    {
+      "added": 1745286504,
+      "info_hash": "e46a0919cb6448668efc62d3398e9842070396c7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e46a0919cb6448668efc62d3398e9842070396c7&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%20720p%20AMZN%20WEB-DL%20DDP5%201%20H%20264-RAWR",
+      "seeders": 1,
+      "size": 1896875250,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 720p AMZN WEB-DL DDP5 1 H 264-RAWR"
+    },
+    {
+      "added": 1745286549,
+      "info_hash": "d38f6a99492c1aeb0e7c654610530de7b87f00a8",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d38f6a99492c1aeb0e7c654610530de7b87f00a8&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%201080p%20AMZN%20WEB-DL%20DDP5%201%20H%20264-RAWR",
+      "seeders": 1,
+      "size": 4282152025,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 1080p AMZN WEB-DL DDP5 1 H 264-RAWR"
+    },
+    {
+      "added": 1745287502,
+      "info_hash": "e818ebfd3a45e6dfebcd649302da9169244717c7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e818ebfd3a45e6dfebcd649302da9169244717c7&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%20720p%20AMZN%20WEB-DL%20DDP5%201%20H%20264-RAWR",
+      "seeders": 1,
+      "size": 1896853375,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 720p AMZN WEB-DL DDP5 1 H 264-RAWR"
+    },
+    {
+      "added": 1745287898,
+      "info_hash": "5d7f326b48a7664b069dfcd88982edd67c7a4e8e",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:5d7f326b48a7664b069dfcd88982edd67c7a4e8e&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%202160p%20MAX%20WEB-DL%20DDP5%201%20H%20265-RAWR",
+      "seeders": 1,
+      "size": 8629364897,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 2160p MAX WEB-DL DDP5 1 H 265-RAWR"
+    },
+    {
+      "added": 1745298631,
+      "info_hash": "c7f66d77cc21c5879a38bac8f6e55f36438ed3c3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c7f66d77cc21c5879a38bac8f6e55f36438ed3c3&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%201080p%20AMZN%20WEB-DL%20DD%205%201%20H%20264-play",
+      "seeders": 1,
+      "size": 4282261743,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 1080p AMZN WEB-DL DD 5 1 H 264-play"
+    },
+    {
+      "added": 1745335796,
+      "info_hash": "db982120fb3b1a26e8ef4a4e79b967867a997b0c",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:db982120fb3b1a26e8ef4a4e79b967867a997b0c&dn=Celtics%20City%20S01E08%20Chapter%20VIII%20Ubuntu%201080p%20AMZN%20WEB-DL%20DDP5%201%20H%20264-Kits",
+      "seeders": 1,
+      "size": 4282044832,
+      "source": "apibay",
+      "title": "Celtics City S01E08 Chapter VIII Ubuntu 1080p AMZN WEB-DL DDP5 1 H 264-Kits"
+    },
+    {
+      "added": 1236809158,
+      "info_hash": "f2da5e0abd9e5ecc109cfdc74dac9a54ba7206c9",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:f2da5e0abd9e5ecc109cfdc74dac9a54ba7206c9&dn=LimeWire%20PRO%20v5.1.2%20Final%20Linux%20%28Ubuntu%2C%20Debian%29%20By%20ChattChitto",
+      "seeders": 0,
+      "size": 24080364,
+      "source": "apibay",
+      "title": "LimeWire PRO v5.1.2 Final Linux (Ubuntu, Debian) By ChattChitto"
+    },
+    {
+      "added": 1334901840,
+      "info_hash": "c168fbd6383b22fddafb70b1e6e9de1b32cd671a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c168fbd6383b22fddafb70b1e6e9de1b32cd671a&dn=%28Video2Brain%29%20Ubuntu%2011.10",
+      "seeders": 0,
+      "size": 204385784,
+      "source": "apibay",
+      "title": "(Video2Brain) Ubuntu 11.10"
+    },
+    {
+      "added": 1342827199,
+      "info_hash": "45a08db7dca2b92455ca70b20e50f3ccf8f5eeb8",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:45a08db7dca2b92455ca70b20e50f3ccf8f5eeb8&dn=Getting%20Started%20with%20Ubuntu%2012.04",
+      "seeders": 0,
+      "size": 9747019,
+      "source": "apibay",
+      "title": "Getting Started with Ubuntu 12.04"
+    },
+    {
+      "added": 1350116110,
+      "info_hash": "1f4d09f07219e72fb7beaf482f5e0f711621829e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1f4d09f07219e72fb7beaf482f5e0f711621829e&dn=Kalter%20-%20Ubuntu%20%282012%29%20mp3%40320",
+      "seeders": 0,
+      "size": 137633158,
+      "source": "apibay",
+      "title": "Kalter - Ubuntu (2012) mp3@320"
+    },
+    {
+      "added": 1351577062,
+      "info_hash": "43288c0815d4a730d82dcff2cb97ad37620c0bde",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:43288c0815d4a730d82dcff2cb97ad37620c0bde&dn=Getting%20Started%20with%20Ubuntu%2012.10",
+      "seeders": 0,
+      "size": 9221230,
+      "source": "apibay",
+      "title": "Getting Started with Ubuntu 12.10"
+    },
+    {
+      "added": 1362793048,
+      "info_hash": "5a482bb34bdf8315c995b126b22c45a27f361b01",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:5a482bb34bdf8315c995b126b22c45a27f361b01&dn=The%20Official%20Ubuntu%20Book%20%287th%20Edition%29%202012%20-%20Prentice%20Hall%20%2B5%26a",
+      "seeders": 0,
+      "size": 36913856,
+      "source": "apibay",
+      "title": "The Official Ubuntu Book (7th Edition) 2012 - Prentice Hall +5&a"
+    },
+    {
+      "added": 1725819528,
+      "info_hash": "4a3f5e08bcef825718eda30637230585e3330599",
+      "leechers": 8,
+      "magnet": "magnet:?xt=urn:btih:4a3f5e08bcef825718eda30637230585e3330599&dn=ubuntu-24.04.1-desktop-amd64.iso",
+      "seeders": 51,
+      "size": 6203355136,
+      "source": "apibay",
+      "title": "ubuntu-24.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1696870394,
+      "info_hash": "5f5e8848426129ab63cb4db717bb54193c1c1ad7",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:5f5e8848426129ab63cb4db717bb54193c1c1ad7&dn=ubuntu-20.04.6-desktop-amd64.iso",
+      "seeders": 24,
+      "size": 4351463424,
+      "source": "apibay",
+      "title": "ubuntu-20.04.6-desktop-amd64.iso"
+    },
+    {
+      "added": 1256831114,
+      "info_hash": "2dd9e39e18a6409c6344e30ffb2f38ea12b9f69b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:2dd9e39e18a6409c6344e30ffb2f38ea12b9f69b&dn=Ubuntu%209.10%20I386%20Server",
+      "seeders": 2,
+      "size": 671686656,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 I386 Server"
+    },
+    {
+      "added": 1272576901,
+      "info_hash": "a1425e0d6630336cdd9fb320f3fff1030098975a",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:a1425e0d6630336cdd9fb320f3fff1030098975a&dn=Ubuntu%2010.04%20LTS%20x64",
+      "seeders": 2,
+      "size": 731453440,
+      "source": "apibay",
+      "title": "Ubuntu 10.04 LTS x64"
+    },
+    {
+      "added": 1440746374,
+      "info_hash": "01c666cf5796f22414ca08f50404ba0d0fe6b814",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:01c666cf5796f22414ca08f50404ba0d0fe6b814&dn=Udemy%20-%20Ubuntu%20Linux%20Server%20Troubleshooting",
+      "seeders": 2,
+      "size": 1473607030,
+      "source": "apibay",
+      "title": "Udemy - Ubuntu Linux Server Troubleshooting"
+    },
+    {
+      "added": 1470434419,
+      "info_hash": "9f9165d9a281a9b8e782cd5176bbcc8256fd1871",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:9f9165d9a281a9b8e782cd5176bbcc8256fd1871&dn=Ubuntu%2016.04.1%20LTS%20Desktop%2064-bit",
+      "seeders": 2,
+      "size": 1513308160,
+      "source": "apibay",
+      "title": "Ubuntu 16.04.1 LTS Desktop 64-bit"
+    },
+    {
+      "added": 1256830739,
+      "info_hash": "2683f82c24c7615c7293260fb1606970e26b1c44",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:2683f82c24c7615c7293260fb1606970e26b1c44&dn=Ubuntu%209.10%20AMD64%20Alternate",
+      "seeders": 1,
+      "size": 730136576,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 AMD64 Alternate"
+    },
+    {
+      "added": 1256830795,
+      "info_hash": "269f12e888ce6a62b82086980558ef4c3008ad74",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:269f12e888ce6a62b82086980558ef4c3008ad74&dn=Ubuntu%209.10%20I386%20Alternate",
+      "seeders": 1,
+      "size": 723068928,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 I386 Alternate"
+    },
+    {
+      "added": 1256830875,
+      "info_hash": "d5de047dcca45306305a03a8801430dff26017c6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d5de047dcca45306305a03a8801430dff26017c6&dn=Ubuntu%209.10%20AMD64%20Standard%20Install",
+      "seeders": 1,
+      "size": 724353024,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 AMD64 Standard Install"
+    },
+    {
+      "added": 1256830974,
+      "info_hash": "8241bdf1f1214014297f87c93ee58a57a983ccc4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8241bdf1f1214014297f87c93ee58a57a983ccc4&dn=Ubuntu%209.10%20I386%20Netbook%20Remix",
+      "seeders": 1,
+      "size": 713887744,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 I386 Netbook Remix"
+    },
+    {
+      "added": 1256831061,
+      "info_hash": "f71cae4313b24c007d8f24c998537e91e6f08da6",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:f71cae4313b24c007d8f24c998537e91e6f08da6&dn=Ubuntu%209.10%20AMD64%20Server",
+      "seeders": 1,
+      "size": 686305280,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 AMD64 Server"
+    },
+    {
+      "added": 1262454670,
+      "info_hash": "840c4451bee467264aee75aff9053d616499892b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:840c4451bee467264aee75aff9053d616499892b&dn=Ubuntu%208.04-3%20Server%20I386",
+      "seeders": 1,
+      "size": 631246848,
+      "source": "apibay",
+      "title": "Ubuntu 8.04-3 Server I386"
+    },
+    {
+      "added": 1272576967,
+      "info_hash": "3e16157f0879eb43e9e51f45d485feff90a77283",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3e16157f0879eb43e9e51f45d485feff90a77283&dn=Ubuntu%2010.04%20LTS%20x32",
+      "seeders": 1,
+      "size": 733419520,
+      "source": "apibay",
+      "title": "Ubuntu 10.04 LTS x32"
+    },
+    {
+      "added": 1273547377,
+      "info_hash": "07053761979d09dead94d09e8326db919797b078",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:07053761979d09dead94d09e8326db919797b078&dn=ubuntu-10.04-server-i386.iso",
+      "seeders": 1,
+      "size": 700413952,
+      "source": "apibay",
+      "title": "ubuntu-10.04-server-i386.iso"
+    },
+    {
+      "added": 1273547447,
+      "info_hash": "ab8ea951c022d4745a9b06ab8020b952a52b71ca",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ab8ea951c022d4745a9b06ab8020b952a52b71ca&dn=ubuntu-10.04-server-amd64.iso",
+      "seeders": 1,
+      "size": 710412288,
+      "source": "apibay",
+      "title": "ubuntu-10.04-server-amd64.iso"
+    },
+    {
+      "added": 1282230241,
+      "info_hash": "cdc844a364ae2417ea204ea4840129b2298e7dd4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:cdc844a364ae2417ea204ea4840129b2298e7dd4&dn=Ubuntu%2010.04.1%20i386",
+      "seeders": 1,
+      "size": 718864384,
+      "source": "apibay",
+      "title": "Ubuntu 10.04.1 i386"
+    },
+    {
+      "added": 1282230404,
+      "info_hash": "9789eb0694c8f7e6e387e376652406321be60544",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:9789eb0694c8f7e6e387e376652406321be60544&dn=Ubuntu%2010.04.1%20AMD64",
+      "seeders": 1,
+      "size": 719472640,
+      "source": "apibay",
+      "title": "Ubuntu 10.04.1 AMD64"
+    },
+    {
+      "added": 1287331987,
+      "info_hash": "4af6fb7cbfb8771f98a92302693b31e863b89d3e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4af6fb7cbfb8771f98a92302693b31e863b89d3e&dn=Ubuntu%2010.10%20amd64",
+      "seeders": 1,
+      "size": 728754176,
+      "source": "apibay",
+      "title": "Ubuntu 10.10 amd64"
+    },
+    {
+      "added": 1308816552,
+      "info_hash": "e8b7331a45924868f8a1720fb5da9c4ea9d4fba8",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e8b7331a45924868f8a1720fb5da9c4ea9d4fba8&dn=Ubuntu%2011.04%20Desktop%20dvd%20amd64%20%28x64%29%20.iso",
+      "seeders": 1,
+      "size": 732112896,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Desktop dvd amd64 (x64) .iso"
+    },
+    {
+      "added": 1308816578,
+      "info_hash": "1a0f2c5aed097c645cc91922d1de9a22a37d1419",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1a0f2c5aed097c645cc91922d1de9a22a37d1419&dn=Ubuntu%2011.04%20Desktop%20dvd%20-i386%20%28x86%29%20.iso",
+      "seeders": 1,
+      "size": 4217223168,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Desktop dvd -i386 (x86) .iso"
+    },
+    {
+      "added": 1358845965,
+      "info_hash": "edb60ac012a0298a307b4ba9b898fa8ea387db81",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:edb60ac012a0298a307b4ba9b898fa8ea387db81&dn=Beginning%20Ubuntu%20Linux%206th%20Edition",
+      "seeders": 1,
+      "size": 48309311,
+      "source": "apibay",
+      "title": "Beginning Ubuntu Linux 6th Edition"
+    },
+    {
+      "added": 1366893000,
+      "info_hash": "ba1d2ad5c03b9328d23d5e248d7cb81349ed168a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ba1d2ad5c03b9328d23d5e248d7cb81349ed168a&dn=ubuntu-13.04-desktop-amd64.iso",
+      "seeders": 1,
+      "size": 823132160,
+      "source": "apibay",
+      "title": "ubuntu-13.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1377383657,
+      "info_hash": "cb8c0c9b486ae6bd257f5fdf41bd8cf8dcd893e9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:cb8c0c9b486ae6bd257f5fdf41bd8cf8dcd893e9&dn=CBT%20Nuggets%20-%20Ubuntu",
+      "seeders": 1,
+      "size": 2049157181,
+      "source": "apibay",
+      "title": "CBT Nuggets - Ubuntu"
+    },
+    {
+      "added": 1430670678,
+      "info_hash": "f94dfa73e45f521d158360e53b8cfac8143089d6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f94dfa73e45f521d158360e53b8cfac8143089d6&dn=Ubuntu%20Facile%20-%20Aprile%202015%2C%20%5BPdf%20-%20Ita%5D%20%5BTNTVillage%5D",
+      "seeders": 1,
+      "size": 12062323,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Aprile 2015, [Pdf - Ita] [TNTVillage]"
+    },
+    {
+      "added": 1430858389,
+      "info_hash": "fc8a15a2faf2734dbb1dc5f7afdc5c9beaeb1f59",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:fc8a15a2faf2734dbb1dc5f7afdc5c9beaeb1f59&dn=Ubuntu%2015.04%20Desktop%20Amd64%2C%20%5BIso%20-%20MultiLang%5D%20%5BTNTVillage%5D",
+      "seeders": 1,
+      "size": 1150844928,
+      "source": "apibay",
+      "title": "Ubuntu 15.04 Desktop Amd64, [Iso - MultiLang] [TNTVillage]"
+    },
+    {
+      "added": 1430858419,
+      "info_hash": "4896fde14efbc0f66a274d2a69104fbb57fbd2cb",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4896fde14efbc0f66a274d2a69104fbb57fbd2cb&dn=Ubuntu%2015.04%20Desktop%20i386%2C%20%5BIso%20-%20MultiLang%5D%20%5BTNTVillage%5D",
+      "seeders": 1,
+      "size": 1188855808,
+      "source": "apibay",
+      "title": "Ubuntu 15.04 Desktop i386, [Iso - MultiLang] [TNTVillage]"
+    },
+    {
+      "added": 1436610323,
+      "info_hash": "932522d91efacfcf5b64b2b38861a27099dd8fa8",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:932522d91efacfcf5b64b2b38861a27099dd8fa8&dn=K9copy-reloaded%20Debian%2FUbuntu%20Packages%2C%20%5BDeb%20-%20MultiLang%5D%20%5BTNT%5D",
+      "seeders": 1,
+      "size": 16367238,
+      "source": "apibay",
+      "title": "K9copy-reloaded Debian/Ubuntu Packages, [Deb - MultiLang] [TNT]"
+    },
+    {
+      "added": 1470434588,
+      "info_hash": "13d22ec551069369502a3100a99b991dd56389d4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:13d22ec551069369502a3100a99b991dd56389d4&dn=Ubuntu%2016.04.1%20LTS%20Desktop%2032-bit",
+      "seeders": 1,
+      "size": 1531445248,
+      "source": "apibay",
+      "title": "Ubuntu 16.04.1 LTS Desktop 32-bit"
+    },
+    {
+      "added": 1661343068,
+      "info_hash": "c716d1ada6c9062535e0a60a0e6343fa1a0ce89d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c716d1ada6c9062535e0a60a0e6343fa1a0ce89d&dn=Hardening%20Ubuntu%20Server",
+      "seeders": 1,
+      "size": 454705171,
+      "source": "apibay",
+      "title": "Hardening Ubuntu Server"
+    },
+    {
+      "added": 1662544160,
+      "info_hash": "fc1eba97cd6f6619ae2a6b9ffb2e93d7990c4483",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:fc1eba97cd6f6619ae2a6b9ffb2e93d7990c4483&dn=Ubuntu%20Facile%20-%20Ottobre-Novembre%202022%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 14311760,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Ottobre-Novembre 2022 [Pdf] Informatica"
+    },
+    {
+      "added": 1667747479,
+      "info_hash": "9ef0d08a01dcd85f2fe92cac39b3c311239189e3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:9ef0d08a01dcd85f2fe92cac39b3c311239189e3&dn=Ubuntu%20Facile%20-%20Dicembre%202022-Gennaio%202023%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 5208976,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Dicembre 2022-Gennaio 2023 [Pdf] Informatica"
+    },
+    {
+      "added": 1673017695,
+      "info_hash": "c5c1a90cd5bd6cfb1c5f56ed03c157479643678d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c5c1a90cd5bd6cfb1c5f56ed03c157479643678d&dn=Ubuntu%20Facile%20-%20Febbraio-Marzo%202023%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 13741165,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Febbraio-Marzo 2023 [Pdf] Informatica"
+    },
+    {
+      "added": 1678214513,
+      "info_hash": "4bd01475da639d941034b8e8caafaeb25e77c6ad",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4bd01475da639d941034b8e8caafaeb25e77c6ad&dn=Ubuntu%20Facile%20-%20Aprile-Maggio%202023%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 14034125,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Aprile-Maggio 2023 [Pdf] Informatica"
+    },
+    {
+      "added": 1683630919,
+      "info_hash": "900a2a08c65079c41e522d1ef536fc4abec86a8c",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:900a2a08c65079c41e522d1ef536fc4abec86a8c&dn=Ubuntu%20Facile%20-%20Giugno-Luglio%202023%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 28360452,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Giugno-Luglio 2023 [Pdf] Informatica"
+    },
+    {
+      "added": 1290373446,
+      "info_hash": "aae5c1512484bedb2feb737b12d8e28d51a9e3a5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:aae5c1512484bedb2feb737b12d8e28d51a9e3a5&dn=Radio%20Giroll%20Ubuntu%20party%20Maverick%20Meerkat%2020%20novembre%202010",
+      "seeders": 0,
+      "size": 433772861,
+      "source": "apibay",
+      "title": "Radio Giroll Ubuntu party Maverick Meerkat 20 novembre 2010"
+    },
+    {
+      "added": 1291984439,
+      "info_hash": "15142f76edb3e9a89740faa5f670133e9b743ce5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:15142f76edb3e9a89740faa5f670133e9b743ce5&dn=Ubuntu%20T%C3%83%C6%92%C3%86%E2%80%99%C3%83%E2%80%9A%C3%82%C2%BCrkiye%20-%20Herkese.tar.gz",
+      "seeders": 0,
+      "size": 169989887,
+      "source": "apibay",
+      "title": "Ubuntu TÃƒÆ’Ã‚Â¼rkiye - Herkese.tar.gz"
+    },
+    {
+      "added": 1291995076,
+      "info_hash": "217eb048f1e5363a7a4b3f3638dec9d9b42c1f98",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:217eb048f1e5363a7a4b3f3638dec9d9b42c1f98&dn=Ubuntu%20T%C3%BCrkiye%20-%20Herkese",
+      "seeders": 0,
+      "size": 173559693,
+      "source": "apibay",
+      "title": "Ubuntu Türkiye - Herkese"
+    },
+    {
+      "added": 1294175647,
+      "info_hash": "3abc91c75b0192276e1aaef3ec105e7123be0af9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3abc91c75b0192276e1aaef3ec105e7123be0af9&dn=music%20for%20ubuntu%2010.10",
+      "seeders": 0,
+      "size": 713154369,
+      "source": "apibay",
+      "title": "music for ubuntu 10.10"
+    },
+    {
+      "added": 1357220143,
+      "info_hash": "768a50f66d6b3efb8426494541e086a55d586277",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:768a50f66d6b3efb8426494541e086a55d586277&dn=Ubuntu%20Administracion%20Edition%2012.04%2064Bits%20%28CosmoUbuntu64%29",
+      "seeders": 0,
+      "size": 2968895488,
+      "source": "apibay",
+      "title": "Ubuntu Administracion Edition 12.04 64Bits (CosmoUbuntu64)"
+    },
+    {
+      "added": 1529490716,
+      "info_hash": "f0226f9bc3f6f3f32eeebb992aacbd976b84efda",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f0226f9bc3f6f3f32eeebb992aacbd976b84efda&dn=2018%20Ubuntu%20FLAC",
+      "seeders": 0,
+      "size": 311498465,
+      "source": "apibay",
+      "title": "2018 Ubuntu FLAC"
+    },
+    {
+      "added": 1246491211,
+      "info_hash": "05341204cc7e28ab77770a3504731bd96967b6f8",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:05341204cc7e28ab77770a3504731bd96967b6f8&dn=VTC%20Ubuntu%20Certification",
+      "seeders": 1,
+      "size": 280438739,
+      "source": "apibay",
+      "title": "VTC Ubuntu Certification"
+    },
+    {
+      "added": 1186771729,
+      "info_hash": "c4bb7335235cf70b4da82e05d0f0d7fb5b947184",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c4bb7335235cf70b4da82e05d0f0d7fb5b947184&dn=ubuntu%20meetup%20vids",
+      "seeders": 0,
+      "size": 1027824012,
+      "source": "apibay",
+      "title": "ubuntu meetup vids"
+    },
+    {
+      "added": 1210789683,
+      "info_hash": "ad2e8ec8b5cc4f9134ef4e6dbbe218d63e381712",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ad2e8ec8b5cc4f9134ef4e6dbbe218d63e381712&dn=elc%20elc2008-david-mandala-ubuntu-mobile.ogg",
+      "seeders": 0,
+      "size": 151017006,
+      "source": "apibay",
+      "title": "elc elc2008-david-mandala-ubuntu-mobile.ogg"
+    },
+    {
+      "added": 1243797547,
+      "info_hash": "41f75d44c9af8a06d5b0e14bee077309c0dfbaa2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:41f75d44c9af8a06d5b0e14bee077309c0dfbaa2&dn=Bezdiskove%20stanice%20na%20Ubuntu%20Linuxu",
+      "seeders": 0,
+      "size": 91781120,
+      "source": "apibay",
+      "title": "Bezdiskove stanice na Ubuntu Linuxu"
+    },
+    {
+      "added": 1271934909,
+      "info_hash": "446c52f14944e5b243bace7aea200ad335dedd43",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:446c52f14944e5b243bace7aea200ad335dedd43&dn=Ubuntu%2010%2004%20LTS%20Trailer%20RUS",
+      "seeders": 0,
+      "size": 10206093,
+      "source": "apibay",
+      "title": "Ubuntu 10 04 LTS Trailer RUS"
+    },
+    {
+      "added": 1273790106,
+      "info_hash": "7531d0bd50675927bf14f4e9ddcf000172d1a971",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7531d0bd50675927bf14f4e9ddcf000172d1a971&dn=Nelson%20Mandela%20explains%20Ubuntu%20%28ideology%29",
+      "seeders": 0,
+      "size": 11137689,
+      "source": "apibay",
+      "title": "Nelson Mandela explains Ubuntu (ideology)"
+    },
+    {
+      "added": 1337429237,
+      "info_hash": "3ee93913b97d4c139af93236037c87cb2acc4b16",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3ee93913b97d4c139af93236037c87cb2acc4b16&dn=Ubuntu%20Fest%20Install%20Novosibirsk%2029.04.2012%20-%20part2.webm",
+      "seeders": 0,
+      "size": 813226833,
+      "source": "apibay",
+      "title": "Ubuntu Fest Install Novosibirsk 29.04.2012 - part2.webm"
+    },
+    {
+      "added": 1338929005,
+      "info_hash": "997fbdc06d15525bdd52fdfda00f1fb7c60ff84a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:997fbdc06d15525bdd52fdfda00f1fb7c60ff84a&dn=Ubuntu%20Tutor",
+      "seeders": 0,
+      "size": 2642900,
+      "source": "apibay",
+      "title": "Ubuntu Tutor"
+    },
+    {
+      "added": 1359400095,
+      "info_hash": "e9e478eb56ee5e1ddff07cda54d7c912b54a4ba9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e9e478eb56ee5e1ddff07cda54d7c912b54a4ba9&dn=How%20to%20Install%20Broadcom%20STA%20Wireless%20Driver%20in%20Ubuntu%2012.10%20%28Off",
+      "seeders": 0,
+      "size": 6012848,
+      "source": "apibay",
+      "title": "How to Install Broadcom STA Wireless Driver in Ubuntu 12.10 (Off"
+    },
+    {
+      "added": 1388237260,
+      "info_hash": "f9a70368820674526495654b31d280f2a72cf663",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:f9a70368820674526495654b31d280f2a72cf663&dn=CBT%20Nuggets%20Ubuntu",
+      "seeders": 0,
+      "size": 2045375100,
+      "source": "apibay",
+      "title": "CBT Nuggets Ubuntu"
+    },
+    {
+      "added": 1201403864,
+      "info_hash": "0c574e52c73f0390a1c61fbf65ec696f57371b69",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:0c574e52c73f0390a1c61fbf65ec696f57371b69&dn=VirtualBox%20-%20Ubuntu%206.06.2%20LAMP%20Server%20VDI%20%5Bveedee-Eyes%5D",
+      "seeders": 0,
+      "size": 913342976,
+      "source": "apibay",
+      "title": "VirtualBox - Ubuntu 6.06.2 LAMP Server VDI [veedee-Eyes]"
+    },
+    {
+      "added": 1201576600,
+      "info_hash": "1b0d863984272e4daf99447f345a54fbbe336bcc",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:1b0d863984272e4daf99447f345a54fbbe336bcc&dn=VirtualBox%20Ubuntu%207.10%20LAMP%20Server%20%5BveeDee-Eyes%5D",
+      "seeders": 0,
+      "size": 1130398208,
+      "source": "apibay",
+      "title": "VirtualBox Ubuntu 7.10 LAMP Server [veeDee-Eyes]"
+    },
+    {
+      "added": 1218006420,
+      "info_hash": "c4af6b96eb4fa172b58e01f2c3c634f488e70e79",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c4af6b96eb4fa172b58e01f2c3c634f488e70e79&dn=Ubuntu%20transformpack%20for%20xp%20all%20include%202%20rar%20pack",
+      "seeders": 0,
+      "size": 21046905,
+      "source": "apibay",
+      "title": "Ubuntu transformpack for xp all include 2 rar pack"
+    },
+    {
+      "added": 1218427950,
+      "info_hash": "2cbf720d2894c9611a7669f01826ceb174a141cd",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:2cbf720d2894c9611a7669f01826ceb174a141cd&dn=%5BMonkeyVision%5D_Ubuntu_8041",
+      "seeders": 0,
+      "size": 728221831,
+      "source": "apibay",
+      "title": "[MonkeyVision]_Ubuntu_8041"
+    },
+    {
+      "added": 1233344402,
+      "info_hash": "a49c23d41063ae2fde6755c4bda9324ad69bc803",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a49c23d41063ae2fde6755c4bda9324ad69bc803&dn=Amaya%2011.1%20-%20Ubuntu",
+      "seeders": 0,
+      "size": 18510928,
+      "source": "apibay",
+      "title": "Amaya 11.1 - Ubuntu"
+    },
+    {
+      "added": 1235365681,
+      "info_hash": "2a37e5ddbf793dfa3ea5b160160a1d5dabe54190",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:2a37e5ddbf793dfa3ea5b160160a1d5dabe54190&dn=Rainlendar%20Lite%202.5%20-%20Ubuntu%20x64%20%2864-bit%29",
+      "seeders": 0,
+      "size": 6194372,
+      "source": "apibay",
+      "title": "Rainlendar Lite 2.5 - Ubuntu x64 (64-bit)"
+    },
+    {
+      "added": 1235365881,
+      "info_hash": "1ac98ed74b1bc165efec4f0eabcabd003a5e12be",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1ac98ed74b1bc165efec4f0eabcabd003a5e12be&dn=Rainlendar%20Lite%202.5%20-%20Ubuntu",
+      "seeders": 0,
+      "size": 5931932,
+      "source": "apibay",
+      "title": "Rainlendar Lite 2.5 - Ubuntu"
+    },
+    {
+      "added": 1256831876,
+      "info_hash": "4e1222befd6a30003fd7f20feb8893489692588c",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4e1222befd6a30003fd7f20feb8893489692588c&dn=Ubuntu%20Studio%209.10%20Alternate%20I386%20%5BRC%5D",
+      "seeders": 0,
+      "size": 1545412608,
+      "source": "apibay",
+      "title": "Ubuntu Studio 9.10 Alternate I386 [RC]"
+    },
+    {
+      "added": 1256843817,
+      "info_hash": "ec5076792737e53b94a1ea62ccfd241f1610eab6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ec5076792737e53b94a1ea62ccfd241f1610eab6&dn=Ubuntu%209.10%20IA64%20Standard%20Install",
+      "seeders": 0,
+      "size": 842737664,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 IA64 Standard Install"
+    },
+    {
+      "added": 1256843901,
+      "info_hash": "8d25525dba5406b8037a8a5f4368b92f66431667",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8d25525dba5406b8037a8a5f4368b92f66431667&dn=Ubuntu%209.10%20PowerPc%20Standard%20Install",
+      "seeders": 0,
+      "size": 739528704,
+      "source": "apibay",
+      "title": "Ubuntu 9.10 PowerPc Standard Install"
+    },
+    {
+      "added": 1267197266,
+      "info_hash": "02622783e8aa101e876a4bbef44da3156439ab3d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:02622783e8aa101e876a4bbef44da3156439ab3d&dn=Ubuntu%2010.04%20Alpha%203%20amd64",
+      "seeders": 0,
+      "size": 722462720,
+      "source": "apibay",
+      "title": "Ubuntu 10.04 Alpha 3 amd64"
+    },
+    {
+      "added": 1274826121,
+      "info_hash": "dd75b8209da4f559bd8442d81fb60af0bf6c304d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:dd75b8209da4f559bd8442d81fb60af0bf6c304d&dn=Ubuntu%2010.04%20LTS%20%3DLatest%3D%20%5B2010%5D%20%5BGuruFuel%5D",
+      "seeders": 0,
+      "size": 719377635,
+      "source": "apibay",
+      "title": "Ubuntu 10.04 LTS =Latest= [2010] [GuruFuel]"
+    },
+    {
+      "added": 1278518712,
+      "info_hash": "475bd2a9c28eea382d2e56c15e5cf537b05b4933",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:475bd2a9c28eea382d2e56c15e5cf537b05b4933&dn=Ubuntu%2010.10%20Alpha%202%20i386",
+      "seeders": 0,
+      "size": 720547840,
+      "source": "apibay",
+      "title": "Ubuntu 10.10 Alpha 2 i386"
+    },
+    {
+      "added": 1278518850,
+      "info_hash": "1d463dcc58d59f15d3064b2ae05abadc964a2189",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1d463dcc58d59f15d3064b2ae05abadc964a2189&dn=Ubuntu%2010.10%20Alpha%202%20amd64",
+      "seeders": 0,
+      "size": 727805952,
+      "source": "apibay",
+      "title": "Ubuntu 10.10 Alpha 2 amd64"
+    },
+    {
+      "added": 1291372964,
+      "info_hash": "64018f29d0709e65852db09256e2272f5e92308f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:64018f29d0709e65852db09256e2272f5e92308f&dn=Ubuntu%2011.04%20Alpha%201%20AMD%20x64",
+      "seeders": 0,
+      "size": 758439936,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Alpha 1 AMD x64"
+    },
+    {
+      "added": 1291373876,
+      "info_hash": "ccd9ef645e1653dbd63e3db619a96e9d49aa724f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ccd9ef645e1653dbd63e3db619a96e9d49aa724f&dn=Ubuntu%2011.04%20Alpha%201",
+      "seeders": 0,
+      "size": 751441920,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Alpha 1"
+    },
+    {
+      "added": 1329747032,
+      "info_hash": "b7c71bc56ddb06a2018eb1e37622eb021e5117bb",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b7c71bc56ddb06a2018eb1e37622eb021e5117bb&dn=ubuntu-10.04.4-desktop-i386.iso",
+      "seeders": 0,
+      "size": 728150016,
+      "source": "apibay",
+      "title": "ubuntu-10.04.4-desktop-i386.iso"
+    },
+    {
+      "added": 1333300644,
+      "info_hash": "b979d85ebcf38b3982dfaf7b9759151e10430486",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:b979d85ebcf38b3982dfaf7b9759151e10430486&dn=Linux.Ubuntu.v11.10-i386.with.Virtualbox.v4.1.10.and.INSTALLATIO",
+      "seeders": 0,
+      "size": 849209301,
+      "source": "apibay",
+      "title": "Linux.Ubuntu.v11.10-i386.with.Virtualbox.v4.1.10.and.INSTALLATIO"
+    },
+    {
+      "added": 1335439145,
+      "info_hash": "49fbd26322960d982da855c54e36df19ad3113b8",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:49fbd26322960d982da855c54e36df19ad3113b8&dn=ubuntu-12.04-desktop-i386.iso",
+      "seeders": 0,
+      "size": 735358976,
+      "source": "apibay",
+      "title": "ubuntu-12.04-desktop-i386.iso"
+    },
+    {
+      "added": 1335452365,
+      "info_hash": "02d255751e0c6122e3d0c8afe4adfa10f2f79e4d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:02d255751e0c6122e3d0c8afe4adfa10f2f79e4d&dn=ubuntu-12.04-desktop-i386.iso",
+      "seeders": 0,
+      "size": 735358976,
+      "source": "apibay",
+      "title": "ubuntu-12.04-desktop-i386.iso"
+    },
+    {
+      "added": 1350574608,
+      "info_hash": "674977bfb4fe2441125e7e6b6fbc60aabc58cdea",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:674977bfb4fe2441125e7e6b6fbc60aabc58cdea&dn=ubuntu-12.10-desktop-i386.iso",
+      "seeders": 0,
+      "size": 789884928,
+      "source": "apibay",
+      "title": "ubuntu-12.10-desktop-i386.iso"
+    },
+    {
+      "added": 1501601587,
+      "info_hash": "4096ec129404689ceb8056d907e384ff872c2ce9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4096ec129404689ceb8056d907e384ff872c2ce9&dn=LINUX%20UBUNTU%2016.10%2032X64",
+      "seeders": 5,
+      "size": 1610612736,
+      "source": "apibay",
+      "title": "LINUX UBUNTU 16.10 32X64"
+    },
+    {
+      "added": 1521052277,
+      "info_hash": "213e999bd418e859653c041d0bd6458936c05dd7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:213e999bd418e859653c041d0bd6458936c05dd7&dn=CodeWeavers.Crossover.15.0.1.%20crack.%20for%20ubuntu.fedora.linux",
+      "seeders": 5,
+      "size": 240330669,
+      "source": "apibay",
+      "title": "CodeWeavers.Crossover.15.0.1. crack. for ubuntu.fedora.linux"
+    },
+    {
+      "added": 1537781526,
+      "info_hash": "e84213a794f3ccd890382a54a64ca68b7e925433",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e84213a794f3ccd890382a54a64ca68b7e925433&dn=Ubuntu%2018.04.1%20Desktop%2064%20bit",
+      "seeders": 3,
+      "size": 1953349632,
+      "source": "apibay",
+      "title": "Ubuntu 18.04.1 Desktop 64 bit"
+    },
+    {
+      "added": 1225379163,
+      "info_hash": "5ac2fc0f69092e7942dd88214d9ea6e5b674e9e1",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:5ac2fc0f69092e7942dd88214d9ea6e5b674e9e1&dn=ubuntu-8.10-alternate-i386.iso",
+      "seeders": 2,
+      "size": 730662912,
+      "source": "apibay",
+      "title": "ubuntu-8.10-alternate-i386.iso"
+    },
+    {
+      "added": 1225379216,
+      "info_hash": "82dc538278c54912f5b4f5da2bb9f17d577081d2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:82dc538278c54912f5b4f5da2bb9f17d577081d2&dn=ubuntu-8.10-desktop-amd64.iso",
+      "seeders": 2,
+      "size": 732989440,
+      "source": "apibay",
+      "title": "ubuntu-8.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1226909940,
+      "info_hash": "febd9a2cb755ec82e6e7a015a8dc497fde9dd507",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:febd9a2cb755ec82e6e7a015a8dc497fde9dd507&dn=Ubuntu%20Ultimate%201.4%20DVD%20%28eng%29%20by%20http%3A%2F%2Fbestzooom.",
+      "seeders": 2,
+      "size": 2083522692,
+      "source": "apibay",
+      "title": "Ubuntu Ultimate 1.4 DVD (eng) by http://bestzooom."
+    },
+    {
+      "added": 1335448344,
+      "info_hash": "95cdb508e6b47b227d3ae1a462ebef4e949f307d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:95cdb508e6b47b227d3ae1a462ebef4e949f307d&dn=Ubuntu%2012.04%20desktop-amd64",
+      "seeders": 2,
+      "size": 732213248,
+      "source": "apibay",
+      "title": "Ubuntu 12.04 desktop-amd64"
+    },
+    {
+      "added": 1397788685,
+      "info_hash": "7a1073bc39e6b0b01e3730227b8ffea6aeac5d59",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:7a1073bc39e6b0b01e3730227b8ffea6aeac5d59&dn=Ubuntu%2014.04%2032%20bits",
+      "seeders": 2,
+      "size": 1017118720,
+      "source": "apibay",
+      "title": "Ubuntu 14.04 32 bits"
+    },
+    {
+      "added": 1491031242,
+      "info_hash": "f426f819ef070a961ff2daec5fee4d600a5a7e12",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f426f819ef070a961ff2daec5fee4d600a5a7e12&dn=Ubuntu%2016.04.2%20ISO%20Files",
+      "seeders": 2,
+      "size": 1554186240,
+      "source": "apibay",
+      "title": "Ubuntu 16.04.2 ISO Files"
+    },
+    {
+      "added": 1495128400,
+      "info_hash": "59066769b9ad42da2e508611c33d7c4480b3857b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:59066769b9ad42da2e508611c33d7c4480b3857b&dn=ubuntu-17.04-desktop-amd64.iso",
+      "seeders": 2,
+      "size": 1609039872,
+      "source": "apibay",
+      "title": "ubuntu-17.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1537781749,
+      "info_hash": "9635cabd201a92fda5d6c70d35cbfb707e290589",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:9635cabd201a92fda5d6c70d35cbfb707e290589&dn=Ubuntu%2018.04.1%20Server%2064%20bit",
+      "seeders": 2,
+      "size": 851443712,
+      "source": "apibay",
+      "title": "Ubuntu 18.04.1 Server 64 bit"
+    },
+    {
+      "added": 1131731553,
+      "info_hash": "d65008fb8bd1d62405a2d321a222a7889701b053",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d65008fb8bd1d62405a2d321a222a7889701b053&dn=ubuntu-5.10-install-i386.iso",
+      "seeders": 1,
+      "size": 647129088,
+      "source": "apibay",
+      "title": "ubuntu-5.10-install-i386.iso"
+    },
+    {
+      "added": 1170805444,
+      "info_hash": "476317f0846369e685bbda50af433b3e4a6fb9ac",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:476317f0846369e685bbda50af433b3e4a6fb9ac&dn=Linux%20Distro%20%28Ubuntu%29",
+      "seeders": 1,
+      "size": 732293120,
+      "source": "apibay",
+      "title": "Linux Distro (Ubuntu)"
+    },
+    {
+      "added": 1189643810,
+      "info_hash": "80f3d7518d0cafc039b01f79bcace5fbea68ba7f",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:80f3d7518d0cafc039b01f79bcace5fbea68ba7f&dn=VMware%20Player%20%2B%20Ubuntu%20Ultimate%201.4%20appliance%20%2B%20Linux%20Docs",
+      "seeders": 1,
+      "size": 1048245046,
+      "source": "apibay",
+      "title": "VMware Player + Ubuntu Ultimate 1.4 appliance + Linux Docs"
+    },
+    {
+      "added": 1192702936,
+      "info_hash": "e02e5e117a5a9080d552a11fa675de868a05fe71",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e02e5e117a5a9080d552a11fa675de868a05fe71&dn=Linux%20Ubuntu-7.10-%28Gutsy%29-Desktop-i386",
+      "seeders": 1,
+      "size": 729608192,
+      "source": "apibay",
+      "title": "Linux Ubuntu-7.10-(Gutsy)-Desktop-i386"
+    },
+    {
+      "added": 1194746167,
+      "info_hash": "1b4ce713fdd95a29269f3c243b3d5133e297914e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1b4ce713fdd95a29269f3c243b3d5133e297914e&dn=Ubuntu%20Ultimate%201.5",
+      "seeders": 1,
+      "size": 2341859328,
+      "source": "apibay",
+      "title": "Ubuntu Ultimate 1.5"
+    },
+    {
+      "added": 1196782913,
+      "info_hash": "3953bcb4f7dc5933befa6c3196c85b42192d7377",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3953bcb4f7dc5933befa6c3196c85b42192d7377&dn=ubuntu-ultimate-1.6-dvd.iso",
+      "seeders": 1,
+      "size": 1872533504,
+      "source": "apibay",
+      "title": "ubuntu-ultimate-1.6-dvd.iso"
+    },
+    {
+      "added": 1209060628,
+      "info_hash": "7a8269d1801b203f96eefbd68cbcd68056f8cc84",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7a8269d1801b203f96eefbd68cbcd68056f8cc84&dn=Linux%20Ubuntu%208.04%20Desktop%20i386%20Hardy%20Heron",
+      "seeders": 1,
+      "size": 733079552,
+      "source": "apibay",
+      "title": "Linux Ubuntu 8.04 Desktop i386 Hardy Heron"
+    },
+    {
+      "added": 1209062599,
+      "info_hash": "3539eb33b8b722135ea27a867497750664a67c26",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3539eb33b8b722135ea27a867497750664a67c26&dn=Linux%20Ubuntu%208.04%20Desktop%20AMD64%20Hardy%20Heron",
+      "seeders": 1,
+      "size": 731170816,
+      "source": "apibay",
+      "title": "Linux Ubuntu 8.04 Desktop AMD64 Hardy Heron"
+    },
+    {
+      "added": 1218902385,
+      "info_hash": "4689eab3a4f25364cd553e9ea197a77c415492ad",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4689eab3a4f25364cd553e9ea197a77c415492ad&dn=ubuntu-8.04.1-desktop-i386.iso",
+      "seeders": 1,
+      "size": 728221696,
+      "source": "apibay",
+      "title": "ubuntu-8.04.1-desktop-i386.iso"
+    },
+    {
+      "added": 1225378040,
+      "info_hash": "33240ee67d22b376025f661f2cba2730f9a9943b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:33240ee67d22b376025f661f2cba2730f9a9943b&dn=ubuntu-8.10-server-i386.iso",
+      "seeders": 1,
+      "size": 668274688,
+      "source": "apibay",
+      "title": "ubuntu-8.10-server-i386.iso"
+    },
+    {
+      "added": 1225379064,
+      "info_hash": "33820db6dd5e5928d23bc811bbac2f4ae94cb882",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:33820db6dd5e5928d23bc811bbac2f4ae94cb882&dn=ubuntu-8.10-desktop-i386.iso",
+      "seeders": 1,
+      "size": 732766208,
+      "source": "apibay",
+      "title": "ubuntu-8.10-desktop-i386.iso"
+    },
+    {
+      "added": 1225379370,
+      "info_hash": "caff87b88f50f46bc22da3a2712a6a4e9a98d91e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:caff87b88f50f46bc22da3a2712a6a4e9a98d91e&dn=ubuntu-8.10-alternate-amd64.iso",
+      "seeders": 1,
+      "size": 731803648,
+      "source": "apibay",
+      "title": "ubuntu-8.10-alternate-amd64.iso"
+    },
+    {
+      "added": 1225379471,
+      "info_hash": "d774c1c83e2814c6b2f93947a6f24aca241d4b6f",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d774c1c83e2814c6b2f93947a6f24aca241d4b6f&dn=ubuntu-8.10-server-amd64.iso",
+      "seeders": 1,
+      "size": 684445696,
+      "source": "apibay",
+      "title": "ubuntu-8.10-server-amd64.iso"
+    },
+    {
+      "added": 1240463802,
+      "info_hash": "60d5d82328b4547511fdeac9bf4d0112daa0ce00",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:60d5d82328b4547511fdeac9bf4d0112daa0ce00&dn=ubuntu-9.04-desktop-i386-release",
+      "seeders": 1,
+      "size": 732909568,
+      "source": "apibay",
+      "title": "ubuntu-9.04-desktop-i386-release"
+    },
+    {
+      "added": 1244873900,
+      "info_hash": "7174908ec9c9bc1cb2c01d2213bb9bb4be6c0544",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7174908ec9c9bc1cb2c01d2213bb9bb4be6c0544&dn=Ubuntu-Studio%209.04%20%28Jaunty%20Jackalope%29%2064bit",
+      "seeders": 1,
+      "size": 1394759680,
+      "source": "apibay",
+      "title": "Ubuntu-Studio 9.04 (Jaunty Jackalope) 64bit"
+    },
+    {
+      "added": 1244874275,
+      "info_hash": "c8306e02ecc32e097260977c644465ad46f30664",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c8306e02ecc32e097260977c644465ad46f30664&dn=Ubuntu-Studio%209.04%20%28Jaunty%20Jackalope%29%20i386",
+      "seeders": 1,
+      "size": 1377239040,
+      "source": "apibay",
+      "title": "Ubuntu-Studio 9.04 (Jaunty Jackalope) i386"
+    },
+    {
+      "added": 1256822192,
+      "info_hash": "124e56ec296f06f782bb3394a0b2d2ff519b1147",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:124e56ec296f06f782bb3394a0b2d2ff519b1147&dn=Ubuntu%20Karmic%20Koala%209.10%20Desktop%20i386",
+      "seeders": 1,
+      "size": 723488768,
+      "source": "apibay",
+      "title": "Ubuntu Karmic Koala 9.10 Desktop i386"
+    },
+    {
+      "added": 1256830603,
+      "info_hash": "98c5c361d0be5f2a07ea8fa5052e5aa48097e7f6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:98c5c361d0be5f2a07ea8fa5052e5aa48097e7f6&dn=ubuntu-9.10-desktop-i386.iso",
+      "seeders": 1,
+      "size": 723488768,
+      "source": "apibay",
+      "title": "ubuntu-9.10-desktop-i386.iso"
+    },
+    {
+      "added": 1256996045,
+      "info_hash": "dc58626c6c3c39040056d39e3508c96028282d96",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:dc58626c6c3c39040056d39e3508c96028282d96&dn=Ubuntu%208.04.3%20Desktop%20i386",
+      "seeders": 1,
+      "size": 732239872,
+      "source": "apibay",
+      "title": "Ubuntu 8.04.3 Desktop i386"
+    },
+    {
+      "added": 1262829796,
+      "info_hash": "20e551d74f949ebbea752e97d0eee2085b7e4275",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:20e551d74f949ebbea752e97d0eee2085b7e4275&dn=Super%20OS%209.10%20DVD%20Ubuntu-Linux%20based%20OS",
+      "seeders": 1,
+      "size": 1128223487,
+      "source": "apibay",
+      "title": "Super OS 9.10 DVD Ubuntu-Linux based OS"
+    },
+    {
+      "added": 1268767807,
+      "info_hash": "8b1b2187cbfcbec5e39a2c0a52cace4aef42fe91",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8b1b2187cbfcbec5e39a2c0a52cace4aef42fe91&dn=ubuntu-9.10-desktop-amd64",
+      "seeders": 1,
+      "size": 1373804544,
+      "source": "apibay",
+      "title": "ubuntu-9.10-desktop-amd64"
+    },
+    {
+      "added": 1273146357,
+      "info_hash": "3592a455eaee84b3231bb123cda10bcfc8c30f28",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3592a455eaee84b3231bb123cda10bcfc8c30f28&dn=Windows%207%20Fonts%20for%20Ubuntu%2FDebian",
+      "seeders": 1,
+      "size": 30284426,
+      "source": "apibay",
+      "title": "Windows 7 Fonts for Ubuntu/Debian"
+    },
+    {
+      "added": 1274575036,
+      "info_hash": "8fdcf44fe1ad8cc8ba5aece8fd12fa95d4b48d65",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8fdcf44fe1ad8cc8ba5aece8fd12fa95d4b48d65&dn=LimeWire%20PRO%205.3.6%20Linux.deb%20%28Debian%2C%20Ubuntu%29",
+      "seeders": 1,
+      "size": 25665161,
+      "source": "apibay",
+      "title": "LimeWire PRO 5.3.6 Linux.deb (Debian, Ubuntu)"
+    },
+    {
+      "added": 1284239308,
+      "info_hash": "0eb40232eec6e277c37a5c80a5822593f7bcb3cb",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:0eb40232eec6e277c37a5c80a5822593f7bcb3cb&dn=ubuntu%20Pentest%202.03.iso",
+      "seeders": 1,
+      "size": 1938839604,
+      "source": "apibay",
+      "title": "ubuntu Pentest 2.03.iso"
+    },
+    {
+      "added": 1288357979,
+      "info_hash": "429f2330241924bc654e13a590fefe17731a712a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:429f2330241924bc654e13a590fefe17731a712a&dn=Ubuntu%20Ultimate%20Edition",
+      "seeders": 1,
+      "size": 2579570688,
+      "source": "apibay",
+      "title": "Ubuntu Ultimate Edition"
+    },
+    {
+      "added": 1291156739,
+      "info_hash": "d29f05e03aa1c4c4d3a2637391d5c0926bfc0c9d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d29f05e03aa1c4c4d3a2637391d5c0926bfc0c9d&dn=ubuntu%20server%2010.10%20i386",
+      "seeders": 1,
+      "size": 657735680,
+      "source": "apibay",
+      "title": "ubuntu server 10.10 i386"
+    },
+    {
+      "added": 1292150374,
+      "info_hash": "bcf2e587afd4d3b1bdd8ece5150d9fb4d2958af4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:bcf2e587afd4d3b1bdd8ece5150d9fb4d2958af4&dn=ubuntu%20desktop%2010.10%20i386",
+      "seeders": 1,
+      "size": 726827008,
+      "source": "apibay",
+      "title": "ubuntu desktop 10.10 i386"
+    },
+    {
+      "added": 1303394724,
+      "info_hash": "faa1ad4d8404003962575f0b2a056ce6d928284a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:faa1ad4d8404003962575f0b2a056ce6d928284a&dn=ubuntu-10.10-netbook-i386.iso",
+      "seeders": 1,
+      "size": 729696256,
+      "source": "apibay",
+      "title": "ubuntu-10.10-netbook-i386.iso"
+    },
+    {
+      "added": 1303984043,
+      "info_hash": "a38d02c287893842a32825aa866e00828a318f07",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a38d02c287893842a32825aa866e00828a318f07&dn=Ubuntu%2011.04%20%28Final%29",
+      "seeders": 1,
+      "size": 718583808,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 (Final)"
+    },
+    {
+      "added": 1303988938,
+      "info_hash": "9cf9026863f07f1d65ad32f5ec78df30192f5efc",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:9cf9026863f07f1d65ad32f5ec78df30192f5efc&dn=Ubuntu%2011.04%20Natty%20amd64",
+      "seeders": 1,
+      "size": 733849600,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Natty amd64"
+    },
+    {
+      "added": 1303989331,
+      "info_hash": "f35b41efc087d8f394866cb96413f8dbf92014d0",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f35b41efc087d8f394866cb96413f8dbf92014d0&dn=Ubuntu%2011.04%20Natty%20Narwhal%20x86",
+      "seeders": 1,
+      "size": 726740992,
+      "source": "apibay",
+      "title": "Ubuntu 11.04 Natty Narwhal x86"
+    },
+    {
+      "added": 1305460788,
+      "info_hash": "f4c8cb0d358c4d9d72c510f103f2705925911335",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f4c8cb0d358c4d9d72c510f103f2705925911335&dn=Ubuntu%20-%20Version%2011.04%20A%20Free%20Alternative%20To%20Windows%20%2B%20Mac%20OSX",
+      "seeders": 1,
+      "size": 733643416,
+      "source": "apibay",
+      "title": "Ubuntu - Version 11.04 A Free Alternative To Windows + Mac OSX"
+    },
+    {
+      "added": 1333302257,
+      "info_hash": "83bc8524cc7ebdbc2c94b8f79da3fc74130695f1",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:83bc8524cc7ebdbc2c94b8f79da3fc74130695f1&dn=LinuxonAndroid%20Project%20Ubuntu%20Boot%20Script%20V6.1",
+      "seeders": 1,
+      "size": 1139,
+      "source": "apibay",
+      "title": "LinuxonAndroid Project Ubuntu Boot Script V6.1"
+    },
+    {
+      "added": 1211609578,
+      "info_hash": "83a70c632a168db89946be59bcbaf51a581524f9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:83a70c632a168db89946be59bcbaf51a581524f9&dn=Utimate%20Ubuntu%20Linux%20%28x64%29%201.8",
+      "seeders": 0,
+      "size": 1417543814,
+      "source": "apibay",
+      "title": "Utimate Ubuntu Linux (x64) 1.8"
+    },
+    {
+      "added": 1226116611,
+      "info_hash": "1ea0b14e0d7cf0f8a656f7c878d9e45d5a9afafa",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1ea0b14e0d7cf0f8a656f7c878d9e45d5a9afafa&dn=ubuntu%20for%20VMware%20Workstation",
+      "seeders": 0,
+      "size": 777897824,
+      "source": "apibay",
+      "title": "ubuntu for VMware Workstation"
+    },
+    {
+      "added": 1324210706,
+      "info_hash": "b9bccadb8c38bdfdc90e737d8109d62ac37c5f98",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b9bccadb8c38bdfdc90e737d8109d62ac37c5f98&dn=minecraft%201.0%20for%20linux%20ubuntu%20%28and%20others%29",
+      "seeders": 0,
+      "size": 180964,
+      "source": "apibay",
+      "title": "minecraft 1.0 for linux ubuntu (and others)"
+    },
+    {
+      "added": 1335558169,
+      "info_hash": "5b17c150f5e177a29ae076522d9a40bb2d8fb5b3",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:5b17c150f5e177a29ae076522d9a40bb2d8fb5b3&dn=Linux%20Ubuntu%2010.10%20ONLY%20RGH%20XBOX360",
+      "seeders": 0,
+      "size": 346364088,
+      "source": "apibay",
+      "title": "Linux Ubuntu 10.10 ONLY RGH XBOX360"
+    },
+    {
+      "added": 1402299564,
+      "info_hash": "7edbc1db60c6b6f34dee752fe9a3cfc971224b00",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7edbc1db60c6b6f34dee752fe9a3cfc971224b00&dn=Quake%203%20Arena-1999-%28Ubuntu-Linux%29",
+      "seeders": 0,
+      "size": 1021107690,
+      "source": "apibay",
+      "title": "Quake 3 Arena-1999-(Ubuntu-Linux)"
+    },
+    {
+      "added": 1688159112,
+      "info_hash": "b96d08bcd9aedb5fca389e51393b673ee5d8eefa",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b96d08bcd9aedb5fca389e51393b673ee5d8eefa&dn=Ubuntu%20Facile%20-%20Agosto-Settembre%202023%20%5BPdf%5D%20Informatica",
+      "seeders": 1,
+      "size": 14296443,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Agosto-Settembre 2023 [Pdf] Informatica"
+    },
+    {
+      "added": 1195757669,
+      "info_hash": "a7c51996b012ad0a6cff6c0eb2f3793542de05b0",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:a7c51996b012ad0a6cff6c0eb2f3793542de05b0&dn=Ubuntu%20curosr%5C%27s%20for%20windows",
+      "seeders": 0,
+      "size": 126124,
+      "source": "apibay",
+      "title": "Ubuntu curosr\\'s for windows"
+    },
+    {
+      "added": 1228860464,
+      "info_hash": "a60cb10646c01941f06bdc5cc7507df850946dd8",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:a60cb10646c01941f06bdc5cc7507df850946dd8&dn=How%20to%20Do%20Everything%20%3A%20Ubuntu%20%28McGraw-Hill%29%20PDF",
+      "seeders": 0,
+      "size": 11325909,
+      "source": "apibay",
+      "title": "How to Do Everything : Ubuntu (McGraw-Hill) PDF"
+    },
+    {
+      "added": 1234859824,
+      "info_hash": "aee2b562dbe151ebf78db19098e21fa12dbae87b",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:aee2b562dbe151ebf78db19098e21fa12dbae87b&dn=Ubuntu%20Server%20Administration%20%28Network%20Professional%5C%27s%20Library%29",
+      "seeders": 0,
+      "size": 14292003,
+      "source": "apibay",
+      "title": "Ubuntu Server Administration (Network Professional\\'s Library)"
+    },
+    {
+      "added": 1296408550,
+      "info_hash": "d6a7c2634096944951a07ffe1e68d224082e38cf",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d6a7c2634096944951a07ffe1e68d224082e38cf&dn=Ubuntu%20Unleashed%202011%20-%20Oceanhawk",
+      "seeders": 0,
+      "size": 10453949,
+      "source": "apibay",
+      "title": "Ubuntu Unleashed 2011 - Oceanhawk"
+    },
+    {
+      "added": 1296450314,
+      "info_hash": "b861f33b8f9e84c6496744c628d8df0ec1b1f24c",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b861f33b8f9e84c6496744c628d8df0ec1b1f24c&dn=Pearson-Ubuntu%20Unleashed%202011%20Edition%20RETAiL%20EBook-DiGiBook",
+      "seeders": 0,
+      "size": 10455803,
+      "source": "apibay",
+      "title": "Pearson-Ubuntu Unleashed 2011 Edition RETAiL EBook-DiGiBook"
+    },
+    {
+      "added": 1310927320,
+      "info_hash": "be2b4e9eec5468d2284b795cb4b00873fe5cf348",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:be2b4e9eec5468d2284b795cb4b00873fe5cf348&dn=The%20Official%20Ubuntu%20Book%20%286th%20Edition%29",
+      "seeders": 0,
+      "size": 10113774,
+      "source": "apibay",
+      "title": "The Official Ubuntu Book (6th Edition)"
+    },
+    {
+      "added": 1345124203,
+      "info_hash": "1da31a40f3a9d160569eff6ba9fc86fa5c670f05",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1da31a40f3a9d160569eff6ba9fc86fa5c670f05&dn=Ubuntu%20Made%20Easy",
+      "seeders": 0,
+      "size": 23520853,
+      "source": "apibay",
+      "title": "Ubuntu Made Easy"
+    },
+    {
+      "added": 1346618648,
+      "info_hash": "71bab263a8cefeb43c3c448e50a24fca7a9d0752",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:71bab263a8cefeb43c3c448e50a24fca7a9d0752&dn=The%20Official%20Ubuntu%20Book%207th%20Edition%202012",
+      "seeders": 0,
+      "size": 11243391,
+      "source": "apibay",
+      "title": "The Official Ubuntu Book 7th Edition 2012"
+    },
+    {
+      "added": 1346742414,
+      "info_hash": "d4e09a9bb452541fcbd7645bba370b002c83fbfd",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d4e09a9bb452541fcbd7645bba370b002c83fbfd&dn=Ubuntu%20An%20Absolute%20Beginners%20Guide",
+      "seeders": 0,
+      "size": 9280986,
+      "source": "apibay",
+      "title": "Ubuntu An Absolute Beginners Guide"
+    },
+    {
+      "added": 1350645564,
+      "info_hash": "49346e50ac8cef3887c2dd43924dab7ae00f20a6",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:49346e50ac8cef3887c2dd43924dab7ae00f20a6&dn=Ubuntu%20For%20Absolute%20Beginners%5Bebookz%5D-2010kaiser",
+      "seeders": 0,
+      "size": 9278651,
+      "source": "apibay",
+      "title": "Ubuntu For Absolute Beginners[ebookz]-2010kaiser"
+    },
+    {
+      "added": 1355824937,
+      "info_hash": "b0eb1e2740f3f1583f1bd7025087e12e0ab55804",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:b0eb1e2740f3f1583f1bd7025087e12e0ab55804&dn=Ubuntu%20Powerful%20Hacks%20and%20Customizations",
+      "seeders": 0,
+      "size": 5521913,
+      "source": "apibay",
+      "title": "Ubuntu Powerful Hacks and Customizations"
+    },
+    {
+      "added": 1390106378,
+      "info_hash": "e297bef8f0e343851bc7dd0fe134e554f5cc155d",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e297bef8f0e343851bc7dd0fe134e554f5cc155d&dn=Instant%20Ubuntu%2C%202013%20%5BPDF%5D~Storm~",
+      "seeders": 0,
+      "size": 2494247,
+      "source": "apibay",
+      "title": "Instant Ubuntu, 2013 [PDF]~Storm~"
+    },
+    {
+      "added": 1396063349,
+      "info_hash": "cdd73df3bb14c0e668936f66b41e5108fb9c89cb",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:cdd73df3bb14c0e668936f66b41e5108fb9c89cb&dn=Ubuntu%20Unleashed%202014%20%5BEpub%20%26%20Mobi%5D~StormRG~",
+      "seeders": 0,
+      "size": 40194417,
+      "source": "apibay",
+      "title": "Ubuntu Unleashed 2014 [Epub & Mobi]~StormRG~"
+    },
+    {
+      "added": 1408586770,
+      "info_hash": "3afb6545d65271ff1ca6da6505d9cac3ddc59c9c",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3afb6545d65271ff1ca6da6505d9cac3ddc59c9c&dn=Ubuntu%2014.04%20Community%20Wallpapers",
+      "seeders": 0,
+      "size": 2919974,
+      "source": "apibay",
+      "title": "Ubuntu 14.04 Community Wallpapers"
+    },
+    {
+      "added": 1410068732,
+      "info_hash": "bf6524bd385b2a6a03aaf7be0daaf282e97f5221",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:bf6524bd385b2a6a03aaf7be0daaf282e97f5221&dn=Ubuntu%2014.04%20Wallpaper%20Pack%20%5BMED%5D",
+      "seeders": 0,
+      "size": 50690866,
+      "source": "apibay",
+      "title": "Ubuntu 14.04 Wallpaper Pack [MED]"
+    },
+    {
+      "added": 1411329440,
+      "info_hash": "763a4d1b6748b6e100d178629d518a88cff9c072",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:763a4d1b6748b6e100d178629d518a88cff9c072&dn=Ubuntu%2014.10%20Wallpapers%20%5BMED%5D",
+      "seeders": 0,
+      "size": 349859991,
+      "source": "apibay",
+      "title": "Ubuntu 14.10 Wallpapers [MED]"
+    },
+    {
+      "added": 1428535430,
+      "info_hash": "6e0d29c5a3bcac1e77e9075d699bcda032e252e7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:6e0d29c5a3bcac1e77e9075d699bcda032e252e7&dn=Ubuntu%20Facile%20-%20Marzo%202015%2C%20%5BPdf%20-%20Ita%5D%20%5BTNTVillage%5D",
+      "seeders": 0,
+      "size": 11766008,
+      "source": "apibay",
+      "title": "Ubuntu Facile - Marzo 2015, [Pdf - Ita] [TNTVillage]"
+    },
+    {
+      "added": 1476283834,
+      "info_hash": "bf98a01c4215cf32e6761f5dd1f56e8a0e26c34f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:bf98a01c4215cf32e6761f5dd1f56e8a0e26c34f&dn=Learning%20Ubuntu%2014.04LTS%3A%20A%20Beginners%20Guide%20to%20Linux%2C%202nd%20Editio",
+      "seeders": 0,
+      "size": 1166196,
+      "source": "apibay",
+      "title": "Learning Ubuntu 14.04LTS: A Beginners Guide to Linux, 2nd Editio"
+    },
+    {
+      "added": 1476287363,
+      "info_hash": "2f0b4ea9169689dbe2ff49407500c01575cd63a2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:2f0b4ea9169689dbe2ff49407500c01575cd63a2&dn=Ubuntu%20The%20Complete%20Manual%202016",
+      "seeders": 0,
+      "size": 12201142,
+      "source": "apibay",
+      "title": "Ubuntu The Complete Manual 2016"
+    },
+    {
+      "added": 1182113222,
+      "info_hash": "3c3a6bc48bc12f1d111837df761cd3ab3b193e91",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3c3a6bc48bc12f1d111837df761cd3ab3b193e91&dn=Icon%20Pack%20%5B500.000%20icone%20Windows%20Vista%2C%20XP%2C%20Linux%2C%20Ubuntu%2C%20Mac%2C",
+      "seeders": 8,
+      "size": 411906040,
+      "source": "apibay",
+      "title": "Icon Pack [500.000 icone Windows Vista, XP, Linux, Ubuntu, Mac,"
+    },
+    {
+      "added": 1386021602,
+      "info_hash": "a687db7cf06d44e89f5651eb561ecd0ba4f8192a",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:a687db7cf06d44e89f5651eb561ecd0ba4f8192a&dn=Ubuntu%20Linux%20Toolbox",
+      "seeders": 6,
+      "size": 12152215,
+      "source": "apibay",
+      "title": "Ubuntu Linux Toolbox"
+    },
+    {
+      "added": 1616465778,
+      "info_hash": "c276993f61b4706a8ba4ad630f2ca26ee1828bd5",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:c276993f61b4706a8ba4ad630f2ca26ee1828bd5&dn=Ubuntu%20Linux%20Unleashed%202021%20Edition%2C%2014th%20Edition",
+      "seeders": 4,
+      "size": 88262567,
+      "source": "apibay",
+      "title": "Ubuntu Linux Unleashed 2021 Edition, 14th Edition"
+    },
+    {
+      "added": 1534103819,
+      "info_hash": "7c65e0559714eaba85f078e0aadd0c01b62aeacf",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7c65e0559714eaba85f078e0aadd0c01b62aeacf&dn=A%20Practical%20Guide%20to%20Ubuntu%20Linux%2C%203rd%20Edition%20%28PDF%29",
+      "seeders": 2,
+      "size": 80749653,
+      "source": "apibay",
+      "title": "A Practical Guide to Ubuntu Linux, 3rd Edition (PDF)"
+    },
+    {
+      "added": 1206047694,
+      "info_hash": "ca569ef051ce1dc543ecaf9c7f9fa52304f8893e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ca569ef051ce1dc543ecaf9c7f9fa52304f8893e&dn=6.Ubuntu.Books.rar",
+      "seeders": 1,
+      "size": 95486942,
+      "source": "apibay",
+      "title": "6.Ubuntu.Books.rar"
+    },
+    {
+      "added": 1210372496,
+      "info_hash": "a7f22a77c21fac82dd9a7a3e0c0eb9a69f6204b6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a7f22a77c21fac82dd9a7a3e0c0eb9a69f6204b6&dn=Ubuntu%20Linux%20-%20Bible%20%5B2007%5D-Graxor",
+      "seeders": 1,
+      "size": 46673207,
+      "source": "apibay",
+      "title": "Ubuntu Linux - Bible [2007]-Graxor"
+    },
+    {
+      "added": 1210696467,
+      "info_hash": "35f6dae8da24e2b87f7611046f0e394ca6037123",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:35f6dae8da24e2b87f7611046f0e394ca6037123&dn=Linux%20-%20Drahtlos%20und%20flexibel%20mit%20Ubuntu",
+      "seeders": 1,
+      "size": 342171,
+      "source": "apibay",
+      "title": "Linux - Drahtlos und flexibel mit Ubuntu"
+    },
+    {
+      "added": 1266173064,
+      "info_hash": "651ed48814daf971eb158a50463f4d4ade8013b5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:651ed48814daf971eb158a50463f4d4ade8013b5&dn=Ubuntu%20Linux%20Bible%5BEbook%5D%5BENG-PDF%5DST",
+      "seeders": 1,
+      "size": 46673377,
+      "source": "apibay",
+      "title": "Ubuntu Linux Bible[Ebook][ENG-PDF]ST"
+    },
+    {
+      "added": 1306994251,
+      "info_hash": "9605fa50c85024a7b5f5f18f77728da9ceaed52b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:9605fa50c85024a7b5f5f18f77728da9ceaed52b&dn=Ubuntu%20for%20Non-Geeks%20A%20Pain-Free%2C%20Get-Things-Done%20Guide%2C%204th%20Edi",
+      "seeders": 1,
+      "size": 41543743,
+      "source": "apibay",
+      "title": "Ubuntu for Non-Geeks A Pain-Free, Get-Things-Done Guide, 4th Edi"
+    },
+    {
+      "added": 1328421007,
+      "info_hash": "96122b3722b6a676462c07f3f2bdf481c554e705",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:96122b3722b6a676462c07f3f2bdf481c554e705&dn=Ubuntu%20Unleashed%202012%20Edition%20%5BPDF%5D",
+      "seeders": 1,
+      "size": 5610675,
+      "source": "apibay",
+      "title": "Ubuntu Unleashed 2012 Edition [PDF]"
+    },
+    {
+      "added": 1396699699,
+      "info_hash": "a00221fcc6410d3463ac81868f866b0b3ffd8068",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:a00221fcc6410d3463ac81868f866b0b3ffd8068&dn=Ubuntu%20Made%20Easy.epub",
+      "seeders": 1,
+      "size": 21032600,
+      "source": "apibay",
+      "title": "Ubuntu Made Easy.epub"
+    },
+    {
+      "added": 1396734118,
+      "info_hash": "04e644ab7ac2a4b76de9498d876664246b6b2ed9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:04e644ab7ac2a4b76de9498d876664246b6b2ed9&dn=Ubuntu_%20Up%20and%20Running.epub",
+      "seeders": 1,
+      "size": 24147968,
+      "source": "apibay",
+      "title": "Ubuntu_ Up and Running.epub"
+    },
+    {
+      "added": 1415039211,
+      "info_hash": "d297c0c2c18afd613bd1e7c28b83fdd003e38c86",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d297c0c2c18afd613bd1e7c28b83fdd003e38c86&dn=The%20Official%20Ubuntu%20Server%20Book%203rd%20Edition%282013%29pdf",
+      "seeders": 1,
+      "size": 20259253,
+      "source": "apibay",
+      "title": "The Official Ubuntu Server Book 3rd Edition(2013)pdf"
+    },
+    {
+      "added": 1456367344,
+      "info_hash": "8499fa5d8ff187f7bd68e5518338a4c9d6ddacc5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8499fa5d8ff187f7bd68e5518338a4c9d6ddacc5&dn=Michael%20Tellinger%20-%20UBUNTU%20Contributionism%20pdf",
+      "seeders": 1,
+      "size": 11132162,
+      "source": "apibay",
+      "title": "Michael Tellinger - UBUNTU Contributionism pdf"
+    },
+    {
+      "added": 1462141813,
+      "info_hash": "aa07f9439b6809692460ddeef5ee6aeca3b9d044",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:aa07f9439b6809692460ddeef5ee6aeca3b9d044&dn=The%20Ubuntu%20Book%201th%20Edition%202016%20%5BDeLUXAS%5D",
+      "seeders": 1,
+      "size": 17468518,
+      "source": "apibay",
+      "title": "The Ubuntu Book 1th Edition 2016 [DeLUXAS]"
+    },
+    {
+      "added": 1482518351,
+      "info_hash": "f38cb9b8c5c5e10f8dfdea317d2b67c0d94dcefe",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f38cb9b8c5c5e10f8dfdea317d2b67c0d94dcefe&dn=Linux.%20Biblia.%20Ubuntu%2C%20Fedora%2C%20Debian%20i%2015%20innych%20dystrybucji",
+      "seeders": 1,
+      "size": 23809807,
+      "source": "apibay",
+      "title": "Linux. Biblia. Ubuntu, Fedora, Debian i 15 innych dystrybucji"
+    },
+    {
+      "added": 1492762565,
+      "info_hash": "6afce4771b86ea36ebcc56b8399c9878d87d25d3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:6afce4771b86ea36ebcc56b8399c9878d87d25d3&dn=Ubuntu%2016.04%2C%20The%20Complete%20Manual%20-%202016",
+      "seeders": 1,
+      "size": 50058840,
+      "source": "apibay",
+      "title": "Ubuntu 16.04, The Complete Manual - 2016"
+    },
+    {
+      "added": 1515644274,
+      "info_hash": "93ef55c5e147bc107310bc81a0add74707e290f7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:93ef55c5e147bc107310bc81a0add74707e290f7&dn=Ubuntu%20Server%20Essentials%20-%206685%20%5BECLiPSE%5D",
+      "seeders": 1,
+      "size": 3773900,
+      "source": "apibay",
+      "title": "Ubuntu Server Essentials - 6685 [ECLiPSE]"
+    },
+    {
+      "added": 1523752749,
+      "info_hash": "f07e0b0584745b7bcb35e98097488d34e68623d0",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f07e0b0584745b7bcb35e98097488d34e68623d0&dn=Ubuntu%2017.10.1%20Desktop%20%28amd64%29",
+      "seeders": 1,
+      "size": 1502576640,
+      "source": "apibay",
+      "title": "Ubuntu 17.10.1 Desktop (amd64)"
+    },
+    {
+      "added": 1533894546,
+      "info_hash": "64f82e718f1ca599fcc7b2931b45a9ea7104e032",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:64f82e718f1ca599fcc7b2931b45a9ea7104e032&dn=Lynda%20-%20Learning%20Ubuntu%20Desktop",
+      "seeders": 1,
+      "size": 549186671,
+      "source": "apibay",
+      "title": "Lynda - Learning Ubuntu Desktop"
+    },
+    {
+      "added": 1589401772,
+      "info_hash": "67526cf268446275f67f1d39212ee05795a12f3f",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:67526cf268446275f67f1d39212ee05795a12f3f&dn=Ubuntu%2020.04%20User%20Guide",
+      "seeders": 1,
+      "size": 28520739,
+      "source": "apibay",
+      "title": "Ubuntu 20.04 User Guide"
+    },
+    {
+      "added": 1625249877,
+      "info_hash": "ead912e816d882306c8f5e1fd55e755d8e3ad2f3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ead912e816d882306c8f5e1fd55e755d8e3ad2f3&dn=Linkedin%20-%20Learning%20Building%20an%20Ubuntu%20Server",
+      "seeders": 1,
+      "size": 584488481,
+      "source": "apibay",
+      "title": "Linkedin - Learning Building an Ubuntu Server"
+    },
+    {
+      "added": 1190568680,
+      "info_hash": "fb75d91dfdda99ae657b15b26d8efa39feeb619d",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:fb75d91dfdda99ae657b15b26d8efa39feeb619d&dn=Video2Brain%20Ubuntu",
+      "seeders": 0,
+      "size": 3947954176,
+      "source": "apibay",
+      "title": "Video2Brain Ubuntu"
+    },
+    {
+      "added": 1194618157,
+      "info_hash": "114b9f3742025998b4dd953a327762268dd65bf3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:114b9f3742025998b4dd953a327762268dd65bf3&dn=Internal%20HD%20Icons%20for%20Leopard%20%28Apple%2C%20BSD%2C%20Linux%2C%20Ubuntu%2C%20Window",
+      "seeders": 0,
+      "size": 664674,
+      "source": "apibay",
+      "title": "Internal HD Icons for Leopard (Apple, BSD, Linux, Ubuntu, Window"
+    },
+    {
+      "added": 1194710896,
+      "info_hash": "b9ce3e27a40e87e5f15fc705ad809679a4fdb4f2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b9ce3e27a40e87e5f15fc705ad809679a4fdb4f2&dn=Ubuntu%20for%20Non-Geeks%20%282nd%20Edition%29%20eBook-BBL",
+      "seeders": 0,
+      "size": 20017846,
+      "source": "apibay",
+      "title": "Ubuntu for Non-Geeks (2nd Edition) eBook-BBL"
+    },
+    {
+      "added": 1199378573,
+      "info_hash": "82dcc6c7e77dcd26e9ca41121a9bf812ad04a1d9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:82dcc6c7e77dcd26e9ca41121a9bf812ad04a1d9&dn=simple_comme_ubuntu_704.pdf",
+      "seeders": 0,
+      "size": 27203815,
+      "source": "apibay",
+      "title": "simple_comme_ubuntu_704.pdf"
+    },
+    {
+      "added": 1204134316,
+      "info_hash": "d35ffcd25a7dfe5f80fac3de0f94a625496b3fbf",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d35ffcd25a7dfe5f80fac3de0f94a625496b3fbf&dn=Wiley.Ubuntu.Linux.Toolbox.1000.plus.Commands.for.Ubuntu.and.Deb",
+      "seeders": 0,
+      "size": 3374387,
+      "source": "apibay",
+      "title": "Wiley.Ubuntu.Linux.Toolbox.1000.plus.Commands.for.Ubuntu.and.Deb"
+    },
+    {
+      "added": 1209043319,
+      "info_hash": "08d9200caa85fdf2b41620d33818ec9158f24958",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:08d9200caa85fdf2b41620d33818ec9158f24958&dn=Ubuntu%208.04%20Hardy%20Heron%20-%20Desktop%20i386",
+      "seeders": 0,
+      "size": 733079552,
+      "source": "apibay",
+      "title": "Ubuntu 8.04 Hardy Heron - Desktop i386"
+    },
+    {
+      "added": 1210785031,
+      "info_hash": "9ca6a5e8bf209bb654ac3aeafcfbabfc3bf4370b",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:9ca6a5e8bf209bb654ac3aeafcfbabfc3bf4370b&dn=Ubuntu%20Student%20PDF",
+      "seeders": 0,
+      "size": 75632400,
+      "source": "apibay",
+      "title": "Ubuntu Student PDF"
+    },
+    {
+      "added": 1218906744,
+      "info_hash": "2388604faed334bf9da957136c5f324d783b2295",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:2388604faed334bf9da957136c5f324d783b2295&dn=ubuntu-6.06.1-desktop-i386.iso",
+      "seeders": 0,
+      "size": 732336128,
+      "source": "apibay",
+      "title": "ubuntu-6.06.1-desktop-i386.iso"
+    }
+  ],
+  "key": "apibay",
+  "page": 1,
+  "query": "ubuntu"
+}

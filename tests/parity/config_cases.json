@@ -1,0 +1,6223 @@
+{
+ "_scope": "对照 data / 写回文件 / 损坏备份 / 访问器 / 数据目录路径。**JSON 键顺序不比对**——Rust 侧 serde_json 默认按键排序，Python 保持插入顺序，语义相同但字节不同，比的是解析后的值。",
+ "load": [
+  {
+   "name": "缺文件",
+   "raw": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "空对象",
+   "raw": "{}",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "顶层不是对象",
+   "raw": "[]",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "顶层是字符串",
+   "raw": "\"nope\"",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "坏 JSON",
+   "raw": "{",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": true,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "版本过高",
+   "raw": "{\"version\": 99, \"sources\": []}",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "version 不是数字",
+   "raw": "{\"version\": \"x\", \"sources\": []}",
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "sources 不是列表",
+   "raw": "{\"sources\": \"nope\"}",
+   "data": {
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "sources 里混垃圾",
+   "raw": "{\"sources\": [null, 5, {}, {\"key\": \"\"}, {\"key\": \"nyaa\"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "键要 trim",
+   "raw": "{\"sources\": [{\"key\": \"  nyaa  \"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "重复键只留第一个",
+   "raw": "{\"sources\": [{\"key\": \"a\", \"label\": \"第一\"}, {\"key\": \"a\", \"label\": \"第二\"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "a",
+      "label": "第一",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "a",
+      "label": "第一",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "已下线源被剔除",
+   "raw": "{\"sources\": [{\"key\": \"btdig\"}, {\"key\": \"apibay_adult\"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "超时被夹取",
+   "raw": "{\"sources\": [{\"key\": \"a\", \"timeout\": 999}, {\"key\": \"b\", \"timeout\": -5}, {\"key\": \"c\", \"timeout\": \"abc\"}, {\"key\": \"d\", \"timeout\": null}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "a",
+      "timeout": 120,
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "b",
+      "timeout": 1,
+      "label": "b",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "c",
+      "timeout": 15,
+      "label": "c",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "d",
+      "timeout": 15,
+      "label": "d",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 13
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 14
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 15
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "a",
+      "timeout": 120,
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "b",
+      "timeout": 1,
+      "label": "b",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "c",
+      "timeout": 15,
+      "label": "c",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "d",
+      "timeout": 15,
+      "label": "d",
+      "type": "builtin",
+      "enabled": true,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 13
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 14
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 15
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "order 排序后重编号",
+   "raw": "{\"sources\": [{\"key\": \"a\", \"order\": 5}, {\"key\": \"b\", \"order\": 1}, {\"key\": \"c\", \"order\": \"abc\"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "c",
+      "order": 0,
+      "label": "c",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "b",
+      "order": 1,
+      "label": "b",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "a",
+      "order": 4,
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 13
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 14
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "c",
+      "order": 0,
+      "label": "c",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "b",
+      "order": 1,
+      "label": "b",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "a",
+      "order": 4,
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": ""
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 13
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 14
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "缺字段补默认",
+   "raw": "{\"sources\": [{\"key\": \"custom\"}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "custom",
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "custom",
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "保留未知字段",
+   "raw": "{\"sources\": [{\"key\": \"custom\", \"notes\": \"x\", \"nested\": {\"a\": 1}}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "custom",
+      "notes": "x",
+      "nested": {
+       "a": 1
+      },
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "custom",
+      "notes": "x",
+      "nested": {
+       "a": 1
+      },
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "保留 health",
+   "raw": "{\"sources\": [{\"key\": \"custom\", \"health\": {\"ms\": 12, \"state\": \"ok\"}}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "custom",
+      "health": {
+       "ms": 12,
+       "state": "ok"
+      },
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "custom",
+      "label": "custom",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "orderLocked",
+   "raw": "{\"orderLocked\": true, \"sources\": [{\"key\": \"a\"}]}",
+   "data": {
+    "orderLocked": true,
+    "sources": [
+     {
+      "key": "a",
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "orderLocked": true,
+    "sources": [
+     {
+      "key": "a",
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "内置源补齐",
+   "raw": "{\"sources\": [{\"key\": \"nyaa\", \"enabled\": false}]}",
+   "data": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "enabled": false,
+      "label": "nyaa",
+      "type": "builtin",
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "broken": false,
+   "save_err": "",
+   "saved": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "enabled": false,
+      "label": "nyaa",
+      "type": "builtin",
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   }
+  }
+ ],
+ "accessors": [
+  {
+   "name": "默认",
+   "raw": "{}",
+   "ops": [],
+   "results": [],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "锁序",
+   "raw": "{\"orderLocked\": true}",
+   "ops": [],
+   "results": [],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": true,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "orderLocked": true,
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "关掉某源",
+   "raw": "{}",
+   "ops": [
+    {
+     "op": "set_enabled",
+     "key": "javdb",
+     "value": false
+    }
+   ],
+   "results": [
+    true
+   ],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "打开某源",
+   "raw": "{}",
+   "ops": [
+    {
+     "op": "set_enabled",
+     "key": "javdb",
+     "value": true
+    }
+   ],
+   "results": [
+    true
+   ],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "javdb"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "未知源",
+   "raw": "{}",
+   "ops": [
+    {
+     "op": "set_enabled",
+     "key": "nope",
+     "value": true
+    }
+   ],
+   "results": [
+    false
+   ],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "上锁并去掉降级标记",
+   "raw": "{\"sources\": [{\"key\": \"a\", \"demoted\": true, \"demoteFrom\": 3, \"health\": {\"ms\": 1}}]}",
+   "ops": [
+    {
+     "op": "set_order_locked",
+     "value": true
+    }
+   ],
+   "results": [
+    null
+   ],
+   "enabled_keys": [
+    "a",
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "a",
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": true,
+   "has_a": true,
+   "missing_key": null,
+   "data": {
+    "sources": [
+     {
+      "key": "a",
+      "health": {
+       "ms": 1
+      },
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 12
+     }
+    ],
+    "version": 1,
+    "orderLocked": true
+   }
+  },
+  {
+   "name": "解锁",
+   "raw": "{\"orderLocked\": true}",
+   "ops": [
+    {
+     "op": "set_order_locked",
+     "value": false
+    }
+   ],
+   "results": [
+    null
+   ],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "清健康",
+   "raw": "{\"sources\": [{\"key\": \"a\", \"health\": {\"ms\": 1}}, {\"key\": \"b\"}]}",
+   "ops": [
+    {
+     "op": "strip_health"
+    }
+   ],
+   "results": [
+    true
+   ],
+   "enabled_keys": [
+    "a",
+    "b",
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "a",
+    "b",
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": true,
+   "missing_key": null,
+   "data": {
+    "sources": [
+     {
+      "key": "a",
+      "label": "a",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "b",
+      "label": "b",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 12
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 13
+     }
+    ],
+    "version": 1
+   }
+  },
+  {
+   "name": "清健康但本就没有",
+   "raw": "{}",
+   "ops": [
+    {
+     "op": "strip_health"
+    }
+   ],
+   "results": [
+    false
+   ],
+   "enabled_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus"
+   ],
+   "all_keys": [
+    "apibay",
+    "nyaa",
+    "mikan",
+    "dmhy",
+    "sukebei",
+    "eztv",
+    "tpb",
+    "knaben",
+    "xccl263",
+    "javbus",
+    "bitsearch",
+    "javdb"
+   ],
+   "order_locked": false,
+   "has_a": false,
+   "missing_key": null,
+   "data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  }
+ ],
+ "files": {
+  "env": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87",
+  "data_dir": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87",
+  "sources": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87\\sources.json",
+  "settings": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87\\settings.json",
+  "health": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87\\health.json",
+  "logs_dir": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87\\logs",
+  "log_path": "C:\\Users\\GVH\\AppData\\Local\\Temp\\hc-paths-kt9_xf87\\logs\\happycrate.log",
+  "mode": "env",
+  "label": "环境变量指定"
+ },
+ "clamp_timeout": [
+  {
+   "in": null,
+   "out": 15
+  },
+  {
+   "in": "",
+   "out": 15
+  },
+  {
+   "in": "abc",
+   "out": 15
+  },
+  {
+   "in": -5,
+   "out": 1
+  },
+  {
+   "in": 0,
+   "out": 1
+  },
+  {
+   "in": 1,
+   "out": 1
+  },
+  {
+   "in": 15,
+   "out": 15
+  },
+  {
+   "in": 60,
+   "out": 60
+  },
+  {
+   "in": 120,
+   "out": 120
+  },
+  {
+   "in": 121,
+   "out": 120
+  },
+  {
+   "in": 999,
+   "out": 120
+  },
+  {
+   "in": "30",
+   "out": 30
+  },
+  {
+   "in": 30.7,
+   "out": 30
+  },
+  {
+   "in": true,
+   "out": 1
+  },
+  {
+   "in": false,
+   "out": 1
+  },
+  {
+   "in": [],
+   "out": 15
+  }
+ ],
+ "clamp_timeout_custom_default": [
+  {
+   "in": null,
+   "default": 1,
+   "out": 1
+  },
+  {
+   "in": null,
+   "default": 30,
+   "out": 30
+  },
+  {
+   "in": null,
+   "default": 120,
+   "out": 120
+  },
+  {
+   "in": "abc",
+   "default": 1,
+   "out": 1
+  },
+  {
+   "in": "abc",
+   "default": 30,
+   "out": 30
+  },
+  {
+   "in": "abc",
+   "default": 120,
+   "out": 120
+  },
+  {
+   "in": 5,
+   "default": 1,
+   "out": 5
+  },
+  {
+   "in": 5,
+   "default": 30,
+   "out": 5
+  },
+  {
+   "in": 5,
+   "default": 120,
+   "out": 5
+  },
+  {
+   "in": 200,
+   "default": 1,
+   "out": 120
+  },
+  {
+   "in": 200,
+   "default": 30,
+   "out": 120
+  },
+  {
+   "in": 200,
+   "default": 120,
+   "out": 120
+  }
+ ],
+ "broken_path": [
+  {
+   "in": "sources.json",
+   "out": "sources.broken.json"
+  },
+  {
+   "in": "sources.JSON",
+   "out": "sources.broken.json"
+  },
+  {
+   "in": "sources.txt",
+   "out": "sources.txt.broken"
+  },
+  {
+   "in": "noext",
+   "out": "noext.broken"
+  }
+ ]
+}

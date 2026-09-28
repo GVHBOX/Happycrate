@@ -1,0 +1,1603 @@
+{
+  "_scope": "unescape 只覆盖「带分号的命名实体 + 数字实体」。Python html.unescape 还支持 HTML5 免分号遗留实体（&not -> ¬），Rust 侧不实现：需要 2231 条实体表，而 12 个源的真实响应里 75041 个实体全部带分号。若将来出现，金样 diff 会先报警。",
+  "b32_to_hex": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "AAA",
+      "out": null
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "7bsrirfcycz767r5upf5oxnfr327bhqz",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "out": "0000000000000000000000000000000000000000"
+    },
+    {
+      "in": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "out": "0000000000000000000000000000000000000000"
+    },
+    {
+      "in": "22222222222222222222222222222222",
+      "out": "d6b5ad6b5ad6b5ad6b5ad6b5ad6b5ad6b5ad6b5a"
+    },
+    {
+      "in": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+      "out": null
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZA",
+      "out": null
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQ",
+      "out": null
+    }
+  ],
+  "cell_text_empty_unescaped": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "<b>Hi</b>",
+      "out": "Hi"
+    },
+    {
+      "in": "<td>&amp;</td>",
+      "out": "&"
+    },
+    {
+      "in": "<td>&lt;i&gt;</td>",
+      "out": "<i>"
+    },
+    {
+      "in": "<td>  <a>1.5 GiB</a>  </td>",
+      "out": "1.5 GiB"
+    },
+    {
+      "in": "&amp;lt;",
+      "out": "&lt;"
+    },
+    {
+      "in": "<td>2026/08/28 05:32</td>",
+      "out": "2026/08/28 05:32"
+    },
+    {
+      "in": "plain",
+      "out": "plain"
+    },
+    {
+      "in": "12<b>GB</b>",
+      "out": "12GB"
+    },
+    {
+      "in": "a<b>b</b>c",
+      "out": "abc"
+    },
+    {
+      "in": "1<sup>2</sup>x",
+      "out": "12x"
+    },
+    {
+      "in": "<b>a</b><i>b</i>",
+      "out": "ab"
+    },
+    {
+      "in": "x<span>1</span>&amp;<span>2</span>y",
+      "out": "x1&2y"
+    },
+    {
+      "in": "<td>2026<b>-</b>08</td>",
+      "out": "2026-08"
+    }
+  ],
+  "cell_text_gap_empty": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "   ",
+      "out": ""
+    },
+    {
+      "in": " <b>Hi</b> there ",
+      "out": "Hi there"
+    },
+    {
+      "in": "<td>&amp;</td>",
+      "out": "&amp;"
+    },
+    {
+      "in": "a href=\"x\">T</a>",
+      "out": "a href=\"x\">T"
+    },
+    {
+      "in": "a<b",
+      "out": "a<b"
+    },
+    {
+      "in": "a<>b",
+      "out": "a<>b"
+    },
+    {
+      "in": "<b></b>",
+      "out": ""
+    },
+    {
+      "in": "<br/>x<br/>",
+      "out": "x"
+    },
+    {
+      "in": "2026/09/20 12:00",
+      "out": "2026/09/20 12:00"
+    },
+    {
+      "in": "<td><a>1.5 GiB</a></td>",
+      "out": "1.5 GiB"
+    },
+    {
+      "in": "12<b>GB</b>",
+      "out": "12GB"
+    },
+    {
+      "in": "a<b>b</b>c",
+      "out": "abc"
+    },
+    {
+      "in": "1<sup>2</sup>x",
+      "out": "12x"
+    },
+    {
+      "in": "<b>a</b><i>b</i>",
+      "out": "ab"
+    },
+    {
+      "in": "x<span>1</span>&amp;<span>2</span>y",
+      "out": "x1&amp;2y"
+    },
+    {
+      "in": "<td>2026<b>-</b>08</td>",
+      "out": "2026-08"
+    }
+  ],
+  "cell_text_gap_space": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "   ",
+      "out": ""
+    },
+    {
+      "in": " <b>Hi</b> there ",
+      "out": "Hi there"
+    },
+    {
+      "in": "<td>&amp;</td>",
+      "out": "&amp;"
+    },
+    {
+      "in": "a href=\"x\">T</a>",
+      "out": "a href=\"x\">T"
+    },
+    {
+      "in": "a<b",
+      "out": "a<b"
+    },
+    {
+      "in": "a<>b",
+      "out": "a<>b"
+    },
+    {
+      "in": "<b></b>",
+      "out": ""
+    },
+    {
+      "in": "<br/>x<br/>",
+      "out": "x"
+    },
+    {
+      "in": "2026/09/20 12:00",
+      "out": "2026/09/20 12:00"
+    },
+    {
+      "in": "<td><a>1.5 GiB</a></td>",
+      "out": "1.5 GiB"
+    },
+    {
+      "in": "12<b>GB</b>",
+      "out": "12 GB"
+    },
+    {
+      "in": "a<b>b</b>c",
+      "out": "a b c"
+    },
+    {
+      "in": "1<sup>2</sup>x",
+      "out": "1 2 x"
+    },
+    {
+      "in": "<b>a</b><i>b</i>",
+      "out": "a b"
+    },
+    {
+      "in": "x<span>1</span>&amp;<span>2</span>y",
+      "out": "x 1 &amp; 2 y"
+    },
+    {
+      "in": "<td>2026<b>-</b>08</td>",
+      "out": "2026 - 08"
+    }
+  ],
+  "cell_text_space_unescaped": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "<b>Hi</b>",
+      "out": "Hi"
+    },
+    {
+      "in": "<td>&amp;</td>",
+      "out": "&"
+    },
+    {
+      "in": "<td>&lt;i&gt;</td>",
+      "out": "<i>"
+    },
+    {
+      "in": "<td>  <a>1.5 GiB</a>  </td>",
+      "out": "1.5 GiB"
+    },
+    {
+      "in": "&amp;lt;",
+      "out": "&lt;"
+    },
+    {
+      "in": "<td>2026/08/28 05:32</td>",
+      "out": "2026/08/28 05:32"
+    },
+    {
+      "in": "plain",
+      "out": "plain"
+    },
+    {
+      "in": "12<b>GB</b>",
+      "out": "12 GB"
+    },
+    {
+      "in": "a<b>b</b>c",
+      "out": "a b c"
+    },
+    {
+      "in": "1<sup>2</sup>x",
+      "out": "1 2 x"
+    },
+    {
+      "in": "<b>a</b><i>b</i>",
+      "out": "a b"
+    },
+    {
+      "in": "x<span>1</span>&amp;<span>2</span>y",
+      "out": "x 1 & 2 y"
+    },
+    {
+      "in": "<td>2026<b>-</b>08</td>",
+      "out": "2026 - 08"
+    }
+  ],
+  "cn_date": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 05:32",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026/08/28 05:32:45",
+      "out": 1787866365.0
+    },
+    {
+      "in": "2026/08/28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026/ 8/28 05:32",
+      "out": null
+    },
+    {
+      "in": "2026/8/28 05:32",
+      "out": 1787866320.0
+    },
+    {
+      "in": "  2026/08/28 05:32  ",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026/13/01",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 25:00",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 extra junk",
+      "out": null
+    },
+    {
+      "in": "26/08/28",
+      "out": null
+    },
+    {
+      "in": "2026-08-28 05:32",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026/08/28 05:3",
+      "out": 1787864580.0
+    },
+    {
+      "in": "2026/08/28 05:32:45:00",
+      "out": null
+    },
+    {
+      "in": "2026/02/30",
+      "out": null
+    },
+    {
+      "in": "2026/02/29",
+      "out": null
+    },
+    {
+      "in": "2024/02/29",
+      "out": 1709136000.0
+    },
+    {
+      "in": "2026/04/31",
+      "out": null
+    },
+    {
+      "in": "2026-08-28T05:32:00",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026-08-28 05:32:00",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026-08-28T05:32:00Z",
+      "out": null
+    },
+    {
+      "in": "2026-08-28",
+      "out": 1787846400.0
+    }
+  ],
+  "collapse": [
+    {
+      "in": "\t a \n b \r\n",
+      "out": "a b"
+    },
+    {
+      "in": "a b",
+      "out": "a b"
+    },
+    {
+      "in": "　a　",
+      "out": "a"
+    },
+    {
+      "in": "a\u001cb",
+      "out": "a b"
+    },
+    {
+      "in": "a\u001fb",
+      "out": "a b"
+    },
+    {
+      "in": "   ",
+      "out": ""
+    },
+    {
+      "in": "single",
+      "out": "single"
+    },
+    {
+      "in": "a b",
+      "out": "a b"
+    },
+    {
+      "in": "  multi   space  ",
+      "out": "multi space"
+    }
+  ],
+  "find_b32_after": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "btih:F8651444A2C0B3FF7E3DA3CBD75DA58EF5F09E19",
+      "out": null
+    },
+    {
+      "in": "btih:abc",
+      "out": null
+    },
+    {
+      "in": "btih:abc btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "magnet:?xt=urn:btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19&dn=x",
+      "out": null
+    },
+    {
+      "in": "data-magnet=\"magnet:?xt=urn:btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "BTIH:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19ff",
+      "out": null
+    }
+  ],
+  "find_hex_after": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "btih:F8651444A2C0B3FF7E3DA3CBD75DA58EF5F09E19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "btih:abc",
+      "out": null
+    },
+    {
+      "in": "btih:abc btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "magnet:?xt=urn:btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19&dn=x",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "data-magnet=\"magnet:?xt=urn:btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "BTIH:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19ff",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    }
+  ],
+  "find_title_attr": [
+    {
+      "in": "<a href=\"/view/123\" class=\"x\" title=\"Hello World\">y</a>",
+      "out": "Hello World"
+    },
+    {
+      "in": "<a href=\"/view/123\" title=\"No\">z</a>",
+      "out": "No"
+    },
+    {
+      "in": "<a href=\"/view/123\" title=\"A\">z</a>",
+      "out": null
+    },
+    {
+      "in": "<a href=\"/view/abc\" title=\"X\">z</a>",
+      "out": null
+    },
+    {
+      "in": "<a title=\"X\" href=\"/view/1\">z</a>",
+      "out": null
+    },
+    {
+      "in": "<a href=\"/view/1\"x title=\"Y\">",
+      "out": null
+    },
+    {
+      "in": "<a href=\"/view/1\" title=\"First\" title=\"Second\">z</a>",
+      "out": "Second"
+    },
+    {
+      "in": "no link here",
+      "out": null
+    },
+    {
+      "in": "<a href=\"/view/9\" title=\"\">z</a>",
+      "out": null
+    }
+  ],
+  "find_torrent_path": [
+    {
+      "in": "href=\"/download/99.torrent\"",
+      "out": "/download/99.torrent"
+    },
+    {
+      "in": "href=\"/download/abc.torrent\"",
+      "out": null
+    },
+    {
+      "in": "href=\"/download/1.torrent?x\"",
+      "out": null
+    },
+    {
+      "in": "x href=\"/download/7.torrent\"",
+      "out": "/download/7.torrent"
+    },
+    {
+      "in": "href=\"/download/0.torrent\" and href=\"/download/5.torrent\"",
+      "out": "/download/0.torrent"
+    },
+    {
+      "in": "nothing",
+      "out": null
+    }
+  ],
+  "hash_from_magnet": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "xf8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19y",
+      "out": null
+    },
+    {
+      "in": "x7BSRIRFCYCZ767R5UPF5OXNFR327BHQZy",
+      "out": null
+    },
+    {
+      "in": "0000000000000000000000000000000000000000",
+      "out": "0000000000000000000000000000000000000000"
+    },
+    {
+      "in": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "out": "0000000000000000000000000000000000000000"
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "btih:7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "prefix f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19 suffix",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "abc",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": null
+    }
+  ],
+  "hash_from_text": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "xf8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19y",
+      "out": null
+    },
+    {
+      "in": "x7BSRIRFCYCZ767R5UPF5OXNFR327BHQZy",
+      "out": null
+    },
+    {
+      "in": "0000000000000000000000000000000000000000",
+      "out": "0000000000000000000000000000000000000000"
+    },
+    {
+      "in": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "out": null
+    },
+    {
+      "in": "btih:f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "btih:7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "prefix f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19 suffix",
+      "out": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19"
+    },
+    {
+      "in": "abc",
+      "out": null
+    },
+    {
+      "in": "f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19f8651444a2c0b3ff7e3da3cbd75da58ef5f09e19",
+      "out": null
+    },
+    {
+      "in": "7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ7BSRIRFCYCZ767R5UPF5OXNFR327BHQZ",
+      "out": null
+    }
+  ],
+  "parse_size": [
+    {
+      "in": null,
+      "out": 0
+    },
+    {
+      "in": true,
+      "out": 1
+    },
+    {
+      "in": false,
+      "out": 0
+    },
+    {
+      "in": 0,
+      "out": 0
+    },
+    {
+      "in": 42,
+      "out": 42
+    },
+    {
+      "in": 1500000000,
+      "out": 1500000000
+    },
+    {
+      "in": 1500000000.7,
+      "out": 1500000000
+    },
+    {
+      "in": "",
+      "out": 0
+    },
+    {
+      "in": "123",
+      "out": 123
+    },
+    {
+      "in": "  42  ",
+      "out": 42
+    },
+    {
+      "in": "1.5 GiB",
+      "out": 1610612736
+    },
+    {
+      "in": "700 MB",
+      "out": 734003200
+    },
+    {
+      "in": "1.5MB",
+      "out": 1572864
+    },
+    {
+      "in": "1.5mib",
+      "out": 0
+    },
+    {
+      "in": "0.5 MB",
+      "out": 524288
+    },
+    {
+      "in": "1024 KiB",
+      "out": 1048576
+    },
+    {
+      "in": "1e5",
+      "out": 100000
+    },
+    {
+      "in": "-5 MB",
+      "out": 0
+    },
+    {
+      "in": "0 B",
+      "out": 0
+    },
+    {
+      "in": "abc",
+      "out": 0
+    },
+    {
+      "in": "no results",
+      "out": 0
+    },
+    {
+      "in": "999999999999999999999",
+      "out": 0
+    },
+    {
+      "in": "1.5 TB",
+      "out": 1649267441664
+    },
+    {
+      "in": "2 PiB",
+      "out": 2251799813685248
+    },
+    {
+      "in": "3 MB extra",
+      "out": 3145728
+    },
+    {
+      "in": "xyz 7.5 GB abc",
+      "out": 8053063680
+    },
+    {
+      "in": "1.2.3 MB",
+      "out": 2411724
+    },
+    {
+      "in": "<1 KB",
+      "out": 1024
+    },
+    {
+      "in": "1 GiB",
+      "out": 1073741824
+    },
+    {
+      "in": "1025 GiB",
+      "out": 1100585369600
+    }
+  ],
+  "quote": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "abc XYZ",
+      "out": "abc%20XYZ"
+    },
+    {
+      "in": "中文标题",
+      "out": "%E4%B8%AD%E6%96%87%E6%A0%87%E9%A2%98"
+    },
+    {
+      "in": "a/b?c=d&e",
+      "out": "a%2Fb%3Fc%3Dd%26e"
+    },
+    {
+      "in": "~._-",
+      "out": "~._-"
+    },
+    {
+      "in": "%20",
+      "out": "%2520"
+    },
+    {
+      "in": "Ünïcode",
+      "out": "%C3%9Cn%C3%AFcode"
+    },
+    {
+      "in": "quote\"and'apos",
+      "out": "quote%22and%27apos"
+    },
+    {
+      "in": "a+b c",
+      "out": "a%2Bb%20c"
+    }
+  ],
+  "quote_plus": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "abc XYZ",
+      "out": "abc+XYZ"
+    },
+    {
+      "in": "中文标题",
+      "out": "%E4%B8%AD%E6%96%87%E6%A0%87%E9%A2%98"
+    },
+    {
+      "in": "a/b?c=d&e",
+      "out": "a%2Fb%3Fc%3Dd%26e"
+    },
+    {
+      "in": "~._-",
+      "out": "~._-"
+    },
+    {
+      "in": "%20",
+      "out": "%2520"
+    },
+    {
+      "in": "Ünïcode",
+      "out": "%C3%9Cn%C3%AFcode"
+    },
+    {
+      "in": "quote\"and'apos",
+      "out": "quote%22and%27apos"
+    },
+    {
+      "in": "a+b c",
+      "out": "a%2Bb+c"
+    }
+  ],
+  "size_from_title": [
+    {
+      "in": "",
+      "out": 0
+    },
+    {
+      "in": "[1.5 GiB]",
+      "out": 1610612736
+    },
+    {
+      "in": "(700 MB) extra",
+      "out": 734003200
+    },
+    {
+      "in": "【2.0GB】",
+      "out": 2147483648
+    },
+    {
+      "in": "[ 1.5 GB ]",
+      "out": 1610612736
+    },
+    {
+      "in": "[1.5GB",
+      "out": 0
+    },
+    {
+      "in": "1.5GB",
+      "out": 0
+    },
+    {
+      "in": "[abc]",
+      "out": 0
+    },
+    {
+      "in": "[1234567890123MB]",
+      "out": 0
+    },
+    {
+      "in": "[12.5 mib]",
+      "out": 0
+    },
+    {
+      "in": "[1.5 MB] [2 GB]",
+      "out": 1572864
+    },
+    {
+      "in": "no bracket 5 GB",
+      "out": 0
+    },
+    {
+      "in": "[]",
+      "out": 0
+    },
+    {
+      "in": "[0 B]",
+      "out": 0
+    },
+    {
+      "in": "[1e5 MB]",
+      "out": 0
+    }
+  ],
+  "split_items": [
+    {
+      "in": "<rss><item><a>1</a></item><item><b>2</b></item></rss>",
+      "out": [
+        "<a>1</a>",
+        "<b>2</b>"
+      ]
+    },
+    {
+      "in": "<ITEM>x</ITEM>",
+      "out": [
+        "x"
+      ]
+    },
+    {
+      "in": "<item>x</item><item>y",
+      "out": [
+        "x"
+      ]
+    },
+    {
+      "in": "no items here",
+      "out": []
+    },
+    {
+      "in": "<item><item>nested</item></item>",
+      "out": [
+        "<item>nested"
+      ]
+    },
+    {
+      "in": "<item>a</item><item>b</item><item>c</item>",
+      "out": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "in": "",
+      "out": []
+    },
+    {
+      "in": "<item></item>",
+      "out": [
+        ""
+      ]
+    }
+  ],
+  "tag": [
+    {
+      "chunk": "<item><title>Hi</title></item>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "Hi",
+        "<title>Hi</title>",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<ITEM><TITLE>Case</TITLE></ITEM>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "Case",
+        "<TITLE>Case</TITLE>",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<item id=\"1\"><title>Attr &amp; more</title></item>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "Attr &amp; more",
+        "<title>Attr &amp; more</title>",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<item><items>x</items></item>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "",
+        "<items>x</items>",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<item>no close",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<item><title>  spaced  </title><title>second</title></item>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "spaced",
+        "<title>  spaced  </title><title>second</title>",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "chunk": "<a:title>ns</a:title>",
+      "names": [
+        "title",
+        "item",
+        "a:title",
+        "missing",
+        ""
+      ],
+      "out": [
+        "",
+        "",
+        "ns",
+        "",
+        ""
+      ]
+    }
+  ],
+  "to_int": [
+    {
+      "in": null,
+      "out": null
+    },
+    {
+      "in": true,
+      "out": 1
+    },
+    {
+      "in": false,
+      "out": 0
+    },
+    {
+      "in": 0,
+      "out": 0
+    },
+    {
+      "in": 42,
+      "out": 42
+    },
+    {
+      "in": 42.7,
+      "out": 42
+    },
+    {
+      "in": -3.9,
+      "out": -3
+    },
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "42",
+      "out": 42
+    },
+    {
+      "in": "42.7",
+      "out": 42
+    },
+    {
+      "in": "abc",
+      "out": null
+    },
+    {
+      "in": "  7  ",
+      "out": 7
+    }
+  ],
+  "ts_from_cn_dash": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026-08-28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-08-28 05:32",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-08-28T05:32:00",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-8-28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-13-01",
+      "out": null
+    },
+    {
+      "in": "2026-08-28extra",
+      "out": 1787846400.0
+    },
+    {
+      "in": "  2026-08-28  ",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026/08/28",
+      "out": null
+    }
+  ],
+  "ts_from_cn_slash": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 05:32",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026/08/28 05:32:45",
+      "out": 1787866365.0
+    },
+    {
+      "in": "2026/08/28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026/ 8/28 05:32",
+      "out": null
+    },
+    {
+      "in": "2026/8/28 05:32",
+      "out": 1787866320.0
+    },
+    {
+      "in": "  2026/08/28 05:32  ",
+      "out": 1787866320.0
+    },
+    {
+      "in": "2026/13/01",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 25:00",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 extra junk",
+      "out": null
+    },
+    {
+      "in": "26/08/28",
+      "out": null
+    },
+    {
+      "in": "2026-08-28 05:32",
+      "out": null
+    },
+    {
+      "in": "2026/08/28 05:3",
+      "out": 1787864580.0
+    },
+    {
+      "in": "2026/08/28 05:32:45:00",
+      "out": null
+    },
+    {
+      "in": "2026/02/30",
+      "out": null
+    },
+    {
+      "in": "2026/02/29",
+      "out": null
+    },
+    {
+      "in": "2024/02/29",
+      "out": 1709136000.0
+    },
+    {
+      "in": "2026/04/31",
+      "out": null
+    }
+  ],
+  "ts_from_cn_ymd": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026-08-28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-08-28 05:32",
+      "out": null
+    },
+    {
+      "in": "2026-8-28",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026-13-01",
+      "out": null
+    },
+    {
+      "in": "2026-02-30",
+      "out": null
+    },
+    {
+      "in": "2024-02-29",
+      "out": 1709136000.0
+    },
+    {
+      "in": "2026-08-28extra",
+      "out": null
+    },
+    {
+      "in": "  2026-08-28  ",
+      "out": 1787846400.0
+    },
+    {
+      "in": "2026/08/28",
+      "out": null
+    }
+  ],
+  "ts_from_iso": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "   ",
+      "out": null
+    },
+    {
+      "in": "2026-09-20T12:00:00+00:00",
+      "out": 1789905600.0
+    },
+    {
+      "in": "2026-09-20T12:00:00Z",
+      "out": 1789905600.0
+    },
+    {
+      "in": "2026-09-20T12:00:00",
+      "out": 1789905600.0
+    },
+    {
+      "in": "2026-09-20",
+      "out": 1789862400.0
+    },
+    {
+      "in": "2026-09-20T12:00:00.500+08:00",
+      "out": 1789876800.5
+    },
+    {
+      "in": "2026-09-20T12:00:00+0800",
+      "out": 1789876800.0
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026-13-01T00:00:00Z",
+      "out": null
+    },
+    {
+      "in": "1970-01-01T00:00:00Z",
+      "out": 0.0
+    },
+    {
+      "in": "2026-09-20T00:00:00-05:00",
+      "out": 1789880400.0
+    }
+  ],
+  "ts_from_naive_cn": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "2026-09-20T12:00:00",
+      "out": 1789876800.0
+    },
+    {
+      "in": "2026-09-20 12:00:00",
+      "out": 1789876800.0
+    },
+    {
+      "in": "2026-09-20",
+      "out": 1789833600.0
+    },
+    {
+      "in": "2026-09-20T12:00:00Z",
+      "out": null
+    },
+    {
+      "in": "2026-09-20T12:00:00+08:00",
+      "out": null
+    },
+    {
+      "in": "2026-09-20T12:00:00+0800",
+      "out": null
+    },
+    {
+      "in": "2026-09-20T12:00",
+      "out": 1789876800.0
+    },
+    {
+      "in": "2026-13-01T00:00:00",
+      "out": null
+    },
+    {
+      "in": "  2026-09-20T12:00:00  ",
+      "out": 1789876800.0
+    }
+  ],
+  "ts_from_rfc": [
+    {
+      "in": "",
+      "out": null
+    },
+    {
+      "in": "garbage",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00 +0000",
+      "out": 1789905600.0
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00",
+      "out": 1789905600.0
+    },
+    {
+      "in": "20 Sep 2026 12:00:00 +0800",
+      "out": 1789876800.0
+    },
+    {
+      "in": "20 Sep 2026 12:00:00",
+      "out": 1789905600.0
+    },
+    {
+      "in": "sat, 20 sep 2026 12:00:00 +0000",
+      "out": 1789905600.0
+    },
+    {
+      "in": "Foo, 20 Sep 2026 12:00:00 +0000",
+      "out": null
+    },
+    {
+      "in": "Sat 20 Sep 2026 12:00:00 +0000",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Xxx 2026 12:00:00 +0000",
+      "out": null
+    },
+    {
+      "in": "Sat, 5 Sep 2026 12:00:00 -0500",
+      "out": 1788627600.0
+    },
+    {
+      "in": "20 Sep 26 12:00:00",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00 +08:00",
+      "out": 1789876800.0
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00 Z",
+      "out": 1789905600.0
+    },
+    {
+      "in": "20 Sep 2026 12:00:00 GMT",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00 +0000 extra",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Sep 2026 99:00:00 +0000",
+      "out": null
+    },
+    {
+      "in": "Sat, 20 Sep 2026 12:00:00 +080000",
+      "out": 1789876800.0
+    }
+  ],
+  "unescape": [
+    {
+      "in": "",
+      "out": ""
+    },
+    {
+      "in": "   ",
+      "out": ""
+    },
+    {
+      "in": "  a  ",
+      "out": "a"
+    },
+    {
+      "in": "&amp;",
+      "out": "&"
+    },
+    {
+      "in": "&amp;lt;",
+      "out": "&lt;"
+    },
+    {
+      "in": "&lt;b&gt;",
+      "out": "<b>"
+    },
+    {
+      "in": "&#x30D5;&#x30EA;&#x30FC;&#x30EC;&#x30F3;",
+      "out": "フリーレン"
+    },
+    {
+      "in": "&#38;",
+      "out": "&"
+    },
+    {
+      "in": "&#151;",
+      "out": "—"
+    },
+    {
+      "in": "&#x200B;a",
+      "out": "​a"
+    },
+    {
+      "in": "&times;&copy;&atilde;",
+      "out": "×©ã"
+    },
+    {
+      "in": "&nbsp;x&nbsp;",
+      "out": "x"
+    },
+    {
+      "in": "a & b",
+      "out": "a & b"
+    },
+    {
+      "in": "&zzzz;",
+      "out": "&zzzz;"
+    },
+    {
+      "in": "&#;",
+      "out": "&#;"
+    },
+    {
+      "in": "&#xZZ;",
+      "out": "&#xZZ;"
+    },
+    {
+      "in": "&#x110000;",
+      "out": "�"
+    },
+    {
+      "in": "&#x2605;",
+      "out": "★"
+    },
+    {
+      "in": "A&B",
+      "out": "A&B"
+    },
+    {
+      "in": "<![CDATA[  hi  ]]>",
+      "out": "hi"
+    },
+    {
+      "in": "<![CDATA[x]]>tail",
+      "out": "xtail"
+    },
+    {
+      "in": "<![CDATA[unclosed",
+      "out": "<![CDATA[unclosed"
+    },
+    {
+      "in": "&Sword;",
+      "out": "&Sword;"
+    },
+    {
+      "in": "5 &lt; 6 &amp;&amp; 7 &gt; 6",
+      "out": "5 < 6 && 7 > 6"
+    }
+  ]
+}

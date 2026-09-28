@@ -1,0 +1,171 @@
+{
+  "key": "tpb",
+  "query": "ubuntu",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 8331,
+  "fetched_at": "2026-09-28T09:57:01+00:00",
+  "captured_local": "2026-09-28T17:57:01+08:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-thepiratebay10-org-search-ubuntu-1-99-0-1b938b.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/1/99/0",
+      "request_body": null,
+      "bytes": 71228,
+      "sha1": "786dcc6611b93cc03b1a04dfb8c0bd91a1fd8a5d"
+    },
+    {
+      "n": 2,
+      "file": "02-thepiratebay10-org-search-ubuntu-3-99-0-54b090.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/3/99/0",
+      "request_body": null,
+      "bytes": 66740,
+      "sha1": "eafbf191a75a8c4914131cd9d993822390671a6e"
+    },
+    {
+      "n": 3,
+      "file": "03-thepiratebay10-org-search-ubuntu-4-99-0-fc76dd.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/4/99/0",
+      "request_body": null,
+      "bytes": 67513,
+      "sha1": "20a8c792f317256482979b48a5d4f0157a24c25e"
+    },
+    {
+      "n": 4,
+      "file": "04-thepiratebay10-org-search-ubuntu-7-99-0-908a00.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/7/99/0",
+      "request_body": null,
+      "bytes": 67586,
+      "sha1": "05368d5374f3161b947f0f0993ef274a77bf07e4"
+    },
+    {
+      "n": 5,
+      "file": "05-thepiratebay10-org-search-ubuntu-5-99-0-1a0bc4.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/5/99/0",
+      "request_body": null,
+      "bytes": 68532,
+      "sha1": "26ac5f8dd70006b15c562ce0fac7ae10cffb6faf"
+    },
+    {
+      "n": 6,
+      "file": "06-thepiratebay10-org-search-ubuntu-2-99-0-be8e64.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/2/99/0",
+      "request_body": null,
+      "bytes": 67950,
+      "sha1": "3d1c153cab4759671b32a9fda9c31e867dcc5889"
+    },
+    {
+      "n": 7,
+      "file": "07-thepiratebay10-org-search-ubuntu-6-99-0-a2ced8.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/6/99/0",
+      "request_body": null,
+      "bytes": 70689,
+      "sha1": "80b942d96c0ff790a4c8318416aa6835bc2cb3f1"
+    },
+    {
+      "n": 8,
+      "file": "08-thepiratebay10-org-search-ubuntu-8-99-0-c3f8fe.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/8/99/0",
+      "request_body": null,
+      "bytes": 66752,
+      "sha1": "b72104ca80ef6ad97c6c09ba5a8aaaeb34e033cb"
+    },
+    {
+      "n": 9,
+      "file": "09-thepiratebay10-org-search-ubuntu-12-99-0-301eb5.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/12/99/0",
+      "request_body": null,
+      "bytes": 66897,
+      "sha1": "61996a42f860a1e10657ead9903efe2de4765532"
+    },
+    {
+      "n": 10,
+      "file": "10-thepiratebay10-org-search-ubuntu-11-99-0-fcd27b.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/11/99/0",
+      "request_body": null,
+      "bytes": 66674,
+      "sha1": "e1fa20f5073e40294ab6ccdc6b8eb6266133cb13"
+    },
+    {
+      "n": 11,
+      "file": "11-thepiratebay10-org-search-ubuntu-9-99-0-f72cee.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/9/99/0",
+      "request_body": null,
+      "bytes": 65765,
+      "sha1": "b55f0ad1fb47cb1aaaf86d7ac73692269a3ff98d"
+    },
+    {
+      "n": 12,
+      "file": "12-thepiratebay10-org-search-ubuntu-10-99-0-7165c6.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/10/99/0",
+      "request_body": null,
+      "bytes": 66638,
+      "sha1": "7505b32b66d2644218ae1d73016434c0c8816c52"
+    },
+    {
+      "n": 13,
+      "file": "13-thepiratebay10-org-search-ubuntu-13-99-0-fe5a65.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/13/99/0",
+      "request_body": null,
+      "bytes": 67258,
+      "sha1": "6ad2d52ae9c83c8cc1d1db1a34da8380ca6dbdf3"
+    },
+    {
+      "n": 14,
+      "file": "14-thepiratebay10-org-search-ubuntu-14-99-0-664286.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/14/99/0",
+      "request_body": null,
+      "bytes": 66484,
+      "sha1": "a7531e1002ccd6bf127381835bbaef7e5b22b6f0"
+    },
+    {
+      "n": 15,
+      "file": "15-thepiratebay10-org-search-ubuntu-18-99-0-cbd142.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/18/99/0",
+      "request_body": null,
+      "bytes": 67467,
+      "sha1": "1caba8b3533ad680ce180a9968277a0d10fe2a3f"
+    },
+    {
+      "n": 16,
+      "file": "16-thepiratebay10-org-search-ubuntu-16-99-0-51f4af.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/16/99/0",
+      "request_body": null,
+      "bytes": 67346,
+      "sha1": "1f14e8ac4f38582ac37b6681d650c57f3aafddcc"
+    },
+    {
+      "n": 17,
+      "file": "17-thepiratebay10-org-search-ubuntu-17-99-0-d026d0.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/17/99/0",
+      "request_body": null,
+      "bytes": 67137,
+      "sha1": "92aa59c130e0543867ffedac461e91356b22a96c"
+    },
+    {
+      "n": 18,
+      "file": "18-thepiratebay10-org-search-ubuntu-15-99-0-e9dd18.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/15/99/0",
+      "request_body": null,
+      "bytes": 65910,
+      "sha1": "f74daa46fcf5d2c1cae277dc49349650bc9b1050"
+    },
+    {
+      "n": 19,
+      "file": "19-thepiratebay10-org-search-ubuntu-19-99-0-56c496.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/19/99/0",
+      "request_body": null,
+      "bytes": 68589,
+      "sha1": "563dfe12ef423d5feb6a313cef5629f3a423d0af"
+    },
+    {
+      "n": 20,
+      "file": "20-thepiratebay10-org-search-ubuntu-20-99-0-07b1f6.html",
+      "url": "https://thepiratebay10.org/search/ubuntu/20/99/0",
+      "request_body": null,
+      "bytes": 68365,
+      "sha1": "e81535c104e719ea9e825caaa10bcf0e07e0309b"
+    }
+  ]
+}

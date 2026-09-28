@@ -1,0 +1,130 @@
+{
+  "key": "eztv",
+  "query": "1080p",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 4596,
+  "fetched_at": "2026-09-28T09:33:07+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-eztvx-to-api-get-torrents-limit-100-page-1-39e351.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=1",
+      "request_body": null,
+      "bytes": 82665,
+      "sha1": "8ad62b813a1e0552c9b9739f5ddeb8888e3664a9"
+    },
+    {
+      "n": 2,
+      "file": "02-eztvx-to-api-get-torrents-limit-100-page-6-d07597.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=6",
+      "request_body": null,
+      "bytes": 84234,
+      "sha1": "a3932423a2a93e0312a657be01c1535a1a576c86"
+    },
+    {
+      "n": 3,
+      "file": "03-eztvx-to-api-get-torrents-limit-100-page-5-c02ccd.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=5",
+      "request_body": null,
+      "bytes": 84041,
+      "sha1": "effa5171cb4407664829d4cfb5b5bff194b98927"
+    },
+    {
+      "n": 4,
+      "file": "04-eztvx-to-api-get-torrents-limit-100-page-4-f4cacd.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=4",
+      "request_body": null,
+      "bytes": 84377,
+      "sha1": "fea5415ebd34f589cd923941837915b240aaa369"
+    },
+    {
+      "n": 5,
+      "file": "05-eztvx-to-api-get-torrents-limit-100-page-7-ae8561.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=7",
+      "request_body": null,
+      "bytes": 84949,
+      "sha1": "5234b51b17c327aa314b5327d111cb265c7b7ece"
+    },
+    {
+      "n": 6,
+      "file": "06-eztvx-to-api-get-torrents-limit-100-page-2-085155.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=2",
+      "request_body": null,
+      "bytes": 82628,
+      "sha1": "3e53ebe86d70e6b2f77a202ae4270ed8b03264fe"
+    },
+    {
+      "n": 7,
+      "file": "07-eztvx-to-api-get-torrents-limit-100-page-3-17a3ca.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=3",
+      "request_body": null,
+      "bytes": 85454,
+      "sha1": "f7ae50b9c793503e74347c96c05daa0edf784796"
+    },
+    {
+      "n": 8,
+      "file": "08-eztvx-to-api-get-torrents-limit-100-page-10-73ca83.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=10",
+      "request_body": null,
+      "bytes": 83647,
+      "sha1": "950c16243ea9830e283fcc2286af94bf0360e650"
+    },
+    {
+      "n": 9,
+      "file": "09-eztvx-to-api-get-torrents-limit-100-page-8-82c88a.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=8",
+      "request_body": null,
+      "bytes": 85845,
+      "sha1": "f334dc55e386018617822e9f71a9a41425831d01"
+    },
+    {
+      "n": 10,
+      "file": "10-eztvx-to-api-get-torrents-limit-100-page-9-bac84c.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=9",
+      "request_body": null,
+      "bytes": 85275,
+      "sha1": "74f0abddb9d5e7580f9997b6d1707140a2918037"
+    },
+    {
+      "n": 11,
+      "file": "11-eztvx-to-api-get-torrents-limit-100-page-11-20213c.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=11",
+      "request_body": null,
+      "bytes": 83962,
+      "sha1": "2c491b19b943f2a13eed7cf980abc83934bf83ea"
+    },
+    {
+      "n": 12,
+      "file": "12-eztvx-to-api-get-torrents-limit-100-page-12-9f45b2.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=12",
+      "request_body": null,
+      "bytes": 84131,
+      "sha1": "9b9129a7eb6a338d3930b3c69ffbcd50bc3584f3"
+    },
+    {
+      "n": 13,
+      "file": "13-eztvx-to-api-get-torrents-limit-100-page-15-920bdd.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=15",
+      "request_body": null,
+      "bytes": 84020,
+      "sha1": "013b414fb1cee3b3665729bb656bc94b217238c4"
+    },
+    {
+      "n": 14,
+      "file": "14-eztvx-to-api-get-torrents-limit-100-page-13-164436.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=13",
+      "request_body": null,
+      "bytes": 85083,
+      "sha1": "529cc4717480376487b7aa4cb014fc8a56cfe297"
+    },
+    {
+      "n": 15,
+      "file": "15-eztvx-to-api-get-torrents-limit-100-page-14-ca5b87.json",
+      "url": "https://eztvx.to/api/get-torrents?limit=100&page=14",
+      "request_body": null,
+      "bytes": 83620,
+      "sha1": "42044211580b2b74fd38103a0e3cefe7be833b97"
+    }
+  ]
+}

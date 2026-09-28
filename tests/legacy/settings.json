@@ -1,0 +1,14 @@
+{
+  "theme": "dark",
+  "ui_font_size": 16,
+  "min_query_len": 5,
+  "max_workers": 99,
+  "timeout": "abc",
+  "sound_volume": 200,
+  "keep_duplicates": true,
+  "brand": "lilac",
+  "progress_look": "{bad json}",
+  "selbar": "yes",
+  "not_a_setting": 42,
+  "default_downloader": "thunder"
+}

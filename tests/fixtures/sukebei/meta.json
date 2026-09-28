@@ -1,0 +1,130 @@
+{
+  "key": "sukebei",
+  "query": "1080p",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 20419,
+  "fetched_at": "2026-09-28T09:40:01+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-sukebei-nyaa-si-page-rss-q-1080p-p-1-c08e37.xml",
+      "url": "https://sukebei.nyaa.si/?page=rss&q=1080p&p=1",
+      "request_body": null,
+      "bytes": 85427,
+      "sha1": "f59c4c6fb82c0052723ad696db3ddcdd20f6d4ca"
+    },
+    {
+      "n": 2,
+      "file": "02-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-4-febcd7.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=4",
+      "request_body": null,
+      "bytes": 129760,
+      "sha1": "36e56a6fd78b61fae9f516db1c9b850a44ca0c00"
+    },
+    {
+      "n": 3,
+      "file": "03-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-6-9f7c67.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=6",
+      "request_body": null,
+      "bytes": 128086,
+      "sha1": "ffe8563b127f00c180bd9e47b7b90a09771f4d3e"
+    },
+    {
+      "n": 4,
+      "file": "04-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-3-4d9f8a.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=3",
+      "request_body": null,
+      "bytes": 132076,
+      "sha1": "3076b26d06c21be089cd6d413faab9528ba75784"
+    },
+    {
+      "n": 5,
+      "file": "05-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-2-534dac.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=2",
+      "request_body": null,
+      "bytes": 133419,
+      "sha1": "061306ab2dab5982d93b2083f15f6c7c89b0d836"
+    },
+    {
+      "n": 6,
+      "file": "06-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-5-5240f7.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=5",
+      "request_body": null,
+      "bytes": 130569,
+      "sha1": "ddf42e3567a07ca06bb6dfb3b58665db5a06adaf"
+    },
+    {
+      "n": 7,
+      "file": "07-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-1-0fd0a2.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=1",
+      "request_body": null,
+      "bytes": 137646,
+      "sha1": "3f2c4b69a0b5831e3f68fad70a0808872628ccff"
+    },
+    {
+      "n": 8,
+      "file": "08-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-7-e9f59d.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=7",
+      "request_body": null,
+      "bytes": 131840,
+      "sha1": "ae99801f1c5b1f7f20eb4a865c3ee724de0802e3"
+    },
+    {
+      "n": 9,
+      "file": "09-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-8-eb7690.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=8",
+      "request_body": null,
+      "bytes": 134621,
+      "sha1": "bf7911041d789a38869c6b581f341b29824ff015"
+    },
+    {
+      "n": 10,
+      "file": "10-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-9-dfcc67.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=9",
+      "request_body": null,
+      "bytes": 133026,
+      "sha1": "adfbd2679a44c65ed022f50321f5d103bdd22e47"
+    },
+    {
+      "n": 11,
+      "file": "11-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-10-c87247.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=10",
+      "request_body": null,
+      "bytes": 126911,
+      "sha1": "7b3d44f30989b30b56d91f8b95d03267bab499ff"
+    },
+    {
+      "n": 12,
+      "file": "12-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-11-04857b.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=11",
+      "request_body": null,
+      "bytes": 130033,
+      "sha1": "3faacc6f25c8ec63ebeec7811da2466c74e90aef"
+    },
+    {
+      "n": 13,
+      "file": "13-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-12-166b8c.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=12",
+      "request_body": null,
+      "bytes": 128966,
+      "sha1": "e1035c9b4227a0485c7e0d820eb06c4f751bc001"
+    },
+    {
+      "n": 14,
+      "file": "14-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-13-b72709.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=13",
+      "request_body": null,
+      "bytes": 134050,
+      "sha1": "5dcaf801627809a2a0db53b8a24201ca1bb192af"
+    },
+    {
+      "n": 15,
+      "file": "15-sukebei-nyaa-si-q-1080p-c-0-0-f-0-s-seeders-o-desc-p-14-de11cd.html",
+      "url": "https://sukebei.nyaa.si/?q=1080p&c=0_0&f=0&s=seeders&o=desc&p=14",
+      "request_body": null,
+      "bytes": 56737,
+      "sha1": "dbcbaacad23c2fcf8164c0f5e85626bbdea2af22"
+    }
+  ]
+}

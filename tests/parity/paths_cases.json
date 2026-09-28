@@ -1,0 +1,82 @@
+{
+ "_scope": "只对照 _resolve 的分支结果。is_writable 的真实文件系统探测与 program_dir 的 dev/打包判定是平台行为，不进对照表。",
+ "_inputs": {
+  "program": "C:\\ProgramDir",
+  "portable": "C:\\ProgramDir\\data",
+  "appdata": "C:\\Users\\X\\AppData\\Roaming\\happycrate",
+  "appdata_data": "C:\\Users\\X\\AppData\\Roaming\\happycrate\\data",
+  "env_dir": "D:\\seed\\data"
+ },
+ "resolve": [
+  {
+   "name": "env 指定，可写",
+   "env": "D:\\seed\\data",
+   "portable_writable": true,
+   "has_appdata": true,
+   "dir": "D:\\seed\\data",
+   "mode": "env"
+  },
+  {
+   "name": "env 指定，便携也可写",
+   "env": "D:\\seed\\data",
+   "portable_writable": true,
+   "has_appdata": true,
+   "dir": "D:\\seed\\data",
+   "mode": "env"
+  },
+  {
+   "name": "env 指定，无 APPDATA",
+   "env": "D:\\seed\\data",
+   "portable_writable": false,
+   "has_appdata": false,
+   "dir": "D:\\seed\\data",
+   "mode": "env"
+  },
+  {
+   "name": "env 为空串",
+   "env": "",
+   "portable_writable": true,
+   "has_appdata": true,
+   "dir": "C:\\ProgramDir\\data",
+   "mode": "portable"
+  },
+  {
+   "name": "无 env，便携可写",
+   "env": null,
+   "portable_writable": true,
+   "has_appdata": true,
+   "dir": "C:\\ProgramDir\\data",
+   "mode": "portable"
+  },
+  {
+   "name": "无 env，便携不可写，有 APPDATA",
+   "env": null,
+   "portable_writable": false,
+   "has_appdata": true,
+   "dir": "C:\\Users\\X\\AppData\\Roaming\\happycrate\\data",
+   "mode": "fallback"
+  },
+  {
+   "name": "无 env，便携不可写，无 APPDATA",
+   "env": null,
+   "portable_writable": false,
+   "has_appdata": false,
+   "dir": "C:\\ProgramDir\\data",
+   "mode": "fallback"
+  }
+ ],
+ "mode_labels": [
+  {
+   "mode": "env",
+   "label": "环境变量指定"
+  },
+  {
+   "mode": "portable",
+   "label": "便携模式"
+  },
+  {
+   "mode": "fallback",
+   "label": "回退模式"
+  }
+ ]
+}

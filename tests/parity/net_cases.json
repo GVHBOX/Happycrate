@@ -1,0 +1,1208 @@
+{
+ "_scope": "绕过的期望值用固定 override 字符串离线生成，不读现场注册表；fnmatch 的 `[seq]` 字符集**未实现**（Python 支持），本项目路径上不会出现。",
+ "_live": {
+  "system": {
+   "http": "http://127.0.0.1:7890",
+   "https": "http://127.0.0.1:7890",
+   "ftp": "http://127.0.0.1:7890"
+  },
+  "env": {}
+ },
+ "parse_proxy": [
+  {
+   "in": "",
+   "mapping": {},
+   "err": ""
+  },
+  {
+   "in": "   ",
+   "mapping": {},
+   "err": ""
+  },
+  {
+   "in": ";",
+   "mapping": {},
+   "err": "代理地址为空"
+  },
+  {
+   "in": " ; ; ",
+   "mapping": {},
+   "err": "代理地址为空"
+  },
+  {
+   "in": "http://127.0.0.1:7890",
+   "mapping": {
+    "http": "http://127.0.0.1:7890",
+    "https": "http://127.0.0.1:7890"
+   },
+   "err": ""
+  },
+  {
+   "in": "127.0.0.1:7890",
+   "mapping": {
+    "http": "http://127.0.0.1:7890",
+    "https": "http://127.0.0.1:7890"
+   },
+   "err": ""
+  },
+  {
+   "in": "https://proxy.local:8080",
+   "mapping": {
+    "http": "https://proxy.local:8080",
+    "https": "https://proxy.local:8080"
+   },
+   "err": ""
+  },
+  {
+   "in": "  http://p:1  ",
+   "mapping": {
+    "http": "http://p:1",
+    "https": "http://p:1"
+   },
+   "err": ""
+  },
+  {
+   "in": "http://user:pass@h:1080",
+   "mapping": {
+    "http": "http://user:pass@h:1080",
+    "https": "http://user:pass@h:1080"
+   },
+   "err": ""
+  },
+  {
+   "in": "socks5://127.0.0.1:1080",
+   "mapping": {},
+   "err": "不支持 socks5 代理，只支持 HTTP 代理端口"
+  },
+  {
+   "in": "socks://127.0.0.1:1080",
+   "mapping": {},
+   "err": "不支持 socks 代理，只支持 HTTP 代理端口"
+  },
+  {
+   "in": "http=127.0.0.1:7890;https=127.0.0.1:7891",
+   "mapping": {},
+   "err": "代理重复指定同一类型：https=127.0.0.1:7891"
+  },
+  {
+   "in": "http://a:1;https://b:2",
+   "mapping": {
+    "http": "http://a:1",
+    "https": "https://b:2"
+   },
+   "err": ""
+  },
+  {
+   "in": "http://a:1;http://b:2",
+   "mapping": {},
+   "err": "代理重复指定同一类型：http://b:2"
+  },
+  {
+   "in": "ftp://a:1",
+   "mapping": {},
+   "err": "代理地址格式无法识别：ftp://a:1"
+  },
+  {
+   "in": "garbage",
+   "mapping": {
+    "http": "http://garbage",
+    "https": "http://garbage"
+   },
+   "err": ""
+  },
+  {
+   "in": "://x",
+   "mapping": {},
+   "err": "代理地址格式无法识别：://x"
+  },
+  {
+   "in": "http://",
+   "mapping": {},
+   "err": "代理地址缺少主机名：http://"
+  },
+  {
+   "in": "http://:8080",
+   "mapping": {},
+   "err": "代理地址缺少主机名：http://:8080"
+  },
+  {
+   "in": "http://a:1;",
+   "mapping": {
+    "http": "http://a:1",
+    "https": "http://a:1"
+   },
+   "err": ""
+  },
+  {
+   "in": ";http://a:1",
+   "mapping": {
+    "http": "http://a:1",
+    "https": "http://a:1"
+   },
+   "err": ""
+  },
+  {
+   "in": "http://a:1;ftp",
+   "mapping": {},
+   "err": "代理重复指定同一类型：ftp"
+  },
+  {
+   "in": "a;b",
+   "mapping": {},
+   "err": "代理重复指定同一类型：b"
+  },
+  {
+   "in": "http://[::1]:8080",
+   "mapping": {
+    "http": "http://[::1]:8080",
+    "https": "http://[::1]:8080"
+   },
+   "err": ""
+  },
+  {
+   "in": "HTTP://A:1",
+   "mapping": {
+    "http": "HTTP://A:1",
+    "https": "HTTP://A:1"
+   },
+   "err": ""
+  }
+ ],
+ "bypass": [
+  {
+   "host": "",
+   "override": "",
+   "hit": true
+  },
+  {
+   "host": "apibay.org",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "mybox",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "intranet",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "<local>",
+   "hit": true
+  },
+  {
+   "host": "apibay.org",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "<local>",
+   "hit": true
+  },
+  {
+   "host": "mybox",
+   "override": "<local>",
+   "hit": true
+  },
+  {
+   "host": "intranet",
+   "override": "<local>",
+   "hit": true
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "<local>",
+   "hit": true
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "<local>",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "apibay.org",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "mybox",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "intranet",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "localhost;127.*;192.168.*;10.*;172.16.*;172.31.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "apibay.org",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "example.com",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "mybox",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "intranet",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "a.b.c",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": true
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "*.example.com;10.*;172.16.*;<local>",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "apibay.org",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": true
+  },
+  {
+   "host": "example.com",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": true
+  },
+  {
+   "host": "example.net",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "mybox",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "intranet",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": true
+  },
+  {
+   "host": "a.b.c",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "www.example.com;*.example.net; 192.168.0.1",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "apibay.org",
+   "override": "*.org",
+   "hit": true
+  },
+  {
+   "host": "nyaa.si",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "mybox",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "intranet",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "*.org",
+   "hit": false
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "*.org",
+   "hit": true
+  },
+  {
+   "host": "",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "apibay.org",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "10.0.0.?",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "mybox",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "intranet",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "10.0.0.?",
+   "hit": false
+  },
+  {
+   "host": "",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "apibay.org",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "nyaa.si",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "www.example.com",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "example.com",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "sub.example.net",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "example.net",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "localhost",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "mybox",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "intranet",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "a.b.c",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "[::1]",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "*",
+   "hit": true
+  },
+  {
+   "host": "",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "apibay.org",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "nyaa.si",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "www.example.com",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "example.com",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "sub.example.net",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "example.net",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "127.0.0.1:8080",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "127.1.2.3",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "192.168.1.5",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.1",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "10.0.0.10",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "172.16.5.5",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "172.31.255.1",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "172.32.5.5",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "localhost",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "mybox",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "intranet",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "WWW.EXAMPLE.COM",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "a.b.c",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "[::1]",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  },
+  {
+   "host": "thepiratebay10.org",
+   "override": "127.0.0.1:8080",
+   "hit": false
+  }
+ ]
+}

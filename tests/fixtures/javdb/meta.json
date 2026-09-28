@@ -1,0 +1,114 @@
+{
+  "key": "javdb",
+  "query": "SSIS-001",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 2584,
+  "fetched_at": "2026-09-28T09:33:14+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-javdb-com-search-f-all-q-SSIS-001-locale-zh-page-1-4151e9.html",
+      "url": "https://javdb.com/search?f=all&q=SSIS-001&locale=zh&page=1",
+      "request_body": null,
+      "bytes": 50053,
+      "sha1": "7b0e1735929901883839bc937d491cf9dfbcb9f4"
+    },
+    {
+      "n": 2,
+      "file": "02-javdb-com-v-ex3Qd-cecfd5.html",
+      "url": "https://javdb.com/v/ex3Qd",
+      "request_body": null,
+      "bytes": 82560,
+      "sha1": "c276a89338ac2b73d05f2f5e591867e46b38642a"
+    },
+    {
+      "n": 3,
+      "file": "03-javdb-com-v-ZY5eq-34eece.html",
+      "url": "https://javdb.com/v/ZY5eq",
+      "request_body": null,
+      "bytes": 98098,
+      "sha1": "ade16370ff7156d4daf68497ee4f6981268e3935"
+    },
+    {
+      "n": 4,
+      "file": "04-javdb-com-v-5Dn8M-d2047c.html",
+      "url": "https://javdb.com/v/5Dn8M",
+      "request_body": null,
+      "bytes": 78720,
+      "sha1": "e36f211decef72032cf225d45283751b600611e0"
+    },
+    {
+      "n": 5,
+      "file": "05-javdb-com-v-4vQJb-348a66.html",
+      "url": "https://javdb.com/v/4vQJb",
+      "request_body": null,
+      "bytes": 81521,
+      "sha1": "0fb7decafef36bc2410238125a47e7f2e5249121"
+    },
+    {
+      "n": 6,
+      "file": "06-javdb-com-v-0m6J3-c231fa.html",
+      "url": "https://javdb.com/v/0m6J3",
+      "request_body": null,
+      "bytes": 84756,
+      "sha1": "b2ce7b9435e691656fcb9626ba667740ce8a6292"
+    },
+    {
+      "n": 7,
+      "file": "07-javdb-com-v-28mgZ-7508f5.html",
+      "url": "https://javdb.com/v/28mgZ",
+      "request_body": null,
+      "bytes": 83001,
+      "sha1": "daa9d3e9fc8e637284c3352eefa9dd3ce1d85f90"
+    },
+    {
+      "n": 8,
+      "file": "08-javdb-com-v-8P2gO-cf5a08.html",
+      "url": "https://javdb.com/v/8P2gO",
+      "request_body": null,
+      "bytes": 81969,
+      "sha1": "ac5f11c3d0b587710ced66d19382d96586d19593"
+    },
+    {
+      "n": 9,
+      "file": "09-javdb-com-v-OM9O8-afb748.html",
+      "url": "https://javdb.com/v/OM9O8",
+      "request_body": null,
+      "bytes": 86732,
+      "sha1": "7e5c0998141d0f2f936f38d9cdeb9c968a47dbdd"
+    },
+    {
+      "n": 10,
+      "file": "10-javdb-com-v-rny5k-e5cea4.html",
+      "url": "https://javdb.com/v/rny5k",
+      "request_body": null,
+      "bytes": 84682,
+      "sha1": "df4c1dc85caadd7ceb3ef77b7bee9ff85d215be0"
+    },
+    {
+      "n": 11,
+      "file": "11-javdb-com-v-WW0ag-51f88f.html",
+      "url": "https://javdb.com/v/WW0ag",
+      "request_body": null,
+      "bytes": 88668,
+      "sha1": "b8554a2a7f0a6a3e06ad9afaf6473760564331f6"
+    },
+    {
+      "n": 12,
+      "file": "12-javdb-com-v-6wzY9-559d84.html",
+      "url": "https://javdb.com/v/6wzY9",
+      "request_body": null,
+      "bytes": 89894,
+      "sha1": "7f6a8dce032680ef40771d09c220a4a6fac15735"
+    },
+    {
+      "n": 13,
+      "file": "13-javdb-com-v-kqgbN-ee512f.html",
+      "url": "https://javdb.com/v/kqgbN",
+      "request_body": null,
+      "bytes": 79770,
+      "sha1": "4561b03897032598327be44cb73e96320fbb7631"
+    }
+  ]
+}

@@ -1,0 +1,5131 @@
+{
+ "_scope": "`parse` 只用内置词表（data_dir 指向临时空目录）。**JSON 键顺序不比**，只比解析后的值。Unicode 的 `\\d` 只覆盖 ASCII + 全角数字，与 Rust 侧一致。",
+ "normalize": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "   ",
+   "out": ""
+  },
+  {
+   "in": "1080p",
+   "out": "1080p"
+  },
+  {
+   "in": "1080P",
+   "out": "1080p"
+  },
+  {
+   "in": "１０８０Ｐ",
+   "out": "1080p"
+  },
+  {
+   "in": "ＡＢＣ",
+   "out": "abc"
+  },
+  {
+   "in": "４ｋ",
+   "out": "4k"
+  },
+  {
+   "in": "ｈ.２６４",
+   "out": "h.264"
+  },
+  {
+   "in": "ﬁlm",
+   "out": "film"
+  },
+  {
+   "in": "½",
+   "out": "1⁄2"
+  },
+  {
+   "in": "²",
+   "out": "2"
+  },
+  {
+   "in": "①",
+   "out": "1"
+  },
+  {
+   "in": "Ⅷ",
+   "out": "viii"
+  },
+  {
+   "in": "～",
+   "out": "~"
+  },
+  {
+   "in": "　",
+   "out": ""
+  },
+  {
+   "in": "ｱｲｳ",
+   "out": "アイウ"
+  },
+  {
+   "in": "a_b+c,d/e|f",
+   "out": "a b c d e f"
+  },
+  {
+   "in": "  多   空格  ",
+   "out": "多 空格"
+  },
+  {
+   "in": "第 12 话",
+   "out": "第 12 话"
+  },
+  {
+   "in": "Ubuntu TÃƒÆ'Ã‚Â¼rkiye",
+   "out": "ubuntu tãƒæ'ã‚â1⁄4rkiye"
+  },
+  {
+   "in": "[7³ACG]",
+   "out": "[73acg]"
+  },
+  {
+   "in": "MixedCASE 1080P",
+   "out": "mixedcase 1080p"
+  }
+ ],
+ "contains": [
+  {
+   "token": "1080p",
+   "word": "1080p",
+   "out": true
+  },
+  {
+   "token": "1080px",
+   "word": "1080p",
+   "out": false
+  },
+  {
+   "token": "x1080p",
+   "word": "1080p",
+   "out": false
+  },
+  {
+   "token": "11080p",
+   "word": "1080p",
+   "out": false
+  },
+  {
+   "token": "1080p.",
+   "word": "1080p",
+   "out": true
+  },
+  {
+   "token": ".1080p",
+   "word": "1080p",
+   "out": true
+  },
+  {
+   "token": "a1080p",
+   "word": "1080p",
+   "out": false
+  },
+  {
+   "token": "中1080p文",
+   "word": "1080p",
+   "out": true
+  },
+  {
+   "token": "h.264",
+   "word": "h.264",
+   "out": true
+  },
+  {
+   "token": "h264",
+   "word": "h.264",
+   "out": false
+  },
+  {
+   "token": "xh.264",
+   "word": "h.264",
+   "out": false
+  },
+  {
+   "token": "中字",
+   "word": "中字",
+   "out": true
+  },
+  {
+   "token": "中文字幕",
+   "word": "中字",
+   "out": false
+  },
+  {
+   "token": "简体中文",
+   "word": "简体中文",
+   "out": true
+  },
+  {
+   "token": "abc",
+   "word": "abc",
+   "out": true
+  },
+  {
+   "token": "ab",
+   "word": "abc",
+   "out": false
+  },
+  {
+   "token": "abcd",
+   "word": "abc",
+   "out": false
+  },
+  {
+   "token": "",
+   "word": "abc",
+   "out": false
+  },
+  {
+   "token": "abc",
+   "word": "",
+   "out": false
+  },
+  {
+   "token": "film",
+   "word": "film",
+   "out": true
+  },
+  {
+   "token": "ﬁlm",
+   "word": "film",
+   "out": false
+  },
+  {
+   "token": "5.1",
+   "word": "5.1",
+   "out": true
+  },
+  {
+   "token": "7.1",
+   "word": "7.1",
+   "out": true
+  }
+ ],
+ "season_of": [
+  {
+   "token": "s01e02",
+   "out": {
+    "s": 1,
+    "e": 2
+   }
+  },
+  {
+   "token": "s1e2",
+   "out": {
+    "s": 1,
+    "e": 2
+   }
+  },
+  {
+   "token": "s99e999",
+   "out": {
+    "s": 99,
+    "e": 999
+   }
+  },
+  {
+   "token": "s1",
+   "out": {
+    "s": 1,
+    "e": 0
+   }
+  },
+  {
+   "token": "s01",
+   "out": {
+    "s": 1,
+    "e": 0
+   }
+  },
+  {
+   "token": "s99",
+   "out": {
+    "s": 99,
+    "e": 0
+   }
+  },
+  {
+   "token": "s100",
+   "out": null
+  },
+  {
+   "token": "s1e",
+   "out": null
+  },
+  {
+   "token": "第12集",
+   "out": {
+    "s": 0,
+    "e": 12
+   }
+  },
+  {
+   "token": "第1话",
+   "out": {
+    "s": 0,
+    "e": 1
+   }
+  },
+  {
+   "token": "第1話",
+   "out": {
+    "s": 0,
+    "e": 1
+   }
+  },
+  {
+   "token": "第12季",
+   "out": {
+    "s": 12,
+    "e": 0
+   }
+  },
+  {
+   "token": "第0季",
+   "out": {
+    "s": 0,
+    "e": 0
+   }
+  },
+  {
+   "token": "第x集",
+   "out": null
+  },
+  {
+   "token": "e5",
+   "out": {
+    "s": 0,
+    "e": 5
+   }
+  },
+  {
+   "token": "ep5",
+   "out": {
+    "s": 0,
+    "e": 5
+   }
+  },
+  {
+   "token": "ep 5",
+   "out": null
+  },
+  {
+   "token": "e123",
+   "out": {
+    "s": 0,
+    "e": 123
+   }
+  },
+  {
+   "token": "e1234",
+   "out": null
+  },
+  {
+   "token": "ep0",
+   "out": {
+    "s": 0,
+    "e": 0
+   }
+  },
+  {
+   "token": "px5",
+   "out": null
+  },
+  {
+   "token": "season1",
+   "out": {
+    "s": 1,
+    "e": 0
+   }
+  },
+  {
+   "token": "season12",
+   "out": {
+    "s": 12,
+    "e": 0
+   }
+  },
+  {
+   "token": "season123",
+   "out": null
+  },
+  {
+   "token": "seasons",
+   "out": null
+  },
+  {
+   "token": "s1e2x",
+   "out": null
+  },
+  {
+   "token": "第1集x",
+   "out": null
+  },
+  {
+   "token": "第 1 集",
+   "out": null
+  },
+  {
+   "token": "s 1",
+   "out": null
+  },
+  {
+   "token": "e1x",
+   "out": null
+  }
+ ],
+ "season_forms": [
+  {
+   "s": 0,
+   "e": 0,
+   "out": []
+  },
+  {
+   "s": 0,
+   "e": 5,
+   "out": [
+    "第5集",
+    "第5话",
+    "第5話",
+    "e5",
+    "e05",
+    "ep5"
+   ]
+  },
+  {
+   "s": 5,
+   "e": 0,
+   "out": [
+    "s5",
+    "s05",
+    "season 5",
+    "第5季"
+   ]
+  },
+  {
+   "s": 1,
+   "e": 1,
+   "out": [
+    "s1e1",
+    "s01e01",
+    "s01 e01",
+    "e1",
+    "ep1"
+   ]
+  },
+  {
+   "s": 2,
+   "e": 12,
+   "out": [
+    "s2e12",
+    "s02e12",
+    "s02 e12",
+    "e12",
+    "ep12"
+   ]
+  },
+  {
+   "s": 12,
+   "e": 999,
+   "out": [
+    "s12e999",
+    "s12 e999",
+    "e999",
+    "ep999"
+   ]
+  }
+ ],
+ "parse": [
+  {
+   "in": "",
+   "out": {
+    "text": "",
+    "tokens": [],
+    "subject": [],
+    "mods": [],
+    "soft": []
+   },
+   "needles": []
+  },
+  {
+   "in": "1080p",
+   "out": {
+    "text": "1080p",
+    "tokens": [
+     "1080p"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": []
+  },
+  {
+   "in": "1080P 电影",
+   "out": {
+    "text": "1080p 电影",
+    "tokens": [
+     "1080p",
+     "电影"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": [
+     {
+      "text": "电影",
+      "forms": [
+       "电影",
+       "影片",
+       "movie",
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "电影",
+    "影片",
+    "movie",
+    "film"
+   ]
+  },
+  {
+   "in": "电影 1080p",
+   "out": {
+    "text": "电影 1080p",
+    "tokens": [
+     "电影",
+     "1080p"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": [
+     {
+      "text": "电影",
+      "forms": [
+       "电影",
+       "影片",
+       "movie",
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "电影",
+    "影片",
+    "movie",
+    "film"
+   ]
+  },
+  {
+   "in": "葬送的芙莉莲 1080p",
+   "out": {
+    "text": "葬送的芙莉莲 1080p",
+    "tokens": [
+     "葬送的芙莉莲",
+     "1080p"
+    ],
+    "subject": [
+     "葬送的芙莉莲"
+    ],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "葬送的芙莉莲"
+   ]
+  },
+  {
+   "in": "Sousou no Frieren S01E02 1080p x265",
+   "out": {
+    "text": "sousou no frieren s01e02 1080p x265",
+    "tokens": [
+     "sousou",
+     "no",
+     "frieren",
+     "s01e02",
+     "1080p",
+     "x265"
+    ],
+    "subject": [
+     "sousou",
+     "no",
+     "frieren"
+    ],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "s01e02",
+      "forms": [
+       "s1e2",
+       "s01e02",
+       "s01 e02",
+       "e2",
+       "ep2"
+      ],
+      "s": 1,
+      "e": 2
+     },
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     },
+     {
+      "text": "x265",
+      "forms": [
+       "x265",
+       "hevc",
+       "h265",
+       "h.265"
+      ],
+      "role": "CODEC"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "sousou",
+    "no",
+    "frieren"
+   ]
+  },
+  {
+   "in": "第12集 中字",
+   "out": {
+    "text": "第12集 中字",
+    "tokens": [
+     "第12集",
+     "中字"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "第12集",
+      "forms": [
+       "第12集",
+       "第12话",
+       "第12話",
+       "e12",
+       "ep12"
+      ],
+      "s": 0,
+      "e": 12
+     }
+    ],
+    "soft": [
+     {
+      "text": "中字",
+      "forms": [
+       "中字",
+       "中文字幕",
+       "简中",
+       "简体中文",
+       "chs",
+       "gb",
+       "中文",
+       "国语",
+       "普通话"
+      ],
+      "kind": "LANG"
+     }
+    ]
+   },
+   "needles": [
+    "中字",
+    "中文字幕",
+    "简中",
+    "简体中文",
+    "chs",
+    "gb",
+    "中文",
+    "国语",
+    "普通话"
+   ]
+  },
+  {
+   "in": "第3季 粤语",
+   "out": {
+    "text": "第3季 粤语",
+    "tokens": [
+     "第3季",
+     "粤语"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "第3季",
+      "forms": [
+       "s3",
+       "s03",
+       "season 3",
+       "第3季"
+      ],
+      "s": 3,
+      "e": 0
+     }
+    ],
+    "soft": [
+     {
+      "text": "粤语",
+      "forms": [
+       "粤语",
+       "粵語",
+       "广东话",
+       "廣東話",
+       "cantonese"
+      ],
+      "kind": "LANG"
+     }
+    ]
+   },
+   "needles": [
+    "粤语",
+    "粵語",
+    "广东话",
+    "廣東話",
+    "cantonese"
+   ]
+  },
+  {
+   "in": "season2 双语",
+   "out": {
+    "text": "season2 双语",
+    "tokens": [
+     "season2",
+     "双语"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "season2",
+      "forms": [
+       "s2",
+       "s02",
+       "season 2",
+       "第2季"
+      ],
+      "s": 2,
+      "e": 0
+     }
+    ],
+    "soft": [
+     {
+      "text": "双语",
+      "forms": [
+       "双语",
+       "雙語",
+       "中英",
+       "bilingual"
+      ],
+      "kind": "LANG"
+     }
+    ]
+   },
+   "needles": [
+    "双语",
+    "雙語",
+    "中英",
+    "bilingual"
+   ]
+  },
+  {
+   "in": "ep12 动画",
+   "out": {
+    "text": "ep12 动画",
+    "tokens": [
+     "ep12",
+     "动画"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "ep12",
+      "forms": [
+       "第12集",
+       "第12话",
+       "第12話",
+       "e12",
+       "ep12"
+      ],
+      "s": 0,
+      "e": 12
+     }
+    ],
+    "soft": [
+     {
+      "text": "动画",
+      "forms": [
+       "动画",
+       "動漫",
+       "动漫",
+       "動畫",
+       "anime"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "动画",
+    "動漫",
+    "动漫",
+    "動畫",
+    "anime"
+   ]
+  },
+  {
+   "in": "e05 动作",
+   "out": {
+    "text": "e05 动作",
+    "tokens": [
+     "e05",
+     "动作"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "SEASON",
+      "text": "e05",
+      "forms": [
+       "第5集",
+       "第5话",
+       "第5話",
+       "e5",
+       "e05",
+       "ep5"
+      ],
+      "s": 0,
+      "e": 5
+     }
+    ],
+    "soft": [
+     {
+      "text": "动作",
+      "forms": [
+       "动作"
+      ],
+      "kind": "GENRE"
+     }
+    ]
+   },
+   "needles": [
+    "动作"
+   ]
+  },
+  {
+   "in": "2024 电影",
+   "out": {
+    "text": "2024 电影",
+    "tokens": [
+     "2024",
+     "电影"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "YEAR",
+      "text": "2024",
+      "forms": [
+       "2024"
+      ]
+     }
+    ],
+    "soft": [
+     {
+      "text": "电影",
+      "forms": [
+       "电影",
+       "影片",
+       "movie",
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "电影",
+    "影片",
+    "movie",
+    "film"
+   ]
+  },
+  {
+   "in": "1999 movie 1080p",
+   "out": {
+    "text": "1999 movie 1080p",
+    "tokens": [
+     "1999",
+     "movie",
+     "1080p"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "role": "YEAR",
+      "text": "1999",
+      "forms": [
+       "1999"
+      ]
+     },
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": [
+     {
+      "text": "movie",
+      "forms": [
+       "movie",
+       "电影",
+       "影片",
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "movie",
+    "电影",
+    "影片",
+    "film"
+   ]
+  },
+  {
+   "in": "x265 hevc 10bit",
+   "out": {
+    "text": "x265 hevc 10bit",
+    "tokens": [
+     "x265",
+     "hevc",
+     "10bit"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "x265",
+      "forms": [
+       "x265",
+       "hevc",
+       "h265",
+       "h.265"
+      ],
+      "role": "CODEC"
+     },
+     {
+      "text": "hevc",
+      "forms": [
+       "hevc",
+       "x265",
+       "h265",
+       "h.265"
+      ],
+      "role": "CODEC"
+     },
+     {
+      "text": "10bit",
+      "forms": [
+       "10bit"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": []
+  },
+  {
+   "in": "web-dl blu-ray remux",
+   "out": {
+    "text": "web-dl blu-ray remux",
+    "tokens": [
+     "web-dl",
+     "blu-ray",
+     "remux"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "web-dl",
+      "forms": [
+       "web-dl",
+       "webdl",
+       "webrip",
+       "web dl"
+      ],
+      "role": "QUALITY"
+     },
+     {
+      "text": "blu-ray",
+      "forms": [
+       "blu-ray",
+       "bluray",
+       "bd",
+       "bdrip",
+       "brrip"
+      ],
+      "role": "QUALITY"
+     },
+     {
+      "text": "remux",
+      "forms": [
+       "remux",
+       "bdmv"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": []
+  },
+  {
+   "in": "5.1 7.1 atmos",
+   "out": {
+    "text": "5.1 7.1 atmos",
+    "tokens": [
+     "5.1",
+     "7.1",
+     "atmos"
+    ],
+    "subject": [],
+    "mods": [],
+    "soft": [
+     {
+      "text": "5.1",
+      "forms": [
+       "5.1"
+      ],
+      "kind": "AUDIO"
+     },
+     {
+      "text": "7.1",
+      "forms": [
+       "7.1"
+      ],
+      "kind": "AUDIO"
+     },
+     {
+      "text": "atmos",
+      "forms": [
+       "atmos"
+      ],
+      "kind": "AUDIO"
+     }
+    ]
+   },
+   "needles": [
+    "5.1",
+    "7.1",
+    "atmos"
+   ]
+  },
+  {
+   "in": "中字 粤语 国语",
+   "out": {
+    "text": "中字 粤语 国语",
+    "tokens": [
+     "中字",
+     "粤语",
+     "国语"
+    ],
+    "subject": [],
+    "mods": [],
+    "soft": [
+     {
+      "text": "中字",
+      "forms": [
+       "中字",
+       "中文字幕",
+       "简中",
+       "简体中文",
+       "chs",
+       "gb",
+       "中文",
+       "国语",
+       "普通话"
+      ],
+      "kind": "LANG"
+     },
+     {
+      "text": "粤语",
+      "forms": [
+       "粤语",
+       "粵語",
+       "广东话",
+       "廣東話",
+       "cantonese"
+      ],
+      "kind": "LANG"
+     },
+     {
+      "text": "国语",
+      "forms": [
+       "国语"
+      ],
+      "kind": "LANG"
+     }
+    ]
+   },
+   "needles": [
+    "中字",
+    "中文字幕",
+    "简中",
+    "简体中文",
+    "chs",
+    "gb",
+    "中文",
+    "国语",
+    "普通话",
+    "粤语",
+    "粵語",
+    "广东话",
+    "廣東話",
+    "cantonese"
+   ]
+  },
+  {
+   "in": "射击 开放世界 第三人称",
+   "out": {
+    "text": "射击 开放世界 第三人称",
+    "tokens": [
+     "射击",
+     "开放世界",
+     "第三人称"
+    ],
+    "subject": [],
+    "mods": [],
+    "soft": [
+     {
+      "text": "射击",
+      "forms": [
+       "射击",
+       "射擊",
+       "shooter",
+       "fps",
+       "tps"
+      ],
+      "kind": "GENRE"
+     },
+     {
+      "text": "开放世界",
+      "forms": [
+       "开放世界",
+       "開放世界",
+       "open world",
+       "openworld"
+      ],
+      "kind": "GENRE"
+     },
+     {
+      "text": "第三人称",
+      "forms": [
+       "第三人称",
+       "第三人稱",
+       "third person",
+       "third-person",
+       "tps",
+       "3rd person"
+      ],
+      "kind": "GENRE"
+     }
+    ]
+   },
+   "needles": [
+    "射击",
+    "射擊",
+    "shooter",
+    "fps",
+    "tps",
+    "开放世界",
+    "開放世界",
+    "open world",
+    "openworld",
+    "第三人称",
+    "第三人稱",
+    "third person",
+    "third-person",
+    "3rd person"
+   ]
+  },
+  {
+   "in": "合集 完结 batch",
+   "out": {
+    "text": "合集 完结 batch",
+    "tokens": [
+     "合集",
+     "完结",
+     "batch"
+    ],
+    "subject": [],
+    "mods": [],
+    "soft": [
+     {
+      "text": "合集",
+      "forms": [
+       "合集"
+      ],
+      "kind": "MISC"
+     },
+     {
+      "text": "完结",
+      "forms": [
+       "完结"
+      ],
+      "kind": "MISC"
+     },
+     {
+      "text": "batch",
+      "forms": [
+       "batch"
+      ],
+      "kind": "MISC"
+     }
+    ]
+   },
+   "needles": [
+    "合集",
+    "完结",
+    "batch"
+   ]
+  },
+  {
+   "in": "ubuntu-24.04.iso",
+   "out": {
+    "text": "ubuntu-24.04.iso",
+    "tokens": [
+     "ubuntu-24.04.iso"
+    ],
+    "subject": [
+     "ubuntu-24.04.iso"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "ubuntu-24.04.iso"
+   ]
+  },
+  {
+   "in": "ubuntu 24.04",
+   "out": {
+    "text": "ubuntu 24.04",
+    "tokens": [
+     "ubuntu",
+     "24.04"
+    ],
+    "subject": [
+     "ubuntu",
+     "24.04"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "ubuntu",
+    "24.04"
+   ]
+  },
+  {
+   "in": "１２００p 电影",
+   "out": {
+    "text": "1200p 电影",
+    "tokens": [
+     "1200p",
+     "电影"
+    ],
+    "subject": [
+     "1200p"
+    ],
+    "mods": [],
+    "soft": [
+     {
+      "text": "电影",
+      "forms": [
+       "电影",
+       "影片",
+       "movie",
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "1200p",
+    "电影",
+    "影片",
+    "movie",
+    "film"
+   ]
+  },
+  {
+   "in": "ﬁlm 1080p",
+   "out": {
+    "text": "film 1080p",
+    "tokens": [
+     "film",
+     "1080p"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": [
+     {
+      "text": "film",
+      "forms": [
+       "film"
+      ],
+      "kind": "TYPE"
+     }
+    ]
+   },
+   "needles": [
+    "film"
+   ]
+  },
+  {
+   "in": "[7³ACG] 1080p",
+   "out": {
+    "text": "[73acg] 1080p",
+    "tokens": [
+     "[73acg]",
+     "1080p"
+    ],
+    "subject": [
+     "[73acg]"
+    ],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "[73acg]"
+   ]
+  },
+  {
+   "in": "  多   空格  1080p  ",
+   "out": {
+    "text": "多 空格 1080p",
+    "tokens": [
+     "多",
+     "空格",
+     "1080p"
+    ],
+    "subject": [
+     "多",
+     "空格"
+    ],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "多",
+    "空格"
+   ]
+  },
+  {
+   "in": "a_b+c,d/e|f",
+   "out": {
+    "text": "a b c d e f",
+    "tokens": [
+     "a",
+     "b",
+     "c",
+     "d",
+     "e",
+     "f"
+    ],
+    "subject": [
+     "a",
+     "b",
+     "c",
+     "d",
+     "e",
+     "f"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f"
+   ]
+  },
+  {
+   "in": "1080",
+   "out": {
+    "text": "1080",
+    "tokens": [
+     "1080"
+    ],
+    "subject": [
+     "1080"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "1080"
+   ]
+  },
+  {
+   "in": "1080px",
+   "out": {
+    "text": "1080px",
+    "tokens": [
+     "1080px"
+    ],
+    "subject": [
+     "1080px"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "1080px"
+   ]
+  },
+  {
+   "in": "abc123",
+   "out": {
+    "text": "abc123",
+    "tokens": [
+     "abc123"
+    ],
+    "subject": [
+     "abc123"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "abc123"
+   ]
+  },
+  {
+   "in": "中1080p文",
+   "out": {
+    "text": "中1080p文",
+    "tokens": [
+     "中1080p文"
+    ],
+    "subject": [],
+    "mods": [
+     {
+      "text": "中1080p文",
+      "forms": [
+       "中1080p文",
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": []
+  },
+  {
+   "in": "xyz 未知词 1080p",
+   "out": {
+    "text": "xyz 未知词 1080p",
+    "tokens": [
+     "xyz",
+     "未知词",
+     "1080p"
+    ],
+    "subject": [
+     "xyz",
+     "未知词"
+    ],
+    "mods": [
+     {
+      "text": "1080p",
+      "forms": [
+       "1080p",
+       "fhd",
+       "fullhd",
+       "1920x1080"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "xyz",
+    "未知词"
+   ]
+  },
+  {
+   "in": "hd",
+   "out": {
+    "text": "hd",
+    "tokens": [
+     "hd"
+    ],
+    "subject": [
+     "hd"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "hd"
+   ]
+  },
+  {
+   "in": "2k qhd",
+   "out": {
+    "text": "2k qhd",
+    "tokens": [
+     "2k",
+     "qhd"
+    ],
+    "subject": [
+     "2k",
+     "qhd"
+    ],
+    "mods": [],
+    "soft": []
+   },
+   "needles": [
+    "2k",
+    "qhd"
+   ]
+  },
+  {
+   "in": "avc x264",
+   "out": {
+    "text": "avc x264",
+    "tokens": [
+     "avc",
+     "x264"
+    ],
+    "subject": [
+     "avc"
+    ],
+    "mods": [
+     {
+      "text": "x264",
+      "forms": [
+       "x264",
+       "h264",
+       "h.264",
+       "avc"
+      ],
+      "role": "CODEC"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "avc"
+   ]
+  },
+  {
+   "in": "4kuhd 2160p",
+   "out": {
+    "text": "4kuhd 2160p",
+    "tokens": [
+     "4kuhd",
+     "2160p"
+    ],
+    "subject": [
+     "4kuhd"
+    ],
+    "mods": [
+     {
+      "text": "2160p",
+      "forms": [
+       "2160p",
+       "4k",
+       "uhd",
+       "2160"
+      ],
+      "role": "QUALITY"
+     }
+    ],
+    "soft": []
+   },
+   "needles": [
+    "4kuhd"
+   ]
+  }
+ ],
+ "load": [
+  {
+   "name": "缺文件",
+   "raw": null,
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "坏 JSON",
+   "raw": "{",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "顶层不是数组",
+   "raw": "[]",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "空对象",
+   "raw": "{}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "新增角色",
+   "raw": "{\"words\": {\"EXTRA\": [\"blu\", \"ray\"]}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ],
+    "EXTRA": [
+     "blu",
+     "ray"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "覆盖内置角色",
+   "raw": "{\"words\": {\"QUALITY\": [\"onlyme\"]}}",
+   "words": {
+    "QUALITY": [
+     "onlyme"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "空列表忽略",
+   "raw": "{\"words\": {\"QUALITY\": []}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "非列表忽略",
+   "raw": "{\"words\": {\"QUALITY\": \"nope\"}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "词要 trim 转小写",
+   "raw": "{\"words\": {\"EXTRA\": [\"  Big \", \"  \", 5]}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ],
+    "EXTRA": [
+     "big",
+     "5"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "2160p",
+     "uhd",
+     "2160",
+     "4kuhd"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "变体",
+   "raw": "{\"variants\": {\" 4K \": [\" FOUR \", \"\"]}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "four"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  },
+  {
+   "name": "变体覆盖",
+   "raw": "{\"variants\": {\"4k\": [\"zzz\"]}}",
+   "words": {
+    "QUALITY": [
+     "2160p",
+     "1440p",
+     "1080p",
+     "1080i",
+     "720p",
+     "480p",
+     "4k",
+     "uhd",
+     "8k",
+     "bluray",
+     "blu-ray",
+     "bdrip",
+     "brrip",
+     "web-dl",
+     "webdl",
+     "webrip",
+     "hdtv",
+     "hdrip",
+     "dvdrip",
+     "remux",
+     "bdmv",
+     "hdr",
+     "sdr",
+     "10bit"
+    ],
+    "CODEC": [
+     "x264",
+     "x265",
+     "h264",
+     "h265",
+     "h.264",
+     "h.265",
+     "hevc",
+     "av1",
+     "xvid",
+     "vc1",
+     "vc-1",
+     "mpeg2"
+    ],
+    "AUDIO": [
+     "atmos",
+     "truehd",
+     "dts",
+     "ddp",
+     "aac",
+     "flac",
+     "dolby",
+     "5.1",
+     "7.1"
+    ],
+    "LANG": [
+     "中字",
+     "中文字幕",
+     "中英",
+     "简中",
+     "简体",
+     "繁中",
+     "繁體",
+     "粤语",
+     "粵語",
+     "广东话",
+     "廣東話",
+     "双语",
+     "雙語",
+     "国语",
+     "國語",
+     "普通话",
+     "chs",
+     "cht",
+     "gb",
+     "big5"
+    ],
+    "TYPE": [
+     "电影",
+     "影片",
+     "movie",
+     "film",
+     "游戏",
+     "遊戲",
+     "game",
+     "单机",
+     "單機",
+     "动漫",
+     "動漫",
+     "动画",
+     "動畫",
+     "anime",
+     "剧集",
+     "劇集",
+     "电视剧",
+     "電視劇",
+     "音乐",
+     "音樂",
+     "软件",
+     "軟體",
+     "电子书"
+    ],
+    "GENRE": [
+     "射击",
+     "射擊",
+     "第三人称",
+     "第三人稱",
+     "第一人称",
+     "第一人稱",
+     "开放世界",
+     "開放世界",
+     "像素",
+     "沙盒",
+     "策略",
+     "策略",
+     "动作",
+     "動作",
+     "冒险",
+     "冒險",
+     "角色扮演",
+     "恐怖",
+     "喜剧",
+     "喜劇",
+     "科幻",
+     "爱情",
+     "愛情",
+     "悬疑",
+     "懸疑",
+     "3d",
+     "2d",
+     "vr",
+     "回合制",
+     "即时",
+     "即時"
+    ],
+    "MISC": [
+     "合集",
+     "全集",
+     "完结",
+     "完結",
+     "未删减",
+     "未刪減",
+     "加长版",
+     "加長版",
+     "珍藏版",
+     "修复",
+     "修復",
+     "batch",
+     "pack",
+     "complete",
+     "proper",
+     "repack"
+    ]
+   },
+   "variants": {
+    "4k": [
+     "zzz"
+    ],
+    "2160p": [
+     "4k",
+     "uhd",
+     "2160"
+    ],
+    "1440p": [
+     "2k",
+     "qhd"
+    ],
+    "1080p": [
+     "fhd",
+     "fullhd",
+     "1920x1080"
+    ],
+    "720p": [
+     "hd",
+     "1280x720"
+    ],
+    "bluray": [
+     "blu-ray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "blu-ray": [
+     "bluray",
+     "bd",
+     "bdrip",
+     "brrip"
+    ],
+    "web-dl": [
+     "webdl",
+     "webrip",
+     "web dl"
+    ],
+    "webdl": [
+     "web-dl",
+     "webrip"
+    ],
+    "webrip": [
+     "web-dl",
+     "webdl"
+    ],
+    "remux": [
+     "bdmv"
+    ],
+    "x265": [
+     "hevc",
+     "h265",
+     "h.265"
+    ],
+    "x264": [
+     "h264",
+     "h.264",
+     "avc"
+    ],
+    "hevc": [
+     "x265",
+     "h265",
+     "h.265"
+    ],
+    "中字": [
+     "中文字幕",
+     "简中",
+     "简体中文",
+     "chs",
+     "gb",
+     "中文",
+     "国语",
+     "普通话"
+    ],
+    "粤语": [
+     "粵語",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "粵語": [
+     "粤语",
+     "广东话",
+     "廣東話",
+     "cantonese"
+    ],
+    "双语": [
+     "雙語",
+     "中英",
+     "bilingual"
+    ],
+    "电影": [
+     "影片",
+     "movie",
+     "film"
+    ],
+    "影片": [
+     "电影",
+     "movie",
+     "film"
+    ],
+    "movie": [
+     "电影",
+     "影片",
+     "film"
+    ],
+    "游戏": [
+     "遊戲",
+     "game",
+     "单机"
+    ],
+    "遊戲": [
+     "游戏",
+     "game",
+     "单机"
+    ],
+    "game": [
+     "游戏",
+     "遊戲"
+    ],
+    "动漫": [
+     "動漫",
+     "动画",
+     "動畫",
+     "anime"
+    ],
+    "动画": [
+     "動漫",
+     "动漫",
+     "動畫",
+     "anime"
+    ],
+    "第三人称": [
+     "第三人稱",
+     "third person",
+     "third-person",
+     "tps",
+     "3rd person"
+    ],
+    "第三人稱": [
+     "第三人称",
+     "third person",
+     "third-person",
+     "tps"
+    ],
+    "射击": [
+     "射擊",
+     "shooter",
+     "fps",
+     "tps"
+    ],
+    "开放世界": [
+     "開放世界",
+     "open world",
+     "openworld"
+    ]
+   }
+  }
+ ],
+ "builtin_roles": [
+  "QUALITY",
+  "CODEC",
+  "AUDIO",
+  "LANG",
+  "TYPE",
+  "GENRE",
+  "MISC"
+ ]
+}

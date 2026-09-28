@@ -1,0 +1,986 @@
+{
+ "_scope": "classify 的每个分支都会被 43 条错误文本覆盖到；state_of / window_empty 用 35 组窗口 + 前 6 种 outcome 的全排列两两组合。",
+ "classify": [
+  {
+   "ok": true,
+   "count": 5,
+   "err": "",
+   "ms": 100,
+   "outcome": "ok",
+   "code": 0
+  },
+  {
+   "ok": true,
+   "count": 0,
+   "err": "",
+   "ms": 100,
+   "outcome": "empty",
+   "code": 0
+  },
+  {
+   "ok": true,
+   "count": 5,
+   "err": "",
+   "ms": 6000,
+   "outcome": "slow",
+   "code": 0
+  },
+  {
+   "ok": true,
+   "count": 5,
+   "err": "",
+   "ms": 5000,
+   "outcome": "slow",
+   "code": 0
+  },
+  {
+   "ok": true,
+   "count": 5,
+   "err": "",
+   "ms": 0,
+   "outcome": "ok",
+   "code": 0
+  },
+  {
+   "ok": true,
+   "count": 1,
+   "err": "ignored",
+   "ms": 10,
+   "outcome": "ok",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 5,
+   "err": "",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "timed out",
+   "ms": 0,
+   "outcome": "timeout",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "连接超时",
+   "ms": 0,
+   "outcome": "timeout",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "TimeoutError('x')",
+   "ms": 0,
+   "outcome": "timeout",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 403: Forbidden",
+   "ms": 0,
+   "outcome": "http403",
+   "code": 403
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 401: Unauthorized",
+   "ms": 0,
+   "outcome": "http403",
+   "code": 401
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 429: Too Many Requests",
+   "ms": 0,
+   "outcome": "http429",
+   "code": 429
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 451: Unavailable For Legal Reasons",
+   "ms": 0,
+   "outcome": "http451",
+   "code": 451
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 404: Not Found",
+   "ms": 0,
+   "outcome": "http4xx",
+   "code": 404
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP Error 500: Internal Server Error",
+   "ms": 0,
+   "outcome": "http5xx",
+   "code": 500
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "HTTP 503",
+   "ms": 0,
+   "outcome": "http5xx",
+   "code": 503
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "状态码 429",
+   "ms": 0,
+   "outcome": "http429",
+   "code": 429
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "状态码418",
+   "ms": 0,
+   "outcome": "http4xx",
+   "code": 418
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "http error 404",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "已停止",
+   "ms": 0,
+   "outcome": "cancel",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "cancelled by user",
+   "ms": 0,
+   "outcome": "cancel",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "人机验证拦截",
+   "ms": 0,
+   "outcome": "blocked",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "部分影片需登入 JavDB 查看",
+   "ms": 0,
+   "outcome": "login",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "ShapeError: 结果页没有条目",
+   "ms": 0,
+   "outcome": "shape",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "系统代理 http://127.0.0.1:7890 连不上",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "代理不可达",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "Tunnel connection failed: 502 Bad Gateway",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "ProxyError: cannot connect",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "myproxy issue",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "tunneling failed",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "<urlopen error [WinError 10061]>",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "connection reset by peer",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "gaierror: getaddrinfo failed",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "网络请求失败",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "SSLError: certificate verify failed",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "JSONDecodeError: Expecting value: line 1",
+   "ms": 0,
+   "outcome": "parse",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "KeyError: 'hits'",
+   "ms": 0,
+   "outcome": "parse",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "TypeError: unsupported operand type(s)",
+   "ms": 0,
+   "outcome": "parse",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "something else entirely",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "state code 500",
+   "ms": 0,
+   "outcome": "unknown",
+   "code": 0
+  },
+  {
+   "ok": false,
+   "count": 0,
+   "err": "10061 is not a signal here",
+   "ms": 0,
+   "outcome": "net",
+   "code": 0
+  }
+ ],
+ "outcome_text": [
+  {
+   "outcome": "ok",
+   "code": 0,
+   "text": ""
+  },
+  {
+   "outcome": "empty",
+   "code": 0,
+   "text": "无结果"
+  },
+  {
+   "outcome": "slow",
+   "code": 0,
+   "text": ""
+  },
+  {
+   "outcome": "timeout",
+   "code": 0,
+   "text": "超时"
+  },
+  {
+   "outcome": "net",
+   "code": 0,
+   "text": "无法连接"
+  },
+  {
+   "outcome": "http403",
+   "code": 0,
+   "text": "403 拒绝"
+  },
+  {
+   "outcome": "http403",
+   "code": 403,
+   "text": "HTTP 403 拒绝"
+  },
+  {
+   "outcome": "http429",
+   "code": 0,
+   "text": "429 限流"
+  },
+  {
+   "outcome": "http5xx",
+   "code": 0,
+   "text": "服务异常"
+  },
+  {
+   "outcome": "http5xx",
+   "code": 503,
+   "text": "HTTP 503"
+  },
+  {
+   "outcome": "http4xx",
+   "code": 0,
+   "text": "请求被拒"
+  },
+  {
+   "outcome": "http4xx",
+   "code": 418,
+   "text": "HTTP 418"
+  },
+  {
+   "outcome": "cancel",
+   "code": 0,
+   "text": ""
+  },
+  {
+   "outcome": "parse",
+   "code": 0,
+   "text": "解析失败"
+  },
+  {
+   "outcome": "http451",
+   "code": 0,
+   "text": "451 地区受限"
+  },
+  {
+   "outcome": "blocked",
+   "code": 0,
+   "text": "人机验证拦截"
+  },
+  {
+   "outcome": "shape",
+   "code": 0,
+   "text": "结果页结构不符"
+  },
+  {
+   "outcome": "login",
+   "code": 0,
+   "text": "部分影片需登入 JavDB 查看"
+  },
+  {
+   "outcome": "unknown",
+   "code": 0,
+   "text": "请求失败"
+  },
+  {
+   "outcome": "nonsense",
+   "code": 0,
+   "text": ""
+  }
+ ],
+ "state_of": [
+  {
+   "in": [],
+   "state": "na",
+   "empty_window": false
+  },
+  {
+   "in": [
+    ""
+   ],
+   "state": "na",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": true
+  },
+  {
+   "in": [
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": true
+  },
+  {
+   "in": [
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "timeout",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "blocked"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "blocked",
+    "blocked",
+    "blocked"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http429"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http4xx"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http5xx"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http451"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "parse"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "shape"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "login"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "unknown"
+   ],
+   "state": "warn",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "cancel"
+   ],
+   "state": "na",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "cancel",
+    "cancel",
+    "cancel",
+    "cancel",
+    "cancel",
+    "cancel",
+    "cancel"
+   ],
+   "state": "na",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "ok",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "timeout",
+    "timeout",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "ok",
+    "timeout",
+    "timeout",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "empty",
+    "empty",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": true
+  },
+  {
+   "in": [
+    "empty",
+    "timeout",
+    "timeout",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "empty",
+    "empty",
+    "empty",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": true
+  },
+  {
+   "in": [
+    "cancel",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "cancel",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "",
+    "ok",
+    ""
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "slow",
+    "empty",
+    "empty",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": true
+  }
+ ],
+ "state_of_pairs": [
+  {
+   "in": [
+    "ok",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "ok",
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "empty",
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "slow",
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "timeout",
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net",
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "net",
+    "http403"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403",
+    "ok"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403",
+    "empty"
+   ],
+   "state": "empty",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403",
+    "slow"
+   ],
+   "state": "ok",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403",
+    "timeout"
+   ],
+   "state": "err",
+   "empty_window": false
+  },
+  {
+   "in": [
+    "http403",
+    "net"
+   ],
+   "state": "err",
+   "empty_window": false
+  }
+ ]
+}

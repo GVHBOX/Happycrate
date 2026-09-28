@@ -1,0 +1,210 @@
+{
+  "key": "javbus",
+  "query": "SSIS",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 4224,
+  "fetched_at": "2026-09-28T09:33:11+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-www-javbus-com-search-SSIS-1f0df4.html",
+      "url": "https://www.javbus.com/search/SSIS",
+      "request_body": null,
+      "bytes": 65658,
+      "sha1": "06ef1e79483b073773ff1fe1f7b64aa2045de7ef"
+    },
+    {
+      "n": 2,
+      "file": "02-www-javbus-com-SSIS-980-76c148.html",
+      "url": "https://www.javbus.com/SSIS-980",
+      "request_body": null,
+      "bytes": 49712,
+      "sha1": "b0877a01bcdec0022b7bd19091880e6115cb6ecf"
+    },
+    {
+      "n": 3,
+      "file": "03-www-javbus-com-SSIS-960-fee03d.html",
+      "url": "https://www.javbus.com/SSIS-960",
+      "request_body": null,
+      "bytes": 49939,
+      "sha1": "eb5e154c8e05c0509d4754d576eed4ded1b610c9"
+    },
+    {
+      "n": 4,
+      "file": "04-www-javbus-com-SSIS-997-4f9c1e.html",
+      "url": "https://www.javbus.com/SSIS-997",
+      "request_body": null,
+      "bytes": 49281,
+      "sha1": "17e9761480794a60451fe2bf7c80c8112425e260"
+    },
+    {
+      "n": 5,
+      "file": "05-www-javbus-com-SSIS-971-ab6950.html",
+      "url": "https://www.javbus.com/SSIS-971",
+      "request_body": null,
+      "bytes": 49511,
+      "sha1": "ad38a5f38267f75b0a7588a09b427057ecd0787b"
+    },
+    {
+      "n": 6,
+      "file": "06-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57910087988-l-c02c05.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57910087988&lang=zh&img=%2Fpics%2Fcover%2Fac3f_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 34126,
+      "sha1": "b3bb628ffcac1e3afa0e8d744761ce73880c71f1"
+    },
+    {
+      "n": 7,
+      "file": "07-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57296887988-l-a9ff16.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57296887988&lang=zh&img=%2Fpics%2Fcover%2Fa82x_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 34030,
+      "sha1": "18e3ddff953baae79c2468c46b28f5c8e046c87d"
+    },
+    {
+      "n": 8,
+      "file": "08-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57485187988-l-340bfa.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57485187988&lang=zh&img=%2Fpics%2Fcover%2Fa9bb_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 39019,
+      "sha1": "5d4ed5a9eea97f56525addb2ffcd9f708692a506"
+    },
+    {
+      "n": 9,
+      "file": "09-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57637387988-l-0cce3f.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57637387988&lang=zh&img=%2Fpics%2Fcover%2Faabc_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 37926,
+      "sha1": "216e325bb753d6f4a120674e9bc54d039fb00751"
+    },
+    {
+      "n": 10,
+      "file": "10-www-javbus-com-SSIS-985-fa5165.html",
+      "url": "https://www.javbus.com/SSIS-985",
+      "request_body": null,
+      "bytes": 48988,
+      "sha1": "d452f6a50648bf39c754650bb1d4fc863b2de451"
+    },
+    {
+      "n": 11,
+      "file": "11-www-javbus-com-SSIS-986-d6cbed.html",
+      "url": "https://www.javbus.com/SSIS-986",
+      "request_body": null,
+      "bytes": 49487,
+      "sha1": "78f664d9ca718ab6c28be5f28dff03b54aa67161"
+    },
+    {
+      "n": 12,
+      "file": "12-www-javbus-com-SSIS-936-a13de7.html",
+      "url": "https://www.javbus.com/SSIS-936",
+      "request_body": null,
+      "bytes": 49232,
+      "sha1": "6bd4ba84f7eeb920e75ffb4a180be0c1d22fbe19"
+    },
+    {
+      "n": 13,
+      "file": "13-www-javbus-com-SSIS-970-06a9c4.html",
+      "url": "https://www.javbus.com/SSIS-970",
+      "request_body": null,
+      "bytes": 48847,
+      "sha1": "d9efc9a8926c3bb54e69824446bfda8ab9bdd4d4"
+    },
+    {
+      "n": 14,
+      "file": "14-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56893687989-l-38bd00.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56893687989&lang=zh&img=%2Fpics%2Fcover%2Fa5fl_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 38532,
+      "sha1": "d9acc53cb5881b3f433ff8b0ba67b1c0876a32b3"
+    },
+    {
+      "n": 15,
+      "file": "15-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57097987989-l-2c17ec.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57097987989&lang=zh&img=%2Fpics%2Fcover%2Fa6s0_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 36188,
+      "sha1": "16a9ea6cb71158012ca8b164d56a913c46ac4589"
+    },
+    {
+      "n": 16,
+      "file": "16-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-57097887989-l-394c1e.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=57097887989&lang=zh&img=%2Fpics%2Fcover%2Fa6rz_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 32963,
+      "sha1": "9f5afc260e4f633d1b28466011ca064a5fb48b4a"
+    },
+    {
+      "n": 17,
+      "file": "17-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56893587989-l-2ca71a.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56893587989&lang=zh&img=%2Fpics%2Fcover%2Fa5fk_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 49081,
+      "sha1": "3ebdb506e4260c0f723b77d42e9885379d8de2b0"
+    },
+    {
+      "n": 18,
+      "file": "18-www-javbus-com-SSIS-984-32361d.html",
+      "url": "https://www.javbus.com/SSIS-984",
+      "request_body": null,
+      "bytes": 47638,
+      "sha1": "04545ee7e2afaa2b1aa687c71c699e543dbd0bd4"
+    },
+    {
+      "n": 19,
+      "file": "19-www-javbus-com-SSIS-982-18c33d.html",
+      "url": "https://www.javbus.com/SSIS-982",
+      "request_body": null,
+      "bytes": 49243,
+      "sha1": "d856f0fe3ede88b42548ac3bc11ff7ed5ce812b8"
+    },
+    {
+      "n": 20,
+      "file": "20-www-javbus-com-SSIS-978-f57e24.html",
+      "url": "https://www.javbus.com/SSIS-978",
+      "request_body": null,
+      "bytes": 50116,
+      "sha1": "13d01f8520691561d528fe8556880f2cf9b36412"
+    },
+    {
+      "n": 21,
+      "file": "21-www-javbus-com-SSIS-983-53f591.html",
+      "url": "https://www.javbus.com/SSIS-983",
+      "request_body": null,
+      "bytes": 50462,
+      "sha1": "5ed0d5e7570b91e29909e66f427f95f52a314bd3"
+    },
+    {
+      "n": 22,
+      "file": "22-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56893987990-l-2c525c.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56893987990&lang=zh&img=%2Fpics%2Fcover%2Fa5fo_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 28061,
+      "sha1": "f991bfef2cafc4eb9698e9ff4fe6b38ed700ed9f"
+    },
+    {
+      "n": 23,
+      "file": "23-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56893787990-l-713b7b.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56893787990&lang=zh&img=%2Fpics%2Fcover%2Fa5fm_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 38350,
+      "sha1": "6c8043298e247350343113641eaa4c8514e06ec6"
+    },
+    {
+      "n": 24,
+      "file": "24-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56894087990-l-5b31cd.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56894087990&lang=zh&img=%2Fpics%2Fcover%2Fa5fp_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 32927,
+      "sha1": "93696664ddc5b8ee7c23f7dc835b2ce8bdd935ed"
+    },
+    {
+      "n": 25,
+      "file": "25-www-javbus-com-ajax-uncledatoolsbyajax-php-gid-56893887990-l-396a18.txt",
+      "url": "https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=56893887990&lang=zh&img=%2Fpics%2Fcover%2Fa5fn_b.jpg&uc=0",
+      "request_body": null,
+      "bytes": 36496,
+      "sha1": "a2d77a8aac1be175fcdbed827c68165f1ad7c7bb"
+    }
+  ]
+}

@@ -1,0 +1,796 @@
+{
+ "_scope": "「现在」冻结为 2026-09-28 19:15:00+08:00。Rust 侧用 `LocalNow{naive, offset}` 表示同一时刻。`relaxed` 只用内置词表（data_dir 指向空目录）。",
+ "now": {
+  "naive": 1790622900,
+  "offset": 28800,
+  "year": 2026
+ },
+ "relative": [
+  {
+   "in": null,
+   "out": ""
+  },
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "abc",
+   "out": ""
+  },
+  {
+   "in": 0,
+   "out": ""
+  },
+  {
+   "in": -5,
+   "out": ""
+  },
+  {
+   "in": -1790594100,
+   "out": ""
+  },
+  {
+   "in": 1790594100,
+   "out": "刚刚"
+  },
+  {
+   "in": 1790594099,
+   "out": "刚刚"
+  },
+  {
+   "in": 1790594041,
+   "out": "刚刚"
+  },
+  {
+   "in": 1790594040,
+   "out": "1 分钟前"
+  },
+  {
+   "in": 1790594039,
+   "out": "1 分钟前"
+  },
+  {
+   "in": 1790590501,
+   "out": "59 分钟前"
+  },
+  {
+   "in": 1790590500,
+   "out": "1 小时前"
+  },
+  {
+   "in": 1790572501,
+   "out": "5 小时前"
+  },
+  {
+   "in": 1790572500,
+   "out": "今天 13:15"
+  },
+  {
+   "in": 1790507701,
+   "out": "昨天 19:15"
+  },
+  {
+   "in": 1790507700,
+   "out": "昨天 19:15"
+  },
+  {
+   "in": 1790507699,
+   "out": "昨天 19:14"
+  },
+  {
+   "in": 1790421300,
+   "out": "2 天前"
+  },
+  {
+   "in": 1790075700,
+   "out": "6 天前"
+  },
+  {
+   "in": 1789989300,
+   "out": "2026-09-21"
+  },
+  {
+   "in": 1788002100,
+   "out": "2026-08-29"
+  },
+  {
+   "in": 1790594700,
+   "out": "刚刚"
+  }
+ ],
+ "magnet": [
+  {
+   "in": {},
+   "out": ""
+  },
+  {
+   "in": {
+    "info_hash": ""
+   },
+   "out": ""
+  },
+  {
+   "in": {
+    "info_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   },
+   "out": "magnet:?xt=urn:btih:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+   "in": {
+    "info_hash": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "title": "标题 空格"
+   },
+   "out": "magnet:?xt=urn:btih:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&dn=%E6%A0%87%E9%A2%98%20%E7%A9%BA%E6%A0%BC"
+  },
+  {
+   "in": {
+    "info_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "magnet": "magnet:?xt=urn:btih:cc"
+   },
+   "out": "magnet:?xt=urn:btih:cc"
+  },
+  {
+   "in": {
+    "info_hash": "dddddddddddddddddddddddddddddddddddddddd",
+    "magnet": "MAGNET:?xt=urn:btih:ee"
+   },
+   "out": "MAGNET:?xt=urn:btih:ee"
+  },
+  {
+   "in": {
+    "info_hash": "ffffffffffffffffffffffffffffffffffffffff",
+    "magnet": "http://x"
+   },
+   "out": "magnet:?xt=urn:btih:ffffffffffffffffffffffffffffffffffffffff"
+  },
+  {
+   "in": {
+    "info_hash": " 1111111111111111111111111111111111111111 ",
+    "title": "a&b/c"
+   },
+   "out": "magnet:?xt=urn:btih:1111111111111111111111111111111111111111&dn=a%26b%2Fc"
+  }
+ ],
+ "as_int": [
+  {
+   "in": null,
+   "out": null
+  },
+  {
+   "in": "",
+   "out": null
+  },
+  {
+   "in": 0,
+   "out": 0
+  },
+  {
+   "in": 1,
+   "out": 1
+  },
+  {
+   "in": -1,
+   "out": -1
+  },
+  {
+   "in": 1.9,
+   "out": 1
+  },
+  {
+   "in": -1.9,
+   "out": -1
+  },
+  {
+   "in": "5",
+   "out": 5
+  },
+  {
+   "in": "5.9",
+   "out": null
+  },
+  {
+   "in": "abc",
+   "out": null
+  },
+  {
+   "in": "  7  ",
+   "out": 7
+  },
+  {
+   "in": true,
+   "out": 1
+  },
+  {
+   "in": false,
+   "out": 0
+  },
+  {
+   "in": [],
+   "out": null
+  },
+  {
+   "in": {},
+   "out": null
+  }
+ ],
+ "relaxed": [
+  {
+   "text": "",
+   "dropped": [],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "",
+   "dropped": [
+    "中字"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "",
+   "dropped": [
+    "电影"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [
+    "中字"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [
+    "电影"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "1080p",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [],
+   "next": "电影 x265",
+   "word": "1080p"
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "电影",
+   "word": "x265"
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [
+    "中字"
+   ],
+   "next": "电影 x265",
+   "word": "1080p"
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "电影",
+   "word": "x265"
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [
+    "电影"
+   ],
+   "next": "x265",
+   "word": "1080p"
+  },
+  {
+   "text": "电影 1080p x265",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "电影 x265",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [],
+   "next": "葬送的芙莉莲 s01e02 中字",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "葬送的芙莉莲 s01e02",
+   "word": "中字"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [
+    "中字"
+   ],
+   "next": "葬送的芙莉莲 s01e02",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "葬送的芙莉莲",
+   "word": "s01e02"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [
+    "电影"
+   ],
+   "next": "葬送的芙莉莲 s01e02 中字",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 S01E02 1080p 中字",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "葬送的芙莉莲 s01e02 中字",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [],
+   "next": "葬送的芙莉莲 中字 粤语",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "葬送的芙莉莲 粤语",
+   "word": "中字"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [
+    "中字"
+   ],
+   "next": "葬送的芙莉莲 粤语",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "葬送的芙莉莲",
+   "word": "粤语"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [
+    "电影"
+   ],
+   "next": "葬送的芙莉莲 中字 粤语",
+   "word": "1080p"
+  },
+  {
+   "text": "葬送的芙莉莲 中字 粤语 1080p",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "葬送的芙莉莲 中字 粤语",
+   "word": "1080p"
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [],
+   "next": "abc 未知词",
+   "word": "1080p"
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [
+    "中字"
+   ],
+   "next": "abc 未知词",
+   "word": "1080p"
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [
+    "电影"
+   ],
+   "next": "abc 未知词",
+   "word": "1080p"
+  },
+  {
+   "text": "abc 1080p 未知词",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "abc 未知词",
+   "word": "1080p"
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [],
+   "next": "电影",
+   "word": "2024"
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "电影",
+   "word": "2024"
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [
+    "中字"
+   ],
+   "next": "电影",
+   "word": "2024"
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "电影",
+   "word": "2024"
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [
+    "电影"
+   ],
+   "next": "",
+   "word": ""
+  },
+  {
+   "text": "2024 电影",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "电影",
+   "word": "2024"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [],
+   "next": "第3季",
+   "word": "动画"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [
+    "1080p"
+   ],
+   "next": "第3季",
+   "word": "动画"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [
+    "中字"
+   ],
+   "next": "第3季",
+   "word": "动画"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [
+    "1080p",
+    "中字"
+   ],
+   "next": "第3季",
+   "word": "动画"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [
+    "电影"
+   ],
+   "next": "第3季",
+   "word": "动画"
+  },
+  {
+   "text": "第3季 动画",
+   "dropped": [
+    "不存在的词"
+   ],
+   "next": "第3季",
+   "word": "动画"
+  }
+ ],
+ "item_view": [
+  {
+   "in": {},
+   "out": {
+    "hash": "",
+    "title": "",
+    "size": 0,
+    "sizeText": "",
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "addedText": "",
+    "magnet": "",
+    "sources": [],
+    "files": [],
+    "fetch": {}
+   }
+  },
+  {
+   "in": {
+    "info_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "title": "标题",
+    "size": 1073741824,
+    "seeders": 5,
+    "leechers": 1,
+    "added": 1790593800,
+    "source": "nyaa"
+   },
+   "out": {
+    "hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "title": "标题",
+    "size": 1073741824,
+    "sizeText": "1.0 GB",
+    "seeders": 5,
+    "leechers": 1,
+    "added": 1790593800,
+    "addedText": "5 分钟前",
+    "magnet": "magnet:?xt=urn:btih:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&dn=%E6%A0%87%E9%A2%98",
+    "sources": [
+     "nyaa"
+    ],
+    "files": [],
+    "fetch": {}
+   }
+  },
+  {
+   "in": {
+    "info_hash": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "title": "大写哈希",
+    "size": "2048",
+    "seeders": "7",
+    "leechers": "0",
+    "added": "1758",
+    "sources": [
+     "nyaa",
+     "tpb"
+    ],
+    "magnet": "magnet:?xt=urn:btih:CC"
+   },
+   "out": {
+    "hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "title": "大写哈希",
+    "size": 2048,
+    "sizeText": "2.0 KB",
+    "seeders": 7,
+    "leechers": 0,
+    "added": 1758,
+    "addedText": "1970-01-01",
+    "magnet": "magnet:?xt=urn:btih:CC",
+    "sources": [
+     "nyaa",
+     "tpb"
+    ],
+    "files": [],
+    "fetch": {}
+   }
+  },
+  {
+   "in": {
+    "info_hash": "cccccccccccccccccccccccccccccccccccccccc",
+    "size": 0,
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "files": [
+     {
+      "n": "a.mkv",
+      "b": 1048576
+     },
+     {
+      "n": "",
+      "b": 9
+     },
+     {
+      "n": "c",
+      "s": "1.0 MB"
+     },
+     {
+      "bad": 1
+     },
+     7
+    ]
+   },
+   "out": {
+    "hash": "cccccccccccccccccccccccccccccccccccccccc",
+    "title": "",
+    "size": 0,
+    "sizeText": "",
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "addedText": "",
+    "magnet": "magnet:?xt=urn:btih:cccccccccccccccccccccccccccccccccccccccc",
+    "sources": [],
+    "files": [
+     {
+      "n": "a.mkv",
+      "s": "1.0 MB"
+     },
+     {
+      "n": "c",
+      "s": "1.0 MB"
+     }
+    ],
+    "fetch": {}
+   }
+  },
+  {
+   "in": {
+    "info_hash": "dddddddddddddddddddddddddddddddddddddddd",
+    "files": "not-a-list",
+    "fetch": {
+     "url": "http://x/y"
+    }
+   },
+   "out": {
+    "hash": "dddddddddddddddddddddddddddddddddddddddd",
+    "title": "",
+    "size": 0,
+    "sizeText": "",
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "addedText": "",
+    "magnet": "magnet:?xt=urn:btih:dddddddddddddddddddddddddddddddddddddddd",
+    "sources": [],
+    "files": [],
+    "fetch": {
+     "url": "http://x/y"
+    }
+   }
+  },
+  {
+   "in": {
+    "info_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "fetch": {
+     "url": "ftp://x"
+    }
+   },
+   "out": {
+    "hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "title": "",
+    "size": 0,
+    "sizeText": "",
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "addedText": "",
+    "magnet": "magnet:?xt=urn:btih:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "sources": [],
+    "files": [],
+    "fetch": {}
+   }
+  },
+  {
+   "in": {
+    "info_hash": "ffffffffffffffffffffffffffffffffffffffff",
+    "sources": [],
+    "source": "mikan",
+    "fetch": {
+     "url": ""
+    }
+   },
+   "out": {
+    "hash": "ffffffffffffffffffffffffffffffffffffffff",
+    "title": "",
+    "size": 0,
+    "sizeText": "",
+    "seeders": null,
+    "leechers": null,
+    "added": 0,
+    "addedText": "",
+    "magnet": "magnet:?xt=urn:btih:ffffffffffffffffffffffffffffffffffffffff",
+    "sources": [
+     "mikan"
+    ],
+    "files": [],
+    "fetch": {}
+   }
+  }
+ ]
+}

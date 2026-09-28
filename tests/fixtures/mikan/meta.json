@@ -1,0 +1,18 @@
+{
+  "key": "mikan",
+  "query": "frieren",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 2248,
+  "fetched_at": "2026-09-28T09:33:01+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-mikanani-me-Home-Search-searchstr-frieren-b6379a.html",
+      "url": "https://mikanani.me/Home/Search?searchstr=frieren",
+      "request_body": null,
+      "bytes": 4295920,
+      "sha1": "b82a62f275d41bbb702a0b9b7e33e337ca364ef4"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "key": "xccl263",
+  "query": "ubuntu",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 6003,
+  "fetched_at": "2026-09-28T09:31:25+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-www-xccl263-xyz-search-kw-ubuntu-2-html-9bf34d.html",
+      "url": "https://www.xccl263.xyz/search/kw-ubuntu-2.html",
+      "request_body": null,
+      "bytes": 52562,
+      "sha1": "320156a4b6c6bf48ecc91fa99118e17056399342"
+    },
+    {
+      "n": 2,
+      "file": "02-www-xccl263-xyz-search-kw-ubuntu-1-html-d1b9d5.html",
+      "url": "https://www.xccl263.xyz/search/kw-ubuntu-1.html",
+      "request_body": null,
+      "bytes": 55341,
+      "sha1": "51a04c13d0441f599c4f5b08fb1916e9b4ef4d21"
+    },
+    {
+      "n": 3,
+      "file": "03-www-xccl263-xyz-search-kw-ubuntu-4-html-ed410e.html",
+      "url": "https://www.xccl263.xyz/search/kw-ubuntu-4.html",
+      "request_body": null,
+      "bytes": 52578,
+      "sha1": "82ff7722c015ca6d4e10d6a074dcdb3b9c12f326"
+    },
+    {
+      "n": 4,
+      "file": "04-www-xccl263-xyz-search-kw-ubuntu-3-html-5315d1.html",
+      "url": "https://www.xccl263.xyz/search/kw-ubuntu-3.html",
+      "request_body": null,
+      "bytes": 52359,
+      "sha1": "6f48b061eae9179b7594fd35f21f9570862c4626"
+    }
+  ]
+}

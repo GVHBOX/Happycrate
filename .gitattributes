@@ -1,0 +1,4 @@
+* text=auto
+tests/fixtures/** -text
+tests/parity/** -text
+tests/legacy/** -text

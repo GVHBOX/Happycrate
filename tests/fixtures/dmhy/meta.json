@@ -1,0 +1,58 @@
+{
+  "key": "dmhy",
+  "query": "frieren",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 1389,
+  "fetched_at": "2026-09-28T09:33:02+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-share-dmhy-org-topics-list-page-4-keyword-frieren-a1dd3f.html",
+      "url": "https://share.dmhy.org/topics/list/page/4?keyword=frieren",
+      "request_body": null,
+      "bytes": 292964,
+      "sha1": "dfebd673f8664336a4fdbb0261b602db3b30a4ff"
+    },
+    {
+      "n": 2,
+      "file": "02-share-dmhy-org-topics-list-page-6-keyword-frieren-0b2ec2.html",
+      "url": "https://share.dmhy.org/topics/list/page/6?keyword=frieren",
+      "request_body": null,
+      "bytes": 415885,
+      "sha1": "f2b8880b71263d5188181a8bf48f7832071e69db"
+    },
+    {
+      "n": 3,
+      "file": "03-share-dmhy-org-topics-list-page-1-keyword-frieren-a8899a.html",
+      "url": "https://share.dmhy.org/topics/list/page/1?keyword=frieren",
+      "request_body": null,
+      "bytes": 286121,
+      "sha1": "a2e3ca5d02176a15faab8e03f98aaeb717bace4c"
+    },
+    {
+      "n": 4,
+      "file": "04-share-dmhy-org-topics-list-page-3-keyword-frieren-92ffe1.html",
+      "url": "https://share.dmhy.org/topics/list/page/3?keyword=frieren",
+      "request_body": null,
+      "bytes": 308067,
+      "sha1": "0d7178176ee0424d39333e8a9b3942e5e3f74454"
+    },
+    {
+      "n": 5,
+      "file": "05-share-dmhy-org-topics-list-page-2-keyword-frieren-e929f4.html",
+      "url": "https://share.dmhy.org/topics/list/page/2?keyword=frieren",
+      "request_body": null,
+      "bytes": 307550,
+      "sha1": "81261646f4050914c6c2c71b3a619110fa3616a5"
+    },
+    {
+      "n": 6,
+      "file": "06-share-dmhy-org-topics-list-page-5-keyword-frieren-65ddbb.html",
+      "url": "https://share.dmhy.org/topics/list/page/5?keyword=frieren",
+      "request_body": null,
+      "bytes": 408742,
+      "sha1": "3ceef72525ba40bb228a83f7d0fa8bffb6fb9522"
+    }
+  ]
+}

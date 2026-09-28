@@ -1,0 +1,66 @@
+{
+  "key": "apibay",
+  "query": "ubuntu",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 791,
+  "fetched_at": "2026-09-28T09:30:50+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-apibay-org-q-php-q-ubuntu-716005.json",
+      "url": "https://apibay.org/q.php?q=ubuntu",
+      "request_body": null,
+      "bytes": 27772,
+      "sha1": "eab39b98cca821b3d2a5734399d4d2ec7a780bdf"
+    },
+    {
+      "n": 2,
+      "file": "02-apibay-org-q-php-q-ubuntu-cat-100-38b20c.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=100",
+      "request_body": null,
+      "bytes": 1936,
+      "sha1": "da94fa001ae732b22ba26d241a57f91979611770"
+    },
+    {
+      "n": 3,
+      "file": "03-apibay-org-q-php-q-ubuntu-cat-200-a0adf3.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=200",
+      "request_body": null,
+      "bytes": 6500,
+      "sha1": "384f974e8bc45bfe06400f13cd001567407a59f7"
+    },
+    {
+      "n": 4,
+      "file": "04-apibay-org-q-php-q-ubuntu-cat-400-e4f31d.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=400",
+      "request_body": null,
+      "bytes": 1625,
+      "sha1": "a26a462a1feb0bc32aae3466ea682dae6f089db2"
+    },
+    {
+      "n": 5,
+      "file": "05-apibay-org-q-php-q-ubuntu-cat-500-8751c2.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=500",
+      "request_body": null,
+      "bytes": 239,
+      "sha1": "452c48aa0b98bfd6b01a2106e1ebb1a36bf305b4"
+    },
+    {
+      "n": 6,
+      "file": "06-apibay-org-q-php-q-ubuntu-cat-300-7a6035.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=300",
+      "request_body": null,
+      "bytes": 26742,
+      "sha1": "bf5ca6c1ef72a702117d6679ac8983da11c2d3d7"
+    },
+    {
+      "n": 7,
+      "file": "07-apibay-org-q-php-q-ubuntu-cat-600-ce2989.json",
+      "url": "https://apibay.org/q.php?q=ubuntu&cat=600",
+      "request_body": null,
+      "bytes": 27855,
+      "sha1": "71488f22fc609c73ceaf8496712cc9ef41ab3600"
+    }
+  ]
+}

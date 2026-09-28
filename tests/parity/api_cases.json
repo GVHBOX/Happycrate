@@ -1,0 +1,7697 @@
+{
+ "_scope": "跳过 Api.boot()（它会跑旧配置迁移与健康存储加载）。`reload_from_config` 与搜索缓存清理在 Rust 侧没有对应物——配置是显式传给调度器的，不走模块全局；搜索缓存属 P3 搜索命令。`set_auto_order` 里的降级逻辑依赖健康数据，健康已暂缓，无数据时它是空操作。**JSON 键顺序不比**。",
+ "commands": [
+  {
+   "name": "默认列表",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [],
+   "results": [],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "打开某源",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "toggle_source",
+     "key": "javdb",
+     "value": true
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": true,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "关闭某源",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "toggle_source",
+     "key": "nyaa",
+     "value": false
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": false,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "未知源",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "toggle_source",
+     "key": "nope",
+     "value": true
+    }
+   ],
+   "results": [
+    false
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "重排两个",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "reorder_sources",
+     "keys": [
+      "nyaa",
+      "apibay"
+     ]
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": true,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   }
+  },
+  {
+   "name": "重排空表",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "reorder_sources",
+     "keys": []
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": true,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   }
+  },
+  {
+   "name": "重排未知名",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "reorder_sources",
+     "keys": [
+      "nope",
+      "nyaa"
+     ]
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": true,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "orderLocked": true
+   }
+  },
+  {
+   "name": "开启自动排序",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "set_auto_order",
+     "value": true
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "关闭自动排序",
+   "raw_sources": "{\"orderLocked\": true}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "set_auto_order",
+     "value": false
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "orderLocked": true,
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": true,
+   "saved_sources": {
+    "orderLocked": true,
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   }
+  },
+  {
+   "name": "保存合法值",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "timeout": 45
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": true,
+     "errors": []
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 45,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 45,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "保存越界值",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "timeout": 999
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": false,
+     "errors": [
+      "投递/清单超时需在 1-120 之间"
+     ]
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "保存未知键",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "nope": 1
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": false,
+     "errors": [
+      "nope取值不合法"
+     ]
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "保存一批含坏值",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "timeout": 45,
+      "retries": 99
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": false,
+     "errors": [
+      "重试次数需在 0-5 之间"
+     ]
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "代理不合法",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "proxy": "socks5://127.0.0.1:1080"
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": false,
+     "errors": [
+      "不支持 socks5 代理，只支持 HTTP 代理端口"
+     ]
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "代理合法",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {
+      "proxy": "  http://127.0.0.1:7890  ",
+      "theme": "light"
+     }
+    }
+   ],
+   "results": [
+    {
+     "ok": true,
+     "errors": []
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "  http://127.0.0.1:7890  ",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "  http://127.0.0.1:7890  ",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "空字段",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "save_settings",
+     "fields": {}
+    }
+   ],
+   "results": [
+    {
+     "ok": true,
+     "errors": []
+    }
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "重载词表",
+   "raw_sources": "{}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [
+    {
+     "op": "reload_query_roles"
+    }
+   ],
+   "results": [
+    true
+   ],
+   "sources_view": [
+    {
+     "key": "apibay",
+     "label": "海盗湾",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "version": 1,
+    "sources": [
+     {
+      "key": "apibay",
+      "label": "海盗湾",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 0
+     },
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ]
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {}
+  },
+  {
+   "name": "自定义地址",
+   "raw_sources": "{\"sources\": [{\"key\": \"nyaa\", \"label\": \"Nyaa\", \"base\": \"https://user:pw@mirror.example/\"}, {\"key\": \"apibay\", \"base\": \"\"}]}",
+   "raw_settings": "{\"theme\": \"dark\", \"min_query_len\": 3, \"timeout\": 30, \"nope\": 1}",
+   "ops": [],
+   "results": [],
+   "sources_view": [
+    {
+     "key": "nyaa",
+     "label": "Nyaa",
+     "enabled": true,
+     "addr": "https://***@mirror.example",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "apibay",
+     "label": "apibay",
+     "enabled": true,
+     "addr": "https://apibay.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "mikan",
+     "label": "蜜柑计划",
+     "enabled": true,
+     "addr": "https://mikanani.me",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "dmhy",
+     "label": "动漫花园",
+     "enabled": true,
+     "addr": "https://share.dmhy.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "sukebei",
+     "label": "Sukebei",
+     "enabled": true,
+     "addr": "https://sukebei.nyaa.si",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "eztv",
+     "label": "EZTV",
+     "enabled": true,
+     "addr": "https://eztvx.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "tpb",
+     "label": "TPB镜像",
+     "enabled": true,
+     "addr": "https://thepiratebay10.org",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "knaben",
+     "label": "Knaben",
+     "enabled": true,
+     "addr": "https://api.knaben.org/v1",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "xccl263",
+     "label": "小草磁力",
+     "enabled": true,
+     "addr": "https://www.xccl263.xyz",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javbus",
+     "label": "JavBus",
+     "enabled": true,
+     "addr": "https://www.javbus.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "bitsearch",
+     "label": "BitSearch",
+     "enabled": false,
+     "addr": "https://bitsearch.to",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    },
+    {
+     "key": "javdb",
+     "label": "JavDB",
+     "enabled": false,
+     "addr": "https://javdb.com",
+     "health": {
+      "ms": 0,
+      "err": "",
+      "state": "na",
+      "outcomes": []
+     }
+    }
+   ],
+   "get_settings": {
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "default_settings": {
+    "min_query_len": 2,
+    "max_workers": 12,
+    "timeout": 15,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "light",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "config_data": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "base": "https://user:pw@mirror.example/",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "order": 0
+     },
+     {
+      "key": "apibay",
+      "base": "",
+      "label": "apibay",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "order": 1
+     },
+     {
+      "key": "mikan",
+      "label": "蜜柑计划",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 2
+     },
+     {
+      "key": "dmhy",
+      "label": "动漫花园",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 3
+     },
+     {
+      "key": "sukebei",
+      "label": "Sukebei",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 4
+     },
+     {
+      "key": "eztv",
+      "label": "EZTV",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 5
+     },
+     {
+      "key": "tpb",
+      "label": "TPB镜像",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 6
+     },
+     {
+      "key": "knaben",
+      "label": "Knaben",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 15,
+      "base": "",
+      "order": 7
+     },
+     {
+      "key": "xccl263",
+      "label": "小草磁力",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 8
+     },
+     {
+      "key": "javbus",
+      "label": "JavBus",
+      "type": "builtin",
+      "enabled": true,
+      "timeout": 20,
+      "base": "",
+      "order": 9
+     },
+     {
+      "key": "bitsearch",
+      "label": "BitSearch",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 15,
+      "base": "",
+      "order": 10
+     },
+     {
+      "key": "javdb",
+      "label": "JavDB",
+      "type": "builtin",
+      "enabled": false,
+      "timeout": 20,
+      "base": "",
+      "order": 11
+     }
+    ],
+    "version": 1
+   },
+   "settings_data": {
+    "version": 1,
+    "min_query_len": 3,
+    "max_workers": 12,
+    "timeout": 30,
+    "default_downloader": "",
+    "retries": 1,
+    "user_agent": "",
+    "proxy": "",
+    "ui_font_size": 18,
+    "selbar": false,
+    "sound": true,
+    "sound_start": true,
+    "sound_done": true,
+    "sound_select": false,
+    "sound_copy": true,
+    "sound_deliver": true,
+    "sound_fail": false,
+    "sound_volume": 80,
+    "theme": "dark",
+    "brand": "lilac",
+    "auto_files": true,
+    "soft_deadline_ms": 3000,
+    "keep_duplicates": false,
+    "progress_style": "segment",
+    "progress_line": true,
+    "progress_look": "{\"on\":\"#8B7FE0\",\"warn\":\"#6F5CB8\",\"line\":\"#4C3D8F\",\"err\":\"#D4676E\",\"slot\":\"#E3E1F2\",\"gap\":\"#C5C1DF\"}"
+   },
+   "last_write_error": "",
+   "order_locked": false,
+   "saved_sources": {
+    "sources": [
+     {
+      "key": "nyaa",
+      "label": "Nyaa",
+      "base": "https://user:pw@mirror.example/"
+     },
+     {
+      "key": "apibay",
+      "base": ""
+     }
+    ]
+   }
+  }
+ ],
+ "redact": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "http://127.0.0.1:7890",
+   "out": "http://127.0.0.1:7890"
+  },
+  {
+   "in": "http://user:pw@host:8080/",
+   "out": "http://***@host:8080/"
+  },
+  {
+   "in": "https://a:b@h",
+   "out": "https://***@h"
+  },
+  {
+   "in": "https://a:b@h/x",
+   "out": "https://***@h/x"
+  },
+  {
+   "in": "http://a:b@h, http://c:d@i",
+   "out": "http://***@h, http://***@i"
+  },
+  {
+   "in": "ftp://user:pass@ftp.example",
+   "out": "ftp://***@ftp.example"
+  },
+  {
+   "in": "//u:p@h",
+   "out": "//***@h"
+  },
+  {
+   "in": "http://no-at-sign/",
+   "out": "http://no-at-sign/"
+  },
+  {
+   "in": "http://onlyuser@h",
+   "out": "http://onlyuser@h"
+  },
+  {
+   "in": "http://a:b@ c:d@h",
+   "out": "http://***@ c:d@h"
+  },
+  {
+   "in": "x//a:b@h",
+   "out": "x//***@h"
+  }
+ ],
+ "too_long": [
+  {
+   "in": "",
+   "out": false
+  },
+  {
+   "in": "a",
+   "out": false
+  },
+  {
+   "in": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "out": false
+  },
+  {
+   "in": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "out": false
+  },
+  {
+   "in": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "out": true
+  },
+  {
+   "in": "中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中",
+   "out": false
+  },
+  {
+   "in": "中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中",
+   "out": true
+  },
+  {
+   "in": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+   "out": false
+  }
+ ],
+ "spec_keys": [
+  "min_query_len",
+  "max_workers",
+  "timeout",
+  "default_downloader",
+  "retries",
+  "user_agent",
+  "proxy",
+  "ui_font_size",
+  "selbar",
+  "sound",
+  "sound_start",
+  "sound_done",
+  "sound_select",
+  "sound_copy",
+  "sound_deliver",
+  "sound_fail",
+  "sound_volume",
+  "theme",
+  "brand",
+  "auto_files",
+  "soft_deadline_ms",
+  "keep_duplicates",
+  "progress_style",
+  "progress_line",
+  "progress_look"
+ ],
+ "info": [
+  {
+   "name": "默认",
+   "raw_sources": "{}",
+   "raw_settings": "{\"proxy\": \"http://127.0.0.1:7890\"}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "手动设置 http://127.0.0.1:7890",
+   "autoOrder": true,
+   "recovered_count": 0,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "跟随系统",
+   "raw_sources": "{}",
+   "raw_settings": "{}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "跟随系统 http://127.0.0.1:7890",
+   "autoOrder": true,
+   "recovered_count": 0,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "手动代理带空格",
+   "raw_sources": "{}",
+   "raw_settings": "{\"proxy\": \"  http://p:1  \"}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "手动设置 http://p:1",
+   "autoOrder": true,
+   "recovered_count": 0,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "代理为空串",
+   "raw_sources": "{}",
+   "raw_settings": "{\"proxy\": \"\"}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "跟随系统 http://127.0.0.1:7890",
+   "autoOrder": true,
+   "recovered_count": 0,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "设置损坏",
+   "raw_sources": "{}",
+   "raw_settings": "{",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "跟随系统 http://127.0.0.1:7890",
+   "autoOrder": true,
+   "recovered_count": 1,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "锁定排序",
+   "raw_sources": "{\"orderLocked\": true}",
+   "raw_settings": "{\"proxy\": \"http://p:1\"}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "手动设置 http://p:1",
+   "autoOrder": false,
+   "recovered_count": 0,
+   "self_ok": true,
+   "self_missing": []
+  },
+  {
+   "name": "源损坏",
+   "raw_sources": "[",
+   "raw_settings": "{\"proxy\": \"http://p:1\"}",
+   "version": "1.0.0",
+   "mode": "环境变量指定",
+   "migratedFrom": "",
+   "proxy": "手动设置 http://p:1",
+   "autoOrder": true,
+   "recovered_count": 1,
+   "self_ok": true,
+   "self_missing": []
+  }
+ ],
+ "proxy": [
+  {
+   "name": "都没有",
+   "manual": {},
+   "system": {},
+   "probe_port": null,
+   "proxy_works": null,
+   "tun_stub": "",
+   "out": {
+    "mode": "none",
+    "addr": "",
+    "portOk": false,
+    "works": false,
+    "systemOn": false,
+    "tun": ""
+   }
+  },
+  {
+   "name": "只有系统",
+   "manual": {},
+   "system": {
+    "http": "http://s:1",
+    "https": "http://s:2"
+   },
+   "probe_port": true,
+   "proxy_works": true,
+   "tun_stub": "TUN0",
+   "out": {
+    "mode": "system",
+    "addr": "http://s:2",
+    "portOk": true,
+    "works": true,
+    "systemOn": true,
+    "tun": ""
+   }
+  },
+  {
+   "name": "只有系统且端口不通",
+   "manual": {},
+   "system": {
+    "http": "http://s:1"
+   },
+   "probe_port": false,
+   "proxy_works": null,
+   "tun_stub": "TUN0",
+   "out": {
+    "mode": "system",
+    "addr": "http://s:1",
+    "portOk": false,
+    "works": false,
+    "systemOn": true,
+    "tun": ""
+   }
+  },
+  {
+   "name": "手动优先于系统",
+   "manual": {
+    "http": "http://m:1"
+   },
+   "system": {
+    "https": "http://s:2"
+   },
+   "probe_port": true,
+   "proxy_works": false,
+   "tun_stub": "",
+   "out": {
+    "mode": "manual",
+    "addr": "http://m:1",
+    "portOk": true,
+    "works": false,
+    "systemOn": true,
+    "tun": ""
+   }
+  },
+  {
+   "name": "只有手动",
+   "manual": {
+    "https": "https://m:9"
+   },
+   "system": {},
+   "probe_port": true,
+   "proxy_works": true,
+   "tun_stub": "",
+   "out": {
+    "mode": "manual",
+    "addr": "https://m:9",
+    "portOk": true,
+    "works": true,
+    "systemOn": false,
+    "tun": ""
+   }
+  },
+  {
+   "name": "手动只有 http 键",
+   "manual": {
+    "http": "http://m:1"
+   },
+   "system": {},
+   "probe_port": true,
+   "proxy_works": true,
+   "tun_stub": "",
+   "out": {
+    "mode": "manual",
+    "addr": "http://m:1",
+    "portOk": true,
+    "works": true,
+    "systemOn": false,
+    "tun": ""
+   }
+  },
+  {
+   "name": "系统只有 http 键",
+   "manual": {},
+   "system": {
+    "http": "http://s:1"
+   },
+   "probe_port": true,
+   "proxy_works": true,
+   "tun_stub": "",
+   "out": {
+    "mode": "system",
+    "addr": "http://s:1",
+    "portOk": true,
+    "works": true,
+    "systemOn": true,
+    "tun": ""
+   }
+  },
+  {
+   "name": "手动为空串",
+   "manual": {},
+   "system": {},
+   "probe_port": null,
+   "proxy_works": null,
+   "tun_stub": "TUN0",
+   "out": {
+    "mode": "none",
+    "addr": "",
+    "portOk": false,
+    "works": false,
+    "systemOn": false,
+    "tun": "TUN0"
+   }
+  }
+ ],
+ "hex_color": [
+  {
+   "in": "",
+   "out": false
+  },
+  {
+   "in": "#",
+   "out": false
+  },
+  {
+   "in": "#fff",
+   "out": false
+  },
+  {
+   "in": "#ffffff",
+   "out": true
+  },
+  {
+   "in": "#FFFFFF",
+   "out": true
+  },
+  {
+   "in": "#8B7FE0",
+   "out": true
+  },
+  {
+   "in": "8B7FE0",
+   "out": false
+  },
+  {
+   "in": "#gggggg",
+   "out": false
+  },
+  {
+   "in": "#12345g",
+   "out": false
+  },
+  {
+   "in": " #ffffff ",
+   "out": true
+  },
+  {
+   "in": "#000000",
+   "out": true
+  },
+  {
+   "in": "#ffffffa",
+   "out": false
+  },
+  {
+   "in": "rgb(1,2,3)",
+   "out": false
+  },
+  {
+   "in": "#FfFfFf",
+   "out": true
+  }
+ ]
+}

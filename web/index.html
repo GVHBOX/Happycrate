@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>happycrate</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/motion.css">
+<link rel="stylesheet" href="styles/base.css">
+</head>
+<body>
+<div class="titlebar">
+  <button class="tb-home" id="tbHome" title="Happycrate">
+    <img class="tb-logo" src="logo.png" alt="">
+    <span class="tb-title" id="tbTitle">Happycrate</span>
+  </button>
+  <div class="tb-drag" data-tauri-drag-region></div>
+  <div class="tb-btns">
+    <button class="tb-btn" id="tbMin" title="最小化">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M1 5h8" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </button>
+    <button class="tb-btn" id="tbMax" title="最大化">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <rect x="1.5" y="1.5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1"/></svg>
+    </button>
+    <button class="tb-btn close" id="tbClose" title="关闭">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+<div id="app"></div>
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/views/sources.js"></script>
+<script src="js/views/search.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/diagnostics.js"></script>
+<script>
+(function(){
+  if (new URLSearchParams(location.search).has("static")){
+    document.documentElement.classList.add("static");
+  }
+
+  var app = document.getElementById("app");
+  var current = null;
+
+  function go(){
+    var name = location.hash.replace("#", "") || "search";
+    if (name === current) return;
+    if (HC.leaveGuard && HC.leaveGuard(function(){ location.hash = name; })){
+      location.hash = current;
+      return;
+    }
+    swapTo(name);
+  }
+
+  function swapTo(name){
+    current = name;
+    app.innerHTML = "";
+    if (name === "search") HC.views.search.mount(app);
+    else if (name === "settings") HC.views.settings.mount(app);
+    else HC.views.sources.mount(app);
+  }
+
+  function leave(action){
+    if (HC.leaveGuard && HC.leaveGuard(action)) return;
+    action();
+  }
+  HC.leave = leave;
+
+  window.addEventListener("hashchange", go);
+  go();
+  document.getElementById("tbHome").onclick = function(){
+    var name = location.hash.replace("#", "") || "search";
+    if (name !== "search"){
+      leave(function(){
+        if (HC.views.search.enterHero) HC.views.search.enterHero();
+        location.hash = "search";
+      });
+      return;
+    }
+    if (HC.views.search.toggleHero) HC.views.search.toggleHero();
+  };
+
+  function applyFont(v){
+    var n = parseInt(v, 10);
+    if (n >= 12 && n <= 24) document.documentElement.style.setProperty("--fr", String(n / 13));
+  }
+  HC.applyFont = applyFont;
+  HC.applyTheme = function(t){
+    document.body.classList.toggle("dark", t === "dark");
+    syncWindowTone();
+  };
+  HC.applyBrand = function(v){
+    document.body.setAttribute("data-brand", v || "");
+  };
+
+  var LOOK_DEFAULTS = {
+    on:"", warn:"", line:"", err:"", slot:"", gap:"",
+    h:10, radius:2.5, gapx:4, skew:16,
+    flow:700, ang:-55, sw:4, cycle:9, alpha:16, glow:8, pulse:550,
+    dlw:2, dlout:4, hold:420, step:45
+  };
+  var LOOK_RANGE = {
+    h:[6,16], radius:[0,6], gapx:[1,8], skew:[0,24],
+    flow:[300,2000], ang:[-80,-20], sw:[2,8], cycle:[6,18],
+    alpha:[5,40], glow:[0,14], pulse:[300,1200],
+    dlw:[1,4], dlout:[0,6], hold:[0,900], step:[15,110]
+  };
+  var LOOK_VARS = {
+    h:["--prog-h","px"], radius:["--prog-radius","px"], gapx:["--prog-gapx","px"],
+    skew:["--prog-skew","deg",-1], flow:["--prog-flow","ms"], ang:["--prog-ang","deg"],
+    sw:["--prog-sw","px"], cycle:["--prog-cycle","px"], alpha:["--prog-alpha","",0.01],
+    glow:["--prog-glow","px"], pulse:["--prog-pulse","ms"],
+    dlw:["--prog-dlw","px"], dlout:["--prog-dlout","px"]
+  };
+  var LOOK_COLORS = {on:"--prog-on", warn:"--prog-warn", line:"--prog-line",
+                     err:"--prog-err", slot:"--prog-slot", gap:"--prog-gap"};
+
+  function lookClamp(key, v){
+    var r = LOOK_RANGE[key];
+    if (!r) return v;
+    v = parseFloat(v);
+    if (isNaN(v)) return LOOK_DEFAULTS[key];
+    return Math.max(r[0], Math.min(r[1], v));
+  }
+
+  function readLook(raw){
+    var out = {};
+    var src = {};
+    if (typeof raw === "string" && raw){
+      try { src = JSON.parse(raw) || {}; } catch (e) { src = {}; }
+    } else if (raw && typeof raw === "object"){
+      src = raw;
+    }
+    Object.keys(LOOK_DEFAULTS).forEach(function(k){
+      var v = src[k];
+      if (v === undefined || v === null || v === ""){
+        out[k] = LOOK_DEFAULTS[k];
+      } else if (LOOK_RANGE[k]){
+        out[k] = lookClamp(k, v);
+      } else {
+        out[k] = String(v).trim();
+      }
+    });
+    return out;
+  }
+
+  function lookParam(key, override){
+    var raw = (override === undefined || override === null)
+      ? (HC.progressLook || {})[key]
+      : override;
+    var v = parseFloat(raw);
+    if (isNaN(v)) v = LOOK_DEFAULTS[key];
+    var r = LOOK_RANGE[key];
+    return r ? Math.max(r[0], Math.min(r[1], v)) : v;
+  }
+
+  function progUnlight(bar, opt){
+    var o = opt || {};
+    var step = lookParam("step", o.step);
+    var defer = o.defer || function(fn, ms){ return setTimeout(fn, ms); };
+    var alive = o.alive || function(){ return true; };
+    var lit = [].slice.call(bar.querySelectorAll(o.lit || ".pseg.on")).reverse();
+    lit.forEach(function(seg, i){
+      defer(function(){ if (alive()) seg.className = "pseg"; }, i * step);
+    });
+    return {count: lit.length, step: step, tail: HC.PROG_TAIL_MS || 560};
+  }
+
+  function hexToHsl(hex){
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || "").trim());
+    if (!m) return null;
+    var r = parseInt(m[1].slice(0,2),16)/255, g = parseInt(m[1].slice(2,4),16)/255, b = parseInt(m[1].slice(4,6),16)/255;
+    var mx = Math.max(r,g,b), mn = Math.min(r,g,b), d = mx-mn, l = (mx+mn)/2, h = 0, s = 0;
+    if (d){
+      s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
+      if (mx === r) h = ((g-b)/d + (g < b ? 6 : 0));
+      else if (mx === g) h = (b-r)/d + 2;
+      else h = (r-g)/d + 4;
+      h *= 60;
+    }
+    return [h, s, l];
+  }
+
+  function shade(hex, dl){
+    var c = hexToHsl(hex);
+    if (!c) return "";
+    var s = Math.min(1, Math.max(0, c[1]));
+    var l = Math.min(1, Math.max(0, c[2] + dl));
+    var hh = ((c[0] % 360) + 360) % 360 / 360;
+    var q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    var f = function(t){
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q-p)*6*t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q-p)*(2/3-t)*6;
+      return p;
+    };
+    var to = function(v){ return ("0" + Math.round(Math.min(1,Math.max(0,v))*255).toString(16)).slice(-2); };
+    return "#" + to(f(hh + 1/3)) + to(f(hh)) + to(f(hh - 1/3));
+  }
+
+  var LOOK_HEX = /^#[0-9a-fA-F]{6}$/;
+
+  HC.applyProgressLook = function(raw){
+    var look = readLook(raw);
+    var st = document.documentElement.style;
+    Object.keys(LOOK_COLORS).forEach(function(k){
+      var v = look[k];
+      if (v && LOOK_HEX.test(v)) st.setProperty(LOOK_COLORS[k], v);
+      else st.removeProperty(LOOK_COLORS[k]);
+    });
+    if (look.on && LOOK_HEX.test(look.on)) st.setProperty("--prog-on-stripe", shade(look.on, -0.12));
+    else st.removeProperty("--prog-on-stripe");
+    if (look.warn && LOOK_HEX.test(look.warn)) st.setProperty("--prog-warn-stripe", shade(look.warn, -0.09));
+    else st.removeProperty("--prog-warn-stripe");
+    Object.keys(LOOK_VARS).forEach(function(k){
+      var spec = LOOK_VARS[k];
+      var v = look[k] * (spec[2] || 1);
+      if (spec[1] === "ms" || spec[1] === "px" || spec[1] === "deg") v = Math.round(v * 100) / 100;
+      st.setProperty(spec[0], String(v) + spec[1]);
+    });
+    HC.progressLook = look;
+    return look;
+  };
+  HC.LOOK_DEFAULTS = LOOK_DEFAULTS;
+  HC.LOOK_RANGE = LOOK_RANGE;
+  HC.LOOK_COLORS = LOOK_COLORS;
+  HC.readLook = readLook;
+  HC.lookParam = lookParam;
+  HC.progUnlight = progUnlight;
+  HC.lookShade = shade;
+
+  var TONE = {light: "#FFFFFF", dark: "#131419"};
+  var DIMMED = {light: "#A3A3AA", dark: "#6D6D70"};
+  var lastTone = "";
+
+  function syncWindowTone(){
+    var dark = document.body.classList.contains("dark");
+    var dim = !!document.querySelector(".backdrop");
+    var c = dim ? DIMMED[dark ? "dark" : "light"] : TONE[dark ? "dark" : "light"];
+    if (c === lastTone) return;
+    lastTone = c;
+    HC.api.setWindowTone(c);
+  }
+  HC.syncWindowTone = syncWindowTone;
+
+  var toneTimer = 0;
+  function watchBackdrop(){
+    clearTimeout(toneTimer);
+    toneTimer = setTimeout(syncWindowTone, 30);
+  }
+  document.addEventListener("focusin", function(e){
+    var t = e.target;
+    if (!t) return;
+    if (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA") return;
+    if (t.type === "range" || t.type === "color") return;
+    t.spellcheck = false;
+  });
+
+  document.addEventListener("DOMContentLoaded", function(){
+    new MutationObserver(watchBackdrop).observe(document.body, {childList: true});
+  });
+
+  function applySettings(s){
+    HC.settings = s;
+    applyFont(s.ui_font_size);
+    HC.applyTheme(s.theme);
+    HC.applyBrand(s.brand);
+    HC.applyProgressLook(s.progress_look);
+  }
+  HC.applySettings = applySettings;
+
+  function loadSettings(){
+    return HC.api.getSettings().then(function(s){
+      if (!s) return;
+      applySettings(s);
+    });
+  }
+
+  var recoveredTold = false;
+
+  function loadInfo(){
+    return HC.api.appInfo().then(function(info){
+      if (info && info.version){
+        document.getElementById("tbTitle").textContent = "Happycrate v" + info.version;
+      }
+      var back = (info && info.recovered) || [];
+      if (recoveredTold || !back.length) return;
+      recoveredTold = true;
+      HC.motion.toast("已恢复默认设置，原文件备份在 " + back.join(" · "), "long");
+    });
+  }
+
+  loadSettings().catch(function(err){ console.warn("getSettings failed", err); });
+  loadInfo().catch(function(err){ console.warn("appInfo failed", err); });
+  HC.api.onLive(function(){
+    loadSettings().catch(function(err){ console.warn("getSettings failed", err); });
+    loadInfo().catch(function(){});
+  });
+})();
+
+(function(){
+  function call(name){
+    var core = window.__TAURI__ && window.__TAURI__.core;
+    if (core && typeof core.invoke === "function") core.invoke(name);
+  }
+  document.getElementById("tbMin").onclick = function(){ call("win_min"); };
+  document.getElementById("tbMax").onclick = function(){ call("win_max"); };
+  document.getElementById("tbClose").onclick = function(){
+    HC.leave(function(){ call("win_close"); });
+  };
+  var drag = document.querySelector(".tb-drag");
+  drag.addEventListener("dblclick", function(){ call("win_max"); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+{
+ "_scope": "老配置迁移（CLB 时代 → 现在）。老目录是合成的边角样本，放在 tests/legacy/，测试把 CLB_DATA_DIR 指向它。`migrated_from` 单独校验：path 必须等于那个老目录，at 只校验形状（YYYY-MM-DDTHH:MM:SS），不比具体秒。",
+ "report": {
+  "done": true,
+  "settings": 8,
+  "sources": 4
+ },
+ "settings": {
+  "version": 1,
+  "min_query_len": 5,
+  "max_workers": 12,
+  "timeout": 15,
+  "default_downloader": "thunder",
+  "retries": 1,
+  "user_agent": "",
+  "proxy": "",
+  "ui_font_size": 18,
+  "selbar": true,
+  "sound": true,
+  "sound_start": true,
+  "sound_done": true,
+  "sound_select": false,
+  "sound_copy": true,
+  "sound_deliver": true,
+  "sound_fail": false,
+  "sound_volume": 80,
+  "theme": "dark",
+  "brand": "lilac",
+  "auto_files": true,
+  "soft_deadline_ms": 3000,
+  "keep_duplicates": true,
+  "progress_style": "segment",
+  "progress_line": true,
+  "progress_look": "{bad json}"
+ },
+ "changed_settings": [
+  "default_downloader",
+  "keep_duplicates",
+  "min_query_len",
+  "progress_look",
+  "selbar",
+  "theme"
+ ],
+ "sources": [
+  {
+   "key": "apibay",
+   "label": "海盗湾",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 45,
+   "base": "",
+   "order": 0
+  },
+  {
+   "key": "mikan",
+   "label": "蜜柑计划",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 15,
+   "base": "",
+   "order": 1
+  },
+  {
+   "key": "dmhy",
+   "label": "动漫花园",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 15,
+   "base": "",
+   "order": 2
+  },
+  {
+   "key": "eztv",
+   "label": "EZTV",
+   "type": "builtin",
+   "enabled": false,
+   "timeout": 15,
+   "base": "",
+   "order": 3
+  },
+  {
+   "key": "sukebei",
+   "label": "Sukebei",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 15,
+   "base": "",
+   "order": 4
+  },
+  {
+   "key": "nyaa",
+   "label": "Nyaa",
+   "type": "builtin",
+   "enabled": false,
+   "timeout": 30,
+   "base": "https://alt.example/nyaa",
+   "order": 5
+  },
+  {
+   "key": "tpb",
+   "label": "TPB镜像",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 15,
+   "base": "",
+   "order": 6
+  },
+  {
+   "key": "knaben",
+   "label": "Knaben",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 15,
+   "base": "",
+   "order": 7
+  },
+  {
+   "key": "xccl263",
+   "label": "小草磁力",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 20,
+   "base": "",
+   "order": 8
+  },
+  {
+   "key": "javbus",
+   "label": "JavBus",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 20,
+   "base": "",
+   "order": 9
+  },
+  {
+   "key": "bitsearch",
+   "label": "BitSearch",
+   "type": "builtin",
+   "enabled": false,
+   "timeout": 15,
+   "base": "",
+   "order": 10
+  },
+  {
+   "key": "javdb",
+   "label": "JavDB",
+   "type": "builtin",
+   "enabled": false,
+   "timeout": 20,
+   "base": "",
+   "order": 11
+  }
+ ]
+}

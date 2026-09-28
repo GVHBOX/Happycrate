@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "key": "nyaa",
+      "enabled": false,
+      "order": 5,
+      "timeout": 30,
+      "base": "https://alt.example/nyaa"
+    },
+    {
+      "key": "mikan",
+      "enabled": true,
+      "timeout": 0
+    },
+    {
+      "key": "dmhy",
+      "enabled": "yes",
+      "timeout": 121
+    },
+    {
+      "key": "btdig",
+      "enabled": true,
+      "order": 9
+    },
+    {
+      "key": "tpb",
+      "order": "abc"
+    },
+    {
+      "key": "eztv",
+      "enabled": 0
+    },
+    {
+      "key": "apibay",
+      "base": "   ",
+      "timeout": "45"
+    },
+    {
+      "key": "",
+      "enabled": true
+    },
+    "不是对象"
+  ]
+}

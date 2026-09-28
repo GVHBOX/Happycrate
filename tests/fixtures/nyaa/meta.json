@@ -1,0 +1,130 @@
+{
+  "key": "nyaa",
+  "query": "frieren",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 8832,
+  "fetched_at": "2026-09-28T09:39:41+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-nyaa-si-page-rss-q-frieren-p-1-83be83.xml",
+      "url": "https://nyaa.si/?page=rss&q=frieren&p=1",
+      "request_body": null,
+      "bytes": 78148,
+      "sha1": "3b0ccb2bb692258bcf1dfec3011348a2492ef990"
+    },
+    {
+      "n": 2,
+      "file": "02-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-3-44974f.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=3",
+      "request_body": null,
+      "bytes": 128515,
+      "sha1": "2af59bff6166867dba6ba20c8a4aec4fed40f658"
+    },
+    {
+      "n": 3,
+      "file": "03-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-2-2ef2e2.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=2",
+      "request_body": null,
+      "bytes": 122674,
+      "sha1": "c2f75a86b1ad436a38bfbcf29367929401c6e294"
+    },
+    {
+      "n": 4,
+      "file": "04-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-1-c00ec2.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=1",
+      "request_body": null,
+      "bytes": 123155,
+      "sha1": "cbc36a74df4a6368887eadacbe0d7ec6dad8439f"
+    },
+    {
+      "n": 5,
+      "file": "05-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-5-6edeb0.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=5",
+      "request_body": null,
+      "bytes": 123174,
+      "sha1": "e52b04cc200cf8a195c64b8f7bbd91270946f494"
+    },
+    {
+      "n": 6,
+      "file": "06-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-4-3d1cc7.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=4",
+      "request_body": null,
+      "bytes": 127477,
+      "sha1": "9fd49cc42f89ddf6dde9c96313665461eeb131b4"
+    },
+    {
+      "n": 7,
+      "file": "07-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-6-e78c65.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=6",
+      "request_body": null,
+      "bytes": 116132,
+      "sha1": "12ce253bda10d919a9b13606dd5bb136f433b761"
+    },
+    {
+      "n": 8,
+      "file": "08-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-7-c5fbd9.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=7",
+      "request_body": null,
+      "bytes": 120193,
+      "sha1": "1aeb9a5955221608b225ff4e8ece51dda5ed550c"
+    },
+    {
+      "n": 9,
+      "file": "09-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-8-e095a8.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=8",
+      "request_body": null,
+      "bytes": 125675,
+      "sha1": "28b69110a2f399d146f058aa426c2a8ef0ddf069"
+    },
+    {
+      "n": 10,
+      "file": "10-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-9-fb0ffb.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=9",
+      "request_body": null,
+      "bytes": 126334,
+      "sha1": "e935e1553020eccc74287a34878ed4229a9d921d"
+    },
+    {
+      "n": 11,
+      "file": "11-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-10-8b62e7.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=10",
+      "request_body": null,
+      "bytes": 125801,
+      "sha1": "40d6e7852c7c0432409b4ac64c833ee143b34ef9"
+    },
+    {
+      "n": 12,
+      "file": "12-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-11-d3f6c7.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=11",
+      "request_body": null,
+      "bytes": 128025,
+      "sha1": "c9b39c0565f0cafdbd07602bd33a0a1da2515e3b"
+    },
+    {
+      "n": 13,
+      "file": "13-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-12-e0919a.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=12",
+      "request_body": null,
+      "bytes": 126180,
+      "sha1": "e27e41ced2a75194169f564d2dc9f3b9c35237c4"
+    },
+    {
+      "n": 14,
+      "file": "14-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-14-43c5a5.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=14",
+      "request_body": null,
+      "bytes": 52370,
+      "sha1": "00728e5d890e836ce8516162eb97659e43996768"
+    },
+    {
+      "n": 15,
+      "file": "15-nyaa-si-q-frieren-c-0-0-f-0-s-seeders-o-desc-p-13-32596e.html",
+      "url": "https://nyaa.si/?q=frieren&c=0_0&f=0&s=seeders&o=desc&p=13",
+      "request_body": null,
+      "bytes": 125470,
+      "sha1": "44ce1753e9785c7f13bf32a8103cfa7596b71eec"
+    }
+  ]
+}

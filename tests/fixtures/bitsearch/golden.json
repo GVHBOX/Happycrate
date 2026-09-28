@@ -1,0 +1,2009 @@
+{
+  "count": 200,
+  "err": "",
+  "items": [
+    {
+      "added": 1790586032.71,
+      "info_hash": "611f70899d4e1d6a9c39cfc925f103dfef630328",
+      "leechers": 311,
+      "magnet": "magnet:?xt=urn:btih:611f70899d4e1d6a9c39cfc925f103dfef630328&dn=ubuntu-24.04.2-desktop-amd64.iso",
+      "seeders": 165,
+      "size": 6343219200,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586037.492,
+      "info_hash": "443c7602b4fde83d1154d6d9da48808418b181b6",
+      "leechers": 340,
+      "magnet": "magnet:?xt=urn:btih:443c7602b4fde83d1154d6d9da48808418b181b6&dn=ubuntu-23.04-desktop-amd64.iso",
+      "seeders": 163,
+      "size": 4932407296,
+      "source": "bitsearch",
+      "title": "ubuntu-23.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586044.977,
+      "info_hash": "d6b4535ba8f2b34012bc633569f113e77017e032",
+      "leechers": 237,
+      "magnet": "magnet:?xt=urn:btih:d6b4535ba8f2b34012bc633569f113e77017e032&dn=ubuntu-23.04-live-server-amd64.iso",
+      "seeders": 136,
+      "size": 2641264640,
+      "source": "bitsearch",
+      "title": "ubuntu-23.04-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586044.576,
+      "info_hash": "2aa4f5a7e209e54b32803d43670971c4c8caaa05",
+      "leechers": 310,
+      "magnet": "magnet:?xt=urn:btih:2aa4f5a7e209e54b32803d43670971c4c8caaa05&dn=ubuntu-24.04-desktop-amd64.iso",
+      "seeders": 123,
+      "size": 6114656256,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586013.891,
+      "info_hash": "5f48f68d0e7cfe2c4cce3d33104fcffaf6145135",
+      "leechers": 183,
+      "magnet": "magnet:?xt=urn:btih:5f48f68d0e7cfe2c4cce3d33104fcffaf6145135&dn=ubuntu-22.10-live-server-amd64.iso",
+      "seeders": 117,
+      "size": 1642631168,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586016.828,
+      "info_hash": "99c82bb73505a3c0b453f9fa0e881d6e5a32a0c1",
+      "leechers": 233,
+      "magnet": "magnet:?xt=urn:btih:99c82bb73505a3c0b453f9fa0e881d6e5a32a0c1&dn=ubuntu-22.10-desktop-amd64.iso",
+      "seeders": 116,
+      "size": 4071903232,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586034.583,
+      "info_hash": "9e638562ab1c1fced9def142864cdd5a7019e1aa",
+      "leechers": 175,
+      "magnet": "magnet:?xt=urn:btih:9e638562ab1c1fced9def142864cdd5a7019e1aa&dn=ubuntu-22.04.2-live-server-amd64.iso",
+      "seeders": 105,
+      "size": 1975971840,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.2-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586064.573,
+      "info_hash": "cf3ea75e2ebbd30e0da6e6e215e2226bf35f2e33",
+      "leechers": 181,
+      "magnet": "magnet:?xt=urn:btih:cf3ea75e2ebbd30e0da6e6e215e2226bf35f2e33&dn=ubuntu-22.04.1-live-server-amd64.iso",
+      "seeders": 98,
+      "size": 1474873344,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.1-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586013.98,
+      "info_hash": "e0d9af6671db5bc4fc77ab5462c50e2f3545dad9",
+      "leechers": 231,
+      "magnet": "magnet:?xt=urn:btih:e0d9af6671db5bc4fc77ab5462c50e2f3545dad9&dn=ubuntu-20.04.5-desktop-amd64.iso",
+      "seeders": 94,
+      "size": 3864182784,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.5-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586026.957,
+      "info_hash": "5f5e8848426129ab63cb4db717bb54193c1c1ad7",
+      "leechers": 275,
+      "magnet": "magnet:?xt=urn:btih:5f5e8848426129ab63cb4db717bb54193c1c1ad7&dn=ubuntu-20.04.6-desktop-amd64.iso",
+      "seeders": 92,
+      "size": 4351463424,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.6-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586009.194,
+      "info_hash": "af89ab583826696f9e77d4cc07826e65ed831bf4",
+      "leechers": 302,
+      "magnet": "magnet:?xt=urn:btih:af89ab583826696f9e77d4cc07826e65ed831bf4&dn=ubuntu-24.04.2-live-server-amd64.iso",
+      "seeders": 87,
+      "size": 3213064192,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04.2-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586011.383,
+      "info_hash": "8a19577fb5f690970ca43a57ff1011ae202244b8",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:8a19577fb5f690970ca43a57ff1011ae202244b8&dn=ubuntu-25.04-desktop-amd64.iso",
+      "seeders": 87,
+      "size": 6278520832,
+      "source": "bitsearch",
+      "title": "ubuntu-25.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586054.546,
+      "info_hash": "cfb0ce978c1c8ec691d76e207f349337bce6efc4",
+      "leechers": 176,
+      "magnet": "magnet:?xt=urn:btih:cfb0ce978c1c8ec691d76e207f349337bce6efc4&dn=ubuntu-20.04.6-live-server-amd64.iso",
+      "seeders": 82,
+      "size": 1487339520,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.6-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586012.5,
+      "info_hash": "94a315e2cf8015b2f635d79aab592e6db557d5ea",
+      "leechers": 170,
+      "magnet": "magnet:?xt=urn:btih:94a315e2cf8015b2f635d79aab592e6db557d5ea&dn=ubuntu-18.04.5-desktop-amd64.iso",
+      "seeders": 81,
+      "size": 2193522688,
+      "source": "bitsearch",
+      "title": "ubuntu-18.04.5-desktop-amd64.iso"
+    },
+    {
+      "added": 1789830967.185,
+      "info_hash": "dafc8c076ca2f3ed376eeae7c76a0d6be2415c45",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:dafc8c076ca2f3ed376eeae7c76a0d6be2415c45&dn=ubuntu-26.04-desktop-amd64.iso",
+      "seeders": 78,
+      "size": 6518974464,
+      "source": "bitsearch",
+      "title": "ubuntu-26.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1790586053.468,
+      "info_hash": "232cd67eb3ffbd7c37bf9ec3ee887417e5ae1ee6",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:232cd67eb3ffbd7c37bf9ec3ee887417e5ae1ee6&dn=Clinton%20D.%2C%20Negus%20C.%20Ubuntu%20Linux%20Bible%2011ed%202025",
+      "seeders": 78,
+      "size": 8554738,
+      "source": "bitsearch",
+      "title": "Clinton D., Negus C. Ubuntu Linux Bible 11ed 2025"
+    },
+    {
+      "added": 1790586009.424,
+      "info_hash": "c1463792a1ff36a237e3a0f68badeb0d3764e9bb",
+      "leechers": 134,
+      "magnet": "magnet:?xt=urn:btih:c1463792a1ff36a237e3a0f68badeb0d3764e9bb&dn=ubuntu-23.10-live-server-amd64.iso",
+      "seeders": 68,
+      "size": 2662275072,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-live-server-amd64.iso"
+    },
+    {
+      "added": 1786549567.856,
+      "info_hash": "2e8e44068b254814ea1a7d4969a9af1d78e0f51f",
+      "leechers": 18,
+      "magnet": "magnet:?xt=urn:btih:2e8e44068b254814ea1a7d4969a9af1d78e0f51f&dn=ubuntu-22.04.5-desktop-amd64.iso",
+      "seeders": 63,
+      "size": 4762707968,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.5-desktop-amd64.iso"
+    },
+    {
+      "added": 1790544627.487,
+      "info_hash": "01c137287d6f0ed05a56742dae794f632c79ff3d",
+      "leechers": 6,
+      "magnet": "magnet:?xt=urn:btih:01c137287d6f0ed05a56742dae794f632c79ff3d&dn=ubuntu-24.04.4-desktop-amd64.iso",
+      "seeders": 63,
+      "size": 6655619072,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04.4-desktop-amd64.iso"
+    },
+    {
+      "added": 1788058849.855,
+      "info_hash": "e1fc140a6391357fa1cf08ddb70274f9c05eb88b",
+      "leechers": 22,
+      "magnet": "magnet:?xt=urn:btih:e1fc140a6391357fa1cf08ddb70274f9c05eb88b&dn=ubuntu-26.04-live-server-amd64.iso",
+      "seeders": 61,
+      "size": 2918598656,
+      "source": "bitsearch",
+      "title": "ubuntu-26.04-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586028.164,
+      "info_hash": "3a4b6e8c7869a18611ba35683f85c2267901c9e4",
+      "leechers": 122,
+      "magnet": "magnet:?xt=urn:btih:3a4b6e8c7869a18611ba35683f85c2267901c9e4&dn=ubuntu-20.04.5-live-server-amd64.iso",
+      "seeders": 60,
+      "size": 1406533632,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.5-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586063.156,
+      "info_hash": "9fc20b9e98ea98b4a35e6223041a5ef94ea27809",
+      "leechers": 101,
+      "magnet": "magnet:?xt=urn:btih:9fc20b9e98ea98b4a35e6223041a5ef94ea27809&dn=ubuntu-20.04-desktop-amd64.iso",
+      "seeders": 59,
+      "size": 2715254784,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1790544612.679,
+      "info_hash": "3f9aac158c7de8dfcab171ea58a17aabdf7fbc93",
+      "leechers": 17,
+      "magnet": "magnet:?xt=urn:btih:3f9aac158c7de8dfcab171ea58a17aabdf7fbc93&dn=ubuntu-24.10-desktop-amd64.iso",
+      "seeders": 58,
+      "size": 5665497088,
+      "source": "bitsearch",
+      "title": "ubuntu-24.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1786425322.735,
+      "info_hash": "c8295ce630f2064f08440db1534e4992cfe4862a",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:c8295ce630f2064f08440db1534e4992cfe4862a&dn=ubuntu-25.10-desktop-amd64.iso",
+      "seeders": 57,
+      "size": 5702520832,
+      "source": "bitsearch",
+      "title": "ubuntu-25.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106203.622,
+      "info_hash": "d029fda9878ca5fc2a7dc1ff9b70df57b7ef2eee",
+      "leechers": 94,
+      "magnet": "magnet:?xt=urn:btih:d029fda9878ca5fc2a7dc1ff9b70df57b7ef2eee&dn=ubuntu-23.10-desktop-amd64.iso",
+      "seeders": 55,
+      "size": 5225402368,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106223.687,
+      "info_hash": "9ecd4676fd0f0474151a4b74a5958f42639cebdf",
+      "leechers": 149,
+      "magnet": "magnet:?xt=urn:btih:9ecd4676fd0f0474151a4b74a5958f42639cebdf&dn=ubuntu-23.10.1-desktop-amd64.iso",
+      "seeders": 55,
+      "size": 5173995520,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106202.135,
+      "info_hash": "e7088644335bd66118c01d3e4ece64f2630fb1c6",
+      "leechers": 144,
+      "magnet": "magnet:?xt=urn:btih:e7088644335bd66118c01d3e4ece64f2630fb1c6&dn=ubuntu-mate-22.04.2-desktop-amd64.iso",
+      "seeders": 52,
+      "size": 3292123136,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106217.731,
+      "info_hash": "d1101a2b9d202811a05e8c57c557a20bf974dc8a",
+      "leechers": 167,
+      "magnet": "magnet:?xt=urn:btih:d1101a2b9d202811a05e8c57c557a20bf974dc8a&dn=ubuntu-20.04.1-desktop-amd64.iso",
+      "seeders": 51,
+      "size": 2785017856,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106227.281,
+      "info_hash": "f864749966037b62be4d28b6af5e229cfa7f1798",
+      "leechers": 83,
+      "magnet": "magnet:?xt=urn:btih:f864749966037b62be4d28b6af5e229cfa7f1798&dn=ubuntu-mate-22.10-desktop-amd64.iso",
+      "seeders": 51,
+      "size": 3199547392,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1790544611.579,
+      "info_hash": "4a3f5e08bcef825718eda30637230585e3330599",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:4a3f5e08bcef825718eda30637230585e3330599&dn=ubuntu-24.04.1-desktop-amd64.iso",
+      "seeders": 51,
+      "size": 6203355136,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1789825517.097,
+      "info_hash": "45bb7b3ac77116ef4e7ec743e2a8319caddf87b1",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:45bb7b3ac77116ef4e7ec743e2a8319caddf87b1&dn=Ubuntu%20Linux%20Bible%2011E%20by%20David%20Clinton%20%28epub%29%28Nonfiction%29.epub",
+      "seeders": 50,
+      "size": 8488590,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Bible 11E by David Clinton (epub)(Nonfiction).epub"
+    },
+    {
+      "added": 1785414625.049,
+      "info_hash": "4d29c6c02c97caad937d8a9b66b0bb1b6f7cbbfe",
+      "leechers": 75,
+      "magnet": "magnet:?xt=urn:btih:4d29c6c02c97caad937d8a9b66b0bb1b6f7cbbfe&dn=ubuntu-22.04.4-live-server-amd64.iso",
+      "seeders": 46,
+      "size": 2104408064,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.4-live-server-amd64.iso"
+    },
+    {
+      "added": 1784753104.96,
+      "info_hash": "5ddf1457426dcd0357154e15a57292a61fcca926",
+      "leechers": 45,
+      "magnet": "magnet:?xt=urn:btih:5ddf1457426dcd0357154e15a57292a61fcca926&dn=ubuntu-budgie-22.04.4-desktop-amd64.iso",
+      "seeders": 45,
+      "size": 3623774208,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.04.4-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106202.003,
+      "info_hash": "5fff0e1c8ac414860310bcc1cb76ac28e960efbe",
+      "leechers": 129,
+      "magnet": "magnet:?xt=urn:btih:5fff0e1c8ac414860310bcc1cb76ac28e960efbe&dn=ubuntu-20.10-desktop-amd64.iso",
+      "seeders": 45,
+      "size": 2942003200,
+      "source": "bitsearch",
+      "title": "ubuntu-20.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1784753103.452,
+      "info_hash": "d2c758662a4c1d75f36613f8e44efde80368c54e",
+      "leechers": 85,
+      "magnet": "magnet:?xt=urn:btih:d2c758662a4c1d75f36613f8e44efde80368c54e&dn=ubuntu-budgie-22.10-desktop-amd64.iso",
+      "seeders": 44,
+      "size": 3065038848,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1789830912.543,
+      "info_hash": "5b1e0d988fc7a0c9e99bd852071681a59974b39f",
+      "leechers": 15,
+      "magnet": "magnet:?xt=urn:btih:5b1e0d988fc7a0c9e99bd852071681a59974b39f&dn=ubuntu-26.04.1-desktop-amd64.iso",
+      "seeders": 42,
+      "size": 6482409472,
+      "source": "bitsearch",
+      "title": "ubuntu-26.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1782106234.213,
+      "info_hash": "018e50b58106b84a42c223ccf0494334f8d55958",
+      "leechers": 92,
+      "magnet": "magnet:?xt=urn:btih:018e50b58106b84a42c223ccf0494334f8d55958&dn=ubuntu-22.04.4-desktop-amd64.iso",
+      "seeders": 41,
+      "size": 5017356288,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.4-desktop-amd64.iso"
+    },
+    {
+      "added": 1785414661.961,
+      "info_hash": "da1a0defb35d43a218fc7eb0fc8d4c6c44a3ed2d",
+      "leechers": 68,
+      "magnet": "magnet:?xt=urn:btih:da1a0defb35d43a218fc7eb0fc8d4c6c44a3ed2d&dn=ubuntu-22.04.3-live-server-amd64.iso",
+      "seeders": 40,
+      "size": 2133391360,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.3-live-server-amd64.iso"
+    },
+    {
+      "added": 1783345558.884,
+      "info_hash": "d83624d047049a5f65102ff83439e9a03f33fa7a",
+      "leechers": 52,
+      "magnet": "magnet:?xt=urn:btih:d83624d047049a5f65102ff83439e9a03f33fa7a&dn=%5B%20DevCourseWeb.com%20%5D%20Ubuntu%20for%20Non-Geeks%20-%20A%20Pain-Free%2C%20Get-Things-Done%20Guide%2C%204th%20Edition%20%28True%20PDF%29",
+      "seeders": 39,
+      "size": 25996942,
+      "source": "bitsearch",
+      "title": "[ DevCourseWeb.com ] Ubuntu for Non-Geeks - A Pain-Free, Get-Things-Done Guide, 4th Edition (True PDF)"
+    },
+    {
+      "added": 1789823717.465,
+      "info_hash": "95c6c298c84fee2eee10c044d673537da158f0f8",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:95c6c298c84fee2eee10c044d673537da158f0f8&dn=ubuntu-22.04.5-live-server-amd64.iso",
+      "seeders": 39,
+      "size": 2136926208,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.5-live-server-amd64.iso"
+    },
+    {
+      "added": 1775901683.029,
+      "info_hash": "4ba4fbf7231a3a660e86892707d25c135533a16a",
+      "leechers": 35,
+      "magnet": "magnet:?xt=urn:btih:4ba4fbf7231a3a660e86892707d25c135533a16a&dn=ubuntu-20.04.2.0-desktop-amd64.iso",
+      "seeders": 38,
+      "size": 2877227008,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.2.0-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "eed74c895ea640bf75d42c19b71eaf64ab72677e",
+      "leechers": 74,
+      "magnet": "magnet:?xt=urn:btih:eed74c895ea640bf75d42c19b71eaf64ab72677e&dn=ubuntu-unity-23.04-desktop-amd64.iso",
+      "seeders": 38,
+      "size": 3294054400,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-23.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1786140935.972,
+      "info_hash": "ed185dd2d7f4d7a28205543b37b6adfe4912e4f7",
+      "leechers": 71,
+      "magnet": "magnet:?xt=urn:btih:ed185dd2d7f4d7a28205543b37b6adfe4912e4f7&dn=ubuntu-unity-24.04-desktop-amd64.iso",
+      "seeders": 37,
+      "size": 3518937088,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-24.04-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "7f1f147998639094012392bb645e52957cb57680",
+      "leechers": 70,
+      "magnet": "magnet:?xt=urn:btih:7f1f147998639094012392bb645e52957cb57680&dn=ubuntu-mate-23.04-desktop-amd64.iso",
+      "seeders": 36,
+      "size": 3535142912,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-23.04-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "f9623b09f6e2d07060678557f7b5263440b3cdfa",
+      "leechers": 54,
+      "magnet": "magnet:?xt=urn:btih:f9623b09f6e2d07060678557f7b5263440b3cdfa&dn=ubuntu-mate-22.04.4-desktop-amd64.iso",
+      "seeders": 35,
+      "size": 3733731328,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.04.4-desktop-amd64.iso"
+    },
+    {
+      "added": 1786140936.057,
+      "info_hash": "f2dda5966f434bbd60679415629718b2040f3076",
+      "leechers": 54,
+      "magnet": "magnet:?xt=urn:btih:f2dda5966f434bbd60679415629718b2040f3076&dn=ubuntu-budgie-24.04-desktop-amd64.iso",
+      "seeders": 35,
+      "size": 4087312384,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-24.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472823.331,
+      "info_hash": "3c82d39a50e10ccba2b187a23a02e73c6a2030d3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3c82d39a50e10ccba2b187a23a02e73c6a2030d3&dn=OBS-Studio-32.2.1-Ubuntu-24.04-x86_64.deb",
+      "seeders": 34,
+      "size": 134324444,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.2.1-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1775901634.458,
+      "info_hash": "ea65091942261e2b5efa6c10a085d63dc3780801",
+      "leechers": 69,
+      "magnet": "magnet:?xt=urn:btih:ea65091942261e2b5efa6c10a085d63dc3780801&dn=ubuntu-unity-22.10-desktop-amd64.iso",
+      "seeders": 33,
+      "size": 3066966016,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-22.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1783122357.078,
+      "info_hash": "7aa799e587ba22a097db14075dda1e40390f4036",
+      "leechers": 62,
+      "magnet": "magnet:?xt=urn:btih:7aa799e587ba22a097db14075dda1e40390f4036&dn=ubuntu-budgie-23.10.1-desktop-amd64.iso",
+      "seeders": 33,
+      "size": 3871952896,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-23.10.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1785414606.88,
+      "info_hash": "dd5600473d34ffa3bdbe0f25800ec3981752ac60",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:dd5600473d34ffa3bdbe0f25800ec3981752ac60&dn=ubuntu-25.04-live-server-amd64.iso",
+      "seeders": 33,
+      "size": 2021750784,
+      "source": "bitsearch",
+      "title": "ubuntu-25.04-live-server-amd64.iso"
+    },
+    {
+      "added": 1786140939.488,
+      "info_hash": "956291e2d0d3a86acc62c510ea997679fc2436db",
+      "leechers": 95,
+      "magnet": "magnet:?xt=urn:btih:956291e2d0d3a86acc62c510ea997679fc2436db&dn=ubuntu-mate-24.04-desktop-amd64.iso",
+      "seeders": 33,
+      "size": 4196413440,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-24.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472723.507,
+      "info_hash": "ddcf1fad453de2cbee00af61296a799e9e27f02b",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:ddcf1fad453de2cbee00af61296a799e9e27f02b&dn=OBS-Studio-32.2.0-Ubuntu-24.04-x86_64.deb",
+      "seeders": 32,
+      "size": 134324376,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.2.0-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": null,
+      "info_hash": "f47e9667ff73818408ef83b0153de3aa6cce7fbb",
+      "leechers": 58,
+      "magnet": "magnet:?xt=urn:btih:f47e9667ff73818408ef83b0153de3aa6cce7fbb&dn=ubuntu-unity-23.10-desktop-amd64.iso",
+      "seeders": 32,
+      "size": 3516002304,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-23.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1778274010.545,
+      "info_hash": "e1388bffe5143dd3a9066b23ea55ef791b69d4f3",
+      "leechers": 50,
+      "magnet": "magnet:?xt=urn:btih:e1388bffe5143dd3a9066b23ea55ef791b69d4f3&dn=ubuntu-budgie-22.04.1-desktop-amd64.iso",
+      "seeders": 32,
+      "size": 2627831808,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1786140939.272,
+      "info_hash": "292b32670eb69f42b121c032d201307b5efea84a",
+      "leechers": 41,
+      "magnet": "magnet:?xt=urn:btih:292b32670eb69f42b121c032d201307b5efea84a&dn=ubuntu-24.04-beta-desktop-amd64.iso",
+      "seeders": 30,
+      "size": 5640747008,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1775902573.202,
+      "info_hash": "14df2b3422dc82a74023771a2789b2df215cbf7e",
+      "leechers": 22,
+      "magnet": "magnet:?xt=urn:btih:14df2b3422dc82a74023771a2789b2df215cbf7e&dn=ubuntu-unity-22.04.iso",
+      "seeders": 29,
+      "size": 3767056384,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-22.04.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "75439d5de343999ab377c617c2c647902956e282",
+      "leechers": 71,
+      "magnet": "magnet:?xt=urn:btih:75439d5de343999ab377c617c2c647902956e282&dn=ubuntu-22.04.3-desktop-amd64.iso",
+      "seeders": 29,
+      "size": 5037662208,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.3-desktop-amd64.iso"
+    },
+    {
+      "added": 1775902518.641,
+      "info_hash": "4c0c745913a3c2a5d60166cc8c87eab04e81c5e7",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:4c0c745913a3c2a5d60166cc8c87eab04e81c5e7&dn=windows-ubuntu-11.4.2-win11-plasma-amd64.iso",
+      "seeders": 28,
+      "size": 4624220160,
+      "source": "bitsearch",
+      "title": "windows-ubuntu-11.4.2-win11-plasma-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "f81ac36376468177150340e47b29ac3b5dc01e0a",
+      "leechers": 37,
+      "magnet": "magnet:?xt=urn:btih:f81ac36376468177150340e47b29ac3b5dc01e0a&dn=ubuntu-23.10-desktop-legacy-amd64.iso",
+      "seeders": 28,
+      "size": 4390459392,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-desktop-legacy-amd64.iso"
+    },
+    {
+      "added": 1790544649.531,
+      "info_hash": "3f11b26c738a374acf78d3def4067e37d91d5f67",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:3f11b26c738a374acf78d3def4067e37d91d5f67&dn=ubuntu-24.10-live-server-amd64.iso",
+      "seeders": 28,
+      "size": 2098460672,
+      "source": "bitsearch",
+      "title": "ubuntu-24.10-live-server-amd64.iso"
+    },
+    {
+      "added": 1790586048.12,
+      "info_hash": "d540fc48eb12f2833163eed6421d449dd8f1ce1f",
+      "leechers": 41,
+      "magnet": "magnet:?xt=urn:btih:d540fc48eb12f2833163eed6421d449dd8f1ce1f&dn=ubuntu-19.04-desktop-amd64.iso",
+      "seeders": 28,
+      "size": 2097152000,
+      "source": "bitsearch",
+      "title": "ubuntu-19.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1784753113.11,
+      "info_hash": "e61809e1453b03ea455c13d139f6cb1798f4ae45",
+      "leechers": 56,
+      "magnet": "magnet:?xt=urn:btih:e61809e1453b03ea455c13d139f6cb1798f4ae45&dn=ubuntu-budgie-23.10-desktop-legacy-amd64.iso",
+      "seeders": 27,
+      "size": 3919976448,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-23.10-desktop-legacy-amd64.iso"
+    },
+    {
+      "added": 1789472749.445,
+      "info_hash": "0b33930759bb30a47663952af9c95f1fdd9c820b",
+      "leechers": 28,
+      "magnet": "magnet:?xt=urn:btih:0b33930759bb30a47663952af9c95f1fdd9c820b&dn=ubuntu-24.04-live-server-arm64%2Blargemem.iso",
+      "seeders": 27,
+      "size": 2490609664,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04-live-server-arm64+largemem.iso"
+    },
+    {
+      "added": 1786547739.503,
+      "info_hash": "d62152914a7ee56bf374c144d0a16cb5c859c983",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d62152914a7ee56bf374c144d0a16cb5c859c983&dn=OBS-Studio-32.1.1-Ubuntu-24.04-x86_64.deb",
+      "seeders": 26,
+      "size": 134236436,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.1.1-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1788531373.877,
+      "info_hash": "51f27e6be5a54b8e25782d30cd1090e86cbd5a1d",
+      "leechers": 19,
+      "magnet": "magnet:?xt=urn:btih:51f27e6be5a54b8e25782d30cd1090e86cbd5a1d&dn=%5B%20DevCourseWeb.com%20%5D%20Udemy%20-%20Ubuntu%20Network%20Server",
+      "seeders": 25,
+      "size": 281837719,
+      "source": "bitsearch",
+      "title": "[ DevCourseWeb.com ] Udemy - Ubuntu Network Server"
+    },
+    {
+      "added": 1789472721.688,
+      "info_hash": "d057fde0c8f038a6ec1278d92dc6c0c8b263621a",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:d057fde0c8f038a6ec1278d92dc6c0c8b263621a&dn=OBS-Studio-32.0.1-Ubuntu-24.04-x86_64.deb",
+      "seeders": 25,
+      "size": 134066208,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.0.1-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1785414611.214,
+      "info_hash": "41e6cd50ccec55cd5704c5e3d176e7b59317a3fb",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:41e6cd50ccec55cd5704c5e3d176e7b59317a3fb&dn=ubuntu-24.04.1-live-server-amd64.iso",
+      "seeders": 25,
+      "size": 2773874688,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04.1-live-server-amd64.iso"
+    },
+    {
+      "added": 1785414661.074,
+      "info_hash": "e3b4be434673f79007d1356005cb3b25c9480976",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:e3b4be434673f79007d1356005cb3b25c9480976&dn=ubuntu-23.10-live-server-arm64.iso",
+      "seeders": 25,
+      "size": 2370514944,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-live-server-arm64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "c543faf1fbdd6db59cba97ac25548091ce4887cb",
+      "leechers": 36,
+      "magnet": "magnet:?xt=urn:btih:c543faf1fbdd6db59cba97ac25548091ce4887cb&dn=ubuntu-mate-20.04.6-desktop-amd64.iso",
+      "seeders": 25,
+      "size": 4845496320,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04.6-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "4b7796b03b55f2abbf0cc68d5b3852f3c098dc74",
+      "leechers": 46,
+      "magnet": "magnet:?xt=urn:btih:4b7796b03b55f2abbf0cc68d5b3852f3c098dc74&dn=ubuntu-22.10-beta-desktop-amd64.iso",
+      "seeders": 24,
+      "size": 4071831552,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1783122314.34,
+      "info_hash": "fa57abbc6a01b1706ca1519e62fcec9fe4786e33",
+      "leechers": 31,
+      "magnet": "magnet:?xt=urn:btih:fa57abbc6a01b1706ca1519e62fcec9fe4786e33&dn=ubuntu-budgie-22.04.2-desktop-amd64.iso",
+      "seeders": 24,
+      "size": 3241588736,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472885.462,
+      "info_hash": "e15c68bef8eb8cb336236e4d766fbbc6c70d2a6c",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:e15c68bef8eb8cb336236e4d766fbbc6c70d2a6c&dn=OBS-Studio-31.1.1-Ubuntu-24.04-x86_64.deb",
+      "seeders": 24,
+      "size": 134167024,
+      "source": "bitsearch",
+      "title": "OBS-Studio-31.1.1-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1775901628.998,
+      "info_hash": "50b3bc19c6eb3f78478d74f389f56b50bd45ddcd",
+      "leechers": 51,
+      "magnet": "magnet:?xt=urn:btih:50b3bc19c6eb3f78478d74f389f56b50bd45ddcd&dn=ubuntu-mate-20.04.5-desktop-amd64.iso",
+      "seeders": 23,
+      "size": 4325916672,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04.5-desktop-amd64.iso"
+    },
+    {
+      "added": 1786547800.471,
+      "info_hash": "5b5724dda80fddb105c3b4719da928ff478115a3",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:5b5724dda80fddb105c3b4719da928ff478115a3&dn=OBS-Studio-32.0.2-Ubuntu-24.04-x86_64.deb",
+      "seeders": 23,
+      "size": 134066234,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.0.2-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1789230696.986,
+      "info_hash": "0ff3cb73ab4544bdc7789137f0bb9c381554918f",
+      "leechers": 11,
+      "magnet": "magnet:?xt=urn:btih:0ff3cb73ab4544bdc7789137f0bb9c381554918f&dn=ubuntu-mate-18.04.2-beta1-desktop-armhf%2Braspi-ext4.img.xz",
+      "seeders": 22,
+      "size": 1265649512,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-18.04.2-beta1-desktop-armhf+raspi-ext4.img.xz"
+    },
+    {
+      "added": 1783122328.247,
+      "info_hash": "f3824d00ce8807245b87b9ca21d2286acf41b5c6",
+      "leechers": 45,
+      "magnet": "magnet:?xt=urn:btih:f3824d00ce8807245b87b9ca21d2286acf41b5c6&dn=ubuntu-budgie-22.04.3-desktop-amd64.iso",
+      "seeders": 22,
+      "size": 3698358272,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.04.3-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472795.022,
+      "info_hash": "39dff09c4727e8a22e4b0fe96bc76f99107e359e",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:39dff09c4727e8a22e4b0fe96bc76f99107e359e&dn=OBS-Studio-31.1.0-Ubuntu-24.04-x86_64.deb",
+      "seeders": 22,
+      "size": 134169634,
+      "source": "bitsearch",
+      "title": "OBS-Studio-31.1.0-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1775901675.051,
+      "info_hash": "518045823d47e45d00e5230716a8310f31d16a92",
+      "leechers": 41,
+      "magnet": "magnet:?xt=urn:btih:518045823d47e45d00e5230716a8310f31d16a92&dn=ubuntu-mate-20.04.1-desktop-armhf%2Braspi.img.xz",
+      "seeders": 22,
+      "size": 1166311924,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04.1-desktop-armhf+raspi.img.xz"
+    },
+    {
+      "added": 1789927272.273,
+      "info_hash": "031559c252dd0e335cfe72f18cc0997b8e9a4e0e",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:031559c252dd0e335cfe72f18cc0997b8e9a4e0e&dn=Practical%20Ubuntu%20Linux%20Server%20administration",
+      "seeders": 22,
+      "size": 1237691473,
+      "source": "bitsearch",
+      "title": "Practical Ubuntu Linux Server administration"
+    },
+    {
+      "added": 1786721421.597,
+      "info_hash": "bc0ab097b50f9468c858b158fb17f12c74667bd6",
+      "leechers": 30,
+      "magnet": "magnet:?xt=urn:btih:bc0ab097b50f9468c858b158fb17f12c74667bd6&dn=ubuntu-22.10-beta-live-server-amd64.iso",
+      "seeders": 22,
+      "size": 1642885120,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-beta-live-server-amd64.iso"
+    },
+    {
+      "added": 1778171401.585,
+      "info_hash": "f09c8d0884590088f4004e010a928f8b6178c2fd",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:f09c8d0884590088f4004e010a928f8b6178c2fd&dn=ubuntu-20.04.4-desktop-amd64.iso",
+      "seeders": 22,
+      "size": 3379068928,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.4-desktop-amd64.iso"
+    },
+    {
+      "added": 1775978114.097,
+      "info_hash": "64c68d030ea75b656a5f1811a70abe17cd27edfd",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:64c68d030ea75b656a5f1811a70abe17cd27edfd&dn=ubuntu-unity-22.04.iso",
+      "seeders": 21,
+      "size": 3575105536,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-22.04.iso"
+    },
+    {
+      "added": 1789211719.792,
+      "info_hash": "c0f3121bac16ae9c35fd4dd82ebd7f843000205c",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c0f3121bac16ae9c35fd4dd82ebd7f843000205c&dn=ubuntu-mate-20.04.1-beta2-desktop-arm64%2Braspi.img.xz",
+      "seeders": 21,
+      "size": 1170051056,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04.1-beta2-desktop-arm64+raspi.img.xz"
+    },
+    {
+      "added": 1784319358.375,
+      "info_hash": "126f82fb33119d2acf93a16cfba6eb1c5787a59f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:126f82fb33119d2acf93a16cfba6eb1c5787a59f&dn=ubuntu-20.04.2-live-server-amd64.iso",
+      "seeders": 21,
+      "size": 1215168512,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.2-live-server-amd64.iso"
+    },
+    {
+      "added": 1775901688.907,
+      "info_hash": "8edaaa1fc05d59056646399bb2e541ac59b2442f",
+      "leechers": 41,
+      "magnet": "magnet:?xt=urn:btih:8edaaa1fc05d59056646399bb2e541ac59b2442f&dn=Ubuntu%20Intelligence",
+      "seeders": 21,
+      "size": 18087936,
+      "source": "bitsearch",
+      "title": "Ubuntu Intelligence"
+    },
+    {
+      "added": 1785723304.329,
+      "info_hash": "b96d08bcd9aedb5fca389e51393b673ee5d8eefa",
+      "leechers": 17,
+      "magnet": "magnet:?xt=urn:btih:b96d08bcd9aedb5fca389e51393b673ee5d8eefa&dn=Ubuntu%20Facile%20N.103%20%28Ago-Set%202023%29.pdf",
+      "seeders": 21,
+      "size": 14296443,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile N.103 (Ago-Set 2023).pdf"
+    },
+    {
+      "added": 1775978155.581,
+      "info_hash": "2c6b6858d61da9543d4231a71db4b1c9264b0685",
+      "leechers": 5,
+      "magnet": "magnet:?xt=urn:btih:2c6b6858d61da9543d4231a71db4b1c9264b0685&dn=ubuntu-22.04-desktop-amd64.iso",
+      "seeders": 20,
+      "size": 3654957056,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472772.869,
+      "info_hash": "aaf01689cdca32cbfd31aa874ccafe46cd15e763",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:aaf01689cdca32cbfd31aa874ccafe46cd15e763&dn=OBS-Studio-32.2.2-Ubuntu-24.04-x86_64.deb",
+      "seeders": 20,
+      "size": 134324516,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.2.2-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1785383140.983,
+      "info_hash": "fc1eba97cd6f6619ae2a6b9ffb2e93d7990c4483",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:fc1eba97cd6f6619ae2a6b9ffb2e93d7990c4483&dn=Ubuntu%20Facile%20%28Ott-Nov%202022%29.pdf",
+      "seeders": 20,
+      "size": 14311760,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile (Ott-Nov 2022).pdf"
+    },
+    {
+      "added": 1785677455.863,
+      "info_hash": "388fe35c9992ecf77282efa5809627f2732814d6",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:388fe35c9992ecf77282efa5809627f2732814d6&dn=ubuntu-unity-21.10.iso",
+      "seeders": 20,
+      "size": 3172171776,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-21.10.iso"
+    },
+    {
+      "added": 1775902558.595,
+      "info_hash": "18108ab0e488d5155c0b6378b745d08067544761",
+      "leechers": 18,
+      "magnet": "magnet:?xt=urn:btih:18108ab0e488d5155c0b6378b745d08067544761&dn=ubuntu-22.04-live-server-s390x.iso",
+      "seeders": 19,
+      "size": 976865280,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04-live-server-s390x.iso"
+    },
+    {
+      "added": 1789472787.203,
+      "info_hash": "8b3fee38fcf6cf97b516917f3333f3f65615544f",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:8b3fee38fcf6cf97b516917f3333f3f65615544f&dn=OBS-Studio-32.1.2-Ubuntu-24.04-x86_64.deb",
+      "seeders": 19,
+      "size": 134236418,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.1.2-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1785678319.787,
+      "info_hash": "28317e3435c7f61d445f5220cb8260862a508560",
+      "leechers": 41,
+      "magnet": "magnet:?xt=urn:btih:28317e3435c7f61d445f5220cb8260862a508560&dn=Win%20Magazine%20Linux%20Passa%20a%20Ubuntu%20Agosto-Settembre2024.pdf",
+      "seeders": 19,
+      "size": 92233758,
+      "source": "bitsearch",
+      "title": "Win Magazine Linux Passa a Ubuntu Agosto-Settembre2024.pdf"
+    },
+    {
+      "added": 1775902575.449,
+      "info_hash": "3abd948f77ccc121133a993a05def3afe38e9d99",
+      "leechers": 21,
+      "magnet": "magnet:?xt=urn:btih:3abd948f77ccc121133a993a05def3afe38e9d99&dn=Ubuntu%20Server%2022.04%20Fundamentals",
+      "seeders": 19,
+      "size": 1053575457,
+      "source": "bitsearch",
+      "title": "Ubuntu Server 22.04 Fundamentals"
+    },
+    {
+      "added": 1789825541.971,
+      "info_hash": "d2e30f9d9759f618f9a5e1b7243a80bcc5cc0761",
+      "leechers": 5,
+      "magnet": "magnet:?xt=urn:btih:d2e30f9d9759f618f9a5e1b7243a80bcc5cc0761&dn=LaCroix%20J.%20Mastering%20Ubuntu%20Server...Linux%20Server...4ed%202022",
+      "seeders": 19,
+      "size": 23640927,
+      "source": "bitsearch",
+      "title": "LaCroix J. Mastering Ubuntu Server...Linux Server...4ed 2022"
+    },
+    {
+      "added": 1776197718.774,
+      "info_hash": "85e720a44fe83ad3f2fe30df25fbd7de6395b27f",
+      "leechers": 7,
+      "magnet": "magnet:?xt=urn:btih:85e720a44fe83ad3f2fe30df25fbd7de6395b27f&dn=windows-ubuntu-11.4.1-win11-plasma-amd64.iso",
+      "seeders": 19,
+      "size": 4619704320,
+      "source": "bitsearch",
+      "title": "windows-ubuntu-11.4.1-win11-plasma-amd64.iso"
+    },
+    {
+      "added": 1778171447.253,
+      "info_hash": "f1fcdc1462d36530f526c1d9402eec9100b7ba18",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:f1fcdc1462d36530f526c1d9402eec9100b7ba18&dn=ubuntu-21.10-desktop-amd64.iso",
+      "seeders": 19,
+      "size": 3116482560,
+      "source": "bitsearch",
+      "title": "ubuntu-21.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1785645985.771,
+      "info_hash": "9ef0d08a01dcd85f2fe92cac39b3c311239189e3",
+      "leechers": 20,
+      "magnet": "magnet:?xt=urn:btih:9ef0d08a01dcd85f2fe92cac39b3c311239189e3&dn=Ubuntu%20Facile%20%28Dic%202022-Gen%202023%29.pdf",
+      "seeders": 19,
+      "size": 5208976,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile (Dic 2022-Gen 2023).pdf"
+    },
+    {
+      "added": 1775902572.642,
+      "info_hash": "b988966c9f3d8d52fc8cab628e887ebb30641f5b",
+      "leechers": 20,
+      "magnet": "magnet:?xt=urn:btih:b988966c9f3d8d52fc8cab628e887ebb30641f5b&dn=ubuntu-unity-22.04.1.iso",
+      "seeders": 18,
+      "size": 3766501376,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-22.04.1.iso"
+    },
+    {
+      "added": 1790586048.385,
+      "info_hash": "a7838b75c42b612da3b6cc99beed4ecb2d04cff2",
+      "leechers": 331,
+      "magnet": "magnet:?xt=urn:btih:a7838b75c42b612da3b6cc99beed4ecb2d04cff2&dn=ubuntu-22.04.2-desktop-amd64.iso",
+      "seeders": 177,
+      "size": 4927586304,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1788311729.434,
+      "info_hash": "1da86a65da30f62c89e8c63d1a3a3eab97c4e1af",
+      "leechers": 27,
+      "magnet": "magnet:?xt=urn:btih:1da86a65da30f62c89e8c63d1a3a3eab97c4e1af&dn=ubuntu-rescue_pack-amd64.iso",
+      "seeders": 18,
+      "size": 3474980864,
+      "source": "bitsearch",
+      "title": "ubuntu-rescue_pack-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "fbdec14bfa108525d78ba19c67202128532abe9c",
+      "leechers": 20,
+      "magnet": "magnet:?xt=urn:btih:fbdec14bfa108525d78ba19c67202128532abe9c&dn=ubuntu-23.10-beta-live-server-amd64.iso",
+      "seeders": 18,
+      "size": 2660288512,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-beta-live-server-amd64.iso"
+    },
+    {
+      "added": 1784753119.761,
+      "info_hash": "6cf22be1065c8a5c09fc5ad30127f05e1b57d85a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:6cf22be1065c8a5c09fc5ad30127f05e1b57d85a&dn=ubuntu-budgie-25.10-desktop-amd64.iso",
+      "seeders": 17,
+      "size": 3633033216,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-25.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1784319321.73,
+      "info_hash": "22b8f63218f1e726ec2f1fb9b38239f95fc6a629",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:22b8f63218f1e726ec2f1fb9b38239f95fc6a629&dn=Mastering%20Ubuntu%20Server%2C%203rd%20Edition",
+      "seeders": 17,
+      "size": 20501290,
+      "source": "bitsearch",
+      "title": "Mastering Ubuntu Server, 3rd Edition"
+    },
+    {
+      "added": 1783122335.427,
+      "info_hash": "f55bff2f143ef4b519a6a7e044a9bf6075185dc2",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:f55bff2f143ef4b519a6a7e044a9bf6075185dc2&dn=ubuntu-budgie-22.10-beta-desktop-amd64.iso",
+      "seeders": 17,
+      "size": 3064584192,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-22.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1786683729.035,
+      "info_hash": "8d18a795aa17439ce1d77d3b1dedaa9c82b55bb8",
+      "leechers": 17,
+      "magnet": "magnet:?xt=urn:btih:8d18a795aa17439ce1d77d3b1dedaa9c82b55bb8&dn=ubuntu-unity-22.10-beta-desktop-amd64.iso",
+      "seeders": 17,
+      "size": 3062579200,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-22.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1785678376.132,
+      "info_hash": "5fce101ab12f424e41f4f0ec0fd596c3ec46a3e1",
+      "leechers": 36,
+      "magnet": "magnet:?xt=urn:btih:5fce101ab12f424e41f4f0ec0fd596c3ec46a3e1&dn=linux-ubuntu-22-packer-x86_64-min-gen2-v1.gz",
+      "seeders": 17,
+      "size": 389569024,
+      "source": "bitsearch",
+      "title": "linux-ubuntu-22-packer-x86_64-min-gen2-v1.gz"
+    },
+    {
+      "added": 1785678401.257,
+      "info_hash": "c276993f61b4706a8ba4ad630f2ca26ee1828bd5",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:c276993f61b4706a8ba4ad630f2ca26ee1828bd5&dn=Ubuntu%20Linux%20Unleashed%202021%20Edition%2C%2014th%20Edition%20%5BFreeBooksOnline.top%5D",
+      "seeders": 17,
+      "size": 88262567,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Unleashed 2021 Edition, 14th Edition [FreeBooksOnline.top]"
+    },
+    {
+      "added": 1788058820.351,
+      "info_hash": "a5283cf4e0f3aa287ed45e4945e67d28eac07de8",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:a5283cf4e0f3aa287ed45e4945e67d28eac07de8&dn=ubuntu-unity-26.04-desktop-amd64.iso",
+      "seeders": 17,
+      "size": 4189728768,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-26.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1788058847.109,
+      "info_hash": "f767f53c6c17aa80aaf8485683de4b765b62259b",
+      "leechers": 8,
+      "magnet": "magnet:?xt=urn:btih:f767f53c6c17aa80aaf8485683de4b765b62259b&dn=ubuntu-budgie-26.04-desktop-amd64.iso",
+      "seeders": 17,
+      "size": 4121487360,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-26.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1789927218.023,
+      "info_hash": "29f629d0586efe2f2327ecd7dbc63797437aacde",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:29f629d0586efe2f2327ecd7dbc63797437aacde&dn=The%20Complete%20Ubuntu%20Linux%20Server%20Administration%20Course",
+      "seeders": 17,
+      "size": 1112120097,
+      "source": "bitsearch",
+      "title": "The Complete Ubuntu Linux Server Administration Course"
+    },
+    {
+      "added": null,
+      "info_hash": "c4f9a755d6d28be712848e3d1b44c81ffb053c3e",
+      "leechers": 21,
+      "magnet": "magnet:?xt=urn:btih:c4f9a755d6d28be712848e3d1b44c81ffb053c3e&dn=ubuntu-22.10-beta-live-server-arm64.iso",
+      "seeders": 16,
+      "size": 1606201344,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-beta-live-server-arm64.iso"
+    },
+    {
+      "added": 1775901677.475,
+      "info_hash": "152bb961f073173ee6b0a0a3e2d0c77c569646cb",
+      "leechers": 38,
+      "magnet": "magnet:?xt=urn:btih:152bb961f073173ee6b0a0a3e2d0c77c569646cb&dn=ubuntu-mate-20.04.1-desktop-arm64%2Braspi.img.xz",
+      "seeders": 16,
+      "size": 1202031116,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04.1-desktop-arm64+raspi.img.xz"
+    },
+    {
+      "added": 1779643028.393,
+      "info_hash": "d8f48475af46d2e01af13fb5126f06f962be215c",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d8f48475af46d2e01af13fb5126f06f962be215c&dn=ubuntu-18.04.5-live-server-amd64.iso",
+      "seeders": 16,
+      "size": 990904320,
+      "source": "bitsearch",
+      "title": "ubuntu-18.04.5-live-server-amd64.iso"
+    },
+    {
+      "added": 1789825568.131,
+      "info_hash": "7f1fb6ea6582d26dc1dede2918555115c15e379a",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:7f1fb6ea6582d26dc1dede2918555115c15e379a&dn=Linux%20Ubuntu%20System%20Administration",
+      "seeders": 16,
+      "size": 2747029803,
+      "source": "bitsearch",
+      "title": "Linux Ubuntu System Administration"
+    },
+    {
+      "added": 1778472043.45,
+      "info_hash": "7bb0cb5f5380c11d7a54b96936bc7a4d3a69a0a6",
+      "leechers": 48,
+      "magnet": "magnet:?xt=urn:btih:7bb0cb5f5380c11d7a54b96936bc7a4d3a69a0a6&dn=Partridge%20M.%20Ubuntu%2018.04%20LTS%20After%20Install%20Self%20Help%20Guide%202022",
+      "seeders": 16,
+      "size": 34352208,
+      "source": "bitsearch",
+      "title": "Partridge M. Ubuntu 18.04 LTS After Install Self Help Guide 2022"
+    },
+    {
+      "added": 1786547710.34,
+      "info_hash": "d71175929880745e5645e119484da0837e695634",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:d71175929880745e5645e119484da0837e695634&dn=OBS-Studio-32.0.0-Ubuntu-24.04-x86_64.deb",
+      "seeders": 16,
+      "size": 134064968,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.0.0-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1783866650.881,
+      "info_hash": "b91d49b1313f5aa27f2b3a9dc48af8248f40908e",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:b91d49b1313f5aa27f2b3a9dc48af8248f40908e&dn=ubuntu-mate-25.10-desktop-amd64.iso",
+      "seeders": 15,
+      "size": 3821662208,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-25.10-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "de9bff3b76489706867baa8021d7e3367998ebba",
+      "leechers": 54,
+      "magnet": "magnet:?xt=urn:btih:de9bff3b76489706867baa8021d7e3367998ebba&dn=ubuntu-mate-22.04.1-desktop-amd64.iso",
+      "seeders": 15,
+      "size": 2667771904,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1779643044.374,
+      "info_hash": "b26c81363ac1a236765385a702aec107a49581b5",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:b26c81363ac1a236765385a702aec107a49581b5&dn=ubuntu-20.04.3-desktop-amd64.iso",
+      "seeders": 15,
+      "size": 3071934464,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.3-desktop-amd64.iso"
+    },
+    {
+      "added": 1788311729.549,
+      "info_hash": "11264792ed3991f66bacc25a9cf7e5f6ac8de634",
+      "leechers": 14,
+      "magnet": "magnet:?xt=urn:btih:11264792ed3991f66bacc25a9cf7e5f6ac8de634&dn=ubuntu_pack-20.04-dde-amd64.iso",
+      "seeders": 15,
+      "size": 4535091200,
+      "source": "bitsearch",
+      "title": "ubuntu_pack-20.04-dde-amd64.iso"
+    },
+    {
+      "added": 1778171457.887,
+      "info_hash": "28036e2627f2731e40758ec93a318acba0b85f02",
+      "leechers": 13,
+      "magnet": "magnet:?xt=urn:btih:28036e2627f2731e40758ec93a318acba0b85f02&dn=Bin%20U.%20Mastering%20Ubuntu%20A%20Beginner%27s%20Guide%202023",
+      "seeders": 15,
+      "size": 24264296,
+      "source": "bitsearch",
+      "title": "Bin U. Mastering Ubuntu A Beginner's Guide 2023"
+    },
+    {
+      "added": 1782261004.719,
+      "info_hash": "6a3afcfdd04eab49bbedf88387007ab028f28c6d",
+      "leechers": 7,
+      "magnet": "magnet:?xt=urn:btih:6a3afcfdd04eab49bbedf88387007ab028f28c6d&dn=windows-ubuntu-11.4.5-copilot-win10-cinnamon-amd64.iso",
+      "seeders": 14,
+      "size": 5010776064,
+      "source": "bitsearch",
+      "title": "windows-ubuntu-11.4.5-copilot-win10-cinnamon-amd64.iso"
+    },
+    {
+      "added": 1779642933.215,
+      "info_hash": "64a980abe6e448226bb930ba061592e44c3781a1",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:64a980abe6e448226bb930ba061592e44c3781a1&dn=ubuntu-21.04-desktop-amd64.iso",
+      "seeders": 14,
+      "size": 2818738176,
+      "source": "bitsearch",
+      "title": "ubuntu-21.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1788275752.155,
+      "info_hash": "e4f19cf636409b72571766c2ae89c98fc21a109d",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:e4f19cf636409b72571766c2ae89c98fc21a109d&dn=ubuntu-26.04.1-live-server-amd64.iso",
+      "seeders": 14,
+      "size": 2927861760,
+      "source": "bitsearch",
+      "title": "ubuntu-26.04.1-live-server-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "0223dcb7785d09dbdff5839a089774277a66b4c9",
+      "leechers": 42,
+      "magnet": "magnet:?xt=urn:btih:0223dcb7785d09dbdff5839a089774277a66b4c9&dn=ubuntu-mate-22.04.3-desktop-amd64.iso",
+      "seeders": 14,
+      "size": 3747717120,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.04.3-desktop-amd64.iso"
+    },
+    {
+      "added": 1783925157.359,
+      "info_hash": "c716d1ada6c9062535e0a60a0e6343fa1a0ce89d",
+      "leechers": 17,
+      "magnet": "magnet:?xt=urn:btih:c716d1ada6c9062535e0a60a0e6343fa1a0ce89d&dn=GetFreeCourses.Co-Udemy-Hardening%20Ubuntu%20Server",
+      "seeders": 14,
+      "size": 454705171,
+      "source": "bitsearch",
+      "title": "GetFreeCourses.Co-Udemy-Hardening Ubuntu Server"
+    },
+    {
+      "added": 1777665704.909,
+      "info_hash": "462c1f7d7f9d1ef019feb0c4ffc7476ce987fbcc",
+      "leechers": 15,
+      "magnet": "magnet:?xt=urn:btih:462c1f7d7f9d1ef019feb0c4ffc7476ce987fbcc&dn=ubuntu-22.10-live-server-arm64.iso",
+      "seeders": 14,
+      "size": 1606201344,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-live-server-arm64.iso"
+    },
+    {
+      "added": 1786547724.801,
+      "info_hash": "e94e85263cbf3ee215914538c166edb54a94dc9a",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e94e85263cbf3ee215914538c166edb54a94dc9a&dn=OBS-Studio-32.1.0-Ubuntu-24.04-x86_64.deb",
+      "seeders": 14,
+      "size": 134231916,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.1.0-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": null,
+      "info_hash": "7754896b2c49c4d9eb12766670a654b41e16b49b",
+      "leechers": 17,
+      "magnet": "magnet:?xt=urn:btih:7754896b2c49c4d9eb12766670a654b41e16b49b&dn=ubuntu-mate-22.10-beta-desktop-amd64.iso",
+      "seeders": 13,
+      "size": 3200270336,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-22.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1784753125.856,
+      "info_hash": "46fd5a9214e7f3a1ad0716732ccd75f3ceb1ee5f",
+      "leechers": 22,
+      "magnet": "magnet:?xt=urn:btih:46fd5a9214e7f3a1ad0716732ccd75f3ceb1ee5f&dn=ubuntu-budgie-23.04-desktop-amd64.iso",
+      "seeders": 13,
+      "size": 3382654976,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-23.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472755.608,
+      "info_hash": "394fb5d3d01aa84544b5e24f10de71de68bed9a8",
+      "leechers": 9,
+      "magnet": "magnet:?xt=urn:btih:394fb5d3d01aa84544b5e24f10de71de68bed9a8&dn=ubuntu-budgie-24.04-beta-desktop-amd64.iso",
+      "seeders": 13,
+      "size": 4109883392,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-24.04-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1779642967.114,
+      "info_hash": "e84213a794f3ccd890382a54a64ca68b7e925433",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:e84213a794f3ccd890382a54a64ca68b7e925433&dn=ubuntu-18.04.1-desktop-amd64.iso",
+      "seeders": 13,
+      "size": 1953349632,
+      "source": "bitsearch",
+      "title": "ubuntu-18.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1785678421.379,
+      "info_hash": "1b4727b874422e279c8603a21712767b3e88b82b",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:1b4727b874422e279c8603a21712767b3e88b82b&dn=Ubuntu%20Linux%20Administration%20-%20User%20and%20Group%20Management",
+      "seeders": 13,
+      "size": 388016378,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Administration - User and Group Management"
+    },
+    {
+      "added": 1788172235.165,
+      "info_hash": "8a3bd33c3017dc7d88614ad3b2e6b2bebfb4bef5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8a3bd33c3017dc7d88614ad3b2e6b2bebfb4bef5&dn=Clinton%20D.%2C%20Negus%20C.%20-%20Ubuntu%20Linux%20Bible%2C%2011th%20Edition%20-%202026",
+      "seeders": 13,
+      "size": 15157084,
+      "source": "bitsearch",
+      "title": "Clinton D., Negus C. - Ubuntu Linux Bible, 11th Edition - 2026"
+    },
+    {
+      "added": null,
+      "info_hash": "b9c5c61454ec0acfd25501e5b865f2cb730c7167",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:b9c5c61454ec0acfd25501e5b865f2cb730c7167&dn=ubuntu-23.04-beta-live-server-amd64.iso",
+      "seeders": 13,
+      "size": 2673633280,
+      "source": "bitsearch",
+      "title": "ubuntu-23.04-beta-live-server-amd64.iso"
+    },
+    {
+      "added": 1789927211.896,
+      "info_hash": "dbbb12ae6aca79abe6fe24ce4cbfabd1d6736fd2",
+      "leechers": 2,
+      "magnet": "magnet:?xt=urn:btih:dbbb12ae6aca79abe6fe24ce4cbfabd1d6736fd2&dn=Ubuntu%20Linux%20Fundamentals%20Linux%20Server%20Administration%20Basics",
+      "seeders": 13,
+      "size": 4591420171,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Fundamentals Linux Server Administration Basics"
+    },
+    {
+      "added": 1775978157.174,
+      "info_hash": "8a55cfbd5ca5d11507364765936c4f9e55b253ed",
+      "leechers": 10,
+      "magnet": "magnet:?xt=urn:btih:8a55cfbd5ca5d11507364765936c4f9e55b253ed&dn=ubuntu-22.04-live-server-amd64.iso",
+      "seeders": 12,
+      "size": 1466714112,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04-live-server-amd64.iso"
+    },
+    {
+      "added": 1784319353.6,
+      "info_hash": "c44f931b1a3986851242d755d0ac46e9fa3c5d32",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:c44f931b1a3986851242d755d0ac46e9fa3c5d32&dn=ubuntu-20.04-live-server-amd64.iso",
+      "seeders": 12,
+      "size": 952107008,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04-live-server-amd64.iso"
+    },
+    {
+      "added": 1779642962.376,
+      "info_hash": "bc26c6bc83d0ca1a7bf9875df1ffc3fed81ff555",
+      "leechers": 5,
+      "magnet": "magnet:?xt=urn:btih:bc26c6bc83d0ca1a7bf9875df1ffc3fed81ff555&dn=ubuntu-18.04.6-desktop-amd64.iso",
+      "seeders": 12,
+      "size": 2514124800,
+      "source": "bitsearch",
+      "title": "ubuntu-18.04.6-desktop-amd64.iso"
+    },
+    {
+      "added": 1779643027.276,
+      "info_hash": "ccbd47a30a5a13a5260295e4bd65c038244e9df0",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:ccbd47a30a5a13a5260295e4bd65c038244e9df0&dn=ubuntu-25.10-live-server-amd64.iso",
+      "seeders": 12,
+      "size": 2283360256,
+      "source": "bitsearch",
+      "title": "ubuntu-25.10-live-server-amd64.iso"
+    },
+    {
+      "added": 1785678430.358,
+      "info_hash": "7c65e0559714eaba85f078e0aadd0c01b62aeacf",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7c65e0559714eaba85f078e0aadd0c01b62aeacf&dn=A%20Practical%20Guide%20to%20Ubuntu%20Linux%2C%203rd%20Edition",
+      "seeders": 12,
+      "size": 80749653,
+      "source": "bitsearch",
+      "title": "A Practical Guide to Ubuntu Linux, 3rd Edition"
+    },
+    {
+      "added": 1785678367.251,
+      "info_hash": "176cbe7776207f31c47a883a08547bee23eed942",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:176cbe7776207f31c47a883a08547bee23eed942&dn=Linux%20%26%20Unix%20Command%20Line%20Basics%20for%20Bash%2C%20Z%20Shell%20%26%20Ubuntu",
+      "seeders": 12,
+      "size": 236960609,
+      "source": "bitsearch",
+      "title": "Linux & Unix Command Line Basics for Bash, Z Shell & Ubuntu"
+    },
+    {
+      "added": 1788311731.121,
+      "info_hash": "b8e3850e014897e7985b8128600f72e808044ef8",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:b8e3850e014897e7985b8128600f72e808044ef8&dn=ubuntu_pack-20.04-xfce-amd64.iso",
+      "seeders": 12,
+      "size": 3116367872,
+      "source": "bitsearch",
+      "title": "ubuntu_pack-20.04-xfce-amd64.iso"
+    },
+    {
+      "added": 1789823763.496,
+      "info_hash": "ead912e816d882306c8f5e1fd55e755d8e3ad2f3",
+      "leechers": 8,
+      "magnet": "magnet:?xt=urn:btih:ead912e816d882306c8f5e1fd55e755d8e3ad2f3&dn=Linkedin%20-%20Learning%20Building%20an%20Ubuntu%20Server",
+      "seeders": 12,
+      "size": 584488481,
+      "source": "bitsearch",
+      "title": "Linkedin - Learning Building an Ubuntu Server"
+    },
+    {
+      "added": 1789825542.783,
+      "info_hash": "ba77b012352d816702c1baab26f6b39660fc9b39",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:ba77b012352d816702c1baab26f6b39660fc9b39&dn=Ubuntu%20Linux%20Administration%20-%20Networking%20By%20andrew-mallett",
+      "seeders": 12,
+      "size": 298682283,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Administration - Networking By andrew-mallett"
+    },
+    {
+      "added": 1779102434.588,
+      "info_hash": "1a741d4d1251ae0968acc9ea81cfa67a04d716d4",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:1a741d4d1251ae0968acc9ea81cfa67a04d716d4&dn=ethereum-ubuntu-nvidia-miner_v3.img.7z",
+      "seeders": 12,
+      "size": 1891534459,
+      "source": "bitsearch",
+      "title": "ethereum-ubuntu-nvidia-miner_v3.img.7z"
+    },
+    {
+      "added": 1786547804.833,
+      "info_hash": "7d746395001c9477a10c1e802519ae3f65d22258",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:7d746395001c9477a10c1e802519ae3f65d22258&dn=OBS-Studio-32.0.4-Ubuntu-24.04-x86_64.deb",
+      "seeders": 12,
+      "size": 134070906,
+      "source": "bitsearch",
+      "title": "OBS-Studio-32.0.4-Ubuntu-24.04-x86_64.deb"
+    },
+    {
+      "added": 1785906062.156,
+      "info_hash": "6a037d4819c7852efd23877f555afdab71131494",
+      "leechers": 13,
+      "magnet": "magnet:?xt=urn:btih:6a037d4819c7852efd23877f555afdab71131494&dn=Ubuntu%20Facile%20N%2097%20-%20Agosto%20Settembre%202022",
+      "seeders": 12,
+      "size": 11604778,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile N 97 - Agosto Settembre 2022"
+    },
+    {
+      "added": 1777717848.831,
+      "info_hash": "3a5eddb2e9928909ffcc1355c5d0400d101f1b08",
+      "leechers": 24,
+      "magnet": "magnet:?xt=urn:btih:3a5eddb2e9928909ffcc1355c5d0400d101f1b08&dn=ubuntu-23.04-desktop-legacy-amd64.iso",
+      "seeders": 11,
+      "size": 3908573184,
+      "source": "bitsearch",
+      "title": "ubuntu-23.04-desktop-legacy-amd64.iso"
+    },
+    {
+      "added": 1775978105.659,
+      "info_hash": "9265e44e82a075e2d1bd7c667f5fd7384501f010",
+      "leechers": 13,
+      "magnet": "magnet:?xt=urn:btih:9265e44e82a075e2d1bd7c667f5fd7384501f010&dn=ubuntu-22.04-live-server-ppc64el.iso",
+      "seeders": 11,
+      "size": 1467541504,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04-live-server-ppc64el.iso"
+    },
+    {
+      "added": 1778865336.812,
+      "info_hash": "2b9fef49d756ef61e1e7aab15ef163c2eed637ef",
+      "leechers": 4,
+      "magnet": "magnet:?xt=urn:btih:2b9fef49d756ef61e1e7aab15ef163c2eed637ef&dn=switchroot-ubuntu-5.1.1-2023-06-12.7z",
+      "seeders": 11,
+      "size": 1011066220,
+      "source": "bitsearch",
+      "title": "switchroot-ubuntu-5.1.1-2023-06-12.7z"
+    },
+    {
+      "added": null,
+      "info_hash": "e2467cbf021192c241367b892230dc1e05c0580e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e2467cbf021192c241367b892230dc1e05c0580e&dn=ubuntu-19.10-desktop-amd64.iso",
+      "seeders": 11,
+      "size": 2463842304,
+      "source": "bitsearch",
+      "title": "ubuntu-19.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1778925678.064,
+      "info_hash": "25dd6f97e00f57ac6f911cb53dc02d53bcfe4275",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:25dd6f97e00f57ac6f911cb53dc02d53bcfe4275&dn=ubuntu-unity-20.10",
+      "seeders": 11,
+      "size": 2627498041,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-20.10"
+    },
+    {
+      "added": 1784319315.793,
+      "info_hash": "8b851cd45092b458da23ba0ed834906d79f4e2d7",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:8b851cd45092b458da23ba0ed834906d79f4e2d7&dn=ubuntu-20.10-live-server-amd64.iso",
+      "seeders": 11,
+      "size": 1046083584,
+      "source": "bitsearch",
+      "title": "ubuntu-20.10-live-server-amd64.iso"
+    },
+    {
+      "added": 1784319343.674,
+      "info_hash": "3057ad5d5df45fe07dbcbca184ec4276d3068a2e",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:3057ad5d5df45fe07dbcbca184ec4276d3068a2e&dn=ubuntu-20.04.3-live-server-amd64.iso",
+      "seeders": 11,
+      "size": 1261371392,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.3-live-server-amd64.iso"
+    },
+    {
+      "added": 1783095366.549,
+      "info_hash": "4a2f583cb1244e6abec2a2ab5625a95abb5cc927",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:4a2f583cb1244e6abec2a2ab5625a95abb5cc927&dn=ubuntu",
+      "seeders": 11,
+      "size": 5125658325,
+      "source": "bitsearch",
+      "title": "ubuntu"
+    },
+    {
+      "added": null,
+      "info_hash": "67526cf268446275f67f1d39212ee05795a12f3f",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:67526cf268446275f67f1d39212ee05795a12f3f&dn=Ubuntu%2020.04%20User%20Guide.rar",
+      "seeders": 11,
+      "size": 28520739,
+      "source": "bitsearch",
+      "title": "Ubuntu 20.04 User Guide.rar"
+    },
+    {
+      "added": 1779642909.201,
+      "info_hash": "e658990e8f5dc016f099ce0ec07efcff34932e67",
+      "leechers": 6,
+      "magnet": "magnet:?xt=urn:btih:e658990e8f5dc016f099ce0ec07efcff34932e67&dn=ubuntu-23.10.1-desktop-arm64%2Bx13s.iso",
+      "seeders": 11,
+      "size": 3872059392,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10.1-desktop-arm64+x13s.iso"
+    },
+    {
+      "added": 1788311705.213,
+      "info_hash": "f8015e04e0d8d748427f6478309d58c3adeec1d5",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f8015e04e0d8d748427f6478309d58c3adeec1d5&dn=ubuntu_pack-20.04-desktop-amd64.iso",
+      "seeders": 11,
+      "size": 3938451456,
+      "source": "bitsearch",
+      "title": "ubuntu_pack-20.04-desktop-amd64.iso"
+    },
+    {
+      "added": null,
+      "info_hash": "f1c89f1d9f9a6b09852328c98e4f75104bc18257",
+      "leechers": 14,
+      "magnet": "magnet:?xt=urn:btih:f1c89f1d9f9a6b09852328c98e4f75104bc18257&dn=ubuntu-23.10-desktop-arm64%2Bx13s.iso",
+      "seeders": 11,
+      "size": 3872059392,
+      "source": "bitsearch",
+      "title": "ubuntu-23.10-desktop-arm64+x13s.iso"
+    },
+    {
+      "added": 1777665686.698,
+      "info_hash": "931cae3d8b23994e59eeaa0ceaa1c8cb011f693b",
+      "leechers": 13,
+      "magnet": "magnet:?xt=urn:btih:931cae3d8b23994e59eeaa0ceaa1c8cb011f693b&dn=ubuntu-22.04.3-live-server-arm64.iso",
+      "seeders": 11,
+      "size": 2069950464,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.3-live-server-arm64.iso"
+    },
+    {
+      "added": 1785645979.02,
+      "info_hash": "342f6ee03a1a3ac7e43e49f2434cfbdcd0a09ad1",
+      "leechers": 7,
+      "magnet": "magnet:?xt=urn:btih:342f6ee03a1a3ac7e43e49f2434cfbdcd0a09ad1&dn=Ubuntu%20Facile%20%28Giu-Lug%202022%29.pdf",
+      "seeders": 11,
+      "size": 31735026,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile (Giu-Lug 2022).pdf"
+    },
+    {
+      "added": 1785702603.476,
+      "info_hash": "c5c1a90cd5bd6cfb1c5f56ed03c157479643678d",
+      "leechers": 6,
+      "magnet": "magnet:?xt=urn:btih:c5c1a90cd5bd6cfb1c5f56ed03c157479643678d&dn=Ubuntu%20Facile%20N.100%20%28Feb-Mar%202023%29.pdf",
+      "seeders": 11,
+      "size": 13741165,
+      "source": "bitsearch",
+      "title": "Ubuntu Facile N.100 (Feb-Mar 2023).pdf"
+    },
+    {
+      "added": 1783866696.144,
+      "info_hash": "f96ec24df9376129de9e7b0d842b187e0b8815a0",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:f96ec24df9376129de9e7b0d842b187e0b8815a0&dn=ubuntu-mate-25.04-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 3724666880,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-25.04-desktop-amd64.iso"
+    },
+    {
+      "added": 1779004807.917,
+      "info_hash": "bfa8991dc42e5af43c1f5435ded437adb6bf83f9",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:bfa8991dc42e5af43c1f5435ded437adb6bf83f9&dn=ubuntu-web-brave-20.04.4.iso.bios.iso",
+      "seeders": 10,
+      "size": 3023104000,
+      "source": "bitsearch",
+      "title": "ubuntu-web-brave-20.04.4.iso.bios.iso"
+    },
+    {
+      "added": 1784319316.196,
+      "info_hash": "36c67464c37a83478ceff54932b5a9bddea636f3",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:36c67464c37a83478ceff54932b5a9bddea636f3&dn=ubuntu-20.04.1-live-server-amd64.iso",
+      "seeders": 10,
+      "size": 958398464,
+      "source": "bitsearch",
+      "title": "ubuntu-20.04.1-live-server-amd64.iso"
+    },
+    {
+      "added": 1775840628.261,
+      "info_hash": "fc3640b2855622481a75b78e3b2b481edc5c9682",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:fc3640b2855622481a75b78e3b2b481edc5c9682&dn=ubuntu-mate-20.10-desktop-armhf%2Braspi.img.xz",
+      "seeders": 10,
+      "size": 1215267884,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.10-desktop-armhf+raspi.img.xz"
+    },
+    {
+      "added": null,
+      "info_hash": "20f98ebde4ffefe3cc24eda863ead3a39de44490",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:20f98ebde4ffefe3cc24eda863ead3a39de44490&dn=ubuntu-unity-21.04.iso",
+      "seeders": 10,
+      "size": 3038193664,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-21.04.iso"
+    },
+    {
+      "added": 1779633023.039,
+      "info_hash": "c16796a74dc24cc7c6df2f7b66b861e22dec69b1",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:c16796a74dc24cc7c6df2f7b66b861e22dec69b1&dn=ubuntu-16.04.6-desktop-i386.iso",
+      "seeders": 10,
+      "size": 1677721600,
+      "source": "bitsearch",
+      "title": "ubuntu-16.04.6-desktop-i386.iso"
+    },
+    {
+      "added": 1785414661.318,
+      "info_hash": "bbe2eeeb6d571f5d5162086a58887a6b202bc7c7",
+      "leechers": 7,
+      "magnet": "magnet:?xt=urn:btih:bbe2eeeb6d571f5d5162086a58887a6b202bc7c7&dn=ubuntu-22.04.3-live-server-ppc64el.iso",
+      "seeders": 10,
+      "size": 2171514880,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.3-live-server-ppc64el.iso"
+    },
+    {
+      "added": 1785678431.807,
+      "info_hash": "f97d29b85756d8f9fbd3ee9eca7ffa593792e277",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:f97d29b85756d8f9fbd3ee9eca7ffa593792e277&dn=UBUNTU%20Linux%20Server",
+      "seeders": 10,
+      "size": 1759917195,
+      "source": "bitsearch",
+      "title": "UBUNTU Linux Server"
+    },
+    {
+      "added": 1785678349.948,
+      "info_hash": "9c99fe40b79721dc56a93c881b5d7853f2dff9fe",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:9c99fe40b79721dc56a93c881b5d7853f2dff9fe&dn=Ubuntu%20Linux%20Administration%20-%20Service%20Configuration",
+      "seeders": 10,
+      "size": 516757384,
+      "source": "bitsearch",
+      "title": "Ubuntu Linux Administration - Service Configuration"
+    },
+    {
+      "added": null,
+      "info_hash": "ff9170af75fb60997a875f402651fdb26603f74c",
+      "leechers": 21,
+      "magnet": "magnet:?xt=urn:btih:ff9170af75fb60997a875f402651fdb26603f74c&dn=ubuntu-23.04-beta-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 4847755264,
+      "source": "bitsearch",
+      "title": "ubuntu-23.04-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1788058808.367,
+      "info_hash": "59ec6454b48d0cb232cc3ad67f66c4327c1a1092",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:59ec6454b48d0cb232cc3ad67f66c4327c1a1092&dn=ubuntu-26.04-desktop-arm64.iso",
+      "seeders": 10,
+      "size": 4161089536,
+      "source": "bitsearch",
+      "title": "ubuntu-26.04-desktop-arm64.iso"
+    },
+    {
+      "added": 1789899309.717,
+      "info_hash": "3b74d16a094dc090a56d918d82828beff708998a",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:3b74d16a094dc090a56d918d82828beff708998a&dn=ubuntu-budgie-20.04.6-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 3717267456,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-20.04.6-desktop-amd64.iso"
+    },
+    {
+      "added": 1789823745.315,
+      "info_hash": "880ed3ace8b662538929b10de8905df57572e0ca",
+      "leechers": 13,
+      "magnet": "magnet:?xt=urn:btih:880ed3ace8b662538929b10de8905df57572e0ca&dn=The%20Perfect%20Nginx%20Server%20-%20Ubuntu%20%2822.04%29%20Edition",
+      "seeders": 10,
+      "size": 6645861018,
+      "source": "bitsearch",
+      "title": "The Perfect Nginx Server - Ubuntu (22.04) Edition"
+    },
+    {
+      "added": 1777665725.071,
+      "info_hash": "385b74921958acbd74c31b143b9eb4db86807354",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:385b74921958acbd74c31b143b9eb4db86807354&dn=ubuntu-22.10-beta-live-server-s390x.iso",
+      "seeders": 10,
+      "size": 1072828416,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-beta-live-server-s390x.iso"
+    },
+    {
+      "added": 1776637825.213,
+      "info_hash": "54e913d0ad70a755cf57075410e228be9ab9e995",
+      "leechers": 3,
+      "magnet": "magnet:?xt=urn:btih:54e913d0ad70a755cf57075410e228be9ab9e995&dn=OBS-Studio-30.1.0-Ubuntu-x86_64.deb",
+      "seeders": 10,
+      "size": 114411562,
+      "source": "bitsearch",
+      "title": "OBS-Studio-30.1.0-Ubuntu-x86_64.deb"
+    },
+    {
+      "added": 1778365862.629,
+      "info_hash": "82f2e2c773431c367b2e11665e08db0ecf4de479",
+      "leechers": 8,
+      "magnet": "magnet:?xt=urn:btih:82f2e2c773431c367b2e11665e08db0ecf4de479&dn=ubuntu-mate-23.10-beta-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 3561330688,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-23.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1786547714.05,
+      "info_hash": "e9f9ce7aa973bab5cdc5b900fbf916342346576d",
+      "leechers": 19,
+      "magnet": "magnet:?xt=urn:btih:e9f9ce7aa973bab5cdc5b900fbf916342346576d&dn=ubuntu-24.04-beta-live-server-amd64.iso",
+      "seeders": 10,
+      "size": 2812514304,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04-beta-live-server-amd64.iso"
+    },
+    {
+      "added": 1786636894.882,
+      "info_hash": "662a4fc7295f283fa3f13c417f89d60226028a91",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:662a4fc7295f283fa3f13c417f89d60226028a91&dn=ubuntu-mate-20.04-beta1-desktop-arm64%2Braspi.img.xz",
+      "seeders": 10,
+      "size": 1182326096,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-20.04-beta1-desktop-arm64+raspi.img.xz"
+    },
+    {
+      "added": 1789810239.46,
+      "info_hash": "5a3971c963393a0d6a93106fa16c645843fc554d",
+      "leechers": 1,
+      "magnet": "magnet:?xt=urn:btih:5a3971c963393a0d6a93106fa16c645843fc554d&dn=ubuntu-budgie-26.04.1-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 4127838208,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-26.04.1-desktop-amd64.iso"
+    },
+    {
+      "added": 1790544606.73,
+      "info_hash": "d6663939e41a8ba70ea153a34a17f896e084fd58",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:d6663939e41a8ba70ea153a34a17f896e084fd58&dn=ubuntu-mate-24.04.2-desktop-amd64.iso",
+      "seeders": 10,
+      "size": 4301398016,
+      "source": "bitsearch",
+      "title": "ubuntu-mate-24.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1777753886.692,
+      "info_hash": "0fed1cd9cfbcd33e79ae82059f9c0e397901b214",
+      "leechers": 19,
+      "magnet": "magnet:?xt=urn:btih:0fed1cd9cfbcd33e79ae82059f9c0e397901b214&dn=ubuntu-flatpak-remix-22.04.2-desktop-amd64.iso",
+      "seeders": 9,
+      "size": 5199736832,
+      "source": "bitsearch",
+      "title": "ubuntu-flatpak-remix-22.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1781950541.268,
+      "info_hash": "4096ec129404689ceb8056d907e384ff872c2ce9",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:4096ec129404689ceb8056d907e384ff872c2ce9&dn=ubuntu-16.10-desktop-i386.iso",
+      "seeders": 9,
+      "size": 1610612736,
+      "source": "bitsearch",
+      "title": "ubuntu-16.10-desktop-i386.iso"
+    },
+    {
+      "added": 1778865314.501,
+      "info_hash": "b20cf89c519a0957e8a8bd716f60adc804234684",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:b20cf89c519a0957e8a8bd716f60adc804234684&dn=switchroot-ubuntu-3.4.0-2021-07-23-v2.7z",
+      "seeders": 9,
+      "size": 1044114638,
+      "source": "bitsearch",
+      "title": "switchroot-ubuntu-3.4.0-2021-07-23-v2.7z"
+    },
+    {
+      "added": 1778925652.004,
+      "info_hash": "45e4cce6911daf06f0d92f298c8840a6323f17ae",
+      "leechers": 10,
+      "magnet": "magnet:?xt=urn:btih:45e4cce6911daf06f0d92f298c8840a6323f17ae&dn=ubuntu-unity-23.10-beta-desktop-amd64.iso",
+      "seeders": 9,
+      "size": 3482114048,
+      "source": "bitsearch",
+      "title": "ubuntu-unity-23.10-beta-desktop-amd64.iso"
+    },
+    {
+      "added": 1781786714.554,
+      "info_hash": "5a8ce26e8a19a877d8ccc927fcc18e34e1f5ff67",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:5a8ce26e8a19a877d8ccc927fcc18e34e1f5ff67&dn=ubuntu-18.10-desktop-amd64.iso",
+      "seeders": 9,
+      "size": 1999503360,
+      "source": "bitsearch",
+      "title": "ubuntu-18.10-desktop-amd64.iso"
+    },
+    {
+      "added": 1789472706.558,
+      "info_hash": "ead8c4756e522e8441818ff5ec397d6168f165f6",
+      "leechers": 16,
+      "magnet": "magnet:?xt=urn:btih:ead8c4756e522e8441818ff5ec397d6168f165f6&dn=ubuntu-24.04-live-server-ppc64el.iso",
+      "seeders": 9,
+      "size": 2078533632,
+      "source": "bitsearch",
+      "title": "ubuntu-24.04-live-server-ppc64el.iso"
+    },
+    {
+      "added": 1785414672.857,
+      "info_hash": "dde11f2b382b031fb9fbd7eec1087de8136e8625",
+      "leechers": 8,
+      "magnet": "magnet:?xt=urn:btih:dde11f2b382b031fb9fbd7eec1087de8136e8625&dn=ubuntu-22.04.4-live-server-arm64.iso",
+      "seeders": 9,
+      "size": 2032332800,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.4-live-server-arm64.iso"
+    },
+    {
+      "added": 1785414661.546,
+      "info_hash": "be19f1f4ebc9e66e63c711b9d629ee99e4f8fad5",
+      "leechers": 11,
+      "magnet": "magnet:?xt=urn:btih:be19f1f4ebc9e66e63c711b9d629ee99e4f8fad5&dn=ubuntu-22.04.1-live-server-arm64.iso",
+      "seeders": 9,
+      "size": 1436102656,
+      "source": "bitsearch",
+      "title": "ubuntu-22.04.1-live-server-arm64.iso"
+    },
+    {
+      "added": 1785414695.957,
+      "info_hash": "c8bdc96097e557340ccf976b21a4732e0d9aa4db",
+      "leechers": 12,
+      "magnet": "magnet:?xt=urn:btih:c8bdc96097e557340ccf976b21a4732e0d9aa4db&dn=ubuntu-22.10-beta-live-server-ppc64el.iso",
+      "seeders": 9,
+      "size": 1632016384,
+      "source": "bitsearch",
+      "title": "ubuntu-22.10-beta-live-server-ppc64el.iso"
+    },
+    {
+      "added": 1785678340.493,
+      "info_hash": "41ecf122721c39ac41bd186bf5794c0fb9b19ddf",
+      "leechers": 7,
+      "magnet": "magnet:?xt=urn:btih:41ecf122721c39ac41bd186bf5794c0fb9b19ddf&dn=The%20Ubuntu%20Linux%20Desktop%20User%20Guide",
+      "seeders": 9,
+      "size": 1337954011,
+      "source": "bitsearch",
+      "title": "The Ubuntu Linux Desktop User Guide"
+    },
+    {
+      "added": 1785678392.126,
+      "info_hash": "e6e51b5eeeb5dd38729f39b14bee9e3f8cc97d72",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:e6e51b5eeeb5dd38729f39b14bee9e3f8cc97d72&dn=Self-hosting%20with%20Ubuntu%20Linux%20Creating%20an%20Email%20server",
+      "seeders": 9,
+      "size": 682056993,
+      "source": "bitsearch",
+      "title": "Self-hosting with Ubuntu Linux Creating an Email server"
+    },
+    {
+      "added": 1788181209.513,
+      "info_hash": "6ec240144287ba84064260f598d742f4314dd922",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:6ec240144287ba84064260f598d742f4314dd922&dn=ubuntu-budgie-24.04.2-desktop-amd64.iso",
+      "seeders": 9,
+      "size": 4248414208,
+      "source": "bitsearch",
+      "title": "ubuntu-budgie-24.04.2-desktop-amd64.iso"
+    },
+    {
+      "added": 1788311708.848,
+      "info_hash": "5130287ea7c85b21d70202c57e1bb9d1aa205fa3",
+      "leechers": 6,
+      "magnet": "magnet:?xt=urn:btih:5130287ea7c85b21d70202c57e1bb9d1aa205fa3&dn=ubuntu-rescue_pack-amd64.iso",
+      "seeders": 9,
+      "size": 3372220416,
+      "source": "bitsearch",
+      "title": "ubuntu-rescue_pack-amd64.iso"
+    },
+    {
+      "added": 1788311721.056,
+      "info_hash": "bc8ee875e28107ad3d46405ca31977db9aba9568",
+      "leechers": 10,
+      "magnet": "magnet:?xt=urn:btih:bc8ee875e28107ad3d46405ca31977db9aba9568&dn=ubuntu_pack-20.04-budgie-amd64.iso",
+      "seeders": 9,
+      "size": 4515168256,
+      "source": "bitsearch",
+      "title": "ubuntu_pack-20.04-budgie-amd64.iso"
+    },
+    {
+      "added": 1788311713.504,
+      "info_hash": "d6a057938c982489c1a8bb2d35bc9905642a51ca",
+      "leechers": 14,
+      "magnet": "magnet:?xt=urn:btih:d6a057938c982489c1a8bb2d35bc9905642a51ca&dn=ubuntu_pack-20.04-amd64.iso",
+      "seeders": 9,
+      "size": 4754243584,
+      "source": "bitsearch",
+      "title": "ubuntu_pack-20.04-amd64.iso"
+    },
+    {
+      "added": 1789472858.517,
+      "info_hash": "7b6cae55db21441f06ea00a25c2a21e11752eee2",
+      "leechers": 0,
+      "magnet": "magnet:?xt=urn:btih:7b6cae55db21441f06ea00a25c2a21e11752eee2&dn=VanDine%20K.%20The%20Ultimate%20Ubuntu%20Handbook.%20A%20complete%20guide%20to%20Ubuntu%2024.04%2C..2025",
+      "seeders": 18,
+      "size": 11526650,
+      "source": "bitsearch",
+      "title": "VanDine K. The Ultimate Ubuntu Handbook. A complete guide to Ubuntu 24.04,..2025"
+    }
+  ],
+  "key": "bitsearch",
+  "page": 1,
+  "query": "ubuntu"
+}

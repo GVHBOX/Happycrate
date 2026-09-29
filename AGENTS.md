@@ -4,7 +4,7 @@
 **目录叫 `happycrate-rust` 只是为了跟老 Python 仓并存；产品名、包名、可执行文件名一律叫 `happycrate`。**
 迁移方案与阶段在 `PLAN.md`，状态在 `PLAN.md` §6，本文件只讲规矩。
 
-**当前阶段：v1.0.1 已发布，本仓已是 GitHub 上的主线** —— `GVHBOX/Happycrate` 的 `main`
+**当前阶段：v1.0.2 已发布，本仓已是 GitHub 上的主线** —— `GVHBOX/Happycrate` 的 `main`
 已被本仓强制覆盖（2026-09-29），Python 版源码在远端只剩 tag `v1.0.0`（指向首发根提交）。
 本地 `D:\AI\happycrate` 仍保有 Python 版全部提交。详见 `PLAN.md` §6.2。
 
@@ -42,6 +42,8 @@ python tools/scan_comment.py --selfcheck
 
 两层出口 —— 用户层：名称 + 具体原因；AI 层：全量结构化数据、字段用英文
 （`key` / `count` / `ms` / `adapter`），走 `source_issues`。
+
+**机器强制**：`python tools/check_front_hygiene.py`（静态扫描前端违规说明文案）。
 
 ### 3. 非源码一律进 `.scratch/`
 
@@ -87,6 +89,7 @@ TUN 还是系统代理 / PAC / 安全软件 / 地区封锁），只有用户知�
 cargo test                              # 金样 + 工具函数对照
 python tools/scan_comment.py            # 铁律 1
 python tools/scan_comment.py --selfcheck
+python tools/check_front_hygiene.py     # 铁律 2
 ```
 
 - **金样 diff 才是验收**：`cargo test` 绿只说明类型对，不说明行为对。

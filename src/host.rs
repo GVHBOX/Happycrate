@@ -16,6 +16,11 @@ fn list_sources(state: tauri::State<AppState>) -> Vec<Value> {
 }
 
 #[tauri::command]
+fn source_issues(state: tauri::State<AppState>) -> Vec<Value> {
+    state.api.lock().unwrap().source_issues()
+}
+
+#[tauri::command]
 fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> bool {
     state.api.lock().unwrap().toggle_source(&key, on)
 }
@@ -165,6 +170,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             list_sources,
+            source_issues,
             toggle_source,
             reorder_sources,
             set_auto_order,

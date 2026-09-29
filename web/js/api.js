@@ -197,42 +197,6 @@
       return Promise.resolve(true);
     },
 
-    diagnostics: function(keys){
-      if (live()) return invoke("diagnostics", {keys: keys});
-      var list = seed().filter(function(s){
-        var st = HC.mergeState((s.health.outcomes || []).slice(-5));
-        return (st === "err" || st === "empty") &&
-               (!keys || !keys.length || keys.indexOf(s.key) >= 0);
-      });
-      if (!list.length) return Promise.resolve("");
-      var report = {
-        at: stamp(),
-        version: "1.0.0",
-        lax: [],
-        sources: list.map(function(s){
-          var outs = (s.health.outcomes || []).slice(-5);
-          var st = HC.mergeState(outs);
-          return {
-            key: s.key,
-            label: s.label,
-            addr: s.addr,
-            kind: st === "empty" ? "empty" : "fail",
-            state: st,
-            err: s.health.err || "",
-            lastOk: 0,
-            outcomes: outs,
-            peers: 0,
-            peerHits: 0,
-            events: outs.map(function(t){
-              return {at: 0, outcome: t, code: 0, count: 0, ms: s.health.ms || 0, round: "", err: ""};
-            }),
-            adapter: adapterLocation(s)
-          };
-        })
-      };
-      return Promise.resolve(JSON.stringify(report, null, 2));
-    },
-
     sourceIssues: function(){
       if (live()) return invoke("source_issues");
       var list = seed().filter(function(s){
@@ -269,7 +233,7 @@
 
     appInfo: function(){
       if (live()) return invoke("app_info");
-      return Promise.resolve({version:"1.0.0", dataDir:"(mock 模式)", mode:"mock",
+      return Promise.resolve({version:"1.0.1", dataDir:"(mock 模式)", mode:"mock",
                               logFile:"(mock 模式)", recovered: [],
                               proxy:"跟随系统 127.0.0.1:7890"});
     },
@@ -494,29 +458,6 @@
       seen[key] = 1;
     });
     return bad;
-  }
-
-  function adapterName(key){
-    var MAP = {
-      apibay:"_search_apibay", nyaa:"_search_nyaa", mikan:"_search_mikan",
-      dmhy:"_search_dmhy", sukebei:"_search_sukebei", eztv:"_search_eztv",
-      bitsearch:"_search_bitsearch", tpb:"_search_tpb_mirror",
-      xccl263:"_search_xccl263", knaben:"_search_knaben",
-      javbus:"_search_javbus", javdb:"_search_javdb"
-    };
-    return MAP[key] || null;
-  }
-
-  function adapterLocation(s){
-    var n = adapterName(s.key);
-    return n ? "app/sources.py :: " + n
-             : "app/sources.py :: (未知内置源 " + s.key + ")";
-  }
-
-  function stamp(){
-    var d = new Date(), p = function(n){ return String(n).padStart(2, "0"); };
-    return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()) +
-           " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
   }
 
   function esc(v){

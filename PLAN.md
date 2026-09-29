@@ -306,6 +306,41 @@ python -c "import json,glob; print('对照表', sum(len(v) for f in glob.glob('t
 
 ---
 
+## 6.1 v1.0.1 变更：移除 diagnostics，source_issues 降级为只报 fail
+
+**决策（2026-09-29）**：`diagnostics` 命令不移植，前端一并删干净。它是给 AI 排查用的
+全量结构化 JSON，终端用户用不到；保留它等于为一条排查通道长期承担两个命令的维护成本。
+
+删的东西：`api.js` 的 `diagnostics` 方法及其 mock 分支、`sources.js` 的「诊断原文」折叠块
+与「复制诊断信息」按钮，以及随之失效的 `highlightJson` / `SEMANTIC` / `adapterName` /
+`adapterLocation` / `stamp`。`js/diagnostics.js` **不删**——它是前端运行时错误收集器
+（`window.onerror` + 调用耗时记录），跟这个命令不是一回事，同名而已。
+
+**`source_issues` 只报 fail，不报 empty，不做 peer 对比。** 原因是数据基础不存在，不是偷工：
+
+| Python 侧依赖 | Rust 侧现状 |
+|---|---|
+| `health.json` 持久化 | `paths::health_path()` 定义了但**无人调用**，文件根本不生成 |
+| 每个源最近 5 条 `outcomes` | `probe_seen` 是 `BTreeMap`，`insert` 覆盖，**只有 1 条** |
+| `events[]`（含 `round`） | 完全没有，`peer_stats` 无从算起 |
+| 跨会话累积 | 纯内存，**重启即空** |
+
+`window_empty()` 要 5 条窗口才判 silent，只有 1 条就永远为假；把判定降到「单次 empty 就报」
+会让测速词没命中就误报异常，比不报更糟。所以：**只报 `state == "err"` 的源**（超时 / 403 /
+网络失败 / 被拦截），这类是真故障，零误报。
+
+empty 类型与 peer 对比等 health 持久化补上再做。补的时候要动的是：新增 health store
+（读写 `health.json`、记 `events` 带 `round`）、让 `start_search` 也写 health（现在只有
+`probe_sources` 写）、`config.save()` 别再 strip health。
+
+**版本号不进 parity。** 升到 v1.0.1 后 `parity_app_info` 挂了一次：`tests/parity/api_cases.json`
+里的 `version` 是 Python 侧跑出来的 `1.0.0`，而断言拿它跟 Rust 侧比。版本号是各仓的发布标识，
+不是跨仓行为契约，让 parity 锁死它只会逼两仓永远同步发版。
+
+改法：`tests/api_parity.rs` 的 version 断言改为对照本仓 `happycrate::api::APP_VERSION` 常量。
+`api_cases.json` 里那 7 个 `version` 字段仍由 `gen_api_parity.py` 生成，但不再参与断言——
+重跑生成器也不会把测试打挂。
+
 ## 7. 金样测试（整个方案的成败点）
 
 `tests/golden.rs` 的形状：

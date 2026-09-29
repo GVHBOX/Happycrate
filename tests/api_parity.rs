@@ -161,7 +161,11 @@ fn parity_app_info() {
         api.settings.load();
         let info = api.app_info();
 
-        assert_eq!(info["version"], row["version"], "{name}: version");
+        assert_eq!(
+            info["version"],
+            happycrate::api::APP_VERSION,
+            "{name}: version"
+        );
         assert_eq!(info["mode"], row["mode"], "{name}: mode");
         assert_eq!(info["migratedFrom"], row["migratedFrom"], "{name}: migratedFrom");
         assert_eq!(info["autoOrder"], row["autoOrder"], "{name}: autoOrder");

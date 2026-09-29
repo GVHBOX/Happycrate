@@ -79,7 +79,7 @@ fn scheme_and_host(url: &str) -> (String, String) {
     (split.0.to_string(), authority.to_string())
 }
 pub const APP_TITLE: &str = "happycrate";
-pub const APP_VERSION: &str = "1.0.0";
+pub const APP_VERSION: &str = "1.0.1";
 
 pub fn hex_color_ok(value: &str) -> bool {
     let bytes = value.as_bytes();
@@ -816,6 +816,37 @@ impl Api {
                 view
             })
             .collect()
+    }
+
+    pub fn source_issues(&self) -> Vec<Value> {
+        let seen = self.probe_seen.lock().unwrap().clone();
+        let mut out = Vec::new();
+        for entry in self.config.sources() {
+            let key = match entry.get("key").and_then(Value::as_str) {
+                Some(value) => value,
+                None => continue,
+            };
+            let row = match seen.get(key) {
+                Some(row) => row,
+                None => continue,
+            };
+            if row.get("state").and_then(Value::as_str).unwrap_or("") != "err" {
+                continue;
+            }
+            let err = row.get("err").and_then(Value::as_str).unwrap_or("");
+            let label = match entry.get("label").and_then(Value::as_str) {
+                Some(value) => value.to_string(),
+                None => key.to_string(),
+            };
+            out.push(serde_json::json!({
+                "key": key,
+                "label": label,
+                "addr": addr_of(&entry),
+                "kind": "fail",
+                "detail": if err.is_empty() { "请求失败" } else { err },
+            }));
+        }
+        out
     }
 
     pub fn toggle_source(&mut self, key: &str, on: bool) -> bool {

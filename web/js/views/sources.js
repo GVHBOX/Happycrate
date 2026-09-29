@@ -61,15 +61,6 @@
   var openModal = HC.motion.openModal;
   var closeModal = HC.motion.closeModal;
 
-  var SEMANTIC = {
-    ok: "ok", slow: "ok", http429: "warn", http4xx: "warn",
-    empty: "empty", na: "na",
-    timeout: "err", net: "err", http403: "err", http5xx: "err",
-    err: "err", warn: "warn", cancel: "na", fail: "err", parse: "warn",
-    http451: "err", blocked: "err", shape: "warn", login: "warn",
-    unknown: "warn"
-  };
-
   var OUTCOME_TEXT = {
     timeout: "超时", net: "无法连接", http403: "403 拒绝", http429: "429 限流",
     http5xx: "服务异常", http4xx: "请求被拒", parse: "解析失败",
@@ -80,26 +71,10 @@
 
   var stateOf = HC.stateOf || function(s){ return "na"; };
 
-  function highlightJson(text){
-    return esc(text).replace(
-      /(&quot;(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\])*?&quot;(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
-      function(match, _all, colon){
-        if (match.indexOf("&quot;") === 0){
-          if (colon) return '<span class="jk">' + match + '</span>';
-          var inner = match.slice(6, -6);
-          var tone = SEMANTIC[inner];
-          return '<span class="' + (tone ? "js js-" + tone : "js") + '">' + match + '</span>';
-        }
-        if (/^(?:true|false|null)$/.test(match)) return '<span class="jb">' + match + '</span>';
-        return '<span class="jn">' + match + '</span>';
-      });
-  }
-
   function showBadModal(){
-    Promise.all([api.sourceIssues(), api.diagnostics([])]).then(function(res){
-      var issues = res[0] || [];
-      var detail = res[1] || "";
-      if (!issues.length && !detail){ M.toast("没有异常源"); return; }
+    api.sourceIssues().then(function(res){
+      var issues = res || [];
+      if (!issues.length){ M.toast("没有异常源"); return; }
 
       var body = issues.map(function(it){
         return '<div class="issue"><span class="ib ' + esc(it.kind) + '"></span>' +
@@ -108,29 +83,16 @@
           '<div class="iline">' + esc(it.detail) + '</div></div></div>';
       }).join("");
 
-      var logBlock = detail
-        ? '<details class="logbox"><summary>' + ICON.chev + '诊断原文</summary>' +
-          '<pre class="term selectable scroll-slim">' + highlightJson(detail) + '</pre></details>'
-        : "";
-
-      var m = openModal(
+      openModal(
         '<div class="dhead"><div class="tile">' + ICON.info + '</div>' +
         '<div class="dtitle">异常详情</div><div class="spacer"></div>' +
         '<button class="iconbtn" data-close>' + ICON.close + '</button></div>' +
         '<div class="div"></div>' +
-        '<div class="mbody"><div class="issues">' + body + '</div>' + logBlock + '</div>' +
+        '<div class="mbody"><div class="issues">' + body + '</div></div>' +
         '<div class="mfoot"><div class="spacer"></div>' +
-          '<button class="btn btn-ghost" data-close>关闭</button>' +
-          '<button class="btn btn-brand" id="mCopy">' + ICON.copy + '复制诊断信息</button></div>',
+          '<button class="btn btn-ghost" data-close>关闭</button></div>',
         true
       );
-      m.querySelector("#mCopy").onclick = function(){
-        var btn = this;
-        M.copy(detail).then(function(ok){
-          if (ok) M.morph(btn, "已复制");
-          else M.toast("复制失败", "err");
-        });
-      };
     }).catch(function(e){
       M.toast(String(e && e.message ? e.message : e), "err");
     });

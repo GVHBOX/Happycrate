@@ -900,7 +900,9 @@ Python 版当年得用 ctypes 子类化窗口过程去补，Rust 这层是白送
 
 **⑥ 打包：交付物就是那个单文件 exe**，不装安装包。`cargo build --release` →
 `target\release\happycrate.exe`（14 MB，界面已内嵌、图标已内嵌——实测 exe 里能找到
-`icons/icon.ico` 的图片数据）。`bundle.active` 保持 `false`：
+`assets/icon.ico` 的图片数据）。`bundle.active` 保持 `false`
+（但 `bundle.icon` 已显式配成 `["assets/icon.ico"]`，**别删**：图标靠这一项嵌进 exe，
+目录改名而这里不改就会静默丢掉 exe 图标）：
 **这个应用是便携式的**（数据在 exe 旁边），装进 Program Files 反而会让 `data\` 不可写、
 退化成 `%APPDATA%` 模式，等于改了用户的数据位置。
 

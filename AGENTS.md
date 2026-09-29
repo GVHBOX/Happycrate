@@ -46,14 +46,16 @@ python tools/scan_comment.py --selfcheck
 ### 3. 非源码一律进 `.scratch/`
 
 报告、备份、脚本、截图、数据导出、临时中间物全进 `.scratch/`。根目录只允许：
-源码（`src/`、`tests/`）、资源（`web/`、`icons/`）、仓库元文件（`README.md`、`LICENSE`、
+源码（`src/`、`tests/`）、资源（`web/`、`assets/`）、仓库元文件（`README.md`、`LICENSE`、
 `Cargo.toml`、`Cargo.lock`、`rust-toolchain.toml`、`tauri.conf.json`、`capabilities/`、
 `build.rs`、`.gitignore`、`tools/`、`AGENTS.md`、`PLAN.md`）、`examples/`、`target/`、`gen/`、
 `data/`（**debug 版跑出来的数据目录**，见下，已在 `.gitignore` 里）。
 
 `gen/` 是 `tauri-build` 每次编译生成的 schema，已进 `.gitignore`，不要手改。
-`icons/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
-**那是用户自己设计的图标，只装容器，不重画不缩放**。
+`assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
+**那是用户自己设计的图标，只装容器，不重画不缩放**。`assets/` 里另有 README 用的
+截图 `ui_screenshot.png` 与演示视频 `core_features_preview.mp4`（从旧 Python 仓搬来，
+界面一样所以直接复用）。改图标路径时记得同步 `tauri.conf.json` 的 `bundle.icon`。
 
 - `.scratch/` 整体不进版本库（成品报告也一样）；交付用原生 Windows 路径 `D:\...`，不用 `/d/...`。
 - **不往 `.workbuddy/` 写东西，也不重建它。**

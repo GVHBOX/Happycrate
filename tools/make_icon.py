@@ -1,4 +1,4 @@
-"""从用户自己设计的应用图标生成 icons/icon.ico。
+"""从用户自己设计的应用图标生成 assets/icon.ico。
 
 **不重画、不缩放、不改色**：只是把 web/assets/app-256.png 装进 ICO 容器。
 Vista 之后 ICO 允许直接内嵌 PNG，256×256 的条目宽高字段写 0（表示 256）。
@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "web" / "assets" / "app-256.png"
-ICON_DIR = ROOT / "icons"
+ICON_DIR = ROOT / "assets"
 TARGET = ICON_DIR / "icon.ico"
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"

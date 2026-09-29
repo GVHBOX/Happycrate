@@ -4,7 +4,11 @@
 **目录叫 `happycrate-rust` 只是为了跟老 Python 仓并存；产品名、包名、可执行文件名一律叫 `happycrate`。**
 迁移方案与阶段在 `PLAN.md`，状态在 `PLAN.md` §6，本文件只讲规矩。
 
-**当前阶段：P3 已完成 —— 21 个命令全通 CDP 真机验证，界面能跑真实搜索。下一步 P4 收尾。**
+**当前阶段：v1.0.1 已发布，本仓已是 GitHub 上的主线** —— `GVHBOX/Happycrate` 的 `main`
+已被本仓强制覆盖（2026-09-29），Python 版源码在远端只剩 tag `v1.0.0`（指向首发根提交）。
+本地 `D:\AI\happycrate` 仍保有 Python 版全部提交。详见 `PLAN.md` §6.2。
+
+工作分支就是 `main`，直接推。`rust-rewrite` 分支已删除，别再建同名的。
 
 ## 4 条铁律
 

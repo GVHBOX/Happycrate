@@ -341,6 +341,37 @@ empty 类型与 peer 对比等 health 持久化补上再做。补的时候要动
 `api_cases.json` 里那 7 个 `version` 字段仍由 `gen_api_parity.py` 生成，但不再参与断言——
 重跑生成器也不会把测试打挂。
 
+## 6.2 仓库结构变更：main 已由本仓接管（2026-09-29）
+
+**P5 没有做，是用户直接拍板切换的。** 原计划「两版并行跑满一个周期再下线 Python 版」
+被跳过，理由是两版并存本身就是负担。
+
+做过的事：
+
+```
+git push --force origin rust-rewrite:main    # ff599eb 覆盖 f41a7f4
+git push origin --delete rust-rewrite         # 本地与远端的分支都已删，工作分支统一为 main
+```
+
+覆盖后的实际状态：
+
+| 引用 | 指向 | 内容 |
+|---|---|---|
+| `main` | `ff599eb` | 本仓（Rust + Tauri），仓库语言已自动识别为 Rust |
+| tag `v1.0.0` | `42117c8` | Python 版**首发根提交**，`git log v1.0.0` 只有 1 条 |
+| tag `rust-v1.0.1` | `ff599eb` | 本仓 v1.0.1 |
+| Release `v1.0.0` | — | 附件 `happycrate-v1.0.0-win64.zip`（13.2 MB），成品仍可下载 |
+| Release `rust-v1.0.1` | — | 附件 `happycrate-v1.0.1.exe`（13.8 MB） |
+
+**一个容易被忽略的后果**：`v1.0.0` tag 指向的是**根提交**，所以 Python 版在 GitHub 上
+只剩「首发那一刻」的源码快照；它之后的 8 个提交（演示视频瘦身、README 多轮迭代、
+列表渲染合帧优化等）在远端已失去所有引用，会被后台 GC 回收。
+**本地 `D:\AI\happycrate` 保有全部 9 个提交**，要恢复随时能推。
+
+另注：Python 版本地仓与远端在覆盖前**已经分叉**——远端有 2 个网页上改的 README 提交
+（`5b2de30` / `f41a7f4`），本地有 2 个未推的提交（`dd28aae` 列表渲染减负 / `a2bd5a2`
+README 与源数量护栏）。覆盖 main 后，远端那 2 个 README 编辑消失，本地这 2 个仍在。
+
 ## 7. 金样测试（整个方案的成败点）
 
 `tests/golden.rs` 的形状：

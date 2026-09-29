@@ -1321,7 +1321,7 @@ dependencies = [
 
 [[package]]
 name = "happycrate"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "encoding_rs",
  "reqwest 0.12.28",

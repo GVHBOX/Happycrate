@@ -233,7 +233,7 @@
 
     appInfo: function(){
       if (live()) return invoke("app_info");
-      return Promise.resolve({version:"1.0.1", dataDir:"(mock 模式)", mode:"mock",
+      return Promise.resolve({version:"1.0.2", dataDir:"(mock 模式)", mode:"mock",
                               logFile:"(mock 模式)", recovered: [],
                               proxy:"跟随系统 127.0.0.1:7890"});
     },

@@ -79,7 +79,7 @@ fn scheme_and_host(url: &str) -> (String, String) {
     (split.0.to_string(), authority.to_string())
 }
 pub const APP_TITLE: &str = "happycrate";
-pub const APP_VERSION: &str = "1.0.1";
+pub const APP_VERSION: &str = "1.0.2";
 
 pub fn hex_color_ok(value: &str) -> bool {
     let bytes = value.as_bytes();

@@ -101,7 +101,7 @@ static CACHE: LazyLock<Mutex<HashMap<String, Cached>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
 pub fn cache_clear() {
-    CACHE.lock().unwrap().clear();
+    CACHE.lock().unwrap_or_else(|e| e.into_inner()).clear();
 }
 
 fn now_secs() -> f64 {
@@ -112,7 +112,7 @@ fn now_secs() -> f64 {
 }
 
 fn cache_take(ckey: &str) -> Option<Cached> {
-    let mut cache = CACHE.lock().unwrap();
+    let mut cache = CACHE.lock().unwrap_or_else(|e| e.into_inner());
     let hit = cache.get(ckey)?.clone();
     if now_secs() - hit.ts > CACHE_TTL {
         cache.remove(ckey);
@@ -122,7 +122,7 @@ fn cache_take(ckey: &str) -> Option<Cached> {
 }
 
 fn cache_put(ckey: &str, entry: Cached) {
-    let mut cache = CACHE.lock().unwrap();
+    let mut cache = CACHE.lock().unwrap_or_else(|e| e.into_inner());
     cache.insert(ckey.to_string(), entry);
     while cache.len() > CACHE_MAX {
         let oldest = cache
@@ -277,7 +277,7 @@ fn on_source(
         return;
     }
     let count = items.len() as i64;
-    let mut state = acc.lock().unwrap();
+    let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
     if state.relax_round > 0 && err.is_empty() && count == 0 {
         crate::log::info(
             crate::log::SOURCES,
@@ -319,7 +319,7 @@ fn on_source(
         dedupe(&values)
     };
 
-    let mut state = acc.lock().unwrap();
+    let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
     state.raw += count;
     state.dup += count - merged.len() as i64;
     let mut batch: Vec<Value> = Vec::with_capacity(merged.len());
@@ -432,7 +432,7 @@ fn run_round<F: Fetch + Sync>(
     acc: &Mutex<Acc>,
 ) {
     if crate::api::py_len(query_text.trim()) < job.min_len as usize {
-        let mut state = acc.lock().unwrap();
+        let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
         if state.rows.is_empty() && state.ok_keys.is_empty() {
             state
                 .errors
@@ -466,7 +466,7 @@ fn run_round<F: Fetch + Sync>(
         }
     }
 
-    let mut state = acc.lock().unwrap();
+    let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
     if reached == 0 && !errors.is_empty() {
         let fatal = if errors.values().all(|msg| msg.contains(&job.hints.proxy)) {
             job.hints.proxy.clone()
@@ -499,7 +499,7 @@ fn runner<F: Fetch + Sync>(
             return;
         }
         let (exhausted, has_rows, relaxed_used) = {
-            let state = acc.lock().unwrap();
+            let state = acc.lock().unwrap_or_else(|e| e.into_inner());
             (
                 !state.ok_keys.is_empty() && state.ok_keys.is_subset(&state.fuzzy_keys),
                 !state.rows.is_empty(),
@@ -519,7 +519,7 @@ fn runner<F: Fetch + Sync>(
             &format!("放宽关键词重搜：去掉 {dropped}"),
         );
         {
-            let mut state = acc.lock().unwrap();
+            let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
             state.relaxed_used.push(dropped);
             state.relax_round = rounds as i64;
         }
@@ -529,7 +529,7 @@ fn runner<F: Fetch + Sync>(
 
 fn seed(job: &Job, cached: &Cached, acc: &Mutex<Acc>, sink: &(dyn Fn(Event) + Sync)) {
     {
-        let mut state = acc.lock().unwrap();
+        let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
         state.rows = cached.rows.clone();
         let hashes: Vec<String> = state
             .rows
@@ -613,26 +613,26 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         scope.spawn(|| {
             runner(job, fetch, sink, &acc, retry.as_deref());
             let (lock, alarm) = &gate;
-            *lock.lock().unwrap() = true;
+            *lock.lock().unwrap_or_else(|e| e.into_inner()) = true;
             alarm.notify_all();
         });
 
         if job.soft_deadline_ms > 0 {
             let (lock, alarm) = &gate;
-            let guard = lock.lock().unwrap();
+            let guard = lock.lock().unwrap_or_else(|e| e.into_inner());
             let (guard, _) = alarm
                 .wait_timeout(guard, Duration::from_millis(job.soft_deadline_ms as u64))
-                .unwrap();
-            if !*guard && sources::batch_alive(job.token) && !acc.lock().unwrap().rows.is_empty() {
+                .unwrap_or_else(|e| e.into_inner());
+            if !*guard && sources::batch_alive(job.token) && !acc.lock().unwrap_or_else(|e| e.into_inner()).rows.is_empty() {
                 drop(guard);
                 sink(Event::Settled(json!({"token": job.token})));
             }
         }
 
         let (lock, alarm) = &gate;
-        let mut guard = lock.lock().unwrap();
+        let mut guard = lock.lock().unwrap_or_else(|e| e.into_inner());
         while !*guard {
-            guard = alarm.wait(guard).unwrap();
+            guard = alarm.wait(guard).unwrap_or_else(|e| e.into_inner());
         }
     });
 

@@ -527,7 +527,8 @@
     }
     var keep = {};
     openKeys.forEach(function(h){
-      var row = rowsEl.querySelector('.srow[data-hash="' + h + '"]');
+      var safeH = window.CSS && CSS.escape ? CSS.escape(h) : h;
+      var row = rowsEl.querySelector('.srow[data-hash="' + safeH + '"]');
       var it = itemByHash(h);
       var lazy = it && it.fetch && it.fetch.url;
       var has = it && ((it.files && it.files.length) || lazy);

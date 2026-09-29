@@ -207,10 +207,19 @@
       store.set({filter: this.value});
     });
 
+    function onSaveResult(promise){
+      if (!promise || !promise.then) return;
+      promise.then(function(r){
+        if (r && !r.ok && r.reason){
+          M.toast("保存失败：" + r.reason);
+        }
+      }).catch(function(){});
+    }
+
     root.querySelector("#btnAuto").onclick = function(){
       autoOrder = !autoOrder;
       paintAuto();
-      api.setAutoOrder(autoOrder);
+      onSaveResult(api.setAutoOrder(autoOrder));
     };
 
     root.querySelector("#btnProbe").onclick = function(){
@@ -262,7 +271,7 @@
         ms.innerHTML = healthText(s);
       }
       if (hd) hd.className = "hd " + st;
-      api.toggleSource(key, s.enabled);
+      onSaveResult(api.toggleSource(key, s.enabled));
       updateStatus();
     });
 
@@ -277,7 +286,7 @@
         var to = Math.max(0, Math.min(next.length, dropTo));
         next.splice(to, 0, item);
         store.set({sources: next});
-        api.reorderSources(next.map(function(s){ return s.key; }));
+        onSaveResult(api.reorderSources(next.map(function(s){ return s.key; })));
       }
     });
 

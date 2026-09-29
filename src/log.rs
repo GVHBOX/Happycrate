@@ -1,9 +1,11 @@
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::sync::OnceLock;
+use std::sync::{Mutex, OnceLock};
 
 use crate::paths;
+
+static WRITE_LOCK: Mutex<()> = Mutex::new(());
 
 pub const ROOT: &str = "happycrate";
 pub const API: &str = "happycrate.app.api";
@@ -112,6 +114,7 @@ fn rotate(path: &Path) {
 }
 
 fn append(line_text: &str) -> bool {
+    let _guard = WRITE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
     let Some(path) = FILE.get() else {
         return false;
     };

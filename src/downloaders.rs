@@ -226,7 +226,7 @@ fn available_of(key: &str) -> bool {
 static AVAILABILITY: Mutex<Option<BTreeMap<String, bool>>> = Mutex::new(None);
 
 fn cached_available(key: &str, refresh: bool) -> bool {
-    let mut guard = AVAILABILITY.lock().unwrap();
+    let mut guard = AVAILABILITY.lock().unwrap_or_else(|e| e.into_inner());
     if refresh {
         guard.take();
     }

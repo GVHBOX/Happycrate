@@ -263,3 +263,27 @@ fn parity_proxy_status() {
         assert_eq!(got, row["out"], "{name}: 代理状态不一致");
     }
 }
+
+#[test]
+fn test_save_settings_reloads_http_client() {
+    let dir = scratch("reload_http");
+    let sources = dir.join("sources.json");
+    let settings = dir.join("settings.json");
+    let mut api = Api::new(Some(sources), Some(settings));
+    api.config.load();
+    api.settings.load();
+
+    let client1 = api.http();
+    assert!(client1.is_some());
+
+    let new_proxy = "http://127.0.0.1:9876";
+    let res = api.save_settings(&serde_json::json!({
+        "proxy": new_proxy,
+    }));
+    assert!(res["ok"].as_bool().unwrap());
+
+    let client2 = api.http();
+    assert!(client2.is_some());
+    let status2 = api.proxy_status(false);
+    assert_eq!(status2["addr"].as_str().unwrap(), new_proxy);
+}

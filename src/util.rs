@@ -7,11 +7,22 @@ const NAMED: &[(&str, char)] = &[
     ("apos", '\''),
     ("atilde", 'ã'),
     ("copy", '©'),
+    ("deg", '°'),
+    ("eacute", 'é'),
     ("gt", '>'),
+    ("hellip", '…'),
+    ("laquo", '«'),
     ("lt", '<'),
+    ("mdash", '—'),
+    ("middot", '·'),
     ("nbsp", '\u{a0}'),
+    ("ndash", '–'),
     ("quot", '"'),
+    ("raquo", '»'),
+    ("reg", '®'),
     ("times", '×'),
+    ("trade", '™'),
+    ("uuml", 'ü'),
 ];
 
 const WIN1252: [char; 32] = [
@@ -52,16 +63,18 @@ fn charref(body: &str, hex: bool) -> Option<(char, usize)> {
         return None;
     }
     let tail = &body[digits.len()..];
-    if !tail.starts_with(';') {
-        return None;
-    }
+    let has_semi = tail.starts_with(';');
     let code = u32::from_str_radix(&digits, if hex { 16 } else { 10 }).ok()?;
-    let ch = if (0x80..=0x9f).contains(&code) {
+    let ch = if code == 0 {
+        '\u{fffd}'
+    } else if (0x80..=0x9f).contains(&code) {
         WIN1252[(code - 0x80) as usize]
     } else {
         char::from_u32(code).unwrap_or('\u{fffd}')
     };
-    Some((ch, digits.len() + if hex { 3 } else { 2 }))
+    let prefix_len = if hex { 2 } else { 1 };
+    let semi_len = if has_semi { 1 } else { 0 };
+    Some((ch, digits.len() + prefix_len + semi_len))
 }
 
 pub fn html_unescape(text: &str) -> String {
@@ -94,7 +107,7 @@ pub fn html_unescape(text: &str) -> String {
             } else {
                 NAMED
                     .iter()
-                    .find(|(n, _)| *n == name)
+                    .find(|(n, _)| n.eq_ignore_ascii_case(&name))
                     .map(|(_, c)| (*c, name.len() + 1))
             }
         };

@@ -343,3 +343,14 @@ fn parity_tables_non_empty() {
     }
     assert_eq!(count, 14, "对照表数量应为 14，实际 {count}");
 }
+
+#[test]
+fn parity_unescape_extended() {
+    assert_eq!(unescape("&laquo;test&raquo;"), "«test»");
+    assert_eq!(unescape("&mdash;&ndash;&hellip;"), "—–…");
+    assert_eq!(unescape("&eacute;&uuml;&reg;&deg;&middot;"), "éü®°·");
+    assert_eq!(unescape("&AMP;&GT;&LT;&QUOT;"), "&><\"");
+    assert_eq!(unescape("&#0;"), "\u{fffd}");
+    assert_eq!(unescape("&#65;"), "A");
+    assert_eq!(unescape("&#65"), "A");
+}

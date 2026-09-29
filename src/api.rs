@@ -429,7 +429,7 @@ pub struct Api {
     pub search_token: i64,
     pub migration: crate::migrate::Report,
     probe_seen: crate::probe::Seen,
-    http: std::cell::OnceCell<Option<std::sync::Arc<crate::net::HttpClient>>>,
+    http: std::sync::Mutex<Option<std::sync::Arc<crate::net::HttpClient>>>,
     push: Option<std::sync::Arc<crate::search::Sink>>,
 }
 
@@ -442,7 +442,7 @@ impl Api {
             search_token: 0,
             migration: crate::migrate::Report::default(),
             probe_seen: std::sync::Arc::new(std::sync::Mutex::new(BTreeMap::new())),
-            http: std::cell::OnceCell::new(),
+            http: std::sync::Mutex::new(None),
             push: None,
         }
     }
@@ -451,28 +451,41 @@ impl Api {
         self.push = Some(sink);
     }
 
+    pub fn reset_http(&self) {
+        let mut guard = self.http.lock().unwrap_or_else(|e| e.into_inner());
+        *guard = None;
+    }
+
     pub fn http(&self) -> Option<std::sync::Arc<crate::net::HttpClient>> {
-        self.http
-            .get_or_init(|| {
-                let ua = match std::env::var("HAPPYCRATE_UA") {
-                    Ok(value) if !value.is_empty() => value,
-                    _ => {
-                        let configured = crate::config::py_str(&self.settings.get("user_agent"));
-                        if configured.is_empty() {
-                            crate::net::DEFAULT_UA.to_string()
-                        } else {
-                            configured
-                        }
-                    }
-                };
-                let retries = self.settings.as_int("retries", 1).max(0) as u32;
-                let timeout = self.settings.as_int("timeout", 15).max(1) as u64;
-                let proxy = crate::config::py_str(&self.settings.get("proxy"));
-                crate::net::HttpClient::new(ua, retries, timeout, &proxy)
-                    .ok()
-                    .map(std::sync::Arc::new)
-            })
-            .clone()
+        let mut guard = self.http.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(client) = guard.as_ref() {
+            return Some(client.clone());
+        }
+        let ua = match std::env::var("HAPPYCRATE_UA") {
+            Ok(value) if !value.is_empty() => value,
+            _ => {
+                let configured = crate::config::py_str(&self.settings.get("user_agent"));
+                if configured.is_empty() {
+                    crate::net::DEFAULT_UA.to_string()
+                } else {
+                    configured
+                }
+            }
+        };
+        let retries = self.settings.as_int("retries", 1).max(0) as u32;
+        let timeout = self.settings.as_int("timeout", 15).max(1) as u64;
+        let proxy = crate::config::py_str(&self.settings.get("proxy"));
+        match crate::net::HttpClient::new(ua, retries, timeout, &proxy) {
+            Ok(client) => {
+                let arc = std::sync::Arc::new(client);
+                *guard = Some(arc.clone());
+                Some(arc)
+            }
+            Err(err) => {
+                crate::log::error(crate::log::API, &format!("创建网络客户端失败：{err:?}"));
+                None
+            }
+        }
     }
 
     pub fn torrent_meta(
@@ -944,12 +957,13 @@ impl Api {
         }
 
         let reason = self.settings.save();
+        self.reset_http();
         crate::search::cache_clear();
         self.note_write(reason.clone());
         if !reason.is_empty() {
             return settings_result(
                 false,
-                vec![format!("改动已生效但没保存，重启后会回到旧设置：{reason}")],
+                vec![format!("改动未能保存到磁盘：{reason}")],
             );
         }
         settings_result(true, Vec::new())

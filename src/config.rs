@@ -161,16 +161,18 @@ pub fn atomic_write_json(path: &Path, data: &Value) -> String {
         .unwrap_or(0);
     let temp = directory.join(format!("{TMP_PREFIX}{}-{stamp}.json", std::process::id()));
     let body = serde_json::to_string_pretty(data).unwrap_or_default();
-    match std::fs::write(&temp, body) {
-        Ok(()) => {}
-        Err(error) => {
-            let _ = std::fs::remove_file(&temp);
-            crate::log::error(
-                crate::log::CONFIG,
-                &format!("写入 {} 失败：{error}", path.display()),
-            );
-            return format!("写入失败：{error}");
-        }
+    let write_res = std::fs::File::create(&temp).and_then(|mut f| {
+        use std::io::Write;
+        f.write_all(body.as_bytes())?;
+        f.sync_all()
+    });
+    if let Err(error) = write_res {
+        let _ = std::fs::remove_file(&temp);
+        crate::log::error(
+            crate::log::CONFIG,
+            &format!("写入 {} 失败：{error}", path.display()),
+        );
+        return format!("写入失败：{error}");
     }
     if let Err(error) = std::fs::rename(&temp, path) {
         let _ = std::fs::remove_file(&temp);

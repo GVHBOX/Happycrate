@@ -624,7 +624,7 @@ impl HttpClient {
 
     fn client(&self, timeout_ms: u64, lax: bool, proxied: bool) -> SourceResult<reqwest::Client> {
         let key = (timeout_ms, lax, proxied);
-        if let Some(found) = self.clients.lock().unwrap().get(&key) {
+        if let Some(found) = self.clients.lock().unwrap_or_else(|e| e.into_inner()).get(&key) {
             return Ok(found.clone());
         }
         let mut base = reqwest::header::HeaderMap::new();
@@ -639,6 +639,7 @@ impl HttpClient {
         let mut builder = reqwest::Client::builder()
             .user_agent(&self.ua)
             .default_headers(base)
+            .timeout(Duration::from_millis(timeout_ms))
             .connect_timeout(Duration::from_millis(timeout_ms))
             .read_timeout(Duration::from_millis(timeout_ms))
             .gzip(true)
@@ -661,13 +662,13 @@ impl HttpClient {
         let client = builder
             .build()
             .map_err(|e| SourceError::Transport(e.to_string()))?;
-        self.clients.lock().unwrap().insert(key, client.clone());
+        self.clients.lock().unwrap_or_else(|e| e.into_inner()).insert(key, client.clone());
         Ok(client)
     }
 
     fn known_lax(&self, url: &str) -> bool {
         let host = host_of(url);
-        let mut guard = self.lax.lock().unwrap();
+        let mut guard = self.lax.lock().unwrap_or_else(|e| e.into_inner());
         let now = Instant::now();
         guard.retain(|_, until| *until > now);
         guard.contains_key(&host)
@@ -675,7 +676,7 @@ impl HttpClient {
 
     fn mark_lax(&self, url: &str) {
         let host = host_of(url);
-        let mut guard = self.lax.lock().unwrap();
+        let mut guard = self.lax.lock().unwrap_or_else(|e| e.into_inner());
         guard.insert(host, Instant::now() + Duration::from_secs(LAX_TTL_SECS));
         if guard.len() > LAX_LIMIT {
             let mut entries: Vec<(String, Instant)> =
@@ -689,7 +690,7 @@ impl HttpClient {
     }
 
     pub fn tun_adapter(&self, force: bool) -> String {
-        let mut guard = self.tun.lock().unwrap();
+        let mut guard = self.tun.lock().unwrap_or_else(|e| e.into_inner());
         if !force {
             if let Some((at, name)) = guard.as_ref() {
                 if at.elapsed() < Duration::from_secs(TUN_ADAPTER_TTL_SECS) {
@@ -720,7 +721,7 @@ impl HttpClient {
     pub fn proxy_status(&self, force: bool) -> serde_json::Value {
         let key = format!("{}|{}", self.resolved.mode, self.resolved.addr);
         if !force {
-            let guard = self.probe.lock().unwrap();
+            let guard = self.probe.lock().unwrap_or_else(|e| e.into_inner());
             if let Some((cached_key, at, data)) = guard.as_ref() {
                 if *cached_key == key
                     && at.elapsed() < Duration::from_secs(PROBE_CACHE_TTL_SECS)
@@ -754,7 +755,7 @@ impl HttpClient {
             &tun,
             checked_at,
         );
-        *self.probe.lock().unwrap() = Some((key, Instant::now(), data.clone()));
+        *self.probe.lock().unwrap_or_else(|e| e.into_inner()) = Some((key, Instant::now(), data.clone()));
         data
     }
 

@@ -211,12 +211,14 @@ pub fn run() {
                 ),
             );
             let handle = window.clone();
+            let push_gate = std::sync::Arc::new(std::sync::Mutex::new(()));
             let state = app.state::<AppState>();
             state
                 .api
                 .lock()
-                .unwrap()
+                .unwrap_or_else(|e| e.into_inner())
                 .set_push(std::sync::Arc::new(move |event| {
+                    let _guard = push_gate.lock().unwrap_or_else(|e| e.into_inner());
                     if handle.eval(&crate::search::js_of(&event)).is_err() {
                         crate::log::warning(crate::log::SHELL, "推送前端失败");
                     }

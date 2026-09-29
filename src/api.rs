@@ -741,6 +741,9 @@ impl Api {
         };
 
         let parsed = query::parse(&text);
+        if self.search_token != 0 {
+            crate::sources::cancel_batch(self.search_token);
+        }
         let token = crate::sources::start_batch();
         self.search_token = token;
 

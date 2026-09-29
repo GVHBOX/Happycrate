@@ -389,13 +389,24 @@ fn fan_out<F: Fetch + Sync>(
                 if !sources::batch_alive(job.token) {
                     break;
                 }
-                let index = match queue.lock().unwrap().pop_front() {
+                let index = match queue.lock().unwrap_or_else(|e| e.into_inner()).pop_front() {
                     Some(index) => index,
                     None => break,
                 };
                 let target = &job.targets[index];
                 on_start(job, &target.key, sink);
-                let row = search_one(job, target, query_text, fetch);
+                let row = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    search_one(job, target, query_text, fetch)
+                })) {
+                    Ok(row) => row,
+                    Err(_) => {
+                        crate::log::warning(
+                            crate::log::SOURCES,
+                            &format!("源 {} 异常退出", target.key),
+                        );
+                        (Vec::new(), "内部异常".to_string(), 0)
+                    }
+                };
                 if tx.send((index, row)).is_err() {
                     break;
                 }

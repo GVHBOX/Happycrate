@@ -311,7 +311,7 @@
       rowHtml(lblText("s_proxy", "代理"),
         '<input class="input mono" id="s_proxy" value="" placeholder="http://127.0.0.1:7890">') +
       rowHtml(lblText("s_user_agent", "User-Agent"),
-        '<input class="input mono" id="s_user_agent" value="" placeholder="留空用内置">'));
+        '<input class="input mono" id="s_user_agent" value="" placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)">'));
   }
 
   function aboutPane(){

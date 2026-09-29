@@ -104,7 +104,7 @@ pub fn proxy_desc(settings: &Settings) -> String {
         String::new()
     };
     if !manual.is_empty() {
-        return format!("手动设置 {manual}");
+        return format!("手动设置 {}", redact(&manual));
     }
     let info = crate::net::system_proxies();
     let addr = info
@@ -115,7 +115,7 @@ pub fn proxy_desc(settings: &Settings) -> String {
     if addr.is_empty() {
         return "未检测到代理".to_string();
     }
-    format!("跟随系统 {addr}")
+    format!("跟随系统 {}", redact(&addr))
 }
 
 pub fn py_len(text: &str) -> usize {
@@ -771,6 +771,10 @@ impl Api {
         self.migration = crate::migrate::run(&mut self.settings, &mut self.config);
         if !self.migration.error.is_empty() {
             let reason = self.migration.error.clone();
+            self.note_write(reason);
+        }
+        if self.migration.sources > 0 {
+            let reason = self.config.save();
             self.note_write(reason);
         }
         crate::log::info(

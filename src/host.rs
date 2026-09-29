@@ -10,101 +10,107 @@ pub struct AppState {
     pub maxed: Mutex<bool>,
 }
 
+impl AppState {
+    fn api(&self) -> std::sync::MutexGuard<'_, Api> {
+        self.api.lock().unwrap_or_else(|e| e.into_inner())
+    }
+}
+
 #[tauri::command]
 fn list_sources(state: tauri::State<AppState>) -> Vec<Value> {
-    state.api.lock().unwrap().list_sources()
+    state.api().list_sources()
 }
 
 #[tauri::command]
 fn source_issues(state: tauri::State<AppState>) -> Vec<Value> {
-    state.api.lock().unwrap().source_issues()
+    state.api().source_issues()
 }
 
 #[tauri::command]
 fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> bool {
-    state.api.lock().unwrap().toggle_source(&key, on)
+    state.api().toggle_source(&key, on)
 }
 
 #[tauri::command]
 fn reorder_sources(state: tauri::State<AppState>, keys: Vec<String>) -> bool {
-    state.api.lock().unwrap().reorder_sources(&keys)
+    state.api().reorder_sources(&keys)
 }
 
 #[tauri::command]
 fn set_auto_order(state: tauri::State<AppState>, on: bool) -> bool {
-    state.api.lock().unwrap().set_auto_order(on)
+    state.api().set_auto_order(on)
 }
 
 #[tauri::command]
 fn get_settings(state: tauri::State<AppState>) -> Value {
-    state.api.lock().unwrap().get_settings()
+    state.api().get_settings()
 }
 
 #[tauri::command]
 fn default_settings(state: tauri::State<AppState>) -> Value {
-    state.api.lock().unwrap().default_settings()
+    state.api().default_settings()
 }
 
 #[tauri::command]
 fn save_settings(state: tauri::State<AppState>, fields: Value) -> Value {
-    state.api.lock().unwrap().save_settings(&fields)
+    state.api().save_settings(&fields)
 }
 
 #[tauri::command]
 fn reload_query_roles(state: tauri::State<AppState>) -> bool {
-    state.api.lock().unwrap().reload_query_roles()
+    state.api().reload_query_roles()
 }
 
 #[tauri::command]
 fn selftest(state: tauri::State<AppState>) -> Value {
-    state.api.lock().unwrap().selftest()
+    state.api().selftest()
 }
 
 #[tauri::command]
 fn app_info(state: tauri::State<AppState>) -> Value {
-    state.api.lock().unwrap().app_info()
+    state.api().app_info()
 }
 
 #[tauri::command]
 fn torrent_files(state: tauri::State<AppState>, payload: Value) -> Value {
-    state.api.lock().unwrap().torrent_files(&payload)
+    state.api().torrent_files(&payload)
 }
 
 #[tauri::command]
 fn downloaders(state: tauri::State<AppState>) -> Vec<Value> {
-    state.api.lock().unwrap().downloaders()
+    state.api().downloaders()
 }
 
 #[tauri::command]
 fn deliver(state: tauri::State<AppState>, magnets: Vec<Value>, key: Option<String>) -> Value {
     let chosen = key.unwrap_or_default();
-    state.api.lock().unwrap().deliver(&magnets, &chosen)
+    state.api().deliver(&magnets, &chosen)
 }
 
 #[tauri::command]
 fn probe_sources(state: tauri::State<AppState>, keys: Option<Vec<String>>) -> i64 {
-    state.api.lock().unwrap().probe_sources(keys.as_deref())
+    state.api().probe_sources(keys.as_deref())
 }
 
 #[tauri::command]
 fn start_search(state: tauri::State<AppState>, query: String, page: Option<i64>) -> Value {
     let page = page.unwrap_or(1);
-    state.api.lock().unwrap().start_search(&query, page)
+    state.api().start_search(&query, page)
 }
 
 #[tauri::command]
 fn cancel_search(state: tauri::State<AppState>, token: Option<i64>) -> bool {
-    state.api.lock().unwrap().cancel_search(token.unwrap_or(0))
+    state.api().cancel_search(token.unwrap_or(0))
 }
 
 #[tauri::command]
 fn proxy_status(state: tauri::State<AppState>, force: bool) -> Value {
-    state.api.lock().unwrap().proxy_status(force)
+    state.api().proxy_status(force)
 }
 
 #[tauri::command]
 fn open_logs(state: tauri::State<AppState>) -> bool {
-    state.api.lock().unwrap().open_logs()
+    state.api().open_logs()
 }
 
 #[tauri::command]
@@ -114,7 +120,7 @@ fn win_min(window: tauri::Window) -> bool {
 
 #[tauri::command]
 fn win_max(window: tauri::Window, state: tauri::State<AppState>) -> bool {
-    let mut maxed = state.maxed.lock().unwrap();
+    let mut maxed = state.maxed.lock().unwrap_or_else(|e| e.into_inner());
     let outcome = if *maxed {
         window.unmaximize()
     } else {

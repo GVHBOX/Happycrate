@@ -41,7 +41,7 @@ python tools/scan_comment.py --selfcheck
 括号挂解释 · 把 AI 排查细节摊给用户。
 
 两层出口 —— 用户层：名称 + 具体原因；AI 层：全量结构化数据、字段用英文
-（`key` / `count` / `ms` / `adapter`），走 `diagnostics`。
+（`key` / `count` / `ms` / `adapter`），走 `source_issues`。
 
 ### 3. 非源码一律进 `.scratch/`
 

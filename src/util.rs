@@ -200,6 +200,12 @@ fn parse_ymd(s: &str) -> Option<(i64, i64, i64)> {
     if b.len() < 10 || b[4] != b'-' || b[7] != b'-' {
         return None;
     }
+    if !b[0..4].iter().all(u8::is_ascii_digit)
+        || !b[5..7].iter().all(u8::is_ascii_digit)
+        || !b[8..10].iter().all(u8::is_ascii_digit)
+    {
+        return None;
+    }
     let y = s[0..4].parse::<i64>().ok()?;
     let m = s[5..7].parse::<i64>().ok()?;
     let d = s[8..10].parse::<i64>().ok()?;
@@ -259,19 +265,29 @@ fn parse_iso(raw: &str) -> Option<f64> {
     if b[10] != b'T' && b[10] != b' ' {
         return Some(seconds as f64);
     }
-    let time = &raw[11..];
+    let time = raw.get(11..)?;
     let tb = time.as_bytes();
     if tb.len() < 5 || tb[2] != b':' {
         return None;
     }
+    if !tb[0..2].iter().all(u8::is_ascii_digit) || !tb[3..5].iter().all(u8::is_ascii_digit) {
+        return None;
+    }
     let hh = time[0..2].parse::<i64>().ok()?;
     let mi = time[3..5].parse::<i64>().ok()?;
+    if !(0..=23).contains(&hh) || !(0..=59).contains(&mi) {
+        return None;
+    }
     seconds += hh * 3600 + mi * 60;
     let mut rest = &time[5..];
     let mut frac = 0f64;
     if let Some(stripped) = rest.strip_prefix(':') {
-        if stripped.len() >= 2 {
+        let sb = stripped.as_bytes();
+        if sb.len() >= 2 && sb[0..2].iter().all(u8::is_ascii_digit) {
             let ss = stripped[0..2].parse::<i64>().ok()?;
+            if !(0..=59).contains(&ss) {
+                return None;
+            }
             seconds += ss;
             rest = &stripped[2..];
         }
@@ -1157,13 +1173,22 @@ pub fn local_parts(iso: &str) -> Option<(i64, i64, i64)> {
     if bytes.len() < 5 || bytes[2] != b':' {
         return None;
     }
+    if !bytes[0..2].iter().all(u8::is_ascii_digit) || !bytes[3..5].iter().all(u8::is_ascii_digit) {
+        return None;
+    }
     let h = all_digits(&rest[0..2], 2)?;
     let mi = all_digits(&rest[3..5], 2)?;
     let s = if bytes.len() >= 8 && bytes[5] == b':' {
+        if !bytes[6..8].iter().all(u8::is_ascii_digit) {
+            return None;
+        }
         all_digits(&rest[6..8], 2)?
     } else {
         0
     };
+    if h > 23 || mi > 59 || s > 59 {
+        return None;
+    }
     let mut off_at = None;
     for (i, c) in rest.char_indices() {
         if i > 0 && (c == '+' || c == '-') {

@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, HashSet};
 use serde_json::Value;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, collect_pages, default_base, first_failure, Fetch};
+use crate::sources::{base_of, collect_pages, default_base, first_failure, Fetch, Req};
 use crate::util::{is_hash40, make_item, num_from_f64, quote, text_of, to_int, ts_from_iso};
 
 pub const PAGE_SIZE: i64 = 100;
@@ -15,7 +15,7 @@ fn page<F: Fetch>(root: &str, page_no: i64, query: &str, fetch: &F) -> SourceRes
         "{root}/api/v1/search?q={}&sort=seeders&page={page_no}&limit={PAGE_SIZE}",
         quote(query)
     );
-    let text = fetch.get(&url, None)?;
+    let text = fetch.fetch(Req::get(&url).header("Accept", "application/json"))?;
     let payload: Value = serde_json::from_str(&text)
         .map_err(|_| SourceError::Shape("BitSearch 返回的不是 JSON".to_string()))?;
     let Some(rows) = payload.get("results").and_then(Value::as_array) else {

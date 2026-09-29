@@ -961,8 +961,29 @@
     renderTip();
   }
 
+  var watchdogTimer = null;
+  var WATCHDOG_MS = 60000;
+
+  function clearWatchdog(){
+    if (watchdogTimer){
+      clearTimeout(watchdogTimer);
+      watchdogTimer = null;
+    }
+  }
+
+  function resetWatchdog(){
+    clearWatchdog();
+    if (!st.busy) return;
+    watchdogTimer = setTimeout(function(){
+      if (st.busy){
+        abortSearch("搜索超时");
+      }
+    }, WATCHDOG_MS);
+  }
+
   function dispatch(type, d){
     if (!st.busy) return false;
+    resetWatchdog();
     if (st.token === null){
       (st.pending || (st.pending = [])).push({type: type, d: d});
       return false;
@@ -1122,6 +1143,7 @@
   }
 
   function abortSearch(msg){
+    clearWatchdog();
     st.startSeq++;
     st.busy = false;
     st.token = 0;
@@ -1141,6 +1163,7 @@
       hideHero();
     }
     if (st.busy){
+      clearWatchdog();
       HC.api.cancelSearch(st.token);
       st.startSeq++;
       st.busy = false;
@@ -1182,6 +1205,7 @@
     progEl.style.setProperty("--p", "0");
     if (!dlRaf) dlRaf = requestAnimationFrame(dlLoop);
     st.busy = true;
+    resetWatchdog();
     HC.sfx.play("start");
     renderRows();
     paintStrip();
@@ -1210,6 +1234,7 @@
   }
 
   function searchDone(){
+    clearWatchdog();
     cancelPaint();
     st.busy = false;
     st.searched = true;

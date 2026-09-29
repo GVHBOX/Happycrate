@@ -378,7 +378,7 @@ pub fn status_from(
     let tun = if mode == "none" { raw_tun } else { "" };
     serde_json::json!({
         "mode": mode,
-        "addr": addr,
+        "addr": crate::api::redact(addr),
         "portOk": port_ok,
         "works": works,
         "systemOn": system_on,
@@ -467,12 +467,14 @@ pub fn scan_tun_adapter() -> String {
             continue;
         }
         let head = line.split(':').next().unwrap_or("");
-        let name = match head.find("适配器") {
-            Some(at) => head[at + "适配器".len()..].trim().to_string(),
-            None => match low.find("adapter") {
-                Some(at) => head[at + "adapter".len()..].trim().to_string(),
-                None => head.trim().to_string(),
-            },
+        let name = if let Some(at) = head.find("适配器") {
+            head[at + "适配器".len()..].trim().to_string()
+        } else if let Some((at, _)) = head.char_indices().find(|&(i, _)| {
+            head.get(i..i + 7).map(|sub| sub.eq_ignore_ascii_case("adapter")).unwrap_or(false)
+        }) {
+            head[at + 7..].trim().to_string()
+        } else {
+            head.trim().to_string()
         };
         let name = name.trim_matches(|c| c == ' ' || c == '.' || c == ':');
         if !name.is_empty() {
@@ -764,7 +766,7 @@ impl HttpClient {
         if self.resolved.addr.is_empty() {
             return crate::outcome::NET_FAIL_TEXT.to_string();
         }
-        format!("{PROXY_MARK} {} 连不上", self.resolved.addr)
+        format!("{PROXY_MARK} {} 连不上", crate::api::redact(&self.resolved.addr))
     }
 
     fn attempt(&self, req: &Req, use_lax: bool, limit: usize) -> Attempt {

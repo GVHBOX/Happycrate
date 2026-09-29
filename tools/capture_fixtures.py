@@ -95,7 +95,7 @@ def capture_one(key: str, query: str, real_http_get, captured: list) -> dict:
     target.mkdir(parents=True, exist_ok=True)
 
     records = []
-    for i, (url, body, req_data) in enumerate(captured, 1):
+    for i, (url, body, req_data, req_hdrs) in enumerate(captured, 1):
         raw = body if isinstance(body, bytes) else str(body).encode("utf-8")
         name = "%02d-%s.%s" % (i, url_slug(url), sniff_ext(raw))
         (target / name).write_bytes(raw)
@@ -104,6 +104,7 @@ def capture_one(key: str, query: str, real_http_get, captured: list) -> dict:
             "file": name,
             "url": url,
             "request_body": encode_request_body(req_data),
+            "headers": req_hdrs if req_hdrs else None,
             "bytes": len(raw),
             "sha1": hashlib.sha1(raw).hexdigest(),
         })
@@ -163,7 +164,11 @@ def main(argv: list[str]) -> int:
 
     def recorder(url, *args, **kwargs):
         body = real_http_get(url, *args, **kwargs)
-        captured.append((url, body, kwargs.get("data")))
+        req_headers = dict(kwargs.get("headers") or {})
+        ref = kwargs.get("referer")
+        if ref:
+            req_headers.setdefault("Referer", ref)
+        captured.append((url, body, kwargs.get("data"), req_headers))
         return body
 
     sources.http_get = recorder

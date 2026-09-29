@@ -82,7 +82,13 @@ pub fn execute<F: Fetch + Sync>(
                     if !alive(token) {
                         return;
                     }
-                    let (ok, ms, count, err) = run(target, fetch, now);
+                    let row = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                        run(target, fetch, now)
+                    }));
+                    let (ok, ms, count, err) = match row {
+                        Ok(res) => res,
+                        Err(_) => (false, 0, 0, "内部异常".to_string()),
+                    };
                     if !alive(token) {
                         return;
                     }

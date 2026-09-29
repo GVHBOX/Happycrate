@@ -199,7 +199,7 @@
 
     api.selftest().then(function(r){
       if (!r.ok && r.missing && r.missing.length){
-        M.toast("后端返回结构不匹配 · 缺少 " + r.missing.join("、"), "long");
+        M.toast("数据源结构异常", "long");
       }
     }).catch(function(){});
 

@@ -12,7 +12,9 @@ fn cases() -> Value {
 }
 
 fn rows(group: &str) -> Vec<Value> {
-    cases()[group].as_array().unwrap().clone()
+    let arr = cases()[group].as_array().unwrap().clone();
+    assert!(!arr.is_empty(), "对照表分组 {group} 不能为空");
+    arr
 }
 
 #[test]
@@ -298,4 +300,46 @@ fn parity_quote_plus() {
             "quote_plus({input:?})"
         );
     }
+}
+
+#[test]
+fn parity_ts_from_iso_malformed() {
+    assert_eq!(ts_from_iso("2020-01-中"), None);
+    assert_eq!(ts_from_iso("2020-01-星期一"), None);
+    assert_eq!(ts_from_iso("2020-01-01T12:中"), Some(1577836800.0));
+    assert_eq!(ts_from_iso("2020-01-01T12:30:中"), Some(1577836800.0));
+    assert_eq!(ts_from_iso("2026-09-28T25:00:00Z"), Some(1790553600.0));
+}
+
+#[test]
+fn parity_tables_non_empty() {
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/parity");
+    let mut count = 0;
+    for entry in fs::read_dir(&dir).unwrap() {
+        let path = entry.unwrap().path();
+        if path.extension().and_then(|s| s.to_str()) != Some("json") {
+            continue;
+        }
+        let fname = path.file_name().unwrap().to_string_lossy().to_string();
+        let content = fs::read_to_string(&path).unwrap();
+        let data: Value = serde_json::from_str(&content).unwrap();
+        match data {
+            Value::Object(map) => {
+                assert!(!map.is_empty(), "{fname} 为空对象");
+                for (k, v) in map {
+                    match v {
+                        Value::Array(arr) => assert!(!arr.is_empty(), "{fname} 分组 {k} 为空数组"),
+                        Value::Object(sub) => assert!(!sub.is_empty(), "{fname} 分组 {k} 为空对象"),
+                        _ => {}
+                    }
+                }
+            }
+            Value::Array(arr) => {
+                assert!(!arr.is_empty(), "{fname} 为空数组");
+            }
+            _ => panic!("{fname} 格式不符"),
+        }
+        count += 1;
+    }
+    assert_eq!(count, 14, "对照表数量应为 14，实际 {count}");
 }

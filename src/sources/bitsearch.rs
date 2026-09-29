@@ -58,6 +58,7 @@ pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> Sou
             Ok(items) => {
                 pages.insert(p, items);
             }
+            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
             Err(exc) => {
                 failed.insert(p, exc);
             }

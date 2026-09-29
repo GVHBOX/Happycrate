@@ -52,8 +52,11 @@
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
     selbarOn: false, progStyle: "segment", progLineOn: true,
-    segOrder: [], t0: 0, deadline: 3000
+    segOrder: [], t0: 0, deadline: 3000,
+    renderedCount: 0
   };
+
+  var CHUNK_SIZE = 100;
 
   var GO_BTN_INNER = '<span class="gico">' + ICONS.search + '</span>' +
     '<span class="gtx">搜索</span>';
@@ -605,6 +608,7 @@
   function renderRows(){
     var list = visible();
     if (!list.length){
+      st.renderedCount = 0;
       if (st.busy && !st.settled){
         rowsEl.innerHTML = skelHtml();
       } else {
@@ -614,7 +618,9 @@
       }
       return;
     }
-    rowsEl.innerHTML = list.map(function(it, i){
+    st.renderedCount = Math.min(list.length, CHUNK_SIZE);
+    var renderList = list.slice(0, st.renderedCount);
+    rowsEl.innerHTML = renderList.map(function(it, i){
       return rowHtml(it, i, false);
     }).join("") + (st.busy && !st.settled ? skelHtml() : "");
     paintCursor();
@@ -624,11 +630,22 @@
   function appendRows(count){
     rowsEl.querySelectorAll(".empty, .skel").forEach(function(n){ n.remove(); });
     var list = visible();
-    var start = Math.max(0, list.length - count);
-    var anim = count <= 40;
+    if (st.renderedCount >= CHUNK_SIZE && list.length > CHUNK_SIZE){
+      if (st.busy && !st.settled){
+        var tmp = document.createElement("div");
+        tmp.innerHTML = skelHtml();
+        while (tmp.firstChild) rowsEl.appendChild(tmp.firstChild);
+      }
+      return;
+    }
+    var oldRendered = st.renderedCount || 0;
+    var nextRendered = Math.min(list.length, CHUNK_SIZE);
+    if (nextRendered <= oldRendered) return;
+    st.renderedCount = nextRendered;
+    var anim = (nextRendered - oldRendered) <= 40;
     var frag = document.createElement("div");
-    frag.innerHTML = list.slice(start).map(function(it, i){
-      return rowHtml(it, start + i, anim);
+    frag.innerHTML = list.slice(oldRendered, nextRendered).map(function(it, i){
+      return rowHtml(it, oldRendered + i, anim);
     }).join("");
     if (st.busy && !st.settled){
       var tmp = document.createElement("div");
@@ -637,6 +654,26 @@
     }
     while (frag.firstChild) rowsEl.appendChild(frag.firstChild);
     paintCursor();
+  }
+
+  function checkMoreRows(){
+    if (!rowsEl || !rowsEl.isConnected) return;
+    var list = visible();
+    if (st.renderedCount >= list.length) return;
+    var distance = rowsEl.scrollHeight - (rowsEl.scrollTop + rowsEl.clientHeight);
+    if (distance < 400){
+      var from = st.renderedCount;
+      var to = Math.min(list.length, from + CHUNK_SIZE);
+      st.renderedCount = to;
+      var box = document.createElement("div");
+      box.innerHTML = list.slice(from, to).map(function(it, i){
+        return rowHtml(it, from + i, false);
+      }).join("");
+      while (box.firstChild) rowsEl.appendChild(box.firstChild);
+      paintCursor();
+      renderPanels();
+      updateSelUI();
+    }
   }
 
   function renumber(){
@@ -1145,6 +1182,7 @@
 
   function abortSearch(msg){
     clearWatchdog();
+    if (st.token) HC.api.cancelSearch(st.token);
     st.startSeq++;
     st.busy = false;
     st.token = 0;
@@ -1614,6 +1652,7 @@
 
     mountEl.appendChild(root);
     rowsEl = root.querySelector("#rows");
+    rowsEl.addEventListener("scroll", checkMoreRows);
     badgeEl = root.querySelector("#badge");
     chipEl = root.querySelector("#chip");
     tipEl = root.querySelector("#tip");

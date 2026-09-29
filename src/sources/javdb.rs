@@ -263,6 +263,7 @@ pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> Sou
     for path in links.iter().take(DETAILS) {
         match detail(&root, path, fetch) {
             Ok(items) => found.push(items),
+            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
             Err(exc) => {
                 if matches!(exc, SourceError::Blocked(_)) {
                     walled += 1;

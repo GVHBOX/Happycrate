@@ -240,6 +240,7 @@ fn fanout<F: Fetch>(
     for link in links.iter().take(DETAILS) {
         match detail(root, link, fetch) {
             Ok(items) => found.push(items),
+            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
             Err(exc) => {
                 if first_error.is_none() {
                     first_error = Some(exc);

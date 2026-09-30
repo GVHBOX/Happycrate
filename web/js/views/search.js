@@ -52,7 +52,7 @@
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
     selbarOn: false, progStyle: "segment", progLineOn: true,
-    filterSource: "", tagFilter: "",
+    filterSource: "",
     segOrder: [], t0: 0, deadline: 3000,
     renderedCount: 0
   };
@@ -232,20 +232,6 @@
         return it.sources && it.sources.indexOf(st.filterSource) >= 0;
       });
     }
-    if (st.tagFilter){
-      if (st.tagFilter === "seed"){
-        baseItems = baseItems.filter(function(it){ return (it.seeders || 0) > 0; });
-      } else if (st.tagFilter === "4k"){
-        baseItems = baseItems.filter(function(it){
-          var t = (it.title || "").toLowerCase();
-          return t.indexOf("4k") >= 0 || t.indexOf("2160p") >= 0 || t.indexOf("uhd") >= 0;
-        });
-      } else if (st.tagFilter === "remux"){
-        baseItems = baseItems.filter(function(it){
-          return (it.title || "").toLowerCase().indexOf("remux") >= 0;
-        });
-      }
-    }
     if (!st.field){
       if ((st.busy && !st.settled) || !st.qtokens.length) return baseItems;
       var neutral = neutralSeed();
@@ -274,7 +260,7 @@
     if (marquee && marquee.active && marquee.visList) return marquee.visList;
     var key = st.rev + "|" + st.field + "|" + (st.desc ? 1 : 0) +
       "|" + (st.busy ? 1 : 0) + (st.settled ? 1 : 0) + "|" + st.qphrase +
-      "|" + (st.filterSource || "") + "|" + (st.tagFilter || "");
+      "|" + (st.filterSource || "");
     if (visCache.key !== key){
       visCache.key = key;
       visCache.list = computeVisible();
@@ -356,7 +342,6 @@
         if (s.enabled) st.enabledCount++;
       });
       st.totalSources = (list || []).length;
-      if (HC.updateSourceCount) HC.updateSourceCount(st.totalSources);
       st.srcList = (list || []).filter(function(s){ return s.enabled; })
         .map(function(s){ return {key:s.key, label:s.label}; });
       var srcs = root ? root.querySelector("#heroSrcs") : null;
@@ -1284,13 +1269,6 @@
     var q = inp.value.trim();
     if (!q) return;
     st.filterSource = "";
-    st.tagFilter = "";
-    var tagStrip = root ? root.querySelector("#tagStrip") : null;
-    if (tagStrip){
-      tagStrip.querySelectorAll(".tag-btn").forEach(function(btn){
-        btn.classList.toggle("active", btn.dataset.tag === "");
-      });
-    }
     st.query = q;
     st.qphrase = q.toLowerCase();
     st.qtokens = st.qphrase.split(/\s+/).filter(Boolean);
@@ -1710,12 +1688,6 @@
           '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
         '</div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
-        '<div class="tag-strip" id="tagStrip">' +
-          '<button class="tag-btn active" data-tag="">全部</button>' +
-          '<button class="tag-btn" data-tag="seed">有种</button>' +
-          '<button class="tag-btn" data-tag="4k">4K</button>' +
-          '<button class="tag-btn" data-tag="remux">Remux</button>' +
-        '</div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead" role="presentation">' + headHtml() + '</div>' +
         '<div class="rows" id="rows" role="grid" tabindex="0" aria-label="搜索结果" aria-rowcount="0"></div>' +
@@ -1754,19 +1726,6 @@
       renderRows();
       updateSelUI();
     });
-    var tagStrip = root.querySelector("#tagStrip");
-    if (tagStrip){
-      tagStrip.addEventListener("click", function(e){
-        var b = e.target.closest("[data-tag]");
-        if (!b) return;
-        st.tagFilter = b.dataset.tag;
-        tagStrip.querySelectorAll(".tag-btn").forEach(function(btn){
-          btn.classList.toggle("active", btn.dataset.tag === st.tagFilter);
-        });
-        renderRows();
-        updateSelUI();
-      });
-    }
     badgeEl.innerHTML = badgeHtml();
 
     var srcLoaded = false;

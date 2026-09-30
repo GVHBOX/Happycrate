@@ -24,12 +24,6 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
     <span class="tb-title" id="tbTitle">Happycrate</span>
   </button>
   <div class="tb-drag" data-tauri-drag-region></div>
-  <div class="tb-nav" id="tbNav">
-    <button class="tb-nav-btn active" id="tbNavSearch" data-nav="search">检索</button>
-    <button class="tb-nav-btn" id="tbNavSources" data-nav="sources">数据源 (12)</button>
-    <button class="tb-nav-btn" id="tbNavSettings" data-nav="settings">设置</button>
-  </div>
-  <div class="tb-drag" data-tauri-drag-region></div>
   <div class="tb-btns">
     <button class="tb-btn tb-theme-btn" id="tbTheme" title="主题">
       <svg class="icon-sun" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -77,16 +71,8 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
     swapTo(name);
   }
 
-  function syncNav(name){
-    var btns = document.querySelectorAll(".tb-nav-btn");
-    for (var i = 0; i < btns.length; i++){
-      btns[i].classList.toggle("active", btns[i].getAttribute("data-nav") === name);
-    }
-  }
-
   function swapTo(name){
     current = name;
-    syncNav(name);
     app.innerHTML = "";
     if (name === "search") HC.views.search.mount(app);
     else if (name === "settings") HC.views.settings.mount(app);
@@ -113,24 +99,6 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
     if (HC.views.search.toggleHero) HC.views.search.toggleHero();
   };
 
-  var navEl = document.getElementById("tbNav");
-  if (navEl){
-    navEl.onclick = function(e){
-      var btn = e.target.closest(".tb-nav-btn");
-      if (!btn) return;
-      var target = btn.getAttribute("data-nav");
-      if (!target) return;
-      if (target === current){
-        if (target === "search" && HC.views.search.toggleHero) HC.views.search.toggleHero();
-        return;
-      }
-      leave(function(){
-        if (target === "search" && HC.views.search.enterHero) HC.views.search.enterHero();
-        location.hash = target;
-      });
-    };
-  }
-
   var tbTheme = document.getElementById("tbTheme");
   if (tbTheme){
     tbTheme.onclick = function(){
@@ -140,11 +108,6 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
       HC.api.saveSettings({theme: next}).catch(function(){});
     };
   }
-
-  HC.updateSourceCount = function(count){
-    var btn = document.getElementById("tbNavSources");
-    if (btn) btn.textContent = "数据源 (" + count + ")";
-  };
 
   function applyFont(v){
     var n = parseInt(v, 10);

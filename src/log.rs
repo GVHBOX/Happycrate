@@ -58,7 +58,7 @@ pub fn setup(level: Option<&str>) -> bool {
     let chosen = level
         .and_then(parse_level)
         .or_else(|| std::env::var(ENV_LEVEL).ok().and_then(|v| parse_level(&v)))
-        .unwrap_or(Level::Info);
+        .unwrap_or(Level::Warning);
     LEVEL.set(chosen).is_ok()
 }
 
@@ -67,7 +67,7 @@ fn threshold() -> Level {
         std::env::var(ENV_LEVEL)
             .ok()
             .and_then(|v| parse_level(&v))
-            .unwrap_or(Level::Info)
+            .unwrap_or(Level::Warning)
     })
 }
 

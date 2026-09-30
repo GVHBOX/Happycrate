@@ -156,6 +156,19 @@ fn set_window_tone(window: tauri::Window, color: String) -> bool {
 }
 
 pub fn run() {
+    let webview_args = "--disable-features=Translate,OptimizationHints,MediaRouter --disable-component-update --disable-background-networking --disk-cache-size=1048576";
+    match std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS") {
+        Ok(existing) if !existing.is_empty() => {
+            std::env::set_var(
+                "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+                format!("{existing} {webview_args}"),
+            );
+        }
+        _ => {
+            std::env::set_var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", webview_args);
+        }
+    }
+
     crate::log::setup(None);
     crate::log::install_panic_hook();
 

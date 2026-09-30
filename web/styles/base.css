@@ -772,6 +772,7 @@ input, textarea{
 .rows.mq-ing .srow > span{transform:none; transition:none}
 .srow:last-child{border-bottom:0}
 .srow.sel{background:var(--brand-soft)}
+.srow.flash{background:var(--brand-line) !important}
 .srow.sel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
   background:var(--brand);animation:barSlide var(--d-state) var(--e-out) both}
 .srow .c-idx{font:500 var(--fs-xs)/1 var(--font-num); color:var(--t5); text-align:center}

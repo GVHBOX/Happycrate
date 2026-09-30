@@ -1793,6 +1793,8 @@
       st.sel[row.dataset.hash] = true;
       st.anchor = row.dataset.hash;
       updateSelUI();
+      row.classList.add("flash");
+      setTimeout(function(){ row.classList.remove("flash"); }, 180);
       doCopy();
     });
 
@@ -1821,6 +1823,16 @@
       var tag = (e.target && e.target.tagName || "").toLowerCase();
       if (e.key === "Escape"){
         if (ctxEl){ closeCtx(); return; }
+        var act = document.activeElement;
+        var inSearch = act === inp || (act && act.id === "heroInp");
+        if (inSearch){
+          if (act.value){
+            act.value = "";
+            return;
+          }
+          act.blur();
+          return;
+        }
         if (selCount()){
           st.sel = {};
           st.anchor = "";
@@ -1838,10 +1850,14 @@
         visible().forEach(function(it){ st.sel[it.hash] = true; });
         updateSelUI();
       }
-      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")){
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K" || e.key === "f" || e.key === "F")){
         e.preventDefault();
         var heroInp = st.hero ? document.getElementById("heroInp") : null;
-        (heroInp || inp).focus();
+        var targetInp = heroInp || inp;
+        if (targetInp){
+          targetInp.focus();
+          targetInp.select();
+        }
         return;
       }
       if (st.hero) return;

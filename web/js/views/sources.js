@@ -180,22 +180,15 @@
         '<div class="dfoot"><div class="dot"></div><span class="status" id="status"></span>' +
           '<div class="spacer"></div>' +
         '</div>' +
-      '</div>' +
-      '<div class="caption" id="caption"></div>';
+      '</div>';
 
     mountEl.appendChild(root);
     rowsEl = root.querySelector("#rows");
 
     api.appInfo().then(function(info){
-      root.querySelector("#caption").textContent =
-        "happycrate v" + info.version + " · 数据源管理 · " +
-        (api.mode() === "mock" ? "原型模式（mock 数据）" : "数据目录 " + info.dataDir);
       autoOrder = info.autoOrder !== false;
       paintAuto();
-    }).catch(function(e){
-      root.querySelector("#caption").textContent =
-        "版本信息读取失败 · " + String(e && e.message ? e.message : e);
-    });
+    }).catch(function(){});
 
     api.selftest().then(function(r){
       if (!r.ok && r.missing && r.missing.length){

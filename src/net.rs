@@ -642,6 +642,7 @@ impl HttpClient {
             .timeout(Duration::from_millis(timeout_ms))
             .connect_timeout(Duration::from_millis(timeout_ms))
             .read_timeout(Duration::from_millis(timeout_ms))
+            .tcp_keepalive(Some(Duration::from_secs(60)))
             .gzip(true)
             .brotli(true)
             .no_proxy();

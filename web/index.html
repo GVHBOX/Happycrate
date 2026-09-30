@@ -7,6 +7,12 @@
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/motion.css">
 <link rel="stylesheet" href="styles/base.css">
+<script>
+try{if(localStorage.getItem("hc_theme")==="dark")document.documentElement.classList.add("dark");}catch(e){}
+</script>
+<style>
+html.dark,html.dark body{background:#131419;color:#E7E9F2}
+</style>
 </head>
 <body>
 <div class="titlebar">
@@ -92,6 +98,8 @@
   }
   HC.applyFont = applyFont;
   HC.applyTheme = function(t){
+    try{ localStorage.setItem("hc_theme", t); }catch(e){}
+    document.documentElement.classList.toggle("dark", t === "dark");
     document.body.classList.toggle("dark", t === "dark");
     syncWindowTone();
   };

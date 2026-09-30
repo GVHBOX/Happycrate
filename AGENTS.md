@@ -56,8 +56,7 @@ python tools/scan_comment.py --selfcheck
 `gen/` 是 `tauri-build` 每次编译生成的 schema，已进 `.gitignore`，不要手改。
 `assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
 **那是用户自己设计的图标，只装容器，不重画不缩放**。`assets/` 里另有 README 用的
-截图 `ui_screenshot.png` 与演示视频 `core_features_preview.mp4`（从旧 Python 仓搬来，
-界面一样所以直接复用）。改图标路径时记得同步 `tauri.conf.json` 的 `bundle.icon`。
+截图 `ui_screenshot.png`（演示视频由 README 直接外链 GitHub 托管）。改图标路径时记得同步 `tauri.conf.json` 的 `bundle.icon`。
 
 - `.scratch/` 整体不进版本库（成品报告也一样）；交付用原生 Windows 路径 `D:\...`，不用 `/d/...`。
 - **不往 `.workbuddy/` 写东西，也不重建它。**

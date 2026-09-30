@@ -167,7 +167,7 @@ pub fn collapse(text: &str) -> String {
     out
 }
 
-pub fn clean_title(raw: &str) -> String {
+fn clean_title(raw: &str) -> String {
     collapse(&unescape(raw))
 }
 
@@ -1029,7 +1029,7 @@ fn cn_date_core(raw: &str, sep: char, allow_time: bool) -> Option<f64> {
     Some(seconds as f64)
 }
 
-pub fn ts_from_cn_date(text: &str, sep: char) -> Option<f64> {
+fn ts_from_cn_date(text: &str, sep: char) -> Option<f64> {
     let raw = py_trim(text);
     if raw.is_empty() {
         return None;
@@ -1175,7 +1175,7 @@ pub fn ts_from_cn_dash(text: &str) -> Option<f64> {
     cn_date_core(&head, '-', true)
 }
 
-pub fn local_parts(iso: &str) -> Option<(i64, i64, i64)> {
+fn local_parts(iso: &str) -> Option<(i64, i64, i64)> {
     let raw = py_trim(iso);
     let (date_part, rest) = match raw.split_once('T') {
         Some(pair) => pair,

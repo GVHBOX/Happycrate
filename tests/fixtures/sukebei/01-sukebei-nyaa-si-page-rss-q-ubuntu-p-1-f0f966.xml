@@ -1,8 +1,0 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:nyaa="https://sukebei.nyaa.si/xmlns/nyaa" version="2.0">
-	<channel>
-		<title>Sukebei - &#34;ubuntu&#34; - Torrent File RSS</title>
-		<description>RSS Feed for &#34;ubuntu&#34;</description>
-		<link>https://sukebei.nyaa.si/</link>
-		<atom:link href="https://sukebei.nyaa.si/?page=rss" rel="self" type="application/rss+xml" />
-	</channel>
-</rss>

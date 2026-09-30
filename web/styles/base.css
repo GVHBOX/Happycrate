@@ -45,10 +45,6 @@ input, textarea{
 .tb-logo{width:16px; height:16px; flex:none; pointer-events:none}
 .tb-title{font:500 12px/1 var(--font); color:var(--t2); letter-spacing:.3px}
 .tb-btns{display:flex; flex:none}
-.tb-theme-btn .icon-sun{display:none}
-.tb-theme-btn .icon-moon{display:block}
-html.dark .tb-theme-btn .icon-sun{display:block}
-html.dark .tb-theme-btn .icon-moon{display:none}
 .tb-btn{
   width:46px; height:32px;
   font-size:13px;

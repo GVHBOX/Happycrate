@@ -756,7 +756,6 @@ input, textarea{
   .shead span:nth-child(3),.srow .c-time{display:none}
 }
 .srow{
-  flex:none;
   height:calc(40px*var(--frs)); background:var(--panel); position:relative;
   border-bottom:1px solid var(--rowline);
   transition:background var(--d-hover) var(--e);

@@ -52,6 +52,7 @@
     open: {}, userShut: {},
     filesCache: {}, filesLoading: {}, filesErr: {}, autoBudget: 0, autoTried: {},
     selbarOn: false, progStyle: "segment", progLineOn: true,
+    filterSource: "", tagFilter: "",
     segOrder: [], t0: 0, deadline: 3000,
     renderedCount: 0
   };
@@ -225,10 +226,30 @@
   var visCache = { key: null, list: null };
 
   function computeVisible(){
+    var baseItems = st.items;
+    if (st.filterSource){
+      baseItems = baseItems.filter(function(it){
+        return it.sources && it.sources.indexOf(st.filterSource) >= 0;
+      });
+    }
+    if (st.tagFilter){
+      if (st.tagFilter === "seed"){
+        baseItems = baseItems.filter(function(it){ return (it.seeders || 0) > 0; });
+      } else if (st.tagFilter === "4k"){
+        baseItems = baseItems.filter(function(it){
+          var t = (it.title || "").toLowerCase();
+          return t.indexOf("4k") >= 0 || t.indexOf("2160p") >= 0 || t.indexOf("uhd") >= 0;
+        });
+      } else if (st.tagFilter === "remux"){
+        baseItems = baseItems.filter(function(it){
+          return (it.title || "").toLowerCase().indexOf("remux") >= 0;
+        });
+      }
+    }
     if (!st.field){
-      if ((st.busy && !st.settled) || !st.qtokens.length) return st.items;
+      if ((st.busy && !st.settled) || !st.qtokens.length) return baseItems;
       var neutral = neutralSeed();
-      var scored = st.items.map(function(it){
+      var scored = baseItems.map(function(it){
         return { it: it, m: contentMiss(it), r: relevance(it, neutral) };
       });
       scored.sort(function(a, b){
@@ -237,7 +258,7 @@
       return scored.map(function(s){ return s.it; });
     }
     var neutral = neutralSeed();
-    var rows = st.items.map(function(it){
+    var rows = baseItems.map(function(it){
       return { it: it, m: contentMiss(it) };
     });
     rows.sort(function(a, b){
@@ -252,7 +273,8 @@
   function visible(){
     if (marquee && marquee.active && marquee.visList) return marquee.visList;
     var key = st.rev + "|" + st.field + "|" + (st.desc ? 1 : 0) +
-      "|" + (st.busy ? 1 : 0) + (st.settled ? 1 : 0) + "|" + st.qphrase;
+      "|" + (st.busy ? 1 : 0) + (st.settled ? 1 : 0) + "|" + st.qphrase +
+      "|" + (st.filterSource || "") + "|" + (st.tagFilter || "");
     if (visCache.key !== key){
       visCache.key = key;
       visCache.list = computeVisible();
@@ -334,6 +356,7 @@
         if (s.enabled) st.enabledCount++;
       });
       st.totalSources = (list || []).length;
+      if (HC.updateSourceCount) HC.updateSourceCount(st.totalSources);
       st.srcList = (list || []).filter(function(s){ return s.enabled; })
         .map(function(s){ return {key:s.key, label:s.label}; });
       var srcs = root ? root.querySelector("#heroSrcs") : null;
@@ -408,11 +431,40 @@
     return i === undefined ? -1 : i;
   }
 
+  function fileSizeBytes(str){
+    if (!str) return 0;
+    var m = /^([0-9.]+)\s*([A-Za-z]+)?$/.exec(String(str).trim());
+    if (!m) return 0;
+    var n = parseFloat(m[1]) || 0;
+    var u = (m[2] || "").toUpperCase();
+    if (u === "GB" || u === "GIB") return n * 1073741824;
+    if (u === "MB" || u === "MIB") return n * 1048576;
+    if (u === "KB" || u === "KIB") return n * 1024;
+    if (u === "TB" || u === "TIB") return n * 1099511627776;
+    return n;
+  }
+
   function fpanelInner(it){
     var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
     if (files && files.length){
-      return files.map(function(f){
-        return '<div class="fline"><span class="fname">' + hlTitle(f.n) +
+      var smart = localStorage.getItem("hc_smart_files") === "1";
+      var maxIdx = -1;
+      if (smart && files.length > 1){
+        var maxBytes = -1;
+        files.forEach(function(f, idx){
+          var name = (f.n || "").toLowerCase();
+          var isVid = /\.(mp4|mkv|avi|mov|wmv|iso|ts)$/i.test(name);
+          var bytes = fileSizeBytes(f.s);
+          if (isVid && bytes > maxBytes){
+            maxBytes = bytes;
+            maxIdx = idx;
+          }
+        });
+      }
+      return files.map(function(f, idx){
+        var isMain = idx === maxIdx;
+        var tag = isMain ? '<span class="fmain-tag">主视频</span>' : '';
+        return '<div class="fline' + (isMain ? " main" : "") + '"><span class="fname">' + hlTitle(f.n) + tag +
           '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
       }).join("");
     }
@@ -711,6 +763,7 @@
     if (selbarEl){
       selbarEl.querySelector("#selN").textContent = n;
       selbarEl.classList.toggle("show", st.selbarOn && n > 0);
+      selbarEl.classList.toggle("island", localStorage.getItem("hc_action_island") === "1");
     }
   }
 
@@ -822,6 +875,10 @@
       var el = tileFor(k);
       var busy = ss.state === "pending" && !!ss.startedAt;
       var cls = busy ? "running" : (settled ? ss.state + " settled" : ss.state);
+      if (st.filterSource){
+        if (k === st.filterSource) cls += " filter-active";
+        else cls += " filter-dim";
+      }
       var prevState = el.dataset.ss || "";
       if (el.dataset.st !== cls) el.className = "stile " + cls;
       if (settled && !DONE_STATE[prevState]) flashTile(el);
@@ -891,7 +948,7 @@
     ctxEl.innerHTML =
       '<button class="mi" data-a="copy">' + ICONS.copy + '复制磁力</button>' +
       '<button class="mi" data-a="title">' + ICONS.copy + '复制标题</button>' +
-      '<button class="mi" data-a="dl">' + ICONS.dl + '发送到下载工具</button>';
+      '<button class="mi" data-a="dl">' + ICONS.dl + '投递到迅雷</button>';
     document.body.appendChild(ctxEl);
     ctxEl.style.left = Math.max(4, Math.min(x, window.innerWidth - ctxEl.offsetWidth - 8)) + "px";
     ctxEl.style.top = Math.max(4, Math.min(y, window.innerHeight - ctxEl.offsetHeight - 8)) + "px";
@@ -1226,6 +1283,14 @@
     }
     var q = inp.value.trim();
     if (!q) return;
+    st.filterSource = "";
+    st.tagFilter = "";
+    var tagStrip = root ? root.querySelector("#tagStrip") : null;
+    if (tagStrip){
+      tagStrip.querySelectorAll(".tag-btn").forEach(function(btn){
+        btn.classList.toggle("active", btn.dataset.tag === "");
+      });
+    }
     st.query = q;
     st.qphrase = q.toLowerCase();
     st.qtokens = st.qphrase.split(/\s+/).filter(Boolean);
@@ -1645,6 +1710,12 @@
           '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
         '</div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
+        '<div class="tag-strip" id="tagStrip">' +
+          '<button class="tag-btn active" data-tag="">全部</button>' +
+          '<button class="tag-btn" data-tag="seed">有种</button>' +
+          '<button class="tag-btn" data-tag="4k">4K</button>' +
+          '<button class="tag-btn" data-tag="remux">Remux</button>' +
+        '</div>' +
         '<div class="div"></div>' +
         '<div class="shead" id="shead" role="presentation">' + headHtml() + '</div>' +
         '<div class="rows" id="rows" role="grid" tabindex="0" aria-label="搜索结果" aria-rowcount="0"></div>' +
@@ -1669,6 +1740,33 @@
     headEl = root.querySelector("#shead");
     progEl = root.querySelector("#prog");
     stripEl = root.querySelector("#srcstrip");
+    stripEl.addEventListener("click", function(e){
+      var tile = e.target.closest(".stile");
+      if (!tile) return;
+      var k = tile.dataset.key;
+      if (!k) return;
+      if (st.filterSource === k){
+        st.filterSource = "";
+      } else {
+        st.filterSource = k;
+      }
+      paintStrip();
+      renderRows();
+      updateSelUI();
+    });
+    var tagStrip = root.querySelector("#tagStrip");
+    if (tagStrip){
+      tagStrip.addEventListener("click", function(e){
+        var b = e.target.closest("[data-tag]");
+        if (!b) return;
+        st.tagFilter = b.dataset.tag;
+        tagStrip.querySelectorAll(".tag-btn").forEach(function(btn){
+          btn.classList.toggle("active", btn.dataset.tag === st.tagFilter);
+        });
+        renderRows();
+        updateSelUI();
+      });
+    }
     badgeEl.innerHTML = badgeHtml();
 
     var srcLoaded = false;
@@ -1930,7 +2028,7 @@
       '<span class="sdiv"></span>' +
       '<button class="sbtn" data-s="copy">复制磁力</button>' +
       '<button class="sbtn" data-s="title">复制标题</button>' +
-      '<button class="sbtn primary" data-s="dl">发送下载</button>' +
+      '<button class="sbtn primary" data-s="dl">投递迅雷</button>' +
       '<span class="ssp"></span>' +
       '<button class="sclose" data-s="close">' +
         '<svg width="12" height="12" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +

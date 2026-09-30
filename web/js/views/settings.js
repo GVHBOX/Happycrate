@@ -13,6 +13,7 @@
 
   var THEME_OPTS = [{key:"light", label:"浅色"}, {key:"dark", label:"深色"}];
   var FONT_OPTS = [{key:"14", label:"小"}, {key:"18", label:"标准"}, {key:"22", label:"大"}];
+  var DENSITY_OPTS = [{key:"compact", label:"紧凑"}, {key:"comfort", label:"舒适"}];
   var PROG_OPTS = [
     {key:"segment", label:"分段 · 警戒线"},
     {key:"flow", label:"连续斜纹"}
@@ -70,6 +71,8 @@
   var volumeVal = SOUND_VOLUME_DEFAULT;
   var themeKey = "light";
   var fontKey = "18";
+  var densityKey = localStorage.getItem("hc_row_density") || "compact";
+  var smartFilesOn = localStorage.getItem("hc_smart_files") === "1";
   var autoFilesOn = true;
   var keepDupOn = false;
   var progStyleKey = "segment";
@@ -259,6 +262,11 @@
       rowHtml(lblGroup("font", "界面字号"),
         '<div class="seg" id="s_font" role="group" aria-labelledby="lb_font">' +
         segHtml(FONT_OPTS, "18", "font") + '</div>') +
+      rowHtml(lblGroup("density", "行高"),
+        '<div class="seg" id="s_density" role="group" aria-labelledby="lb_density">' +
+        segHtml(DENSITY_OPTS, densityKey, "density") + '</div>') +
+      rowHtml(lblText("s_smartfiles", "主视频高亮"), swHtml("s_smartfiles")) +
+      rowHtml(lblText("s_selbar", "悬浮底栏"), swHtml("s_selbar")) +
       sectHtml("音效") +
       rowHtml(lblText("s_sound", "音效反馈"), swHtml("s_sound")) +
       rowHtml(lblText("sldVolume", "总音量"),
@@ -280,10 +288,10 @@
       sectHtml("结果") +
       rowHtml(lblText("s_keepdup", "保留重复项"), swHtml("s_keepdup")) +
       rowHtml(lblText("s_autofiles", "文件命中时自动展开"), swHtml("s_autofiles")) +
-      rowHtml(lblText("s_selbar", "浮动选择条"), swHtml("s_selbar")) +
       sectHtml("投递") +
       rowHtml(lblGroup("dl", "投递工具"),
-        '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl"></div>') +
+        '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl">' +
+        '<button type="button" class="segbtn active" data-dl="thunder" aria-pressed="true">迅雷</button></div>') +
       rowHtml(lblGroup("dldetect", "检测结果"),
         '<div class="detect" id="dlDetect" role="status"><span class="netdot"></span>' +
         '<span class="detecttxt"></span></div>') +
@@ -695,10 +703,7 @@
   function paintDl(list, current){
     var box = root.querySelector("#s_dl");
     if (!box) return;
-    var opts = [{key:"", label:"自动"}].concat((list || []).map(function(d){
-      return {key:d.key, label:d.label};
-    }));
-    box.innerHTML = segHtml(opts, current, "dl");
+    box.innerHTML = '<button type="button" class="segbtn active" data-dl="thunder" aria-pressed="true">迅雷</button>';
   }
 
   function paintDetect(list){
@@ -707,8 +712,8 @@
     var found = (list || []).filter(function(d){ return d.available; });
     box.querySelector(".netdot").className = "netdot" + (found.length ? " ok" : "");
     box.querySelector(".detecttxt").textContent = found.length
-      ? found.map(function(d){ return d.label; }).join(" · ")
-      : "未检测到下载工具";
+      ? "已检测到迅雷"
+      : "未检测到迅雷";
   }
 
   function paintProg(current){
@@ -916,6 +921,10 @@
       setSw("#s_keepdup", keepDupOn);
       selbarOn = settings.selbar === true;
       setSw("#s_selbar", selbarOn);
+      densityKey = localStorage.getItem("hc_row_density") || "compact";
+      syncSeg(root.querySelector("#s_density"), "density", densityKey);
+      smartFilesOn = localStorage.getItem("hc_smart_files") === "1";
+      setSw("#s_smartfiles", smartFilesOn);
       progStyleKey = settings.progress_style === "flow" ? "flow" : "segment";
       paintProg(progStyleKey);
       progLineOn = settings.progress_line !== false;
@@ -1070,6 +1079,22 @@
       });
     });
 
+    root.querySelector("#s_density").addEventListener("click", function(e){
+      var b = e.target.closest("button[data-density]");
+      if (!b) return;
+      densityKey = b.dataset.density;
+      syncSeg(this, "density", densityKey);
+      try{ localStorage.setItem("hc_row_density", densityKey); }catch(err){}
+      document.documentElement.classList.toggle("density-comfort", densityKey === "comfort");
+      document.body.classList.toggle("density-comfort", densityKey === "comfort");
+    });
+
+    root.querySelector("#s_smartfiles").onclick = function(){
+      smartFilesOn = !smartFilesOn;
+      setSw("#s_smartfiles", smartFilesOn);
+      try{ localStorage.setItem("hc_smart_files", smartFilesOn ? "1" : "0"); }catch(err){}
+    };
+
     root.querySelector("#s_selbar").onclick = function(){
       selbarOn = !selbarOn;
       setSw("#s_selbar", selbarOn);
@@ -1143,6 +1168,12 @@
           return Promise.all([HC.api.getSettings(), HC.api.downloaders()]);
         }).then(function(res){
           HC.settings = Object.assign({}, res[0] || {});
+          try{ localStorage.removeItem("hc_row_density"); }catch(e){}
+          try{ localStorage.removeItem("hc_smart_files"); }catch(e){}
+          densityKey = "compact";
+          smartFilesOn = false;
+          document.documentElement.classList.remove("density-comfort");
+          document.body.classList.remove("density-comfort");
           fill(res[0] || {}, res[1] || []);
           HC.motion.toast("已恢复默认设置", "ok");
         }).catch(function(e){

@@ -1,5 +1,5 @@
 * text=auto
-assets/** -text
-tests/fixtures/** -text
-tests/parity/** -text
-tests/legacy/** -text
+assets/** binary
+tests/fixtures/** binary
+tests/parity/** binary
+tests/legacy/** binary

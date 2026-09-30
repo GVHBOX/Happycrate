@@ -72,8 +72,24 @@ fn app_info(state: tauri::State<AppState>) -> Value {
 }
 
 #[tauri::command]
-fn torrent_files(state: tauri::State<AppState>, payload: Value) -> Value {
-    state.api().torrent_files(&payload)
+async fn torrent_files(app: tauri::AppHandle, payload: Value) -> Result<Value, String> {
+    let (http, timeout) = {
+        let state = app.state::<AppState>();
+        let api = state.api();
+        (api.http(), api.settings.as_int("timeout", 15))
+    };
+    let outcome = tauri::async_runtime::spawn_blocking(move || {
+        crate::api::torrent_files_fetch(http.as_deref(), timeout, &payload)
+    })
+    .await
+    .unwrap_or_else(|_| {
+        serde_json::json!({
+            "ok": false,
+            "files": [],
+            "error": "任务被取消"
+        })
+    });
+    Ok(outcome)
 }
 
 #[tauri::command]
@@ -104,8 +120,20 @@ fn cancel_search(state: tauri::State<AppState>, token: Option<i64>) -> bool {
 }
 
 #[tauri::command]
-fn proxy_status(state: tauri::State<AppState>, force: bool) -> Value {
-    state.api().proxy_status(force)
+async fn proxy_status(app: tauri::AppHandle, force: bool) -> Result<Value, String> {
+    let http = {
+        let state = app.state::<AppState>();
+        let api = state.api();
+        api.http()
+    };
+    if let Some(http) = http {
+        let outcome = tauri::async_runtime::spawn_blocking(move || http.proxy_status(force))
+            .await
+            .unwrap_or_default();
+        Ok(outcome)
+    } else {
+        Ok(serde_json::Value::Null)
+    }
 }
 
 #[tauri::command]

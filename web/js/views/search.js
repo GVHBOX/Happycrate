@@ -431,7 +431,6 @@
       delete st.filesLoading[h];
       if (res && res.ok && res.files && res.files.length){
         st.filesCache[h] = res.files;
-        st.rev++;
       }
       else if (!quiet) st.filesErr[h] = (res && res.error) || "获取文件清单失败";
       if (st.open[h]) renderPanels();
@@ -570,7 +569,7 @@
   }
 
   function rowHtml(it, i, animate){
-    var cls = "srow" + (i % 2 ? " alt" : "") + (st.sel[it.hash] ? " sel" : "");
+    var cls = "srow" + (i % 2 ? " alt" : "") + (st.sel[it.hash] ? " sel" : "") + (i === st.cursor ? " cursor" : "");
     var anim = animate
       ? ' style="animation:rowIn .3s var(--land) both ' + Math.min(i, 10) * 28 + 'ms"'
       : "";
@@ -581,7 +580,7 @@
     var chev = (it.files && it.files.length) || it.fetch
       ? '<button class="fchev" tabindex="-1" data-hash="' + esc(it.hash) + '" title="文件">' + FCHEV + '</button>'
       : "";
-    return '<div class="' + cls + '" data-hash="' + esc(it.hash) + '"' + anim +
+    return '<div class="' + cls + '" id="hc-row-' + i + '" data-hash="' + esc(it.hash) + '"' + anim +
       ' role="row" aria-selected="' + (st.sel[it.hash] ? "true" : "false") + '">' +
       '<span class="c-idx" role="gridcell">' + pad(i) + '</span>' +
       '<span class="c-size" role="gridcell">' + esc(it.sizeText) + '</span>' +
@@ -670,9 +669,8 @@
         return rowHtml(it, from + i, false);
       }).join("");
       while (box.firstChild) rowsEl.appendChild(box.firstChild);
-      paintCursor();
+      rowsEl.setAttribute("aria-rowcount", String(to));
       renderPanels();
-      updateSelUI();
     }
   }
 
@@ -732,16 +730,20 @@
 
   function paintCursor(){
     if (!rowsEl) return;
-    var rows = rowsEl.querySelectorAll(".srow");
-    if (st.cursor >= rows.length) st.cursor = rows.length - 1;
-    [].slice.call(rows).forEach(function(row, i){
-      row.id = "hc-row-" + i;
-      row.classList.toggle("cursor", i === st.cursor);
-      if (i === st.cursor) rowsEl.setAttribute("aria-activedescendant", row.id);
-    });
-    rowsEl.setAttribute("aria-rowcount", String(rows.length));
-    if (st.cursor < 0) rowsEl.removeAttribute("aria-activedescendant");
-    if (st.cursor >= 0 && rows[st.cursor]) rows[st.cursor].scrollIntoView({block:"nearest"});
+    var prev = rowsEl.querySelector(".srow.cursor");
+    var cur = st.cursor >= 0 ? document.getElementById("hc-row-" + st.cursor) : null;
+    if (prev === cur){
+      if (cur) rowsEl.setAttribute("aria-activedescendant", cur.id);
+      return;
+    }
+    if (prev) prev.classList.remove("cursor");
+    if (cur){
+      cur.classList.add("cursor");
+      rowsEl.setAttribute("aria-activedescendant", cur.id);
+      cur.scrollIntoView({block:"nearest"});
+    } else {
+      rowsEl.removeAttribute("aria-activedescendant");
+    }
   }
 
   function stripLabel(ss){
@@ -1384,11 +1386,9 @@
       if (st.field){
         renderRows();
         updateSelUI();
-      } else if (st.settled){
-        if (hasBumped) refreshRows(bumped);
       } else {
         if (hasBumped) refreshRows(bumped);
-        if (fresh) appendRows(fresh);
+        if (fresh && (st.renderedCount || 0) < CHUNK_SIZE) appendRows(fresh);
       }
       paintBadge();
       autoExpand(AUTO_EARLY, false, arrived);
@@ -1652,7 +1652,14 @@
 
     mountEl.appendChild(root);
     rowsEl = root.querySelector("#rows");
-    rowsEl.addEventListener("scroll", checkMoreRows);
+    var scrollRaf = 0;
+    rowsEl.addEventListener("scroll", function(){
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(function(){
+        scrollRaf = 0;
+        checkMoreRows();
+      });
+    });
     badgeEl = root.querySelector("#badge");
     chipEl = root.querySelector("#chip");
     tipEl = root.querySelector("#tip");

@@ -494,81 +494,15 @@ impl Api {
         timeout: i64,
         referer: &str,
     ) -> Result<Vec<crate::bencode::FileEntry>, TorrentError> {
-        let Some(client) = self.http() else {
-            return Err(TorrentError::Other("URLError: 网络层不可用".to_string()));
-        };
-        let mut target = url.to_string();
-        if !url.to_lowercase().ends_with(".torrent") {
-            let page = client
-                .fetch_bytes(
-                    &Req::get(url).referer(referer).timeout(timeout.max(1) as u64),
-                    MAX_TORRENT_BYTES,
-                )
-                .map_err(map_torrent_error)?;
-            let Some(link) = abs_link(&page) else {
-                return Ok(Vec::new());
-            };
-            if let Some(rest) = link.strip_prefix("//") {
-                target = format!("https://{rest}");
-            } else if link.starts_with('/') {
-                let (scheme, host) = scheme_and_host(url);
-                target = format!("{scheme}://{host}{link}");
-            } else {
-                target = link;
-            }
-        }
-        let data = client
-            .fetch_bytes(
-                &Req::get(&target)
-                    .referer(referer)
-                    .retries(0)
-                    .timeout(timeout.max(1) as u64),
-                MAX_TORRENT_BYTES,
-            )
-            .map_err(map_torrent_error)?;
-        crate::bencode::decode_torrent_files(&data).map_err(TorrentError::Other)
+        torrent_meta_fetch(self.http().as_deref(), url, timeout, referer)
     }
 
     pub fn torrent_files(&self, payload: &Value) -> Value {
-        let url = match payload.get("url") {
-            Some(value) if crate::config::truthy(value) => crate::config::py_str(value),
-            _ => String::new(),
-        };
-        if !url.starts_with("http://") && !url.starts_with("https://") {
-            return torrent_result(false, Vec::new(), "缺少有效的种子地址");
-        }
-        let (scheme, host) = scheme_and_host(&url);
-        let referer = format!("{scheme}://{host}/");
-        let timeout = self.settings.as_int("timeout", 15);
-        match self.torrent_meta(&url, timeout, &referer) {
-            Err(TorrentError::TooLarge) => {
-                torrent_result(false, Vec::new(), "种子文件过大，已拒绝读取")
-            }
-            Err(TorrentError::Other(text)) => {
-                let clipped: String = text.chars().take(180).collect();
-                torrent_result(false, Vec::new(), &clipped)
-            }
-            Ok(rows) => {
-                let files: Vec<Value> = rows
-                    .iter()
-                    .filter(|row| !row.name.is_empty())
-                    .take(FILES_CAP)
-                    .map(|row| {
-                        let mut entry = Map::new();
-                        entry.insert("n".to_string(), Value::from(row.name.clone()));
-                        entry.insert(
-                            "s".to_string(),
-                            Value::from(crate::core::format_size(&Value::from(row.bytes))),
-                        );
-                        Value::Object(entry)
-                    })
-                    .collect();
-                if files.is_empty() {
-                    return torrent_result(false, Vec::new(), "种子内没有文件清单");
-                }
-                torrent_result(true, files, "")
-            }
-        }
+        torrent_files_fetch(
+            self.http().as_deref(),
+            self.settings.as_int("timeout", 15),
+            payload,
+        )
     }
 
     pub fn downloaders(&self) -> Vec<Value> {
@@ -1049,6 +983,92 @@ fn map_torrent_error(error: crate::model::SourceError) -> TorrentError {
     match error {
         crate::model::SourceError::TooLarge { .. } => TorrentError::TooLarge,
         other => TorrentError::Other(other.search_text()),
+    }
+}
+
+pub fn torrent_meta_fetch(
+    client: Option<&crate::net::HttpClient>,
+    url: &str,
+    timeout: i64,
+    referer: &str,
+) -> Result<Vec<crate::bencode::FileEntry>, TorrentError> {
+    let Some(client) = client else {
+        return Err(TorrentError::Other("URLError: 网络层不可用".to_string()));
+    };
+    let mut target = url.to_string();
+    if !url.to_lowercase().ends_with(".torrent") {
+        let page = client
+            .fetch_bytes(
+                &Req::get(url).referer(referer).timeout(timeout.max(1) as u64),
+                MAX_TORRENT_BYTES,
+            )
+            .map_err(map_torrent_error)?;
+        let Some(link) = abs_link(&page) else {
+            return Ok(Vec::new());
+        };
+        if let Some(rest) = link.strip_prefix("//") {
+            target = format!("https://{rest}");
+        } else if link.starts_with('/') {
+            let (scheme, host) = scheme_and_host(url);
+            target = format!("{scheme}://{host}{link}");
+        } else {
+            target = link;
+        }
+    }
+    let data = client
+        .fetch_bytes(
+            &Req::get(&target)
+                .referer(referer)
+                .retries(0)
+                .timeout(timeout.max(1) as u64),
+            MAX_TORRENT_BYTES,
+        )
+        .map_err(map_torrent_error)?;
+    crate::bencode::decode_torrent_files(&data).map_err(TorrentError::Other)
+}
+
+pub fn torrent_files_fetch(
+    client: Option<&crate::net::HttpClient>,
+    timeout: i64,
+    payload: &Value,
+) -> Value {
+    let url = match payload.get("url") {
+        Some(value) if crate::config::truthy(value) => crate::config::py_str(value),
+        _ => String::new(),
+    };
+    if !url.starts_with("http://") && !url.starts_with("https://") {
+        return torrent_result(false, Vec::new(), "缺少有效的种子地址");
+    }
+    let (scheme, host) = scheme_and_host(&url);
+    let referer = format!("{scheme}://{host}/");
+    match torrent_meta_fetch(client, &url, timeout, &referer) {
+        Err(TorrentError::TooLarge) => {
+            torrent_result(false, Vec::new(), "种子文件过大，已拒绝读取")
+        }
+        Err(TorrentError::Other(text)) => {
+            let clipped: String = text.chars().take(180).collect();
+            torrent_result(false, Vec::new(), &clipped)
+        }
+        Ok(rows) => {
+            let files: Vec<Value> = rows
+                .iter()
+                .filter(|row| !row.name.is_empty())
+                .take(FILES_CAP)
+                .map(|row| {
+                    let mut entry = Map::new();
+                    entry.insert("n".to_string(), Value::from(row.name.clone()));
+                    entry.insert(
+                        "s".to_string(),
+                        Value::from(crate::core::format_size(&Value::from(row.bytes))),
+                    );
+                    Value::Object(entry)
+                })
+                .collect();
+            if files.is_empty() {
+                return torrent_result(false, Vec::new(), "种子内没有文件清单");
+            }
+            torrent_result(true, files, "")
+        }
     }
 }
 

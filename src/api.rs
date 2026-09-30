@@ -526,43 +526,9 @@ impl Api {
     }
 
     pub fn deliver(&mut self, magnets: &[Value], key: &str) -> Value {
-        let items: Vec<String> = magnets
-            .iter()
-            .filter(|value| crate::config::truthy(value))
-            .map(crate::config::py_str)
-            .collect();
-        if items.is_empty() {
-            return deliver_result(false, "没有可提交的磁力链接");
-        }
-        let cap = crate::downloaders::MAGNET_CAP;
-        if items.len() > cap {
-            return deliver_result(
-                false,
-                &format!("一次最多提交 {cap} 条，本次 {} 条", items.len()),
-            );
-        }
-
         let configured = self.settings.get("default_downloader");
-        let prefer = if !key.is_empty() {
-            key.to_string()
-        } else if crate::config::truthy(&configured) {
-            crate::config::py_str(&configured)
-        } else {
-            String::new()
-        };
-        if crate::downloaders::pick_default(&prefer, true).is_none() {
-            return deliver_result(false, "没找到可用的下载工具");
-        }
-
         let timeout = self.settings.as_int("timeout", 15);
-        let outcome = crate::downloaders::add(&items, timeout, &[]);
-        if !outcome.ok {
-            crate::log::warning(
-                crate::log::API,
-                &format!("投递失败：{}", outcome.message()),
-            );
-        }
-        deliver_result(outcome.ok, &outcome.message())
+        deliver_prepared(magnets, key, &configured, timeout)
     }
 
     pub fn proxy_status(&self, force: bool) -> Value {
@@ -1078,6 +1044,49 @@ fn torrent_result(ok: bool, files: Vec<Value>, error: &str) -> Value {
     map.insert("files".to_string(), Value::Array(files));
     map.insert("error".to_string(), Value::from(error));
     Value::Object(map)
+}
+
+pub fn deliver_prepared(
+    magnets: &[Value],
+    key: &str,
+    configured: &Value,
+    timeout: i64,
+) -> Value {
+    let items: Vec<String> = magnets
+        .iter()
+        .filter(|value| crate::config::truthy(value))
+        .map(crate::config::py_str)
+        .collect();
+    if items.is_empty() {
+        return deliver_result(false, "没有可提交的磁力链接");
+    }
+    let cap = crate::downloaders::MAGNET_CAP;
+    if items.len() > cap {
+        return deliver_result(
+            false,
+            &format!("一次最多提交 {cap} 条，本次 {} 条", items.len()),
+        );
+    }
+
+    let prefer = if !key.is_empty() {
+        key.to_string()
+    } else if crate::config::truthy(configured) {
+        crate::config::py_str(configured)
+    } else {
+        String::new()
+    };
+    if crate::downloaders::pick_default(&prefer, true).is_none() {
+        return deliver_result(false, "没找到可用的下载工具");
+    }
+
+    let outcome = crate::downloaders::add(&items, timeout, &[]);
+    if !outcome.ok {
+        crate::log::warning(
+            crate::log::API,
+            &format!("投递失败：{}", outcome.message()),
+        );
+    }
+    deliver_result(outcome.ok, &outcome.message())
 }
 
 fn deliver_result(ok: bool, message: &str) -> Value {

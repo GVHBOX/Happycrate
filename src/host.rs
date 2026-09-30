@@ -98,9 +98,31 @@ fn downloaders(state: tauri::State<AppState>) -> Vec<Value> {
 }
 
 #[tauri::command]
-fn deliver(state: tauri::State<AppState>, magnets: Vec<Value>, key: Option<String>) -> Value {
+async fn deliver(
+    app: tauri::AppHandle,
+    magnets: Vec<Value>,
+    key: Option<String>,
+) -> Result<Value, String> {
+    let (configured, timeout) = {
+        let state = app.state::<AppState>();
+        let api = state.api();
+        (
+            api.settings.get("default_downloader"),
+            api.settings.as_int("timeout", 15),
+        )
+    };
     let chosen = key.unwrap_or_default();
-    state.api().deliver(&magnets, &chosen)
+    let outcome = tauri::async_runtime::spawn_blocking(move || {
+        crate::api::deliver_prepared(&magnets, &chosen, &configured, timeout)
+    })
+    .await
+    .unwrap_or_else(|_| {
+        serde_json::json!({
+            "ok": false,
+            "message": "投递任务被取消"
+        })
+    });
+    Ok(outcome)
 }
 
 #[tauri::command]

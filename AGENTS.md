@@ -97,11 +97,12 @@ python tools/check_front_hygiene.py     # 铁律 2
   新增源时人工确认条数显著大于 0 且覆盖多条响应，别只看测试是绿的。
 - 金样表与工具函数对照表都由 Python 侧生成，**不手写**：
   - `tools/capture_fixtures.py` → `tests/fixtures/`
-  - `tools/gen_*.py` → `tests/parity/*.json`（一个模块一份对照表）
-  - `tools/gen_search_pipeline.py` → `tests/parity/search_pipeline.json`
+  - `tools/legacy_generators/gen_*.py` → `tests/parity/*.json`（一个模块一份对照表）
+  - `tools/legacy_generators/gen_search_pipeline.py` → `tests/parity/search_pipeline.json`
     （整条搜索流水线的事件序列，最贵的一份，3 MB）
-  - `tools/gen_migrate_parity.py` → `tests/legacy/` + `tests/parity/migrate_cases.json`
+  - `tools/legacy_generators/gen_migrate_parity.py` → `tests/legacy/` + `tests/parity/migrate_cases.json`
     （老配置迁移；老目录是**合成**的边角样本，不搬用户真实数据进仓库）
+- **前端排障工具**：`web/js/diagnostics.js` 为前端运行时错误收集器，由快捷键 `Ctrl+Shift+D` 呼出，界面不设常驻按钮，不是未清理遗留物。
 - **真实数据兼容性**用 `tools/check_data_compat.py <写到哪> [参照]`：
   拿 Python 自己的 config/settings 去加载 Rust 写过的目录，再看逐键差异。
   **不要比字节**——Rust 侧 serde 的键是排序过的，Python 保持插入序，文件名内容都合法。
@@ -117,7 +118,7 @@ python tools/check_front_hygiene.py     # 铁律 2
 cd /d D:\AI\happycrate
 .venv\Scripts\python.exe D:\AI\happycrate-rust\tools\capture_fixtures.py
 .venv\Scripts\python.exe D:\AI\happycrate-rust\tools\capture_fixtures.py --query=nyaa:frieren nyaa
-.venv\Scripts\python.exe D:\AI\happycrate-rust\tools\gen_util_parity.py
+.venv\Scripts\python.exe D:\AI\happycrate-rust\tools\legacy_generators\gen_util_parity.py
 ```
 
 ## 环境事实

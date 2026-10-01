@@ -79,7 +79,7 @@ fn scheme_and_host(url: &str) -> (String, String) {
     (split.0.to_string(), authority.to_string())
 }
 pub const APP_TITLE: &str = "happycrate";
-pub const APP_VERSION: &str = "1.0.2";
+pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn hex_color_ok(value: &str) -> bool {
     let bytes = value.as_bytes();
@@ -486,15 +486,6 @@ impl Api {
                 None
             }
         }
-    }
-
-    pub fn torrent_meta(
-        &self,
-        url: &str,
-        timeout: i64,
-        referer: &str,
-    ) -> Result<Vec<crate::bencode::FileEntry>, TorrentError> {
-        torrent_meta_fetch(self.http().as_deref(), url, timeout, referer)
     }
 
     pub fn torrent_files(&self, payload: &Value) -> Value {
@@ -1079,7 +1070,7 @@ pub fn deliver_prepared(
         return deliver_result(false, "没找到可用的下载工具");
     }
 
-    let outcome = crate::downloaders::add(&items, timeout, &[]);
+    let outcome = crate::downloaders::add(&items, timeout);
     if !outcome.ok {
         crate::log::warning(
             crate::log::API,

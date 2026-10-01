@@ -292,25 +292,13 @@ pub fn protocol_deliver(magnets: &[String], timeout: i64) -> DeliveryResult {
     DeliveryResult::new(0, magnets.len(), errors, "protocol", None)
 }
 
-pub fn add(magnets: &[String], timeout: i64, order: &[String]) -> DeliveryResult {
+pub fn add(magnets: &[String], timeout: i64) -> DeliveryResult {
     let items = clean_magnets(magnets);
     if items.is_empty() {
         return DeliveryResult::new(0, 0, vec!["没有有效的磁力链接".to_string()], "", None);
     }
 
-    let mut usable: Vec<(&str, &str)> = Vec::new();
-    if cached_available("thunder", false) {
-        usable.push(("protocol", "协议拉起"));
-    }
-    if !order.is_empty() {
-        let rank: BTreeMap<&str, usize> = order
-            .iter()
-            .enumerate()
-            .map(|(index, key)| (key.as_str(), index))
-            .collect();
-        usable.sort_by_key(|(key, _)| *rank.get(*key).unwrap_or(&rank.len()));
-    }
-    if usable.is_empty() {
+    if !cached_available("thunder", false) {
         return DeliveryResult::new(
             0,
             items.len(),
@@ -320,18 +308,14 @@ pub fn add(magnets: &[String], timeout: i64, order: &[String]) -> DeliveryResult
         );
     }
 
-    let mut errors: Vec<String> = Vec::new();
-    for (_key, label) in usable {
-        let result = protocol_deliver(&items, timeout);
-        if result.ok {
-            return result;
-        }
-        let reason = result
-            .errors
-            .first()
-            .cloned()
-            .unwrap_or_else(|| "未知原因".to_string());
-        errors.push(format!("{label}：{reason}"));
+    let result = protocol_deliver(&items, timeout);
+    if result.ok {
+        return result;
     }
-    DeliveryResult::new(0, items.len(), errors, "", None)
+    let reason = result
+        .errors
+        .first()
+        .cloned()
+        .unwrap_or_else(|| "未知原因".to_string());
+    DeliveryResult::new(0, items.len(), vec![format!("协议拉起：{reason}")], "", None)
 }

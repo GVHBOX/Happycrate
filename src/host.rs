@@ -26,19 +26,40 @@ fn source_issues(state: tauri::State<AppState>) -> Vec<Value> {
     state.api().source_issues()
 }
 
-#[tauri::command]
-fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> bool {
-    state.api().toggle_source(&key, on)
+fn save_result(ok: bool, reason: String) -> Value {
+    let effective_reason = if !ok && reason.is_empty() {
+        "操作未生效".to_string()
+    } else {
+        reason
+    };
+    serde_json::json!({
+        "ok": ok && effective_reason.is_empty(),
+        "reason": effective_reason
+    })
 }
 
 #[tauri::command]
-fn reorder_sources(state: tauri::State<AppState>, keys: Vec<String>) -> bool {
-    state.api().reorder_sources(&keys)
+fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> Value {
+    let mut api = state.api();
+    let ok = api.toggle_source(&key, on);
+    let reason = api.last_write_error.clone();
+    save_result(ok, reason)
 }
 
 #[tauri::command]
-fn set_auto_order(state: tauri::State<AppState>, on: bool) -> bool {
-    state.api().set_auto_order(on)
+fn reorder_sources(state: tauri::State<AppState>, keys: Vec<String>) -> Value {
+    let mut api = state.api();
+    let ok = api.reorder_sources(&keys);
+    let reason = api.last_write_error.clone();
+    save_result(ok, reason)
+}
+
+#[tauri::command]
+fn set_auto_order(state: tauri::State<AppState>, on: bool) -> Value {
+    let mut api = state.api();
+    let ok = api.set_auto_order(on);
+    let reason = api.last_write_error.clone();
+    save_result(ok, reason)
 }
 
 #[tauri::command]

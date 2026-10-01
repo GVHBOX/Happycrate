@@ -7,11 +7,9 @@ use crate::paths;
 
 static WRITE_LOCK: Mutex<()> = Mutex::new(());
 
-pub const ROOT: &str = "happycrate";
 pub const API: &str = "happycrate.app.api";
 pub const SOURCES: &str = "happycrate.app.sources";
 pub const CONFIG: &str = "happycrate.app.config";
-pub const DOWNLOADERS: &str = "happycrate.app.downloaders";
 pub const MIGRATE: &str = "happycrate.app.migrate";
 pub const SHELL: &str = "happycrate.app.shell";
 pub const SINGLE: &str = "happycrate.app.single";
@@ -147,10 +145,6 @@ pub fn write(level: Level, target: &str, message: &str) {
         message
     );
     let _ = append(&line);
-}
-
-pub fn debug(target: &str, message: &str) {
-    write(Level::Debug, target, message);
 }
 
 pub fn info(target: &str, message: &str) {

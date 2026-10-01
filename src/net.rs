@@ -7,12 +7,12 @@ use crate::sources::{Fetch, Req};
 
 pub const DEFAULT_UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 pub const ACCEPT_LANGUAGE: &str = "zh-CN,zh;q=0.9,en;q=0.8";
-pub const PROBE_URL: &str = "http://www.gstatic.com/generate_204";pub const PROBE_TIMEOUT_MS: u64 = 1500;
+pub const PROBE_URL: &str = "http://www.gstatic.com/generate_204";
+pub const PROBE_TIMEOUT_MS: u64 = 1500;
 pub const PROBE_CACHE_TTL_SECS: u64 = 15;
 pub const TUN_ADAPTER_TTL_SECS: u64 = 30;
 
 pub const PROXY_MARK: &str = "系统代理";
-pub const PROXY_UNREACHABLE_MARK: &str = "代理不可达";
 
 fn scheme_of(raw: &str) -> &str {
     match raw.find("://") {

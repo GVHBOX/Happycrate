@@ -64,7 +64,7 @@
   var OUTCOME_TEXT = {
     timeout: "超时", net: "无法连接", http403: "403 拒绝", http429: "429 限流",
     http5xx: "服务异常", http4xx: "请求被拒", parse: "解析失败",
-    http451: "451 地区受限", blocked: "代理拦截", shape: "结果页结构不符",
+    http451: "451 地区受限", blocked: "人机验证拦截", shape: "结果页结构不符",
     login: "部分影片需登入 JavDB 查看",
     unknown: "请求失败", empty: "无结果", err: "请求失败"
   };
@@ -279,6 +279,8 @@
         var to = Math.max(0, Math.min(next.length, dropTo));
         next.splice(to, 0, item);
         store.set({sources: next});
+        autoOrder = false;
+        paintAuto();
         onSaveResult(api.reorderSources(next.map(function(s){ return s.key; })));
       }
     });

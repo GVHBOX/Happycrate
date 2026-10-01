@@ -46,6 +46,7 @@
     errors: {}, names: {},
     rawTotal: 0, dupCount: 0, dupKept: false,
     enabledCount: 0, totalSources: 0,
+    netState: null,
     lines: [],
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null, parsed: null,
@@ -328,9 +329,12 @@
     HC.motion.toast(text, kind);
   }
 
-  function setChip(text, kind){
-    chipEl.textContent = text;
+  function setChip(content, kind, isHtml, title){
+    if (isHtml) chipEl.innerHTML = content;
+    else chipEl.textContent = content;
     chipEl.className = "chipbtn" + (kind ? " " + kind : "");
+    if (title !== undefined) chipEl.title = title || "";
+    else chipEl.removeAttribute("title");
   }
 
   function refreshSources(){
@@ -372,7 +376,32 @@
   }
 
   function chipIdle(){
-    setChip("已启用 " + st.enabledCount + "/" + st.totalSources + " 个源", "");
+    var ns = st.netState;
+    if (!ns && HC.getNetStatus && HC.netState){
+      var cached = HC.getNetStatus();
+      if (cached) ns = st.netState = HC.netState(cached);
+    }
+    var countText = "已启用 " + st.enabledCount + "/" + st.totalSources + " 个源";
+    if (ns && ns.dot === "err"){
+      var text = (ns.note || "外网不可达") + " · " + countText;
+      setChip('<span class="sdot"></span>' + esc(text), "err", true, (ns.title || "网络") + "：" + (ns.note || "不可达"));
+    } else if (ns && ns.dot === "ok"){
+      var label = (ns.title || "直连 / TUN") + " · " + countText;
+      setChip('<span class="sdot"></span>' + esc(label), "", true, (ns.title || "网络") + " · " + (ns.note || "连通"));
+    } else {
+      setChip(countText, "", false, "");
+    }
+  }
+
+  function checkNetwork(force){
+    if (typeof HC.api.proxyStatus !== "function") return;
+    HC.api.proxyStatus(force).then(function(d){
+      if (HC.setNetStatus) HC.setNetStatus(d);
+      st.netState = HC.netState ? HC.netState(d) : null;
+      if (!st.busy) chipIdle();
+    }).catch(function(){
+      st.netState = null;
+    });
   }
 
   function renderTip(){
@@ -1735,6 +1764,7 @@
       refreshSources();
     }
     loadSourcesOnce();
+    checkNetwork(false);
 
     hooks = buildHooks();
     HC.api.onSearch(hooks);
@@ -1755,7 +1785,12 @@
       location.hash = "settings";
     };
     chipEl.onclick = function(){
-      location.hash = "sources";
+      if (st.netState && st.netState.dot === "err"){
+        HC.settingsDefaultPane = "network";
+        location.hash = "settings";
+      } else {
+        location.hash = "sources";
+      }
     };
     chipEl.addEventListener("mouseenter", function(){
       if (st.lines.length) tipEl.classList.add("show");

@@ -662,13 +662,13 @@ input, textarea{
 
 .chipwrap{position:relative; flex:none; display:flex; align-items:center}
 .chipbtn{
-  height:calc(24px*var(--frs)); padding:0 12px;
+  height:calc(24px*var(--frs)); padding:0 10px;
   border-radius:var(--r-chip);
-  border:0; background:var(--shell);
+  border:1px solid transparent; background:var(--shell);
   font:500 var(--fc-xs)/1 var(--font); color:var(--t3);
   cursor:pointer; white-space:nowrap;
   display:inline-flex; align-items:center; gap:4px;
-  transition:background .18s var(--e), color .18s var(--e),
+  transition:background .18s var(--e), color .18s var(--e), border-color .18s var(--e),
              transform var(--d-release) var(--spring);
 }
 .chipbtn:hover{background:var(--shell-hover); color:var(--t2)}
@@ -682,6 +682,10 @@ input, textarea{
 .chipbtn.busy{background:var(--brand-soft); color:var(--t1)}
 .chipbtn.warn{background:var(--warn-soft); color:var(--warn-strong)}
 .chipbtn.ok{background:var(--ok-soft); color:var(--ok-strong)}
+.chipbtn.err{background:var(--danger-soft); color:var(--err-strong); border-color:rgba(var(--err-rgb),.32)}
+.chipbtn .sdot{width:6px; height:6px; border-radius:50%; background:var(--ok); flex:none; margin-right:2px}
+.chipbtn.warn .sdot{background:var(--warn)}
+.chipbtn.err .sdot{background:var(--err)}
 .chiptip{
   position:absolute; top:34px; left:0; z-index:var(--z-tip);
   min-width:190px; background:var(--panel);

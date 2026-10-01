@@ -92,9 +92,9 @@
                 note:"代理端口无响应"};
       }
       return data.works
-        ? {dot:"ok", title:"手动设置", addr:data.addr || ""}
+        ? {dot:"ok", title:"手动设置", addr:data.addr || "", note:"外网连通", muted:true}
         : {dot:"err", title:"手动设置", addr:data.addr || "",
-           note:"端口能连上，但代理没有转发请求"};
+           note:"代理未转发请求"};
     }
     if (data.mode === "system"){
       if (!data.systemOn){
@@ -106,14 +106,14 @@
                 note:"代理端口无响应"};
       }
       return data.works
-        ? {dot:"ok", title:"跟随系统", addr:data.addr || ""}
+        ? {dot:"ok", title:"跟随系统", addr:data.addr || "", note:"外网连通", muted:true}
         : {dot:"err", title:"跟随系统", addr:data.addr || "",
-           note:"端口能连上，但代理没有转发请求"};
+           note:"代理未转发请求"};
     }
-    if (data.tun){
-      return {dot:"ok", title:"直连 · TUN", addr:"TUN 网卡 " + data.tun};
+    if (data.directWorks || data.tun){
+      return {dot:"ok", title:"直连 / TUN", note:"外网连通", muted:true};
     }
-    return {dot:"", note:"未检测到代理", muted:true};
+    return {dot:"err", title:"直连", note:"外网不可达"};
   }
 
   function netPaint(data){
@@ -144,6 +144,7 @@
     HC.api.proxyStatus(force).then(function(d){
       if (gen !== netGen) return;
       netBusy = false;
+      if (HC.setNetStatus) HC.setNetStatus(d);
       netPaint(d || {mode:"none"});
     }).catch(function(){
       if (gen !== netGen) return;
@@ -197,8 +198,10 @@
     el.setAttribute("aria-checked", String(on));
   }
 
+  var activePane = "personalize";
+
   function paneHtml(key, title, body){
-    return '<section class="spane' + (key === "personalize" ? " on" : "") +
+    return '<section class="spane' + (key === activePane ? " on" : "") +
       '" data-pane="' + key + '">' +
       '<div class="spane-t">' + esc(title) + '</div>' + body + '</section>';
   }
@@ -853,6 +856,8 @@
   }
 
   function mount(mountEl){
+    activePane = HC.settingsDefaultPane || "personalize";
+    HC.settingsDefaultPane = null;
     root = document.createElement("div");
     root.className = "app settings";
     root.innerHTML =
@@ -863,7 +868,7 @@
             '<span>返回</span></button></div>' +
         NAV.map(function(n){
           return '<button type="button" class="snav-i' +
-            (n.key === "personalize" ? " on" : "") + '" data-pane="' + n.key + '">' +
+            (n.key === activePane ? " on" : "") + '" data-pane="' + n.key + '">' +
             '<svg viewBox="0 0 16 16" fill="none"><path d="' + n.d +
             '" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
             '<span>' + esc(n.label) + '</span></button>';

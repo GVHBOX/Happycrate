@@ -719,6 +719,18 @@ impl HttpClient {
         })
     }
 
+    pub fn probe_direct(&self) -> bool {
+        let Ok(client) = self.client(PROBE_TIMEOUT_MS, false, false) else {
+            return false;
+        };
+        self.rt.block_on(async {
+            match client.get(PROBE_URL).send().await {
+                Ok(response) => response.status().as_u16() < 400,
+                Err(_) => false,
+            }
+        })
+    }
+
     pub fn proxy_status(&self, force: bool) -> serde_json::Value {
         let key = format!("{}|{}", self.resolved.mode, self.resolved.addr);
         if !force {
@@ -738,8 +750,13 @@ impl HttpClient {
             false
         };
         let works = if port_ok { self.probe_works() } else { false };
+        let direct_works = if self.resolved.mode == "none" {
+            self.probe_direct()
+        } else {
+            false
+        };
         let tun = if self.resolved.mode == "none" {
-            self.tun_adapter(false)
+            self.tun_adapter(force)
         } else {
             String::new()
         };
@@ -747,7 +764,7 @@ impl HttpClient {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_secs_f64())
             .unwrap_or(0.0);
-        let data = status_from(
+        let mut data = status_from(
             self.resolved.mode,
             &self.resolved.addr,
             system_on,
@@ -756,6 +773,9 @@ impl HttpClient {
             &tun,
             checked_at,
         );
+        if let Some(obj) = data.as_object_mut() {
+            obj.insert("directWorks".to_string(), serde_json::Value::Bool(direct_works));
+        }
         *self.probe.lock().unwrap_or_else(|e| e.into_inner()) = Some((key, Instant::now(), data.clone()));
         data
     }

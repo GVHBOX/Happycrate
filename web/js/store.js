@@ -93,7 +93,44 @@
     });
   }
 
+  var netStatusCache = null;
+
+  function netState(data){
+    if (!data) return {busy:true, dot:"busy", note:"检测中", muted:true};
+    if (data.mode === "manual"){
+      if (!data.portOk){
+        return {dot:"err", title:"手动设置", addr:data.addr || "",
+                note:"代理端口无响应"};
+      }
+      return data.works
+        ? {dot:"ok", title:"手动设置", addr:data.addr || "", note:"外网连通", muted:true}
+        : {dot:"err", title:"手动设置", addr:data.addr || "",
+           note:"代理未转发请求"};
+    }
+    if (data.mode === "system"){
+      if (!data.systemOn){
+        return {dot:"err", title:"跟随系统", addr:data.addr || "",
+                note:"系统代理已关闭", off:true};
+      }
+      if (!data.portOk){
+        return {dot:"err", title:"跟随系统", addr:data.addr || "",
+                note:"代理端口无响应"};
+      }
+      return data.works
+        ? {dot:"ok", title:"跟随系统", addr:data.addr || "", note:"外网连通", muted:true}
+        : {dot:"err", title:"跟随系统", addr:data.addr || "",
+           note:"代理未转发请求"};
+    }
+    if (data.directWorks || data.tun){
+      return {dot:"ok", title:"直连 / TUN", note:"外网连通", muted:true};
+    }
+    return {dot:"err", title:"直连", note:"外网不可达"};
+  }
+
   HC.store = store;
   HC.mergeState = mergeState;
   HC.stateOf = stateOf;
+  HC.netState = netState;
+  HC.getNetStatus = function(){ return netStatusCache; };
+  HC.setNetStatus = function(s){ netStatusCache = s; };
 })();

@@ -1,9 +1,11 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use serde_json::Value;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, collect_pages, default_base, first_failure, Fetch, Req};
+use crate::sources::{
+    base_of, collect_pages, default_base, first_failure, gather_pages, Fetch, Req,
+};
 use crate::util::{is_hash40, make_item, num_from_f64, quote, text_of, to_int, ts_from_iso};
 
 pub const PAGE_SIZE: i64 = 100;
@@ -47,22 +49,14 @@ fn page<F: Fetch>(root: &str, page_no: i64, query: &str, fetch: &F) -> SourceRes
     Ok(out)
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("bitsearch"));
     let first = page_no.max(1);
-    let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
-
-    for p in first..first + PAGES {
-        match page(&root, p, query, fetch) {
-            Ok(items) => {
-                pages.insert(p, items);
-            }
-            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
-            Err(exc) => {
-                failed.insert(p, exc);
-            }
-        }
+    let (pages, failed) = gather_pages(first..first + PAGES, 2, |&p| {
+        page(&root, p, query, fetch)
+    });
+    if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
+        return Err(err.clone());
     }
 
     let mut seen = HashSet::new();

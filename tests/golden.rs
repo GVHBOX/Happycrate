@@ -1,7 +1,7 @@
-use std::cell::RefCell;
 use std::collections::{HashMap, VecDeque};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use happycrate::model::SourceError;
 use happycrate::sources::{knaben, Fetch, Req};
@@ -26,8 +26,8 @@ fn canonical_body(data: Option<&[u8]>) -> String {
 }
 
 struct Replay {
-    bodies: RefCell<HashMap<String, VecDeque<(String, Option<HashMap<String, String>>)>>>,
-    served: RefCell<Vec<String>>,
+    bodies: Mutex<HashMap<String, VecDeque<(String, Option<HashMap<String, String>>)>>>,
+    served: Mutex<Vec<String>>,
     expected_keys: Vec<String>,
 }
 
@@ -55,14 +55,14 @@ impl Replay {
             bodies.entry(key).or_default().push_back((content, hdrs));
         }
         Replay {
-            bodies: RefCell::new(bodies),
-            served: RefCell::new(Vec::new()),
+            bodies: Mutex::new(bodies),
+            served: Mutex::new(Vec::new()),
             expected_keys,
         }
     }
 
     fn assert_complete(&self, source: &str) {
-        let mut served = self.served.borrow().clone();
+        let mut served = self.served.lock().unwrap().clone();
         let mut expected = self.expected_keys.clone();
         served.sort();
         expected.sort();
@@ -87,8 +87,8 @@ impl Fetch for Replay {
         let url = req.url;
         let data = req.data;
         let key = format!("{url}\u{1}{}", canonical_body(data));
-        self.served.borrow_mut().push(key.clone());
-        let served = self.bodies.borrow_mut().get_mut(&key).and_then(|q| q.pop_front());
+        self.served.lock().unwrap().push(key.clone());
+        let served = self.bodies.lock().unwrap().get_mut(&key).and_then(|q| q.pop_front());
         match served {
             Some((body, expected_hdrs)) => {
                 if let Some(want_hdrs) = expected_hdrs {

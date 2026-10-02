@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, HashSet};
 use serde_json::Value;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, first_failure, Fetch};
+use crate::sources::{base_of, default_base, first_failure, gather_pages, Fetch};
 use crate::util::{is_hash40, make_item, num_from_i64, parse_size, text_of, to_int};
 
 pub const PAGE_SIZE: usize = 100;
@@ -70,7 +70,7 @@ fn page<F: Fetch>(root: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>
     Ok(out)
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("eztv"));
     let needle = query.trim().to_lowercase();
     if needle.is_empty() {
@@ -79,21 +79,14 @@ pub fn search<F: Fetch>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<
 
     let first = page(&root, 1, fetch)?;
     let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
     let gated = first.len() >= PAGE_SIZE;
     pages.insert(1, first);
 
     if gated {
-        for p in 2..=PAGES {
-            match page(&root, p, fetch) {
-                Ok(items) => {
-                    pages.insert(p, items);
-                }
-                Err(exc) => {
-                    failed.insert(p, exc);
-                }
-            }
-        }
+        let (more, failed) = gather_pages(2..=PAGES, 6, |&p| {
+            page(&root, p, fetch)
+        });
+        pages.extend(more);
         if !failed.is_empty() && failed.len() >= (PAGES - 1) as usize {
             return Err(first_failure(&failed));
         }

@@ -1029,20 +1029,18 @@ Python 版当年得用 ctypes 子类化窗口过程去补，Rust 这层是白送
   它的逻辑都很薄，复用的全是已有金样覆盖过的零件（`sources::search` /
   `classify` / `outcome_text` / `state_of`）。
 
-**⑫ 顺手发现：Rust 的多页源是「串行拉页」，Python 是 6 路并发**
+**⑫ 多页源从「串行拉页」完成平移为「池化并发」（P5 待办完成）**
 
-`grep -l "thread::scope\|spawn" src/sources/*.rs` → **零命中**。
-Python 侧 `_gather_pages` 给 apibay/nyaa/sukebei/dmhy/eztv/bitsearch/knaben/javbus/javdb
-都开了池（2–6 路），Rust 侧全是一个 `for` 循环一页一页来。
-对**最终结果没有影响**（各源都把页收进 `BTreeMap<页号, …>` 再按序合并，金样也全绿），
-影响的是**等待时间**：API 不稳时串行会把超时叠加成倍。
+在 `src/sources/mod.rs` 封装 `gather_pages` 通用并发收集器（基于 `std::thread::scope` + `mpsc`，结果自动按 Key 归入 `BTreeMap` 保证严格保序）。
+11 个多页源与详情源平移老版 Python 经过实测的差异化安全并发度：
+- 宽松源（`apibay`, `nyaa`, `sukebei`, `dmhy`, `eztv`, `tpb`）：6 路并发；
+- 中度源（`knaben`, `javbus`, `javdb`）：4 路并发；
+- 强风控源（`bitsearch`, `xccl263`）：严格限制 2 路并发。
 
-**但这轮的 A/B 测量被污染了**：测 Python 时系统代理是开/关来回切的
-（`live_smoke` 报 `代理 none`，说明那一次是直连；apibay 直连 17.1 秒、走代理 0.7 秒，
-差 20 倍）。所以「串行 vs 并发」到底差多少**目前没有可信数字**。
-**要做一次干净的对照：两边都显式指定 `http://127.0.0.1:7890`**，别依赖系统代理开关。
-**先不动代码**：这是约 10 个适配器文件的改动（金样能兜正确性，但合并/失败计数要原样保留），
-  值不值由用户定；这也是 P5 的第一项待办。
+**验收结果**：
+- `cargo test` 16 套件、102 项金样与流水线测试全绿（0 失败）；
+- `cargo run --release --example live_smoke` 现场烟测：5/5 源全部成功，满额返回，0 拦截/0 验证码。
+- `tools/scan_comment.py` 铁律 1（零注释）通过。
 
 **⑬ `tpb_budget` 那条测试会在大负载下闪断**：它断言「预算 2 秒时只试 1 个镜像」，
 而预算是**墙钟**——`let deadline = now + 2s` 之后如果测试线程被抢占超过 1 秒，

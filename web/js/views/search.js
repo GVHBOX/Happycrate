@@ -27,11 +27,11 @@
     arw: '<svg class="arw" width="9" height="9" viewBox="-3 -3 16 16" fill="none">' +
       '<path d="M5 8V2M2.4 4.6L5 2l2.6 2.6" stroke="currentColor" stroke-width="1.4" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    srclist: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none">' +
-      '<path d="M4.6 4.4h9M4.6 8h9M4.6 11.6h9" stroke="currentColor" stroke-width="1.4" ' +
-      'stroke-linecap="round"/><circle cx="2.3" cy="4.4" r="1" fill="currentColor"/>' +
-      '<circle cx="2.3" cy="8" r="1" fill="currentColor"/>' +
-      '<circle cx="2.3" cy="11.6" r="1" fill="currentColor"/></svg>'
+    sun: '<svg width="15" height="15" viewBox="-1 -1 16 16" fill="none">' +
+      '<circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/>' +
+      '<path d="M7 1v1.6M7 10.8v1.6M1 7h1.6M10.8 7h1.6M2.8 2.8l1.1 1.1M10.1 10.1l1.1 1.1M2.8 11.2l1.1-1.1M10.1 3.9l1.1-1.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+    moon: '<svg width="15" height="15" viewBox="-1 -1 16 16" fill="none">' +
+      '<path d="M12.3 9.4A5.5 5.5 0 0 1 4.6 1.7 6 6 0 1 0 12.3 9.4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>'
   };
 
   var autoFiles = true;
@@ -1795,7 +1795,9 @@
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
           '<div class="group">' +
-            '<button class="iconbtn" id="btnSrc" title="数据源">' + ICONS.srclist + '</button>' +
+            '<button class="iconbtn" id="btnTheme" title="主题">' +
+              (document.documentElement.classList.contains("dark") ? ICONS.sun : ICONS.moon) +
+            '</button>' +
             '<button class="iconbtn" id="btnCfg" title="设置">' + ICONS.gear + '</button>' +
           '</div>' +
         '</div>' +
@@ -1880,9 +1882,23 @@
       if (e.key === "Enter") go();
     };
 
-    root.querySelector("#btnSrc").onclick = function(){
-      location.hash = "sources";
+    root.querySelector("#btnTheme").onclick = function(){
+      var isDark = document.documentElement.classList.contains("dark");
+      var next = isDark ? "light" : "dark";
+      if (HC.applyTheme) HC.applyTheme(next);
+      if (HC.settings) HC.settings.theme = next;
+      if (HC.api && HC.api.saveSettings) HC.api.saveSettings({ theme: next });
     };
+
+    var themeMo = new MutationObserver(function(){
+      var btn = root ? root.querySelector("#btnTheme") : null;
+      if (btn){
+        var isDark = document.documentElement.classList.contains("dark");
+        btn.innerHTML = isDark ? ICONS.sun : ICONS.moon;
+      }
+    });
+    themeMo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
     root.querySelector("#btnCfg").onclick = function(){
       location.hash = "settings";
     };

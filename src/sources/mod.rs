@@ -11,8 +11,9 @@ pub mod xccl263;
 pub mod sukebei;
 pub mod tpb;
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::Mutex;
 
 use crate::model::{Item, SourceError, SourceResult};
 
@@ -155,7 +156,73 @@ impl<F: Fetch> Fetch for Scoped<'_, F> {
     }
 }
 
-pub fn search<F: Fetch>(
+pub fn gather_pages<K: Ord + Send, V: Send, F>(
+    keys: impl IntoIterator<Item = K>,
+    workers: usize,
+    work: F,
+) -> (BTreeMap<K, V>, BTreeMap<K, SourceError>)
+where
+    F: Fn(&K) -> SourceResult<V> + Sync + Send,
+{
+    let items: Vec<K> = keys.into_iter().collect();
+    if items.is_empty() {
+        return (BTreeMap::new(), BTreeMap::new());
+    }
+
+    if workers <= 1 || items.len() <= 1 {
+        let mut collected = BTreeMap::new();
+        let mut failed = BTreeMap::new();
+        for key in items {
+            match work(&key) {
+                Ok(val) => {
+                    collected.insert(key, val);
+                }
+                Err(err) => {
+                    failed.insert(key, err);
+                }
+            }
+        }
+        return (collected, failed);
+    }
+
+    let workers = workers.clamp(1, items.len());
+    let queue = Mutex::new(VecDeque::from(items));
+    let (tx, rx) = std::sync::mpsc::channel::<(K, SourceResult<V>)>();
+    let work_ref = &work;
+
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            let tx = tx.clone();
+            let queue = &queue;
+            scope.spawn(move || loop {
+                let key = match queue.lock().unwrap_or_else(|e| e.into_inner()).pop_front() {
+                    Some(key) => key,
+                    None => break,
+                };
+                let res = work_ref(&key);
+                if tx.send((key, res)).is_err() {
+                    break;
+                }
+            });
+        }
+        drop(tx);
+        let mut collected = BTreeMap::new();
+        let mut failed = BTreeMap::new();
+        for (key, res) in rx {
+            match res {
+                Ok(val) => {
+                    collected.insert(key, val);
+                }
+                Err(err) => {
+                    failed.insert(key, err);
+                }
+            }
+        }
+        (collected, failed)
+    })
+}
+
+pub fn search<F: Fetch + Sync>(
     key: &str,
     base: &str,
     query: &str,

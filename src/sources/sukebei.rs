@@ -46,6 +46,6 @@ pub fn parse_html(page_text: &str, root: &str, source_key: &str) -> Vec<Item> {
 pub const PAGES: i64 = 14;
 pub const MAX_HITS: usize = 1100;
 
-pub fn search<F: Fetch>(base: &str, query: &str, page: i64, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, page: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     nyaa::family(base, query, page, fetch, "sukebei", PAGES, MAX_HITS)
 }

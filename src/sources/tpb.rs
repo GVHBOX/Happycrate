@@ -1,9 +1,9 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 use std::time::{Duration, Instant};
 
 use crate::model::{Item, SourceResult};
 use crate::model::SourceError;
-use crate::sources::{collect_pages, Fetch, Req};
+use crate::sources::{collect_pages, gather_pages, Fetch, Req};
 use crate::util::{
     cell_text, civil_stamp, find_ci, find_hex_after, findall_bounded,
     make_item, num_from_f64, parse_size_text, quote, strip_tags, to_int, unescape, LocalNow,
@@ -177,7 +177,7 @@ fn fetch_page<F: Fetch>(
     fetch.fetch(Req::get(&url).retries(0).timeout(timeout))
 }
 
-fn more_pages<F: Fetch>(
+fn more_pages<F: Fetch + Sync>(
     root: &str,
     query: &str,
     page_no: i64,
@@ -197,22 +197,19 @@ fn more_pages<F: Fetch>(
     }
 
     let first_page = page_no.max(1);
-    let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    for p in first_page + 1..first_page + PAGES {
-        if let Ok(text) = fetch_page(root, query, p, fetch, timeout) {
-            if text.contains(RESULT_MARK) {
-                let rows = parse(&text, now_iso);
-                if !rows.is_empty() {
-                    pages.insert(p, rows);
-                }
-            }
+    let (pages, _) = gather_pages(first_page + 1..first_page + PAGES, 6, |&p| {
+        let text = fetch_page(root, query, p, fetch, timeout)?;
+        if text.contains(RESULT_MARK) {
+            Ok(parse(&text, now_iso))
+        } else {
+            Ok(Vec::new())
         }
-    }
+    });
     collect_pages(&pages, &mut seen, &mut items, MAX_HITS);
     items
 }
 
-pub fn search<F: Fetch>(
+pub fn search<F: Fetch + Sync>(
     base: &str,
     query: &str,
     page_no: i64,

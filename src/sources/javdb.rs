@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, merge_details, Fetch, Req};
+use crate::sources::{base_of, default_base, gather_pages, merge_details, Fetch, Req};
 use crate::util::{
     cell_text, find_ci, find_hash40, parse_size_text, quote_plus, strip_tags, ts_from_cn_ymd,
     unescape,
@@ -250,38 +250,30 @@ fn detail<F: Fetch>(root: &str, path: &str, fetch: &F) -> SourceResult<Vec<Item>
     Ok(parse_magnets(&text))
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("javdb"));
     let links = search_page(&root, query, page_no, fetch)?;
     if links.is_empty() {
         return Ok(Vec::new());
     }
 
-    let mut found: Vec<Vec<Item>> = Vec::new();
-    let mut first_error: Option<SourceError> = None;
-    let mut walled = 0usize;
-    for path in links.iter().take(DETAILS) {
-        match detail(&root, path, fetch) {
-            Ok(items) => found.push(items),
-            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
-            Err(exc) => {
-                if matches!(exc, SourceError::Blocked(_)) {
-                    walled += 1;
-                }
-                if first_error.is_none() {
-                    first_error = Some(exc);
-                }
-            }
-        }
+    let limit = links.len().min(DETAILS);
+    let (details, failed) = gather_pages(0..limit, 4, |&i| {
+        detail(&root, &links[i], fetch)
+    });
+    if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
+        return Err(err.clone());
     }
 
+    let walled = failed.values().filter(|e| matches!(e, SourceError::Blocked(_))).count();
+    let found: Vec<Vec<Item>> = details.into_values().collect();
     let got_magnets = found.iter().any(|group| !group.is_empty());
     if walled > 0 && !got_magnets {
         return Err(SourceError::Blocked(LOGIN_TEXT.to_string()));
     }
     if found.is_empty() {
-        if let Some(exc) = first_error {
-            return Err(exc);
+        if let Some(exc) = failed.values().next() {
+            return Err(exc.clone());
         }
     }
     Ok(merge_details(&found, MAX_HITS))

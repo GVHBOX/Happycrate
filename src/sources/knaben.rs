@@ -1,9 +1,11 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use serde_json::Value;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, collect_pages, default_base, first_failure, Fetch, Req};
+use crate::sources::{
+    base_of, collect_pages, default_base, first_failure, gather_pages, Fetch, Req,
+};
 use crate::util::{is_hash40, make_item, num_from_f64, text_of, to_int, ts_from_iso};
 
 pub const PAGE_SIZE: i64 = 300;
@@ -71,7 +73,7 @@ fn page<F: Fetch>(
     Ok(out)
 }
 
-pub fn search<F: Fetch>(
+pub fn search<F: Fetch + Sync>(
     base: &str,
     query: &str,
     page_no: i64,
@@ -81,18 +83,9 @@ pub fn search<F: Fetch>(
     let first = (page_no.max(1) - 1) * PAGE_SIZE * PAGES;
     let starts: Vec<i64> = (0..PAGES).map(|i| first + i * PAGE_SIZE).collect();
 
-    let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
-    for start in starts {
-        match page(&root, query, start, fetch) {
-            Ok(items) => {
-                pages.insert(start, items);
-            }
-            Err(exc) => {
-                failed.insert(start, exc);
-            }
-        }
-    }
+    let (pages, failed) = gather_pages(starts, 4, |&start| {
+        page(&root, query, start, fetch)
+    });
 
     let mut seen = HashSet::new();
     let mut items = Vec::new();

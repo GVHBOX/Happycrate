@@ -1,7 +1,7 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
-use crate::model::{FetchTarget, Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, first_failure, Fetch};
+use crate::model::{FetchTarget, Item, SourceResult};
+use crate::sources::{base_of, default_base, first_failure, gather_pages, Fetch};
 use crate::util::{
     b32_to_hex, cell_text, find_b32_after, find_ci, find_hex_after, find_tag_end,
     findall_bounded, findall_marked, hash_from_magnet, hash_from_text, is_py_space, make_item,
@@ -222,24 +222,15 @@ pub fn parse_rss(text: &str) -> Vec<Item> {
     items
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("dmhy"));
     let needle = quote(query);
-    let mut pages: BTreeMap<i64, Page> = BTreeMap::new();
-    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
-
-    for p in 1..=PAGES {
+    let (pages, failed) = gather_pages(1..=PAGES, 6, |&p| {
         let url = format!("{root}/topics/list/page/{p}?keyword={needle}");
-        match fetch.get(&url, None) {
-            Ok(text) => {
-                let (items, ok) = parse_list(&text, &root);
-                pages.insert(p, Page { items, ok });
-            }
-            Err(exc) => {
-                failed.insert(p, exc);
-            }
-        }
-    }
+        let text = fetch.get(&url, None)?;
+        let (items, ok) = parse_list(&text, &root);
+        Ok(Page { items, ok })
+    });
 
     let mut seen: HashSet<String> = HashSet::new();
     let mut items: Vec<Item> = Vec::new();

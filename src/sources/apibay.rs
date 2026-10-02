@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use serde_json::Value;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, keyword_hit_rate, Fetch};
+use crate::sources::{base_of, default_base, gather_pages, keyword_hit_rate, Fetch};
 use crate::util::{
     is_hash40, is_py_space, make_item, num_from_i64, parse_size, quote, text_of, to_int,
 };
@@ -92,7 +92,7 @@ fn rows(text: &str, source_key: &str) -> SourceResult<Vec<Item>> {
     Ok(items)
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("apibay"));
     let head = rows(&fetch.get(&url_for(&root, query, None), None)?, "apibay")?;
     if head.is_empty() {
@@ -103,12 +103,12 @@ pub fn search<F: Fetch>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<
     }
 
     let mut all = head;
-    for cat in CATS {
-        if let Ok(more) = fetch.get(&url_for(&root, query, Some(cat)), None) {
-            if let Ok(items) = rows(&more, "apibay") {
-                all.extend(items);
-            }
-        }
+    let (cats_data, _) = gather_pages(CATS, 6, |&cat| {
+        let more = fetch.get(&url_for(&root, query, Some(cat)), None)?;
+        rows(&more, "apibay")
+    });
+    for items in cats_data.into_values() {
+        all.extend(items);
     }
 
     let mut seen = HashSet::new();

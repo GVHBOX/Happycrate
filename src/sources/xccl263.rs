@@ -1,7 +1,9 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, collect_pages, default_base, first_failure, Fetch, Req};
+use crate::sources::{
+    base_of, collect_pages, default_base, first_failure, gather_pages, Fetch, Req,
+};
 use crate::util::{
     find_ci, find_tag_end, make_item, num_from_f64, parse_size_text, quote, to_int,
     ts_from_cn_dash, unescape,
@@ -155,25 +157,16 @@ fn page<F: Fetch>(root: &str, page_no: i64, query: &str, fetch: &F) -> SourceRes
     Ok(parse_html(&text))
 }
 
-fn search_words<F: Fetch>(
+fn search_words<F: Fetch + Sync>(
     root: &str,
     query: &str,
     page_no: i64,
     fetch: &F,
 ) -> SourceResult<Vec<Item>> {
     let first = page_no.max(1);
-    let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
-    for p in first..first + PAGES {
-        match page(root, p, query, fetch) {
-            Ok(items) => {
-                pages.insert(p, items);
-            }
-            Err(exc) => {
-                failed.insert(p, exc);
-            }
-        }
-    }
+    let (pages, failed) = gather_pages(first..first + PAGES, 2, |&p| {
+        page(root, p, query, fetch)
+    });
     if pages.is_empty() && !failed.is_empty() {
         return Err(first_failure(&failed));
     }
@@ -182,7 +175,7 @@ fn search_words<F: Fetch>(
     Ok(items)
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("xccl263"));
     let words: Vec<String> = query
         .split_whitespace()

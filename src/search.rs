@@ -205,7 +205,7 @@ pub fn proxy_hint_for(hints: &Hints, errors: &BTreeMap<String, String>) -> Strin
     crate::outcome::NET_FAIL_TEXT.to_string()
 }
 
-fn search_one<F: Fetch>(
+fn search_one<F: Fetch + Sync>(
     job: &Job,
     target: &Target,
     query_text: &str,

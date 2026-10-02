@@ -25,7 +25,7 @@ fn alive(token: i64) -> bool {
     TOKEN.load(Ordering::SeqCst) == token
 }
 
-fn run<F: Fetch>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
+fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
     let started = Instant::now();
     let bound = Scoped {
         inner: fetch,

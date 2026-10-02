@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::model::{Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, merge_details, Fetch, Req};
+use crate::sources::{base_of, default_base, gather_pages, merge_details, Fetch, Req};
 use crate::util::{
     cell_text, find_ci, find_hash40, find_tag_end, findall_bounded, make_item, num_from_f64,
     parse_size_text, quote, quote_plus, ts_from_cn_ymd,
@@ -230,33 +230,28 @@ fn search_page<F: Fetch>(root: &str, word: &str, page_no: i64, fetch: &F) -> Sou
     Ok(out)
 }
 
-fn fanout<F: Fetch>(
+fn fanout<F: Fetch + Sync>(
     root: &str,
     links: &[String],
     fetch: &F,
 ) -> SourceResult<Vec<Item>> {
-    let mut found: Vec<Vec<Item>> = Vec::new();
-    let mut first_error: Option<SourceError> = None;
-    for link in links.iter().take(DETAILS) {
-        match detail(root, link, fetch) {
-            Ok(items) => found.push(items),
-            Err(SourceError::Cancelled) => return Err(SourceError::Cancelled),
-            Err(exc) => {
-                if first_error.is_none() {
-                    first_error = Some(exc);
-                }
-            }
-        }
+    let limit = links.len().min(DETAILS);
+    let (details, failed) = gather_pages(0..limit, 4, |&i| {
+        detail(root, &links[i], fetch)
+    });
+    if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
+        return Err(err.clone());
     }
+    let found: Vec<Vec<Item>> = details.into_values().collect();
     if found.is_empty() {
-        if let Some(exc) = first_error {
-            return Err(exc);
+        if let Some(exc) = failed.values().next() {
+            return Err(exc.clone());
         }
     }
     Ok(merge_details(&found, MAX_HITS))
 }
 
-fn words_for<F: Fetch>(
+fn words_for<F: Fetch + Sync>(
     root: &str,
     word: &str,
     page_no: i64,
@@ -269,7 +264,7 @@ fn words_for<F: Fetch>(
     fanout(root, &links, fetch)
 }
 
-pub fn search<F: Fetch>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
+pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("javbus"));
     let first = page_no.max(1);
     let words: Vec<String> = query.split_whitespace().map(str::to_string).collect();

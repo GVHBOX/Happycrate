@@ -1,9 +1,9 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use serde_json::Value;
 
 use crate::model::{FetchTarget, Item, SourceError, SourceResult};
-use crate::sources::{base_of, default_base, sukebei, Fetch};
+use crate::sources::{base_of, default_base, gather_pages, sukebei, Fetch};
 use crate::util::{
     find_after, find_hex40, make_item, num_from_f64, parse_size_text, quote, split_items, tag,
     to_int, ts_from_rfc, unescape,
@@ -45,7 +45,7 @@ pub fn parse_rss(text: &str, source_key: &str, root: &str) -> Vec<Item> {
     items
 }
 
-pub fn family<F: Fetch>(
+pub fn family<F: Fetch + Sync>(
     base: &str,
     query: &str,
     page: i64,
@@ -77,13 +77,11 @@ pub fn family<F: Fetch>(
     }
 
     let needle = quote(query);
-    let mut collected: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
-    for p in page..page + pages {
+    let (collected, _) = gather_pages(page..page + pages, 6, |&p| {
         let url = format!("{root}/?q={needle}&c=0_0&f=0&s=seeders&o=desc&p={p}");
-        if let Ok(text) = fetch.get(&url, None) {
-            collected.insert(p, sukebei::parse_html(&text, &root, source_key));
-        }
-    }
+        let text = fetch.get(&url, None)?;
+        Ok(sukebei::parse_html(&text, &root, source_key))
+    });
 
     if collected.is_empty() && items.is_empty() {
         if let Some(exc) = rss_failed {

@@ -1778,7 +1778,6 @@
                 '<button class="crew res" id="crewRes" type="button">' +
                   '<span class="k" id="rsCount">共 0 条</span>' +
                   '<span class="k" id="rsSrcs">0/0 源' + CHEV + '</span>' +
-                  '<span class="rail" id="rsRailBox"><i id="rsRail"></i></span>' +
                 '</button>' +
                 '<div class="chiptip" id="tip"></div>' +
               '</div>' +
@@ -1786,6 +1785,7 @@
                 '<span class="ar"></span><span class="nm" id="dwName"></span>' +
                 '<span class="vl" id="dwVal"></span>' +
               '</span></span>' +
+              '<span class="rail" id="rsRailBox"><i id="rsRail"></i></span>' +
             '</div>' +
             '<div class="net-island">' +
               '<button class="crew net busy" id="crewNet" type="button">' +

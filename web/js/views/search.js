@@ -715,7 +715,7 @@
       return st.names[k] || k;
     }).join(" · ");
     var title = hlTitle(it.title);
-    var chev = (it.files && it.files.length) || it.fetch
+    var chev = (it.files && it.files.length) || (it.fetch && it.fetch.url)
       ? '<button class="fchev" tabindex="-1" data-hash="' + esc(it.hash) + '" title="文件">' + FCHEV + '</button>'
       : "";
     return '<div class="' + cls + '" id="hc-row-' + i + '" data-hash="' + esc(it.hash) + '"' + anim +

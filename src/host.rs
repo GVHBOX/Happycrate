@@ -291,6 +291,9 @@ pub fn run() {
         ])
         .setup(|app| {
             let window = app.get_webview_window("main").ok_or("找不到主窗口")?;
+            if let Ok(hwnd) = window.hwnd() {
+                crate::single::register_main_window(hwnd.0);
+            }
             window.set_focus()?;
             crate::log::info(
                 crate::log::SHELL,

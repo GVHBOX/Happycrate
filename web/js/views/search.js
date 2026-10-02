@@ -46,7 +46,7 @@
     errors: {}, names: {},
     rawTotal: 0, dupCount: 0, dupKept: false,
     enabledCount: 0, totalSources: 0,
-    netState: null,
+    netState: null, speed: 0, failed: 0,
     lines: [],
     srcList: [], strip: {}, cursor: -1,
     query: "", qtokens: [], qphrase: "", hlRe: null, parsed: null,
@@ -62,9 +62,15 @@
 
   var GO_BTN_INNER = '<span class="gico">' + ICONS.search + '</span>' +
     '<span class="gtx">搜索</span>';
-  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl, netChipEl, speedEl;
+  var CHEV = '<svg class="chev" viewBox="0 0 16 16" fill="none"><path d="M6.2 4l4 4-4 4" ' +
+    'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var root, rowsEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
+  var crewRes, rsCount, rsSrcs, rsRailBox, rsRail, drwWrap, drw, dwName, dwVal;
+  var crewNet, ntExit, ntSpeed;
   var dlRaf = 0;
   var speedTimer = 0;
+  var railT1 = null;
+  var railT2 = null;
   var marquee = null;
   var justMarqueed = false;
   var nohashSeq = 0;
@@ -307,32 +313,99 @@
     var merged = st.rawTotal && st.dupCount
       ? '（<b>' + st.rawTotal + '</b> 条合并 <b>' + st.dupCount + '</b>）'
       : (st.dupKept ? "（重复已保留）" : "");
-    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged
-             : '共 ' + total + ' 条' + merged;
+    var lax = st.relaxed ? " · 已放宽：去掉 " + esc(st.relaxed) : "";
+    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged + lax
+             : '共 ' + total + ' 条' + merged + lax;
   }
 
   var popT = null;
 
   function paintBadge(still){
     var t = badgeHtml();
-    if (badgeEl.innerHTML === t) return;
-    badgeEl.className = "badge";
-    badgeEl.innerHTML = t;
+    if (rsCount.innerHTML === t) return;
+    rsCount.innerHTML = t;
     if (still) return;
-    badgeEl.classList.remove("pop");
-    void badgeEl.offsetWidth;
-    badgeEl.classList.add("pop");
+    rsCount.classList.remove("pop");
+    void rsCount.offsetWidth;
+    rsCount.classList.add("pop");
     clearTimeout(popT);
-    popT = setTimeout(function(){ badgeEl.classList.remove("pop"); }, 300);
+    popT = setTimeout(function(){ rsCount.classList.remove("pop"); }, 300);
   }
 
   function flash(text, kind){
     HC.motion.toast(text, kind);
   }
 
-  function setChip(text, kind){
-    chipEl.textContent = text;
-    chipEl.className = "chipbtn" + (kind ? " " + kind : "");
+  function rateText(bps){
+    var k = bps / 1024;
+    if (k < 1) return "↓0";
+    if (k < 1024) return "↓" + Math.round(k) + "K";
+    return "↓" + (k / 1024).toFixed(2) + "M";
+  }
+
+  function paintSrcWarn(){
+    if (crewNet.classList.contains("err")){
+      crewRes.classList.remove("warn");
+      return;
+    }
+    crewRes.classList.toggle("warn",
+      st.failed > 0 || (st.searched && !st.busy && !st.items.length));
+  }
+
+  function paintSrcs(){
+    var done = st.busy || st.searched ? st.done : st.enabledCount;
+    rsSrcs.innerHTML = esc(done + "/" + st.totalSources + " 源") + CHEV;
+    if (st.busy && st.totalSources){
+      rsRailBox.classList.add("on");
+      rsRail.style.width = Math.min(100, done / st.totalSources * 100) + "%";
+    }
+    paintSrcWarn();
+  }
+
+  function resetRail(){
+    clearTimeout(railT1);
+    clearTimeout(railT2);
+    rsRailBox.classList.remove("on");
+    rsRail.style.transition = "none";
+    rsRail.style.width = "0%";
+    void rsRail.offsetWidth;
+    rsRail.style.transition = "";
+  }
+
+  function finishRail(){
+    rsRail.style.width = "100%";
+    clearTimeout(railT1);
+    clearTimeout(railT2);
+    railT1 = setTimeout(function(){
+      rsRailBox.classList.remove("on");
+      railT2 = setTimeout(resetRail, 300);
+    }, 700);
+  }
+
+  function drawerShow(name, value, bad){
+    dwName.textContent = name;
+    dwVal.textContent = value;
+    drw.classList.toggle("bad", !!bad);
+    drwWrap.classList.add("on");
+  }
+
+  function drawerHide(){
+    drwWrap.classList.remove("on");
+    drw.classList.remove("bad");
+  }
+
+  function paintNetCrew(){
+    var ns = st.netState || (HC.netState ? HC.netState(null) : null);
+    var dot = ns ? ns.dot : "busy";
+    var label = dot === "ok" ? (ns.title || "网络")
+      : dot === "busy" ? "检测中" : (ns.note || "网络不可用");
+    crewNet.className = "crew net " + dot + (st.speed >= 1024 ? " live" : "");
+    ntExit.innerHTML = '<span class="ndot"></span><span class="tx">' +
+      esc(label) + '</span>' + CHEV;
+    crewNet.title = ns ? [ns.title, ns.addr, ns.note].filter(Boolean).join(" · ") : "";
+    ntSpeed.hidden = dot === "busy";
+    ntSpeed.textContent = rateText(st.speed);
+    paintSrcWarn();
   }
 
   function refreshSources(){
@@ -356,7 +429,7 @@
             '<span class="sdot"></span>' + esc(s.label) + '</button>';
         }).join("");
       }
-      if (!st.busy) chipIdle();
+      paintSrcs();
       if (st.searched || st.busy){
         renderRows();
         updateSelUI(true);
@@ -367,36 +440,14 @@
           goBtn.textContent = "停止";
           goBtn.classList.add("stop");
           progEl.classList.add("on");
-          setChip("搜索中…", "busy");
+          paintSrcs();
         }
       }
     }).catch(function(err){ console.warn("listSources failed", err); });
   }
 
-  function chipIdle(){
-    setChip("已启用 " + st.enabledCount + "/" + st.totalSources + " 个源", "");
-  }
-
-  function paintNet(){
-    if (!netChipEl) return;
-    var ns = st.netState || (HC.netState ? HC.netState(null) : null);
-    if (!ns) return;
-    var label = ns.dot === "ok" ? (ns.title || "网络") : (ns.note || "");
-    netChipEl.className = "netchip " +
-      (ns.dot === "busy" ? "busy" : ns.dot === "err" ? "err" : "ok");
-    netChipEl.innerHTML = '<span class="ndot"></span>' + esc(label);
-    netChipEl.title = [ns.title, ns.addr, ns.note].filter(Boolean).join(" · ");
-  }
-
-  function rateText(bps){
-    var k = bps / 1024;
-    if (k < 1) return "↓0";
-    if (k < 1024) return "↓" + (k < 10 ? k.toFixed(1) : Math.round(k)) + "K";
-    return "↓" + (k / 1024).toFixed(1) + "M";
-  }
-
   function tickSpeed(){
-    if (!speedEl) return;
+    if (!crewNet) return;
     if (!root || !root.isConnected){
       clearInterval(speedTimer);
       speedTimer = 0;
@@ -404,25 +455,24 @@
     }
     if (document.hidden || typeof HC.api.netThroughput !== "function") return;
     HC.api.netThroughput().then(function(d){
-      var bps = (d && d.down) || 0;
-      speedEl.textContent = rateText(bps);
-      speedEl.className = "netchip stat" + (bps >= 1024 ? " live" : "");
+      st.speed = (d && d.down) || 0;
+      paintNetCrew();
     }).catch(function(){});
   }
 
   function checkNetwork(force){
     if (typeof HC.api.proxyStatus !== "function"){
-      if (netChipEl) netChipEl.hidden = true;
+      if (crewNet) crewNet.hidden = true;
       return;
     }
     HC.api.proxyStatus(force).then(function(d){
       if (HC.setNetStatus) HC.setNetStatus(d);
       st.netState = HC.netState ? HC.netState(d) : null;
-      if (netChipEl) netChipEl.hidden = false;
-      paintNet();
+      if (crewNet) crewNet.hidden = false;
+      paintNetCrew();
     }).catch(function(){
       st.netState = null;
-      if (netChipEl) netChipEl.hidden = true;
+      if (crewNet) crewNet.hidden = true;
     });
   }
 
@@ -1285,7 +1335,9 @@
     goBtn.innerHTML = GO_BTN_INNER;
     goBtn.classList.remove("stop");
     stopProgress();
-    chipIdle();
+    drawerHide();
+    finishRail();
+    paintSrcs();
     if (msg) HC.motion.toast(msg, "err");
     renderRows();
   }
@@ -1311,7 +1363,9 @@
       goBtn.innerHTML = GO_BTN_INNER;
       goBtn.classList.remove("stop");
       stopProgress();
-      chipIdle();
+      drawerHide();
+      finishRail();
+      paintSrcs();
       flash("已停止搜索", "warn");
       renderRows();
       paintBadge();
@@ -1345,7 +1399,10 @@
     renderRows();
     paintStrip();
     paintBadge();
-    setChip("搜索中…", "busy");
+    st.failed = 0;
+    drawerHide();
+    resetRail();
+    paintSrcs();
     goBtn.textContent = "停止";
     goBtn.classList.add("stop");
     st.startSeq++;
@@ -1361,7 +1418,7 @@
       st.parsed = res.query || null;
       st.rev++;
       setProgress();
-      setChip("搜索中 0/" + res.total + "…", "busy");
+      paintSrcs();
       replayPending();
     }).catch(function(err){
       abortSearch(err && err.message ? err.message : String(err));
@@ -1379,16 +1436,13 @@
     st.errors = st.errors || {};
     var fails = Object.keys(st.errors).filter(function(k){ return k; }).length;
     var total = st.items.length;
-    var relaxed = st.relaxed ? " · 已放宽：去掉 " + st.relaxed : "";
-    if (fails){
-      setChip(total + " 条 · " + fails + " 个源失败" + relaxed, "warn");
-      HC.sfx.play("fail");
-    } else if (!total){
-      setChip("没有找到结果" + relaxed, "");
-    } else {
-      setChip("搜索完成 · " + total + " 条" + relaxed, "ok");
-      HC.sfx.play("done");
-    }
+    st.failed = Math.max(st.failed, fails);
+    if (fails) HC.sfx.play("fail");
+    else if (total) HC.sfx.play("done");
+    paintBadge();
+    paintSrcs();
+    finishRail();
+    drawerHide();
     Object.keys(st.strip).forEach(function(k){
       if (st.strip[k].state === "pending") st.strip[k] = {state:"cancel"};
     });
@@ -1521,26 +1575,29 @@
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
         if (ss === "err"){
           st.lines.push({text: name + "：失败（" + (d.err || "请求失败") + "）", bad: true});
-          setChip(name + " 失败", "warn");
+          st.failed += 1;
+          drawerShow(name, "失败", true);
           st.strip[d.key] = {state:"err", err:d.err};
         } else if (ss === "empty"){
           st.lines.push({text: name + "：无结果", bad: false});
-          setChip(name + " 无结果", "");
+          drawerShow(name, "无结果", false);
           st.strip[d.key] = {state:"empty"};
         } else if (ss === "warn"){
           var why = d.err || "提示";
           st.lines.push({text: name + "：" + why, bad: false});
-          setChip(name + " " + why, "warn");
+          drawerShow(name, why, false);
           st.strip[d.key] = {state:"warn", err:d.err, count:d.count};
         } else {
           st.lines.push({text: name + "：" + d.count + " 条" +
                          (d.fuzzy ? "（未使用关键词）" : ""), bad: false});
-          setChip(name + " " + d.count + " 条", "busy");
+          drawerShow(name, d.count + " 条", false);
           st.strip[d.key] = {state:"ok", count:d.count, fuzzy:!!d.fuzzy,
                              cached:!!d.cached};
         }
         renderTip();
         paintStrip();
+        paintBadge();
+        paintSrcs();
       },
       settled: function(d){
         if (!dispatch("settled", d)) return;
@@ -1548,11 +1605,7 @@
         renderRows();
         paintBadge();
         paintStrip();
-        var left = st.srcList.filter(function(s){
-          var one = st.strip[s.key];
-          return !one || one.state === "pending";
-        }).length;
-        if (left > 0) setChip(st.items.length + " 条 · " + left + " 个源仍在返回", "busy");
+        paintSrcs();
       },
       batch: function(d){
         if (!dispatch("batch", d)) return;
@@ -1718,13 +1771,23 @@
           '<div class="group">' +
             '<button class="cb" id="ckAll"></button>' +
             '<span class="allabel">全选</span>' +
-            '<span class="badge" id="badge">共 0 条</span>' +
-            '<button class="netchip" id="netChip" type="button"><span class="ndot"></span></button>' +
-            '<span class="netchip stat" id="speedChip">↓0</span>' +
-            '<div class="chipwrap">' +
-              '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
+            '<span class="crewwrap">' +
+              '<button class="crew res" id="crewRes" type="button">' +
+                '<span class="k" id="rsCount">共 0 条</span>' +
+                '<span class="k" id="rsSrcs">0/0 源' + CHEV + '</span>' +
+                '<span class="rail" id="rsRailBox"><i id="rsRail"></i></span>' +
+              '</button>' +
               '<div class="chiptip" id="tip"></div>' +
-            '</div>' +
+            '</span>' +
+            '<span class="drw-wrap" id="drw"><span class="drw">' +
+              '<span class="ar"></span><span class="nm" id="dwName"></span>' +
+              '<span class="vl" id="dwVal"></span>' +
+            '</span></span>' +
+            '<button class="crew net busy" id="crewNet" type="button">' +
+              '<span class="k exit" id="ntExit"><span class="ndot"></span>' +
+                '<span class="tx">检测中</span>' + CHEV + '</span>' +
+              '<span class="k aux" id="ntSpeed">↓0</span>' +
+            '</button>' +
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
@@ -1756,10 +1819,18 @@
         checkMoreRows();
       });
     });
-    badgeEl = root.querySelector("#badge");
-    chipEl = root.querySelector("#chip");
-    netChipEl = root.querySelector("#netChip");
-    speedEl = root.querySelector("#speedChip");
+    crewRes = root.querySelector("#crewRes");
+    rsCount = root.querySelector("#rsCount");
+    rsSrcs = root.querySelector("#rsSrcs");
+    rsRailBox = root.querySelector("#rsRailBox");
+    rsRail = root.querySelector("#rsRail");
+    drwWrap = root.querySelector("#drw");
+    drw = root.querySelector(".drw");
+    dwName = root.querySelector("#dwName");
+    dwVal = root.querySelector("#dwVal");
+    crewNet = root.querySelector("#crewNet");
+    ntExit = root.querySelector("#ntExit");
+    ntSpeed = root.querySelector("#ntSpeed");
     tipEl = root.querySelector("#tip");
     ckAllEl = root.querySelector("#ckAll");
     inp = root.querySelector("#inp");
@@ -1781,7 +1852,7 @@
       renderRows();
       updateSelUI();
     });
-    badgeEl.innerHTML = badgeHtml();
+    paintBadge(true);
 
     var srcLoaded = false;
     function loadSourcesOnce(){
@@ -1792,7 +1863,7 @@
     loadSourcesOnce();
     var cachedNet = HC.getNetStatus ? HC.getNetStatus() : null;
     st.netState = cachedNet && HC.netState ? HC.netState(cachedNet) : null;
-    paintNet();
+    paintNetCrew();
     checkNetwork(false);
     clearInterval(speedTimer);
     speedTimer = setInterval(tickSpeed, 1000);
@@ -1815,23 +1886,23 @@
     root.querySelector("#btnCfg").onclick = function(){
       location.hash = "settings";
     };
-    chipEl.onclick = function(){
+    crewRes.onclick = function(){
       location.hash = "sources";
     };
-    netChipEl.onclick = function(){
+    crewNet.onclick = function(){
       HC.settingsDefaultPane = "network";
       location.hash = "settings";
     };
-    chipEl.addEventListener("mouseenter", function(){
+    crewRes.addEventListener("mouseenter", function(){
       if (st.lines.length) tipEl.classList.add("show");
     });
-    chipEl.addEventListener("mouseleave", function(){
+    crewRes.addEventListener("mouseleave", function(){
       tipEl.classList.remove("show");
     });
-    chipEl.addEventListener("focus", function(){
+    crewRes.addEventListener("focus", function(){
       if (st.lines.length) tipEl.classList.add("show");
     });
-    chipEl.addEventListener("blur", function(){
+    crewRes.addEventListener("blur", function(){
       tipEl.classList.remove("show");
     });
 

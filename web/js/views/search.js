@@ -981,6 +981,11 @@
       }
       var title = el.querySelector(".stitle");
       if (title && title.innerHTML !== text) title.innerHTML = text;
+      var fill = el.querySelector(".track .fill");
+      if (fill){
+        if (settled) fill.style.transform = "scaleX(1)";
+        else if (!busy) fill.style.transform = "scaleX(0)";
+      }
       var at = stripEl.children[i];
       if (at !== el) stripEl.insertBefore(el, at || null);
     });
@@ -1278,6 +1283,7 @@
 
   function paintRunning(){
     if (!stripEl) return;
+    var now = performance.now();
     [].slice.call(stripEl.querySelectorAll(".stile.running")).forEach(function(el){
       var ss = st.strip[el.dataset.key];
       if (!ss || ss.state !== "pending" || !ss.startedAt) return;
@@ -1287,6 +1293,13 @@
         startedAt: ss.startedAt, typical: ss.typical,
       });
       if (title && title.innerHTML !== text) title.innerHTML = text;
+      var fill = el.querySelector(".track .fill");
+      if (fill){
+        var used = now - ss.startedAt;
+        var typ = ss.typical || 2000;
+        var ratio = Math.min(0.94, (used / typ) * 0.94);
+        fill.style.transform = "scaleX(" + ratio + ")";
+      }
     });
   }
 

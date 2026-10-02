@@ -1028,40 +1028,54 @@ body.dark .rail i{
   transform:translateY(calc(-3px*var(--frs)));
   box-shadow:var(--sh-lift);
 }
-.stile .stitle{min-width:0}
+.stile .stitle{min-width:0; position:relative; z-index:2}
+.stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none; position:relative; z-index:2}
+.stile .tick{width:1px; height:9px; background:var(--ink-13); flex:none; margin-left:1px; position:relative; z-index:2}
 .stile .track{
-  position:absolute; left:0; right:0; bottom:0; height:2px;
-  overflow:hidden; opacity:0;
+  position:absolute; inset:0; width:100%; height:100%;
+  border-radius:inherit; overflow:hidden; opacity:0; pointer-events:none; z-index:1;
   transition:opacity var(--d-state) var(--e);
 }
-.stile .track::before{
-  content:""; position:absolute; inset:0; background:var(--track);
-}
+.stile .track::before{display:none}
 .stile .track .fill{
-  position:absolute; inset:0; display:block;
-  background:var(--brand); transform-origin:left center; transform:scaleX(0);
-  transition:transform 340ms var(--e-out);
+  position:absolute; top:0; bottom:0; left:0; width:100%;
+  transform-origin:left center; transform:scaleX(0);
+  background:linear-gradient(90deg, rgba(var(--brand-rgb),.08), rgba(var(--brand-rgb),.22));
+  border-right:1.5px solid rgba(var(--brand-rgb),.55);
+  transition:transform 160ms linear;
 }
-.stile.pending .track{opacity:1}
+body.dark .stile .track .fill{
+  background:linear-gradient(90deg, rgba(var(--brand-rgb),.12), rgba(var(--brand-rgb),.28));
+  border-right:1.5px solid rgba(var(--brand-rgb),.70);
+}
+.stile.pending .track{opacity:0}
 .stile.ok .track,
-.stile.empty .track,
 .stile.warn .track,
-.stile.err .track{opacity:0; transition:opacity 260ms var(--e) 420ms}
-.stile.ok .track .fill,
+.stile.err .track{opacity:1; transition:opacity 260ms var(--e) 420ms}
+.stile.empty .track,
+.stile.cancel .track{opacity:0; transition:opacity 260ms var(--e) 420ms}
+.stile.ok .track .fill{
+  transform:scaleX(1);
+  background:linear-gradient(90deg, rgba(16,185,129,.08), rgba(16,185,129,.16));
+  border-right:1.5px solid rgba(16,185,129,.45);
+}
+.stile.warn .track .fill{
+  transform:scaleX(1);
+  background:linear-gradient(90deg, rgba(202,138,4,.08), rgba(202,138,4,.18));
+  border-right:1.5px solid rgba(202,138,4,.45);
+}
+.stile.err .track .fill{
+  transform:scaleX(1);
+  background:linear-gradient(90deg, rgba(220,38,38,.08), rgba(220,38,38,.18));
+  border-right:1.5px solid rgba(220,38,38,.45);
+}
 .stile.empty .track .fill,
-.stile.warn .track .fill,
-.stile.err .track .fill{transform:scaleX(1)}
-.stile.ok .track .fill{background:var(--ok)}
-.stile.empty .track .fill{background:var(--empty)}
-.stile.warn .track .fill{background:var(--warn)}
-.stile.err .track .fill{background:var(--err)}
-.stile .sdot{width:6px; height:6px; border-radius:50%; background:var(--ink-13); flex:none}
+.stile.cancel .track .fill{transform:scaleX(0)}
 .stile.pending .sdot{background:var(--ink-13)}
-.stile.running{border-color:var(--brand-line); background:var(--brand-soft); color:var(--t2)}
+.stile.running{border-color:var(--brand-line); background:var(--panel); color:var(--t1); box-shadow:0 1px 6px rgba(var(--brand-rgb),.12)}
 .stile.running .sdot{background:var(--brand); animation:breathe 1.4s var(--e) infinite}
 .stile.running .stitle{color:var(--t1)}
 .stile.running .track{opacity:1}
-.stile.running .track .fill{transform:scaleX(1); background:var(--brand)}
 .stile .ela,.stile .eta{font-family:var(--font-num); font-variant-numeric:tabular-nums; flex:none}
 .stile .ela{color:var(--t2); font-weight:600}
 .stile .eta{color:var(--t4); font-weight:400}

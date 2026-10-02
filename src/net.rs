@@ -450,6 +450,22 @@ const TUN_WORDS: [&str; 9] = [
     "tunnel",
 ];
 
+fn adapter_name(head: &str) -> String {
+    if let Some(at) = head.find("适配器") {
+        return head[at + "适配器".len()..].trim().to_string();
+    }
+    if let Some((at, _)) = head.char_indices().find(|&(i, _)| {
+        head.get(i..i + 7).map(|sub| sub.eq_ignore_ascii_case("adapter")).unwrap_or(false)
+    }) {
+        return head[at + 7..].trim().to_string();
+    }
+    head.trim().to_string()
+}
+
+fn carries_ipv4(block: &str) -> bool {
+    block.to_lowercase().contains("ipv4")
+}
+
 pub fn scan_tun_adapter() -> String {
     if std::env::consts::OS != "windows" {
         return String::new();
@@ -457,28 +473,34 @@ pub fn scan_tun_adapter() -> String {
     let Ok(output) = Command::new("ipconfig").output() else {
         return String::new();
     };
-    let text = String::from_utf8_lossy(&output.stdout);
-    for line in text.lines() {
+    let text = decode(&output.stdout);
+    let lines: Vec<&str> = text.lines().collect();
+    let mut index = 0;
+    while index < lines.len() {
+        let line = lines[index].trim_end();
+        index += 1;
         let low = line.to_lowercase();
-        if !line.contains("适配器") && !low.contains("adapter") {
+        if !(line.contains("适配器") || low.contains("adapter")) {
             continue;
         }
         if !TUN_WORDS.iter().any(|w| low.contains(w)) {
             continue;
         }
         let head = line.split(':').next().unwrap_or("");
-        let name = if let Some(at) = head.find("适配器") {
-            head[at + "适配器".len()..].trim().to_string()
-        } else if let Some((at, _)) = head.char_indices().find(|&(i, _)| {
-            head.get(i..i + 7).map(|sub| sub.eq_ignore_ascii_case("adapter")).unwrap_or(false)
-        }) {
-            head[at + 7..].trim().to_string()
-        } else {
-            head.trim().to_string()
-        };
-        let name = name.trim_matches(|c| c == ' ' || c == '.' || c == ':');
-        if !name.is_empty() {
-            return name.to_string();
+        let name = adapter_name(head).trim_matches(|c| c == ' ' || c == '.' || c == ':').to_string();
+        if name.is_empty() {
+            continue;
+        }
+        let start = index;
+        while index < lines.len() {
+            let next = lines[index];
+            if next.contains("适配器") || next.to_lowercase().contains("adapter") {
+                break;
+            }
+            index += 1;
+        }
+        if carries_ipv4(&lines[start..index].join(" ")) {
+            return name;
         }
     }
     String::new()
@@ -755,11 +777,7 @@ impl HttpClient {
         } else {
             false
         };
-        let tun = if self.resolved.mode == "none" {
-            self.tun_adapter(force)
-        } else {
-            String::new()
-        };
+        let tun = self.tun_adapter(force);
         let checked_at = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_secs_f64())
@@ -775,6 +793,7 @@ impl HttpClient {
         );
         if let Some(obj) = data.as_object_mut() {
             obj.insert("directWorks".to_string(), serde_json::Value::Bool(direct_works));
+            obj.insert("tunActive".to_string(), serde_json::Value::String(tun));
         }
         *self.probe.lock().unwrap_or_else(|e| e.into_inner()) = Some((key, Instant::now(), data.clone()));
         data
@@ -967,6 +986,28 @@ enum BodyRead {
     Failed(String),
 }
 
+static RX_TOTAL: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+static RX_SAMPLE: std::sync::Mutex<Option<(u64, Instant, f64)>> = std::sync::Mutex::new(None);
+
+pub fn down_rate() -> f64 {
+    let now = Instant::now();
+    let total = RX_TOTAL.load(std::sync::atomic::Ordering::Relaxed);
+    let mut guard = RX_SAMPLE.lock().unwrap_or_else(|e| e.into_inner());
+    let rate = match *guard {
+        Some((prev_total, prev_at, last)) => {
+            let secs = now.duration_since(prev_at).as_secs_f64();
+            if secs < 0.2 {
+                last
+            } else {
+                total.saturating_sub(prev_total) as f64 / secs
+            }
+        }
+        None => 0.0,
+    };
+    *guard = Some((total, now, rate));
+    rate
+}
+
 async fn read_body(mut response: reqwest::Response, limit: usize, strict: bool) -> BodyRead {
     let mut out: Vec<u8> = Vec::new();
     let mut got = 0usize;
@@ -974,6 +1015,7 @@ async fn read_body(mut response: reqwest::Response, limit: usize, strict: bool) 
         match response.chunk().await {
             Ok(Some(chunk)) => {
                 got += chunk.len();
+                RX_TOTAL.fetch_add(chunk.len() as u64, std::sync::atomic::Ordering::Relaxed);
                 if got > limit {
                     if strict {
                         return BodyRead::TooLarge;

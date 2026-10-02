@@ -1769,25 +1769,31 @@
       '<div class="card">' +
         '<div class="bar">' +
           '<div class="group">' +
-            '<button class="cb" id="ckAll"></button>' +
-            '<span class="allabel">全选</span>' +
-            '<span class="crewwrap">' +
-              '<button class="crew res" id="crewRes" type="button">' +
-                '<span class="k" id="rsCount">共 0 条</span>' +
-                '<span class="k" id="rsSrcs">0/0 源' + CHEV + '</span>' +
-                '<span class="rail" id="rsRailBox"><i id="rsRail"></i></span>' +
+            '<div class="data-island">' +
+              '<div class="chk-wrap" id="ckWrap">' +
+                '<button class="cb" id="ckAll"></button>' +
+                '<span class="allabel">全选</span>' +
+              '</div>' +
+              '<div class="crewwrap">' +
+                '<button class="crew res" id="crewRes" type="button">' +
+                  '<span class="k" id="rsCount">共 0 条</span>' +
+                  '<span class="k" id="rsSrcs">0/0 源' + CHEV + '</span>' +
+                  '<span class="rail" id="rsRailBox"><i id="rsRail"></i></span>' +
+                '</button>' +
+                '<div class="chiptip" id="tip"></div>' +
+              '</div>' +
+              '<span class="drw-wrap" id="drw"><span class="drw">' +
+                '<span class="ar"></span><span class="nm" id="dwName"></span>' +
+                '<span class="vl" id="dwVal"></span>' +
+              '</span></span>' +
+            '</div>' +
+            '<div class="net-island">' +
+              '<button class="crew net busy" id="crewNet" type="button">' +
+                '<span class="k exit" id="ntExit"><span class="ndot"></span>' +
+                  '<span class="tx">检测中</span>' + CHEV + '</span>' +
+                '<span class="k aux" id="ntSpeed">↓0</span>' +
               '</button>' +
-              '<div class="chiptip" id="tip"></div>' +
-            '</span>' +
-            '<span class="drw-wrap" id="drw"><span class="drw">' +
-              '<span class="ar"></span><span class="nm" id="dwName"></span>' +
-              '<span class="vl" id="dwVal"></span>' +
-            '</span></span>' +
-            '<button class="crew net busy" id="crewNet" type="button">' +
-              '<span class="k exit" id="ntExit"><span class="ndot"></span>' +
-                '<span class="tx">检测中</span>' + CHEV + '</span>' +
-              '<span class="k aux" id="ntSpeed">↓0</span>' +
-            '</button>' +
+            '</div>' +
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
@@ -1931,6 +1937,13 @@
       }
       updateSelUI();
     };
+
+    var ckWrap = root.querySelector("#ckWrap");
+    if (ckWrap){
+      ckWrap.onclick = function(e){
+        if (e.target !== ckAllEl) ckAllEl.click();
+      };
+    }
 
     headEl.addEventListener("click", function(e){
       var cell = e.target.closest("[data-sort]");

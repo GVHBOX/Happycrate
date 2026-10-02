@@ -62,8 +62,9 @@
 
   var GO_BTN_INNER = '<span class="gico">' + ICONS.search + '</span>' +
     '<span class="gtx">搜索</span>';
-  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl;
+  var root, rowsEl, badgeEl, chipEl, tipEl, ckAllEl, inp, goBtn, headEl, progEl, stripEl, selbarEl, netChipEl, speedEl;
   var dlRaf = 0;
+  var speedTimer = 0;
   var marquee = null;
   var justMarqueed = false;
   var nohashSeq = 0;
@@ -329,12 +330,9 @@
     HC.motion.toast(text, kind);
   }
 
-  function setChip(content, kind, isHtml, title){
-    if (isHtml) chipEl.innerHTML = content;
-    else chipEl.textContent = content;
+  function setChip(text, kind){
+    chipEl.textContent = text;
     chipEl.className = "chipbtn" + (kind ? " " + kind : "");
-    if (title !== undefined) chipEl.title = title || "";
-    else chipEl.removeAttribute("title");
   }
 
   function refreshSources(){
@@ -376,31 +374,55 @@
   }
 
   function chipIdle(){
-    var ns = st.netState;
-    if (!ns && HC.getNetStatus && HC.netState){
-      var cached = HC.getNetStatus();
-      if (cached) ns = st.netState = HC.netState(cached);
+    setChip("已启用 " + st.enabledCount + "/" + st.totalSources + " 个源", "");
+  }
+
+  function paintNet(){
+    if (!netChipEl) return;
+    var ns = st.netState || (HC.netState ? HC.netState(null) : null);
+    if (!ns) return;
+    var label = ns.dot === "ok" ? (ns.title || "网络") : (ns.note || "");
+    netChipEl.className = "netchip " +
+      (ns.dot === "busy" ? "busy" : ns.dot === "err" ? "err" : "ok");
+    netChipEl.innerHTML = '<span class="ndot"></span>' + esc(label);
+    netChipEl.title = [ns.title, ns.addr, ns.note].filter(Boolean).join(" · ");
+  }
+
+  function rateText(bps){
+    var k = bps / 1024;
+    if (k < 1) return "↓0";
+    if (k < 1024) return "↓" + (k < 10 ? k.toFixed(1) : Math.round(k)) + "K";
+    return "↓" + (k / 1024).toFixed(1) + "M";
+  }
+
+  function tickSpeed(){
+    if (!speedEl) return;
+    if (!root || !root.isConnected){
+      clearInterval(speedTimer);
+      speedTimer = 0;
+      return;
     }
-    var countText = "已启用 " + st.enabledCount + "/" + st.totalSources + " 个源";
-    if (ns && ns.dot === "err"){
-      var text = (ns.note || "外网不可达") + " · " + countText;
-      setChip('<span class="sdot"></span>' + esc(text), "err", true, (ns.title || "网络") + "：" + (ns.note || "不可达"));
-    } else if (ns && ns.dot === "ok"){
-      var label = (ns.title || "直连 / TUN") + " · " + countText;
-      setChip('<span class="sdot"></span>' + esc(label), "", true, (ns.title || "网络") + " · " + (ns.note || "连通"));
-    } else {
-      setChip(countText, "", false, "");
-    }
+    if (document.hidden || typeof HC.api.netThroughput !== "function") return;
+    HC.api.netThroughput().then(function(d){
+      var bps = (d && d.down) || 0;
+      speedEl.textContent = rateText(bps);
+      speedEl.className = "netchip stat" + (bps >= 1024 ? " live" : "");
+    }).catch(function(){});
   }
 
   function checkNetwork(force){
-    if (typeof HC.api.proxyStatus !== "function") return;
+    if (typeof HC.api.proxyStatus !== "function"){
+      if (netChipEl) netChipEl.hidden = true;
+      return;
+    }
     HC.api.proxyStatus(force).then(function(d){
       if (HC.setNetStatus) HC.setNetStatus(d);
       st.netState = HC.netState ? HC.netState(d) : null;
-      if (!st.busy) chipIdle();
+      if (netChipEl) netChipEl.hidden = false;
+      paintNet();
     }).catch(function(){
       st.netState = null;
+      if (netChipEl) netChipEl.hidden = true;
     });
   }
 
@@ -1697,6 +1719,8 @@
             '<button class="cb" id="ckAll"></button>' +
             '<span class="allabel">全选</span>' +
             '<span class="badge" id="badge">共 0 条</span>' +
+            '<button class="netchip" id="netChip" type="button"><span class="ndot"></span></button>' +
+            '<span class="netchip stat" id="speedChip">↓0</span>' +
             '<div class="chipwrap">' +
               '<button class="chipbtn" id="chip">已启用 0/0 个源</button>' +
               '<div class="chiptip" id="tip"></div>' +
@@ -1734,6 +1758,8 @@
     });
     badgeEl = root.querySelector("#badge");
     chipEl = root.querySelector("#chip");
+    netChipEl = root.querySelector("#netChip");
+    speedEl = root.querySelector("#speedChip");
     tipEl = root.querySelector("#tip");
     ckAllEl = root.querySelector("#ckAll");
     inp = root.querySelector("#inp");
@@ -1764,7 +1790,12 @@
       refreshSources();
     }
     loadSourcesOnce();
+    var cachedNet = HC.getNetStatus ? HC.getNetStatus() : null;
+    st.netState = cachedNet && HC.netState ? HC.netState(cachedNet) : null;
+    paintNet();
     checkNetwork(false);
+    clearInterval(speedTimer);
+    speedTimer = setInterval(tickSpeed, 1000);
 
     hooks = buildHooks();
     HC.api.onSearch(hooks);
@@ -1785,12 +1816,11 @@
       location.hash = "settings";
     };
     chipEl.onclick = function(){
-      if (st.netState && st.netState.dot === "err"){
-        HC.settingsDefaultPane = "network";
-        location.hash = "settings";
-      } else {
-        location.hash = "sources";
-      }
+      location.hash = "sources";
+    };
+    netChipEl.onclick = function(){
+      HC.settingsDefaultPane = "network";
+      location.hash = "settings";
     };
     chipEl.addEventListener("mouseenter", function(){
       if (st.lines.length) tipEl.classList.add("show");

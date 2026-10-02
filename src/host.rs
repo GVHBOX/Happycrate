@@ -180,6 +180,11 @@ async fn proxy_status(app: tauri::AppHandle, force: bool) -> Result<Value, Strin
 }
 
 #[tauri::command]
+fn net_throughput() -> Value {
+    serde_json::json!({ "down": crate::net::down_rate() })
+}
+
+#[tauri::command]
 fn open_logs(state: tauri::State<AppState>) -> bool {
     state.api().open_logs()
 }
@@ -275,6 +280,7 @@ pub fn run() {
             app_info,
             open_logs,
             proxy_status,
+            net_throughput,
             downloaders,
             deliver,
             torrent_files,

@@ -686,6 +686,28 @@ input, textarea{
 .chipbtn .sdot{width:6px; height:6px; border-radius:50%; background:var(--ok); flex:none; margin-right:2px}
 .chipbtn.warn .sdot{background:var(--warn)}
 .chipbtn.err .sdot{background:var(--err)}
+.netchip{
+  height:calc(24px*var(--frs)); padding:0 10px;
+  border-radius:var(--r-chip);
+  border:1px solid transparent; background:var(--shell);
+  font:500 var(--fc-xs)/1 var(--font); color:var(--t3);
+  cursor:pointer; white-space:nowrap; flex:none;
+  display:inline-flex; align-items:center; gap:5px;
+  transition:background .18s var(--e), color .18s var(--e), border-color .18s var(--e),
+             transform var(--d-release) var(--spring);
+}
+.netchip:hover{background:var(--shell); color:var(--t2)}
+.netchip:active{transform:scale(var(--s-press-chip));
+  transition-duration:var(--d-press); transition-timing-function:var(--e-out)}
+.netchip .ndot{width:6px; height:6px; border-radius:50%; background:var(--t4); flex:none}
+.netchip.ok{color:var(--t2)}
+.netchip.ok .ndot{background:var(--ok)}
+.netchip.err{background:var(--danger-soft); color:var(--err-strong); border-color:rgba(var(--err-rgb),.32)}
+.netchip.err .ndot{background:var(--err)}
+.netchip.busy .ndot{background:var(--brand); animation:netblink .6s linear infinite}
+.netchip.stat{cursor:default}
+.netchip.stat:hover{background:var(--shell); color:var(--t3)}
+.netchip.stat.live{color:var(--t1)}
 .chiptip{
   position:absolute; top:34px; left:0; z-index:var(--z-tip);
   min-width:190px; background:var(--panel);

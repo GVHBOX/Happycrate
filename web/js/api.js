@@ -110,6 +110,10 @@
       return invoke("proxy_status", {force: !!force});
     },
 
+    netThroughput: function(){
+      return invoke("net_throughput", {});
+    },
+
     defaultSettings: function(){
       return invoke("default_settings");
     },

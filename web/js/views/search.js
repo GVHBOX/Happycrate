@@ -75,9 +75,13 @@
   var justMarqueed = false;
   var nohashSeq = 0;
   var selSig = "";
-  var hashIdx = {};
-
   var esc = HC.esc;
+  var SOURCE_BASE_TYPICAL = {
+    apibay: 550, nyaa: 950, sukebei: 1050, mikan: 1100, dmhy: 1250,
+    eztv: 1800, bitsearch: 1900, javbus: 2400, xccl263: 2600,
+    javdb: 2800, knaben: 3200, tpb: 3600
+  };
+  var sourceHist = {};
 
   function fmtCount(n){
     if (n === null || n === undefined) return "—";
@@ -961,6 +965,10 @@
       var el = tileFor(k);
       var busy = ss.state === "pending" && !!ss.startedAt;
       var cls = busy ? "running" : (settled ? ss.state + " settled" : ss.state);
+      if (settled){
+        if (ss.count > 0) cls += " has-items";
+        else cls += " zero-items";
+      }
       if (st.filterSource){
         if (k === st.filterSource) cls += " filter-active";
         else cls += " filter-dim";
@@ -973,7 +981,7 @@
       var name = st.names[k] || k;
       var text = busy
         ? runningLabel({name:name, startedAt:ss.startedAt, typical:ss.typical})
-        : esc(name) + " · " + stripLabel(ss);
+        : esc(name) + " · " + (ss.count > 0 ? "<b>" + stripLabel(ss) + "</b>" : stripLabel(ss));
       if (settled && ss.state !== "cancel" && !el.querySelector(".tick")){
         var tick = document.createElement("span");
         tick.className = "tick";
@@ -1296,9 +1304,14 @@
       var fill = el.querySelector(".track .fill");
       if (fill){
         var used = now - ss.startedAt;
-        var typ = ss.typical || 2000;
-        var ratio = Math.min(0.94, (used / typ) * 0.94);
-        fill.style.transform = "scaleX(" + ratio + ")";
+        var typ = ss.typical || SOURCE_BASE_TYPICAL[el.dataset.key] || 2000;
+        var ratio;
+        if (used < typ){
+          ratio = (used / typ) * 0.86;
+        } else {
+          ratio = 0.86 + 0.10 * (1 - Math.exp(-(used - typ) / (typ * 0.8)));
+        }
+        fill.style.transform = "scaleX(" + Math.min(0.96, ratio) + ")";
       }
     });
   }
@@ -1573,12 +1586,17 @@
         var one = st.strip[d.key];
         if (!one || one.state !== "pending") return;
         one.startedAt = performance.now();
-        one.typical = Number(d.typical_ms) || 0;
+        one.typical = sourceHist[d.key] || Number(d.typical_ms) || SOURCE_BASE_TYPICAL[d.key] || 2000;
         paintStrip();
       },
       source: function(d){
         if (!dispatch("source", d)) return;
         st.done += 1;
+        var one = st.strip[d.key];
+        var actualMs = performance.now() - (one && one.startedAt ? one.startedAt : st.t0);
+        if (actualMs > 80){
+          sourceHist[d.key] = sourceHist[d.key] ? Math.round(sourceHist[d.key] * 0.4 + actualMs * 0.6) : Math.round(actualMs);
+        }
         if (progEl) progEl.classList.remove("wait");
         var segRed = d.state === "err" || (!d.state && d.err && d.outcome !== "empty");
         var seg = progEl && progEl.querySelector('.pseg[data-key="' + d.key + '"]');

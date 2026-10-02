@@ -691,10 +691,14 @@ input, textarea{
   color:inherit; font-weight:inherit}
 .crew > .k + .k{box-shadow:inset 1px 0 0 var(--divider)}
 .crew > .k b{color:var(--brand); font-weight:600}
+.crew > .k i{font-style:normal; font-weight:600; margin-left:7px; letter-spacing:.2px}
+.crew > .k i.add{color:var(--ok)}
+.crew > .k i.del{color:var(--err)}
 .crew > .k.pop{animation:countPop .26s var(--spring)}
 .crew > .k.aux{color:var(--t4); min-width:calc(58px*var(--frs))}
 .crew.live > .k.aux{color:var(--t1)}
 .crew.warn{background:var(--warn-soft); color:var(--warn-strong)}
+.crew.warn > .k i{color:inherit}
 .crew.err{background:var(--danger-soft); color:var(--err-strong)}
 .crew .ndot{width:6px; height:6px; border-radius:50%; background:var(--t4); flex:none}
 .crew.ok .ndot{background:var(--ok)}

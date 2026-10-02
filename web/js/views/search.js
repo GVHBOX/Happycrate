@@ -311,7 +311,7 @@
   function badgeHtml(){
     var n = selCount(), total = st.items.length;
     var merged = st.rawTotal && st.dupCount
-      ? '（<b>' + st.rawTotal + '</b> 条合并 <b>' + st.dupCount + '</b>）'
+      ? '<i class="add">+' + st.rawTotal + '</i><i class="del">-' + st.dupCount + '</i>'
       : (st.dupKept ? "（重复已保留）" : "");
     var lax = st.relaxed ? " · 已放宽：去掉 " + esc(st.relaxed) : "";
     return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged + lax

@@ -190,6 +190,14 @@ fn open_logs(state: tauri::State<AppState>) -> bool {
 }
 
 #[tauri::command]
+fn open_repo() -> bool {
+    std::process::Command::new("explorer")
+        .arg("https://github.com/GVHBOX/Happycrate")
+        .spawn()
+        .is_ok()
+}
+
+#[tauri::command]
 fn win_min(window: tauri::Window) -> bool {
     window.minimize().is_ok()
 }
@@ -279,6 +287,7 @@ pub fn run() {
             selftest,
             app_info,
             open_logs,
+            open_repo,
             proxy_status,
             net_throughput,
             downloaders,

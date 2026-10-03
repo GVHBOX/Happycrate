@@ -297,6 +297,8 @@
     return paneHtml("about", "关于",
       sectHtml("版本信息", true) +
       '<div id="about"></div>' +
+      rowHtml(lblGroup("repo", "源码"),
+        '<button type="button" class="btn btn-ghost" id="btnRepo">GitHub 仓库</button>') +
       sectHtml("维护") +
       rowHtml(lblGroup("roles", "词表"),
         '<button type="button" class="btn btn-ghost" id="btnReloadRoles">重新载入</button>') +
@@ -1231,6 +1233,10 @@
 
     root.querySelector("#btnLogs").onclick = function(){
       HC.api.openLogs();
+    };
+
+    root.querySelector("#btnRepo").onclick = function(){
+      HC.api.openRepo();
     };
 
     root.querySelector("#btnReloadRoles").onclick = function(){

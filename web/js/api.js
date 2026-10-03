@@ -160,6 +160,10 @@
       return invoke("open_logs");
     },
 
+    openRepo: function(){
+      return invoke("open_repo");
+    },
+
     reloadQueryRoles: function(){
       return invoke("reload_query_roles");
     },

@@ -2,11 +2,11 @@
 
 `D:\AI\happycrate` 的 Rust 重写版：Rust + Tauri 2 后端，前端 `web/` 从原项目整份带走。
 **目录叫 `happycrate-rust` 只是为了跟老 Python 仓并存；产品名、包名、可执行文件名一律叫 `happycrate`。**
-迁移方案与阶段在 `PLAN.md`，状态在 `PLAN.md` §6，本文件只讲规矩。
+仓库现状、依赖理由与版本史在 `PLAN.md`，本文件只讲规矩。
 
 **当前阶段：v1.0.3 已发布，本仓已是 GitHub 上的主线** —— `GVHBOX/Happycrate` 的 `main`
 已被本仓强制覆盖（2026-09-29），Python 版源码在远端只剩 tag `v1.0.0`（指向首发根提交）。
-本地 `D:\AI\happycrate` 仍保有 Python 版全部提交。详见 `PLAN.md` §6.2。
+本地 `D:\AI\happycrate` 仍保有 Python 版全部提交。详见 `PLAN.md` §1。
 
 工作分支就是 `main`，直接推。`rust-rewrite` 分支已删除，别再建同名的。
 
@@ -59,7 +59,7 @@ python tools/scan_comment.py --selfcheck
 
 报告、备份、脚本、截图、数据导出、临时中间物全进 `.scratch/`。根目录只允许：
 源码（`src/`、`tests/`）、资源（`web/`、`assets/`）、仓库元文件（`README.md`、`LICENSE`、
-`Cargo.toml`、`Cargo.lock`、`rust-toolchain.toml`、`tauri.conf.json`、`capabilities/`、
+`Cargo.toml`、`Cargo.lock`、`tauri.conf.json`、`capabilities/`、
 `build.rs`、`.gitignore`、`tools/`、`AGENTS.md`、`PLAN.md`）、`examples/`、`target/`、`gen/`、
 `data/`（**debug 版跑出来的数据目录**，见下，已在 `.gitignore` 里）。
 
@@ -86,11 +86,11 @@ TUN 还是系统代理 / PAC / 安全软件 / 地区封锁），只有用户知�
 
 ## 迁移纪律
 
-- **不发明。** 先 1:1 复现 Python 行为，复现完了再谈优化。顺手重构会让金样 diff 无法判断
-  「是重写错了还是重构改的」。
-- **一个源一棵金样测试。** 翻一个绿一个，不留尾巴。
-- **Python 版全程不动**，两条腿并行到 P5。
-- 加了依赖要在 `PLAN.md` §2 写理由。**不要从 P3（搭 Tauri 壳）开始做。**
+- **不发明。** 任何行为改动先对照 Python 侧金样（`tests/fixtures/`、`tests/parity/`）。
+  顺手重构会让金样 diff 无法判断「是重写错了还是重构改的」。
+- **Python 版已下线**（2026-09-29 用户拍板切换，并行期跳过）；
+  本地 `D:\AI\happycrate` 保留全史，仅作行为参照，不再改动。
+- 加了依赖要在 `PLAN.md` §2 写理由。
 
 ## 测试与检查
 
@@ -149,8 +149,8 @@ cd /d D:\AI\happycrate
   `target\release\happycrate.exe`（`cargo run --release` 等价）。
   走的是**便携模式**，数据在 exe 旁边的 `data\`：`target\release\data`。
   **不需要环境变量，也不需要启动器脚本**（曾经做过一个 .bat，用户明确不要）。
-  `.scratch\test-data` 是真实配置的母本副本，`target\{release,debug}\data` 各铺了一份
-  （debug 与 release 各用各的，免得 `cargo run` 看到空配置）。
+  `.scratch\test-data` 是真实配置的母本副本，`target\release\data` 铺一份给 exe 直跑用
+  （debug 编译用仓库根 `data\`，见下条，不用铺）。
   **`cargo clean` 会把 target 里的配置一起清掉**（`cargo build` 不会），重铺就是从母本再复制一次。
 - **debug 版的数据目录是仓库根的 `data\`，不是 `target\debug\data\`**：
   `paths::program_dir()` 在 debug 下返回 `CARGO_MANIFEST_DIR`（`paths.rs` 里写死的），
@@ -165,7 +165,7 @@ cd /d D:\AI\happycrate
   在页面里跑一段 JS。起应用时带上两个环境变量：
 
   ```
-  HAPPYCRATE_DATA_DIR=<种子目录>          # 铁律：P0–P4 绝不碰真实数据目录
+  HAPPYCRATE_DATA_DIR=<种子目录>          # 铁律：绝不指向真实数据目录
   WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222
   ```
 
@@ -203,8 +203,8 @@ cd /d D:\AI\happycrate
   · `anyhow`。加依赖要在 §2 补理由。
 - **`web/` 是复制来的，要立刻冻结原项目的 `web/`**，改动只在 Rust 仓做。
   确认没漂：`diff -rq "D:/AI/happycrate-rust/web" "D:/AI/happycrate/web"`。
-- **单实例 mutex 要换名**：原项目用 `Local\happycrate_v1_SingleInstance_7d4a9e2c6b1f8053`，
-  并行期沿用同名会让 Rust 版起不来。
+- **单实例 mutex 已换名**：Rust 版用 `Local\happycrate_rust_v1_SingleInstance_...`（带 `_rust`），
+  与 Python 版的 `Local\happycrate_v1_SingleInstance_7d4a9e2c6b1f8053` 区分，不会互抢。
 
 ## 边界
 

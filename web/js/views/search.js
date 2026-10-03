@@ -1959,20 +1959,16 @@
       tipEl.classList.remove("show");
     });
 
-    ckAllEl.onclick = function(){
-      var on = !(selCount() > 0 && selCount() === visible().length);
-      st.sel = {};
-      if (on){
-        visible().forEach(function(it){ st.sel[it.hash] = true; });
-        st.anchor = "";
-      }
-      updateSelUI();
-    };
-
     var ckWrap = root.querySelector("#ckWrap");
     if (ckWrap){
-      ckWrap.onclick = function(e){
-        if (e.target !== ckAllEl) ckAllEl.click();
+      ckWrap.onclick = function(){
+        var on = !(selCount() > 0 && selCount() === visible().length);
+        st.sel = {};
+        if (on){
+          visible().forEach(function(it){ st.sel[it.hash] = true; });
+          st.anchor = "";
+        }
+        updateSelUI();
       };
     }
 

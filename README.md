@@ -8,7 +8,7 @@
 
 <p align="center"><img src="assets/ui_screenshot.png" alt="Happycrate 主界面" width="880"></p>
 
-https://github.com/user-attachments/assets/62700545-29a4-45e2-9c8e-82441daeff5b
+<p align="center"><a href="assets/core_features_preview.mp4">演示视频</a></p>
 
 ## 特点
 

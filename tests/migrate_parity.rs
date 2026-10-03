@@ -46,7 +46,10 @@ fn migrate_matches_python() {
     assert!(legacy.join("sources.json").is_file(), "缺少老配置样本");
     std::env::set_var("CLB_DATA_DIR", &legacy);
 
-    let sandbox = std::env::temp_dir().join("happycrate-migrate-test");
+    let sandbox = std::env::temp_dir().join(format!(
+        "happycrate-migrate-test-{}",
+        std::process::id()
+    ));
     let _ = fs::remove_dir_all(&sandbox);
     fs::create_dir_all(&sandbox).unwrap();
 

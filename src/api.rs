@@ -704,7 +704,7 @@ impl Api {
     }
 
     pub fn list_sources(&self) -> Vec<Value> {
-        let seen = self.probe_seen.lock().unwrap().clone();
+        let seen = self.probe_seen.lock().unwrap_or_else(|e| e.into_inner()).clone();
         self.config
             .sources()
             .iter()
@@ -730,7 +730,7 @@ impl Api {
     }
 
     pub fn source_issues(&self) -> Vec<Value> {
-        let seen = self.probe_seen.lock().unwrap().clone();
+        let seen = self.probe_seen.lock().unwrap_or_else(|e| e.into_inner()).clone();
         let mut out = Vec::new();
         for entry in self.config.sources() {
             let key = match entry.get("key").and_then(Value::as_str) {

@@ -585,6 +585,16 @@ fn seed(job: &Job, cached: &Cached, acc: &Mutex<Acc>, sink: &(dyn Fn(Event) + Sy
     }
 }
 
+struct DoneFlag<'a>(&'a (Mutex<bool>, Condvar));
+
+impl Drop for DoneFlag<'_> {
+    fn drop(&mut self) {
+        let (lock, alarm) = &self.0;
+        *lock.lock().unwrap_or_else(|e| e.into_inner()) = true;
+        alarm.notify_all();
+    }
+}
+
 pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sync)) {
     let acc = Mutex::new(Acc {
         needs: query::needles(&job.parsed),
@@ -611,10 +621,14 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
     let gate = (Mutex::new(false), Condvar::new());
     std::thread::scope(|scope| {
         scope.spawn(|| {
-            runner(job, fetch, sink, &acc, retry.as_deref());
-            let (lock, alarm) = &gate;
-            *lock.lock().unwrap_or_else(|e| e.into_inner()) = true;
-            alarm.notify_all();
+            let _done = DoneFlag(&gate);
+            if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                runner(job, fetch, sink, &acc, retry.as_deref());
+            }))
+            .is_err()
+            {
+                crate::log::warning(crate::log::API, "搜索主流程异常退出");
+            }
         });
 
         if job.soft_deadline_ms > 0 {
@@ -640,7 +654,7 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         return;
     }
 
-    let state = acc.into_inner().unwrap();
+    let state = acc.into_inner().unwrap_or_else(|e| e.into_inner());
     cache_put(
         &ckey,
         Cached {

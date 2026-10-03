@@ -243,6 +243,12 @@
           outcomes: outcomes.slice(-5)
         };
         store.set({probeDone: store.get().probeDone + 1});
+      }).catch(function(e){
+        M.toast(String(e && e.message ? e.message : e), "err");
+        store.set({probing: false});
+        root.querySelector("#btnProbe").classList.remove("busy");
+        targets.forEach(function(s){ s.probing = false; });
+        render();
       });
     };
 

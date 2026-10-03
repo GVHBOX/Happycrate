@@ -229,7 +229,7 @@ unsafe extern "system" fn enum_windows_callback(
 
     let path = String::from_utf16_lossy(&name_buf[..size as usize]);
     let lower_path = path.to_lowercase();
-    if !lower_path.ends_with("\\happycrate.exe") && !lower_path.ends_with("happycrate.exe") {
+    if !lower_path.ends_with("happycrate.exe") {
         return 1;
     }
 

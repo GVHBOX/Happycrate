@@ -131,11 +131,6 @@ impl<'a> Req<'a> {
         self.timeout = Some(seconds);
         self
     }
-
-    pub fn batch(mut self, token: i64) -> Self {
-        self.batch = Some(token);
-        self
-    }
 }
 
 pub struct Scoped<'a, F: Fetch> {

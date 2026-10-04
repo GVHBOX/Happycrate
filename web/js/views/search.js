@@ -17,6 +17,10 @@
     check: '<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none">' +
       '<path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    minus: '<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none">' +
+      '<path d="M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    clear: '<svg width="10" height="10" viewBox="0 0 16 16" fill="none">' +
+      '<path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
     copy: '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none">' +
       '<rect x="4.6" y="4.6" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/>' +
       '<path d="M9.4 2.6H3.4A1.4 1.4 0 0 0 2 4v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
@@ -74,6 +78,7 @@
   var marquee = null;
   var justMarqueed = false;
   var nohashSeq = 0;
+  var hashIdx = {};
   var selSig = "";
   var esc = HC.esc;
   var SOURCE_BASE_TYPICAL = {
@@ -318,8 +323,9 @@
       ? '<i class="add">+' + st.rawTotal + '</i><em>条合并</em><i class="del">-' + st.dupCount + '</i>'
       : (st.dupKept ? "（重复已保留）" : "");
     var lax = st.relaxed ? " · 已放宽：去掉 " + esc(st.relaxed) : "";
-    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged + lax
-             : '共 ' + total + ' 条' + merged + lax;
+    var flt = st.filterSource ? " · " + esc(st.names[st.filterSource] || st.filterSource) + " " + visible().length + " 条" : "";
+    return n ? '已选中 <b>' + n + '</b> 条 / 共 ' + total + ' 条' + merged + lax + flt
+             : '共 ' + total + ' 条' + merged + lax + flt;
   }
 
   var popT = null;
@@ -813,6 +819,10 @@
       while (box.firstChild) rowsEl.appendChild(box.firstChild);
       rowsEl.setAttribute("aria-rowcount", String(to));
       renderPanels();
+      if (marquee && marquee.active){
+        marquee.spans = collectSpans(marquee.rect, rowsEl.scrollLeft, rowsEl.scrollTop);
+        paintMarquee();
+      }
     }
   }
 
@@ -847,8 +857,10 @@
     var list = visible();
     var n = selCount();
     var all = n > 0 && n === list.length;
-    ckAllEl.classList.toggle("on", all);
-    ckAllEl.innerHTML = all ? ICONS.check : "";
+    var some = n > 0 && !all;
+    ckAllEl.classList.toggle("on", all || some);
+    ckAllEl.classList.toggle("part", some);
+    ckAllEl.innerHTML = all ? ICONS.check : (some ? ICONS.minus : "");
     paintBadge(still);
     if (selbarEl){
       selbarEl.querySelector("#selN").textContent = n;
@@ -857,8 +869,22 @@
     }
   }
 
+  function selSignature(){
+    var keys = Object.keys(st.sel);
+    var len = keys.length;
+    if (!len) return "0";
+    var a = 0, b = 0;
+    for (var i = 0; i < len; i++){
+      var k = keys[i];
+      var code = k.charCodeAt(0) + (k.charCodeAt(k.length - 1) << 7);
+      a = (a + code) | 0;
+      b ^= (code + i);
+    }
+    return len + ":" + a + ":" + b;
+  }
+
   function updateSelUI(still){
-    var sig = Object.keys(st.sel).sort().join(",");
+    var sig = selSignature();
     [].slice.call(rowsEl.querySelectorAll(".srow")).forEach(function(row){
       var on = !!st.sel[row.dataset.hash];
       row.classList.toggle("sel", on);
@@ -1498,13 +1524,26 @@
       '<div class="hero-in">' +
         '<img class="brandmark" src="assets/app-256.png" alt="">' +
         '<div class="hero-search">' + ICONS.search +
-          '<input id="heroInp" placeholder="输入搜索内容" autocomplete="off">' +
+          '<input id="heroInp" placeholder="输入搜索内容" autocomplete="off" title="搜索 (Ctrl+K)">' +
+          '<button class="sentry-clear" id="heroClear" type="button" tabindex="-1" hidden>' + ICONS.clear + '</button>' +
           '<button class="gobtn" id="heroGo">' + GO_BTN_INNER + '</button>' +
         '</div>' +
         '<div class="hero-srcs" id="heroSrcs"></div>' +
       '</div>';
     root.appendChild(hero);
     var heroInp = hero.querySelector("#heroInp");
+    var heroClear = hero.querySelector("#heroClear");
+    heroInp.addEventListener("input", function(){
+      if (heroClear) heroClear.hidden = !this.value;
+    });
+    if (heroClear){
+      heroClear.onclick = function(e){
+        e.stopPropagation();
+        heroInp.value = "";
+        heroClear.hidden = true;
+        heroInp.focus();
+      };
+    }
     hero.querySelector("#heroGo").onclick = go;
     heroInp.onkeydown = function(e){
       if (e.key === "Enter") go();
@@ -1801,7 +1840,7 @@
         '<div class="bar">' +
           '<div class="group">' +
             '<div class="data-island">' +
-              '<div class="chk-wrap" id="ckWrap">' +
+              '<div class="chk-wrap" id="ckWrap" title="全选 (Ctrl+A)">' +
                 '<button class="cb" id="ckAll"></button>' +
                 '<span class="allabel">全选</span>' +
               '</div>' +
@@ -1828,7 +1867,8 @@
           '</div>' +
           '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
-            '<input id="inp" placeholder="输入搜索内容" autocomplete="off">' +
+            '<input id="inp" placeholder="输入搜索内容" autocomplete="off" title="搜索 (Ctrl+K)">' +
+            '<button class="sentry-clear" id="sentryClear" type="button" tabindex="-1" hidden>' + ICONS.clear + '</button>' +
             '<button class="gobtn" id="goBtn">搜索</button>' +
           '</div>' +
           '<div class="group">' +
@@ -1910,6 +1950,18 @@
     hooks = buildHooks();
     HC.api.onSearch(hooks);
 
+    var sentryClear = root.querySelector("#sentryClear");
+    inp.addEventListener("input", function(){
+      if (sentryClear) sentryClear.hidden = !this.value;
+    });
+    if (sentryClear){
+      sentryClear.onclick = function(e){
+        e.stopPropagation();
+        inp.value = "";
+        sentryClear.hidden = true;
+        inp.focus();
+      };
+    }
     root.querySelector(".sentry").addEventListener("click", function(e){
       if (e.target === goBtn) return;
       inp.focus();
@@ -2084,6 +2136,8 @@
         if (inSearch){
           if (act.value){
             act.value = "";
+            var cBtn = act.id === "heroInp" ? document.getElementById("heroClear") : document.getElementById("sentryClear");
+            if (cBtn) cBtn.hidden = true;
             return;
           }
           act.blur();

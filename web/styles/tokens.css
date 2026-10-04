@@ -38,14 +38,14 @@
 
   --ok:#16A34A;
   --warn:#CA8A04;
-  --prog-warn:#6F5CB8;
-  --prog-warn-stripe:#5A48A0;
-  --prog-line:#4C3D8F;
-  --prog-err:#D4676E;
+  --prog-warn:#D97706;
+  --prog-warn-stripe:#B45309;
+  --prog-line:#B45309;
+  --prog-err:var(--err);
   --prog-on:var(--brand);
   --prog-on-stripe:var(--brand-stripe);
-  --prog-slot:#D5D2E6;
-  --prog-gap:#BFBBDB;
+  --prog-slot:var(--track-off);
+  --prog-gap:var(--line);
   --prog-h:10px;
   --prog-radius:2.5px;
   --prog-gapx:4px;
@@ -101,6 +101,14 @@
   --float-bd:rgba(13,13,31,.10);
   --knob:#FFFFFF;
   --line-strong:#C9CAD3;
+  --badge-add:#10B981;
+  --badge-add-bg:rgba(16,185,129,.14);
+  --badge-del:#EF4444;
+  --badge-del-bg:rgba(239,68,68,.14);
+  --selbar-btn-bg:var(--shell);
+  --selbar-btn-hover:var(--shell-hover);
+  --selbar-close-color:var(--t4);
+  --selbar-close-hover:var(--ink-8);
 
   --icon-sm:14px;
   --icon-md:16px;
@@ -229,14 +237,14 @@ body.dark{
   --warn-soft:rgba(202,138,4,.18);
   --warn-line:rgba(202,138,4,.42);
   --warn:#E0A81E;
-  --prog-warn:#A79BF0;
-  --prog-warn-stripe:#6B5DB4;
-  --prog-line:#BCAEF6;
-  --prog-err:#D9737C;
+  --prog-warn:#F59E0B;
+  --prog-warn-stripe:#D97706;
+  --prog-line:#FBBF24;
+  --prog-err:var(--err);
   --prog-on:var(--brand);
   --prog-on-stripe:var(--brand-stripe);
-  --prog-slot:#3A3A4E;
-  --prog-gap:#2A2C38;
+  --prog-slot:rgba(255,255,255,.08);
+  --prog-gap:rgba(0,0,0,.35);
   --ok-strong:#4ADE80;
   --warn-strong:#FCD34D;
   --err-strong:#F87171;
@@ -256,6 +264,14 @@ body.dark{
   --float-bd:rgba(255,255,255,.10);
   --knob:#E7E9F2;
   --line-strong:#545868;
+  --badge-add:#34D399;
+  --badge-add-bg:rgba(52,211,153,.16);
+  --badge-del:#F87171;
+  --badge-del-bg:rgba(248,113,113,.16);
+  --selbar-btn-bg:rgba(255,255,255,.08);
+  --selbar-btn-hover:rgba(255,255,255,.16);
+  --selbar-close-color:rgba(255,255,255,.6);
+  --selbar-close-hover:rgba(255,255,255,.12);
 
   --sh-card:0 16px 40px -6px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);
   --sh-modal:0 24px 64px rgba(0,0,0,.55);

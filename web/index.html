@@ -318,17 +318,43 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
 })();
 
 (function(){
+  var maxBtn = document.getElementById("tbMax");
+  var MAX_SVG = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1"/></svg>';
+  var RESTORE_SVG = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.2 1.8h5v5M1.8 3.2h5v5h-5z" stroke="currentColor" stroke-width="1"/></svg>';
+
   function call(name){
     var core = window.__TAURI__ && window.__TAURI__.core;
-    if (core && typeof core.invoke === "function") core.invoke(name);
+    if (core && typeof core.invoke === "function") return core.invoke(name);
+    return Promise.resolve(false);
   }
+
+  function syncMaxState(){
+    var isMax = window.screen && (window.innerWidth >= window.screen.availWidth && window.innerHeight >= window.screen.availHeight);
+    if (maxBtn){
+      maxBtn.innerHTML = isMax ? RESTORE_SVG : MAX_SVG;
+      maxBtn.title = isMax ? "还原" : "最大化";
+    }
+  }
+
   document.getElementById("tbMin").onclick = function(){ call("win_min"); };
-  document.getElementById("tbMax").onclick = function(){ call("win_max"); };
+  if (maxBtn){
+    maxBtn.onclick = function(){
+      call("win_max").then(function(){
+        setTimeout(syncMaxState, 60);
+      });
+    };
+  }
   document.getElementById("tbClose").onclick = function(){
     HC.leave(function(){ call("win_close"); });
   };
   var drag = document.querySelector(".tb-drag");
-  drag.addEventListener("dblclick", function(){ call("win_max"); });
+  drag.addEventListener("dblclick", function(){
+    call("win_max").then(function(){
+      setTimeout(syncMaxState, 60);
+    });
+  });
+  window.addEventListener("resize", syncMaxState);
+  syncMaxState();
 })();
 </script>
 </body>

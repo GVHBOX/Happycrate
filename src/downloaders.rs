@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::os::windows::process::CommandExt;
 use std::process::Command;
 use std::sync::Mutex;
 use std::time::Duration;
@@ -17,6 +18,8 @@ pub const PROTOCOL_KEYS: [&str; 2] = [
 ];
 
 pub const PROTOCOL_FLAG: &str = "-StartType:magnet";
+
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 const GAP_WARMUP: f64 = 0.2;
 const GAP_BATCH: f64 = 0.05;
@@ -113,6 +116,7 @@ fn reg_default(key: &str) -> Option<String> {
     for exe in candidates {
         let Ok(output) = Command::new(&exe)
             .args(["query", &format!("HKCR\\{key}"), "/ve"])
+            .creation_flags(CREATE_NO_WINDOW)
             .output()
         else {
             continue;

@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::os::windows::process::CommandExt;
 use std::process::Command;
 use std::time::{Duration, Instant};
 
@@ -11,6 +12,8 @@ pub const PROBE_URL: &str = "http://www.gstatic.com/generate_204";
 pub const PROBE_TIMEOUT_MS: u64 = 1500;
 pub const PROBE_CACHE_TTL_SECS: u64 = 15;
 pub const TUN_ADAPTER_TTL_SECS: u64 = 30;
+
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 pub const PROXY_MARK: &str = "系统代理";
 
@@ -163,6 +166,7 @@ fn reg_query(value: &str) -> Option<String> {
     for exe in candidates {
         let Ok(output) = Command::new(&exe)
             .args(["query", &format!("HKCU\\{KEY}"), "/v", value])
+            .creation_flags(CREATE_NO_WINDOW)
             .output()
         else {
             continue;
@@ -470,7 +474,9 @@ pub fn scan_tun_adapter() -> String {
     if std::env::consts::OS != "windows" {
         return String::new();
     }
-    let Ok(output) = Command::new("ipconfig").output() else {
+    let Ok(output) = Command::new("ipconfig")
+        .creation_flags(CREATE_NO_WINDOW)
+        .output() else {
         return String::new();
     };
     let text = decode(&output.stdout);

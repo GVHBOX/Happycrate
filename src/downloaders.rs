@@ -208,21 +208,125 @@ pub fn find_exe() -> Option<String> {
     None
 }
 
+pub fn find_exe_115() -> Option<String> {
+    if let Ok(local) = std::env::var("LOCALAPPDATA") {
+        let p = format!(r"{local}\Programs\115Life\Life115.exe");
+        if std::path::Path::new(&p).is_file() {
+            return Some(p);
+        }
+    }
+    let candidates = [
+        r"C:\Program Files\115Life\Life115.exe",
+        r"C:\Program Files (x86)\115Life\Life115.exe",
+        r"C:\Program Files\115\115.exe",
+        r"C:\Program Files (x86)\115\115.exe",
+    ];
+    for candidate in candidates {
+        if std::path::Path::new(candidate).is_file() {
+            return Some(candidate.to_string());
+        }
+    }
+    if std::env::consts::OS != "windows" {
+        return None;
+    }
+    let proto_keys = [
+        r"life115\shell\open\command",
+        r"Life115.Magnet\shell\open\command",
+    ];
+    for key in proto_keys {
+        let Some(command) = reg_default(key) else {
+            continue;
+        };
+        let found = quoted_exe(&command).or_else(|| bare_exe(&command));
+        if let Some(path) = found {
+            if std::path::Path::new(&path).is_file() {
+                let name = path
+                    .rsplit(['\\', '/'])
+                    .next()
+                    .unwrap_or("")
+                    .to_lowercase();
+                if name.contains("115") || name.contains("life") {
+                    return Some(path);
+                }
+            }
+        }
+    }
+    None
+}
+
+pub fn find_exe_pikpak() -> Option<String> {
+    let candidates = [
+        r"C:\Program Files\PikPak\PikPak.exe",
+        r"C:\Program Files (x86)\PikPak\PikPak.exe",
+    ];
+    for candidate in candidates {
+        if std::path::Path::new(candidate).is_file() {
+            return Some(candidate.to_string());
+        }
+    }
+    if let Ok(local) = std::env::var("LOCALAPPDATA") {
+        let p = format!(r"{local}\Programs\PikPak\PikPak.exe");
+        if std::path::Path::new(&p).is_file() {
+            return Some(p);
+        }
+    }
+    if std::env::consts::OS != "windows" {
+        return None;
+    }
+    let proto_keys = [r"pikpakapp\shell\open\command"];
+    for key in proto_keys {
+        let Some(command) = reg_default(key) else {
+            continue;
+        };
+        let found = quoted_exe(&command).or_else(|| bare_exe(&command));
+        if let Some(path) = found {
+            if std::path::Path::new(&path).is_file() {
+                let name = path
+                    .rsplit(['\\', '/'])
+                    .next()
+                    .unwrap_or("")
+                    .to_lowercase();
+                if name.contains("pikpak") {
+                    return Some(path);
+                }
+            }
+        }
+    }
+    None
+}
+
 pub struct DownloaderInfo {
     pub key: &'static str,
     pub label: &'static str,
 }
 
 pub fn all_downloaders() -> Vec<DownloaderInfo> {
-    vec![DownloaderInfo {
-        key: "thunder",
-        label: "迅雷",
-    }]
+    vec![
+        DownloaderInfo {
+            key: "thunder",
+            label: "迅雷",
+        },
+        DownloaderInfo {
+            key: "115",
+            label: "115",
+        },
+        DownloaderInfo {
+            key: "pikpak",
+            label: "PikPak",
+        },
+        DownloaderInfo {
+            key: "all",
+            label: "全部",
+        },
+    ]
 }
 
 fn available_of(key: &str) -> bool {
     match key {
         "thunder" => find_exe().is_some(),
+        "115" => find_exe_115().is_some(),
+        "pikpak" => find_exe_pikpak().is_some(),
+        "all" => find_exe().is_some() || find_exe_115().is_some() || find_exe_pikpak().is_some(),
         _ => false,
     }
 }
@@ -296,30 +400,126 @@ pub fn protocol_deliver(magnets: &[String], timeout: i64) -> DeliveryResult {
     DeliveryResult::new(0, magnets.len(), errors, "protocol", None)
 }
 
-pub fn add(magnets: &[String], timeout: i64) -> DeliveryResult {
+fn protocol_deliver_simple(exe: &str, magnets: &[String], timeout: i64, app_name: &str) -> DeliveryResult {
+    let mut added = 0usize;
+    let mut errors: Vec<String> = Vec::new();
+    let gaps = plan_gaps(magnets.len(), timeout);
+    for (index, magnet) in magnets.iter().enumerate() {
+        match Command::new(exe).arg(magnet).spawn() {
+            Ok(_) => {
+                added += 1;
+                if let Some(gap) = gaps.get(index) {
+                    std::thread::sleep(Duration::from_secs_f64(*gap));
+                }
+            }
+            Err(error) => errors.push(format!("{error}")),
+        }
+    }
+    if added > 0 {
+        return DeliveryResult::new(added, magnets.len(), errors, "protocol", None);
+    }
+    if errors.is_empty() {
+        errors.push(format!("{app_name}主程序启动失败"));
+    }
+    DeliveryResult::new(0, magnets.len(), errors, "protocol", None)
+}
+
+pub fn add_target(key: &str, magnets: &[String], timeout: i64) -> DeliveryResult {
     let items = clean_magnets(magnets);
     if items.is_empty() {
         return DeliveryResult::new(0, 0, vec!["没有有效的磁力链接".to_string()], "", None);
     }
-
-    if !cached_available("thunder", false) {
-        return DeliveryResult::new(
-            0,
-            items.len(),
-            vec!["迅雷 未找到或不可用".to_string()],
-            "",
-            None,
-        );
+    if key == "all" {
+        let targets = ["thunder", "115", "pikpak"];
+        let mut any_ok = false;
+        let mut total_added = 0;
+        let mut all_errors = Vec::new();
+        for t in targets {
+            if available_of(t) {
+                let res = add_target(t, &items, timeout);
+                if res.ok {
+                    any_ok = true;
+                    total_added += res.added;
+                } else {
+                    all_errors.extend(res.errors);
+                }
+            }
+        }
+        if any_ok {
+            return DeliveryResult::new(total_added, items.len(), all_errors, "protocol", None);
+        }
+        if all_errors.is_empty() {
+            all_errors.push("没有可用的下载工具".to_string());
+        }
+        return DeliveryResult::new(0, items.len(), all_errors, "protocol", None);
     }
-
-    let result = protocol_deliver(&items, timeout);
-    if result.ok {
-        return result;
+    match key {
+        "115" => {
+            let Some(exe) = find_exe_115() else {
+                return DeliveryResult::new(
+                    0,
+                    items.len(),
+                    vec!["115 未找到或不可用".to_string()],
+                    "",
+                    None,
+                );
+            };
+            let result = protocol_deliver_simple(&exe, &items, timeout, "115");
+            if result.ok {
+                return result;
+            }
+            let reason = result
+                .errors
+                .first()
+                .cloned()
+                .unwrap_or_else(|| "未知原因".to_string());
+            DeliveryResult::new(0, items.len(), vec![format!("协议拉起：{reason}")], "", None)
+        }
+        "pikpak" => {
+            let Some(exe) = find_exe_pikpak() else {
+                return DeliveryResult::new(
+                    0,
+                    items.len(),
+                    vec!["PikPak 未找到或不可用".to_string()],
+                    "",
+                    None,
+                );
+            };
+            let result = protocol_deliver_simple(&exe, &items, timeout, "PikPak");
+            if result.ok {
+                return result;
+            }
+            let reason = result
+                .errors
+                .first()
+                .cloned()
+                .unwrap_or_else(|| "未知原因".to_string());
+            DeliveryResult::new(0, items.len(), vec![format!("协议拉起：{reason}")], "", None)
+        }
+        _ => {
+            if !cached_available("thunder", false) {
+                return DeliveryResult::new(
+                    0,
+                    items.len(),
+                    vec!["迅雷 未找到或不可用".to_string()],
+                    "",
+                    None,
+                );
+            }
+            let result = protocol_deliver(&items, timeout);
+            if result.ok {
+                return result;
+            }
+            let reason = result
+                .errors
+                .first()
+                .cloned()
+                .unwrap_or_else(|| "未知原因".to_string());
+            DeliveryResult::new(0, items.len(), vec![format!("协议拉起：{reason}")], "", None)
+        }
     }
-    let reason = result
-        .errors
-        .first()
-        .cloned()
-        .unwrap_or_else(|| "未知原因".to_string());
-    DeliveryResult::new(0, items.len(), vec![format!("协议拉起：{reason}")], "", None)
+}
+
+pub fn add(magnets: &[String], timeout: i64) -> DeliveryResult {
+    add_target("thunder", magnets, timeout)
 }

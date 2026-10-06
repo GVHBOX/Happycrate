@@ -160,6 +160,10 @@
       return invoke("open_logs");
     },
 
+    openDataDir: function(){
+      return invoke("open_data_dir");
+    },
+
     openRepo: function(){
       return invoke("open_repo");
     },

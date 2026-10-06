@@ -16,7 +16,7 @@
   var DENSITY_OPTS = [{key:"compact", label:"紧凑"}, {key:"comfort", label:"舒适"}];
   var PROG_OPTS = [
     {key:"segment", label:"分段"},
-    {key:"flow", label:"连续斜纹"}
+    {key:"flow", label:"连续"}
   ];
   var BRAND_OPTS = [
     {key:"", label:"默认"},
@@ -44,15 +44,22 @@
     {key:"retries", sel:"#s_retries", label:"重试次数"},
     {key:"soft_deadline_ms", sel:"#s_soft_deadline_ms", label:"软截止"},
     {key:"sound_volume", sel:"#sldVolume", label:"总音量"},
-    {key:"proxy", sel:"#s_proxy", label:"代理"},
-    {key:"user_agent", sel:"#s_user_agent", label:"User-Agent"},
     {key:"ui_font_size", sel:"#s_font", label:"界面字号"}
   ];
 
-  var STEP_BTN = {
-    minus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    plus:'<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 7h7M7 3.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
-  };
+  var REFRESH_SVG = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none">' +
+    '<path d="M13.8 3.2A7 7 0 1 0 15 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+    '<path d="M14.5 1.8v3.4h-3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+  '</svg>';
+
+  var FOLDER_SVG = '<svg viewBox="0 0 16 16" fill="none">' +
+    '<path d="M1.5 3.5A1.5 1.5 0 0 1 3 2h3.2a1.5 1.5 0 0 1 1.06.44l1.3 1.3A1.5 1.5 0 0 0 9.62 4.2H13a1.5 1.5 0 0 1 1.5 1.5v6.8a1.5 1.5 0 0 1-1.5 1.5H3a1.5 1.5 0 0 1-1.5-1.5V3.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
+  '</svg>';
+
+  var GITHUB_SVG = '<svg viewBox="0 0 16 16" fill="currentColor">' +
+    '<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>' +
+  '</svg>';
+
   var FOLD_CHEV = '<svg viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   var root = null;
@@ -72,12 +79,11 @@
   var themeKey = "light";
   var fontKey = "18";
   var densityKey = localStorage.getItem("hc_row_density") || "compact";
-  var smartFilesOn = localStorage.getItem("hc_smart_files") === "1";
   var autoFilesOn = true;
-  var keepDupOn = false;
   var progStyleKey = "segment";
-  var progLineOn = true;
   var brandKey = "";
+  var proxyVal = "";
+  var uaVal = "";
   var baseline = "";
 
   var netEl = null;
@@ -96,7 +102,11 @@
     var note = netEl.querySelector(".netnote");
     note.textContent = s.note || "";
     note.className = "netnote" + (s.muted ? " muted" : "");
-    netEl.querySelector("#btnNetRecheck").disabled = !!s.busy;
+    var rBtn = netEl.querySelector("#btnNetRecheck");
+    if (rBtn){
+      rBtn.classList.toggle("spinning", !!s.busy);
+      rBtn.disabled = !!s.busy;
+    }
   }
 
   function netCheck(force){
@@ -204,16 +214,6 @@
       '" aria-label="试听">' + PV_ICON + '</button>');
   }
 
-  function stepperHtml(key){
-    var spec = NUMS[key];
-    return '<div class="stepper numfield" data-field="' + key + '">' +
-      '<button type="button" data-step="-1">' + STEP_BTN.minus + '</button>' +
-      '<input class="val mono" id="s_' + key + '" inputmode="numeric" value=""' +
-        ' style="--digits:' + String(spec.max).length + '">' +
-      '<span class="unit">' + esc(spec.unit || "") + '</span>' +
-      '<button type="button" data-step="1">' + STEP_BTN.plus + '</button>' +
-    '</div>';
-  }
 
   function foldHtml(key, title, body){
     return '<button type="button" class="foldbtn" id="fold_' + key +
@@ -236,60 +236,40 @@
       rowHtml(lblGroup("density", "行高"),
         '<div class="seg" id="s_density" role="group" aria-labelledby="lb_density">' +
         segHtml(DENSITY_OPTS, densityKey, "density") + '</div>') +
-      rowHtml(lblText("s_smartfiles", "主视频高亮"), swHtml("s_smartfiles")) +
       rowHtml(lblText("s_selbar", "悬浮底栏"), swHtml("s_selbar")) +
       sectHtml("音效") +
       rowHtml(lblText("s_sound", "音效反馈"), swHtml("s_sound")) +
       rowHtml(lblText("sldVolume", "总音量"),
         '<div class="rngpair"><input type="range" class="rng" id="sldVolume" min="0" max="100" step="1">' +
         '<span class="rv" id="rvVolume"></span></div>') +
-      SFX_ROWS.map(sfxRowHtml).join("") +
+      foldHtml("sfx", "音效细项",
+        SFX_ROWS.map(sfxRowHtml).join("")) +
       sectHtml("进度条") +
       lookPreviewHtml() +
       rowHtml(lblGroup("prog", "样式"),
-        '<div class="seg" id="s_progstyle" role="group" aria-labelledby="lb_prog"></div>') +
-      rowHtml(lblText("s_progline", "警戒线"), swHtml("s_progline")));
+        '<div class="seg" id="s_progstyle" role="group" aria-labelledby="lb_prog"></div>'));
   }
 
   function searchPane(){
     return paneHtml("search", "搜索",
-      sectHtml("关键词", true) +
-      rowHtml(lblText("s_min_query_len", "最短关键词"), stepperHtml("min_query_len")) +
-      sectHtml("结果") +
-      rowHtml(lblText("s_keepdup", "保留重复项"), swHtml("s_keepdup")) +
+      sectHtml("检索", true) +
       rowHtml(lblText("s_autofiles", "文件命中时自动展开"), swHtml("s_autofiles")) +
       sectHtml("投递") +
       rowHtml(lblGroup("dl", "投递工具"),
-        '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl">' +
-        '<button type="button" class="segbtn active" data-dl="thunder" aria-pressed="true">迅雷</button></div>') +
-      rowHtml(lblGroup("dldetect", "检测结果"),
-        '<div class="detect" id="dlDetect" role="status"><span class="netdot"></span>' +
-        '<span class="detecttxt"></span></div>') +
-      foldHtml("tune", "调优",
-        rowHtml(lblText("s_max_workers", "并发数"), stepperHtml("max_workers")) +
-        rowHtml(lblText("s_timeout", "投递/清单超时"), stepperHtml("timeout")) +
-        rowHtml(lblText("s_retries", "重试次数"), stepperHtml("retries")) +
-        rowHtml(lblText("s_soft_deadline_ms", "软截止"),
-          '<div class="rngpair"><input type="range" class="rng" id="sldDeadline" min="0" max="60000" step="500" aria-label="软截止">' +
-          stepperHtml("soft_deadline_ms") + '</div>')));
+        '<div class="seg" id="s_dl" role="group" aria-labelledby="lb_dl"></div>'));
   }
 
   function networkPane(){
     return paneHtml("network", "网络",
-      sectHtml("出口状态", true) +
+      sectHtml("网络状态", true) +
       '<div class="netbar" id="netbar" role="status" aria-live="polite" hidden>' +
         '<span class="netdot"></span>' +
         '<span class="nettitle"></span>' +
         '<span class="netaddr"></span>' +
         '<span class="netnote muted"></span>' +
         '<span class="spacer"></span>' +
-        '<button type="button" class="btn btn-ghost" id="btnNetRecheck">重新检测</button>' +
-      '</div>' +
-      sectHtml("代理") +
-      rowHtml(lblText("s_proxy", "代理"),
-        '<input class="input mono" id="s_proxy" value="" placeholder="http://127.0.0.1:7890">') +
-      rowHtml(lblText("s_user_agent", "User-Agent"),
-        '<input class="input mono" id="s_user_agent" value="" placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)">'));
+        '<button type="button" class="btn-refresh" id="btnNetRecheck" title="重新检测">' + REFRESH_SVG + '</button>' +
+      '</div>');
   }
 
   var SHORTCUTS = [
@@ -304,19 +284,26 @@
 
   function aboutPane(){
     return paneHtml("about", "关于",
-      sectHtml("版本信息", true) +
+      '<div class="about-hero">' +
+        '<div class="about-app">' +
+          '<span class="about-name">happycrate</span>' +
+          '<span class="about-tag" id="aboutVer">v1.0.3</span>' +
+        '</div>' +
+        '<div class="about-actions">' +
+          '<button type="button" class="btn-octo" id="btnRepo" title="GitHub 仓库" aria-label="GitHub 仓库">' + GITHUB_SVG + '</button>' +
+        '</div>' +
+      '</div>' +
+      sectHtml("本地存储", true) +
       '<div id="about"></div>' +
-      rowHtml(lblGroup("repo", "源码"),
-        '<button type="button" class="btn btn-ghost" id="btnRepo">GitHub 仓库</button>') +
       sectHtml("快捷键") +
-      SHORTCUTS.map(function(s, i){
-        return rowHtml(lblGroup("sc" + i, s.name), s.keys);
-      }).join("") +
-      sectHtml("维护") +
-      rowHtml(lblGroup("roles", "词表"),
-        '<button type="button" class="btn btn-ghost" id="btnReloadRoles">重新载入</button>') +
-      rowHtml(lblGroup("logs", "日志"),
-        '<button type="button" class="btn btn-ghost" id="btnLogs">打开目录</button>'));
+      '<div class="sc-grid">' +
+        SHORTCUTS.map(function(s){
+          return '<div class="sc-item">' +
+            '<span class="sc-name">' + esc(s.name) + '</span>' +
+            '<span class="sc-keys">' + s.keys + '</span>' +
+          '</div>';
+        }).join("") +
+      '</div>');
   }
 
   var lookRaf = 0;
@@ -325,8 +312,7 @@
 
   function lookPreviewHtml(){
     return '<div class="lookprev">' +
-        '<div class="progress" id="lookBar"><div class="track" id="lookTrack"></div>' +
-          '<div class="deadline" id="lookDl"></div></div>' +
+        '<div class="progress" id="lookBar"><div class="track" id="lookTrack"></div></div>' +
         '<div class="lookrow"><button type="button" class="btn btn-ghost" id="btnLookPlay">播放一轮</button>' +
           '<span class="lookst" id="lookSt">9 个源 · 最快 0.4s · 最慢 4.0s</span></div>' +
       '</div>';
@@ -356,16 +342,19 @@
       for (var i = 0; i < 9; i++){
         var s = document.createElement("div");
         s.className = "pseg";
+        var sub = document.createElement("div");
+        sub.className = "sub-fill";
+        sub.style.width = "0%";
+        sub.style.opacity = "0";
+        s.appendChild(sub);
         track.appendChild(s);
       }
     }
-    var dl = root.querySelector("#lookDl");
-    if (dl) dl.classList.remove("show", "passed");
+
   }
 
   function lookDeadlineSecs(){
-    var inp = root ? root.querySelector("#s_soft_deadline_ms") : null;
-    var raw = inp && inp.value !== "" ? inp.value : (HC.settings || {}).soft_deadline_ms;
+    var raw = (HC.settings || {}).soft_deadline_ms;
     var d = parseInt(raw, 10) / 1000;
     if (!d || d <= 0 || isNaN(d)) d = 3;
     return d;
@@ -373,7 +362,6 @@
 
   function lookPlay(){
     var track = root.querySelector("#lookTrack");
-    var dl = root.querySelector("#lookDl");
     var st = root.querySelector("#lookSt");
     var bar = root.querySelector("#lookBar");
     if (!track || !bar) return;
@@ -390,21 +378,34 @@
       var segs = track.querySelectorAll(".pseg");
       for (var i = 0; i < segs.length; i++){
         var back = lookTimes[i] <= el;
-        if (back) done++;
-        else if (el > deadline) warned++;
-        segs[i].className = "pseg" + (back ? " on" : (el > deadline ? " warned" : ""));
+        var sub = segs[i].querySelector(".sub-fill");
+        if (back){
+          done++;
+          segs[i].className = "pseg on";
+          if (sub){
+            sub.style.width = "100%";
+            sub.style.opacity = "1";
+          }
+        } else {
+          var ratio = Math.min(0.985, el / lookTimes[i]);
+          if (sub){
+            sub.style.width = (ratio * 100).toFixed(1) + "%";
+            sub.style.opacity = ratio > 0 ? "1" : "0";
+          }
+          if (el > deadline){
+            warned++;
+            segs[i].className = "pseg warned";
+          } else {
+            segs[i].className = "pseg running";
+          }
+        }
       }
       if (progStyleKey === "flow"){
         bar.style.setProperty("--p", String(Math.min(1, el / lookTimes[8])));
         done = lookTimes.filter(function(t){ return t <= el; }).length;
         warned = el > deadline ? 9 - done : 0;
       }
-      if (dl){
-        var ratio = Math.min(1, el / deadline);
-        dl.style.left = (ratio * 100) + "%";
-        dl.classList.toggle("show", progLineOn);
-        dl.classList.toggle("passed", ratio >= 1);
-      }
+
       if (st) st.textContent = done + "/9 源" + (warned ? " · 越过软截止 " + warned + " 个" : "");
       if (el >= lookTimes[8] + 0.3){ lookFinish(); return; }
       lookRaf = requestAnimationFrame(frame);
@@ -412,11 +413,8 @@
   }
 
   function lookFinish(){
-    var track = root.querySelector("#lookTrack");
-    var dl = root.querySelector("#lookDl");
     var st = root.querySelector("#lookSt");
     var bar = root.querySelector("#lookBar");
-    var hold = (HC.LOOK_DEFAULTS || {}).hold || 420;
     if (st) st.textContent = "完成 · 9/9";
     lookTimer.push(setTimeout(function(){
       var defer = function(fn, ms){
@@ -425,41 +423,31 @@
         return t;
       };
       var rest = function(){ if (st) st.textContent = "完成 · 已回退到空槽"; };
-      if (progStyleKey === "flow"){
-        bar.style.setProperty("--p", "1");
-        if (dl) dl.classList.remove("show", "passed");
-        bar.classList.add("receding");
-        defer(function(){
-          if (!bar.isConnected) return;
-          bar.classList.remove("receding");
-          bar.style.setProperty("--p", "0");
-          rest();
-        }, HC.PROG_TAIL_MS || 560);
-        return;
-      }
-      var u = HC.progUnlight(track, {
-        step: (HC.LOOK_DEFAULTS || {}).step || 45, defer: defer,
-        alive: function(){ return bar.isConnected; }
-      });
-      if (dl) dl.classList.remove("show", "passed");
-      defer(rest, u.count * u.step + u.tail);
-    }, hold));
+      bar.classList.add("receding");
+      defer(function(){
+        if (!bar.isConnected) return;
+        bar.classList.remove("receding");
+        lookResetPreview();
+        rest();
+      }, 360);
+    }, 280));
   }
 
   function paintDl(list, current){
     var box = root.querySelector("#s_dl");
     if (!box) return;
-    box.innerHTML = '<button type="button" class="segbtn active" data-dl="thunder" aria-pressed="true">迅雷</button>';
-  }
-
-  function paintDetect(list){
-    var box = root.querySelector("#dlDetect");
-    if (!box) return;
-    var found = (list || []).filter(function(d){ return d.available; });
-    box.querySelector(".netdot").className = "netdot" + (found.length ? " ok" : "");
-    box.querySelector(".detecttxt").textContent = found.length
-      ? "已检测到迅雷"
-      : "未检测到迅雷";
+    var cur = current || "";
+    if (!cur && list && list.length){
+      var firstAvail = list.find(function(d){ return d.available; });
+      cur = firstAvail ? firstAvail.key : list[0].key;
+    }
+    box.innerHTML = (list || []).map(function(d){
+      var on = d.key === cur;
+      return '<button type="button" data-dl="' + esc(d.key) +
+        '" class="' + (on ? "on" : "") + '" aria-pressed="' + (on ? "true" : "false") +
+        '"' + (d.available ? "" : " disabled") + '>' + esc(d.label) + '</button>';
+    }).join("");
+    dlKey = cur;
   }
 
   function paintProg(current){
@@ -479,58 +467,21 @@
     }).join("");
   }
 
-  function wireSteppers(){
-    root.querySelectorAll(".numfield").forEach(function(box){
-      var key = box.dataset.field;
-      var spec = NUMS[key];
-      if (!spec) return;
-      var input = box.querySelector("input");
-      var btns = box.querySelectorAll("[data-step]");
-      function sync(){
-        var v = clamp(input.value, spec.min, spec.max);
-        btns[0].disabled = v - spec.step < spec.min;
-        btns[1].disabled = v + spec.step > spec.max;
-        return v;
-      }
-      btns.forEach(function(b){
-        b.onclick = function(){
-          input.value = clamp(parseInt(input.value, 10) +
-            parseInt(b.dataset.step, 10) * spec.step, spec.min, spec.max);
-          sync();
-          syncDeadlineSlider();
-          input.dispatchEvent(new Event("input", {bubbles: true}));
-        };
-      });
-      input.addEventListener("input", sync);
-      input.addEventListener("change", function(){
-        input.value = clamp(input.value, spec.min, spec.max);
-        sync();
-        syncDeadlineSlider();
-      });
-      input.addEventListener("blur", function(){
-        input.value = clamp(input.value, spec.min, spec.max);
-        sync();
-      });
-      sync();
-    });
-  }
 
-  function syncDeadlineSlider(){
-    var sld = root.querySelector("#sldDeadline");
-    var inp = root.querySelector("#s_soft_deadline_ms");
-    if (sld && inp) sld.value = clamp(inp.value, 0, 60000);
-  }
 
   function readFields(){
     var out = {};
     Object.keys(NUMS).forEach(function(k){
       var el = root.querySelector("#s_" + k);
-      if (!el) return;
+      if (!el){
+        out[k] = NUM_FALLBACKS[k];
+        return;
+      }
       var spec = NUMS[k];
       out[k] = clamp(el.value, spec.min, spec.max);
     });
-    out.proxy = root.querySelector("#s_proxy").value.trim();
-    out.user_agent = root.querySelector("#s_user_agent").value.trim();
+    out.proxy = proxyVal;
+    out.user_agent = uaVal;
     out.ui_font_size = parseInt(fontKey, 10);
     out.default_downloader = dlKey;
     out.selbar = selbarOn;
@@ -543,8 +494,8 @@
     out.brand = brandKey;
     out.auto_files = autoFilesOn;
     out.progress_style = progStyleKey;
-    out.progress_line = progLineOn;
-    out.keep_duplicates = keepDupOn;
+    out.progress_line = true;
+    out.keep_duplicates = false;
     out.progress_look = "";
     return out;
   }
@@ -618,6 +569,9 @@
         }).join("") +
       '</aside>' +
       '<div class="smain">' +
+        '<button type="button" class="iconbtn sclose-btn" id="btnSettingsClose" title="关闭">' +
+          '<svg width="14" height="14" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+        '</button>' +
         '<div class="spanes scroll-slim">' +
           personalizePane() + searchPane() + networkPane() + aboutPane() +
         '</div>' +
@@ -634,8 +588,12 @@
     netEl = root.querySelector("#netbar");
     netBusy = false;
     netGen += 1;
-    root.querySelector("#btnNetRecheck").onclick = function(){ netCheck(true); };
+    root.querySelector("#btnNetRecheck").onclick = function(){
+      this.classList.add("spinning");
+      netCheck(true);
+    };
     root.querySelector("#btnSettingsBack").onclick = tryClose;
+    root.querySelector("#btnSettingsClose").onclick = tryClose;
 
     function fill(settings, list){
       Object.keys(NUMS).forEach(function(k){
@@ -643,9 +601,8 @@
         if (!el) return;
         el.value = clamp(numOr(settings[k], NUM_FALLBACKS[k]), NUMS[k].min, NUMS[k].max);
       });
-      syncDeadlineSlider();
-      root.querySelector("#s_proxy").value = settings.proxy || "";
-      root.querySelector("#s_user_agent").value = settings.user_agent || "";
+      proxyVal = settings.proxy || "";
+      uaVal = settings.user_agent || "";
       fontKey = snapFont(settings.ui_font_size);
       syncSeg(root.querySelector("#s_font"), "font", fontKey);
       applyFont(fontKey);
@@ -665,21 +622,15 @@
       });
       autoFilesOn = settings.auto_files !== false;
       setSw("#s_autofiles", autoFilesOn);
-      keepDupOn = settings.keep_duplicates === true;
-      setSw("#s_keepdup", keepDupOn);
       selbarOn = settings.selbar === true;
       setSw("#s_selbar", selbarOn);
       densityKey = localStorage.getItem("hc_row_density") || "compact";
       syncSeg(root.querySelector("#s_density"), "density", densityKey);
-      smartFilesOn = localStorage.getItem("hc_smart_files") === "1";
-      setSw("#s_smartfiles", smartFilesOn);
       progStyleKey = settings.progress_style === "flow" ? "flow" : "segment";
       paintProg(progStyleKey);
-      progLineOn = settings.progress_line !== false;
-      setSw("#s_progline", progLineOn);
+
       dlKey = settings.default_downloader || "";
       paintDl(list, dlKey);
-      paintDetect(list);
       brandKey = settings.brand || "";
       paintBrand(brandKey);
       if (HC.applyBrand) HC.applyBrand(brandKey);
@@ -691,23 +642,20 @@
     }
 
     function aboutKvHtml(info){
+      var verEl = root.querySelector("#aboutVer");
+      if (verEl && info.version) verEl.textContent = "v" + info.version;
       var lines = [
-        ["版本", info.version, false],
-        ["数据目录", info.dataDir, true],
-        ["运行模式", info.mode, false],
-        ["日志", info.logFile, true]
+        ["数据目录", info.dataDir, "data"],
+        ["日志文件", info.logFile, "logs"]
       ];
-      if (info.proxy) lines.push(["网络出口", info.proxy, true]);
-      if (info.migratedFrom) lines.push(["配置来源", info.migratedFrom, true]);
       if (info.recovered && info.recovered.length){
-        lines.push(["已恢复默认", info.recovered.join(" · "), true]);
+        lines.push(["已恢复默认", info.recovered.join(" · "), ""]);
       }
       return lines.map(function(p, i){
         var val = p[1] || "";
+        var openBtn = p[2] ? '<button type="button" class="btn-folder" data-open="' + p[2] + '" title="打开目录">' + FOLDER_SVG + '</button>' : '';
         return rowHtml(lblGroup("info" + i, p[0]),
-          '<span class="v" title="' + esc(val) + '">' + esc(val) + '</span>' +
-          (p[2] ? '<button type="button" class="cp" data-cp="' + esc(val) + '">复制</button>'
-                : '<span class="cp-slot"></span>'));
+          '<span class="v" title="' + esc(val) + '">' + esc(val) + '</span>' + openBtn);
       }).join("");
     }
 
@@ -755,20 +703,13 @@
         btn.setAttribute("aria-expanded", String(open));
       };
     }
-    wireFold("fold_tune", "foldbody_tune");
+    wireFold("fold_sfx", "foldbody_sfx");
     var btnPlay = root.querySelector("#btnLookPlay");
     if (btnPlay) btnPlay.onclick = lookPlay;
 
-    wireSteppers();
+
 
     root.addEventListener("input", onEdit);
-
-    root.querySelector("#sldDeadline").addEventListener("input", function(){
-      var inp = root.querySelector("#s_soft_deadline_ms");
-      if (!inp) return;
-      inp.value = clamp(this.value, 0, 60000);
-      inp.dispatchEvent(new Event("input", {bubbles: true}));
-    });
 
     root.querySelector("#sldVolume").addEventListener("input", function(){
       volumeVal = clamp(this.value, 0, 100);
@@ -797,7 +738,7 @@
 
     root.querySelector("#s_dl").addEventListener("click", function(e){
       var b = e.target.closest("[data-dl]");
-      if (!b) return;
+      if (!b || b.disabled) return;
       dlKey = b.dataset.dl;
       syncSeg(root.querySelector("#s_dl"), "dl", dlKey);
       onEdit();
@@ -825,11 +766,13 @@
     });
 
     root.querySelector("#about").addEventListener("click", function(e){
-      var b = e.target.closest("[data-cp]");
-      if (!b) return;
-      HC.motion.copy(b.dataset.cp).then(function(ok){
-        HC.motion.toast(ok ? "已复制" : "复制失败", ok ? "ok" : "err");
-      });
+      var op = e.target.closest("[data-open]");
+      if (!op) return;
+      if (op.dataset.open === "data"){
+        if (HC.api.openDataDir) HC.api.openDataDir();
+      } else if (op.dataset.open === "logs"){
+        if (HC.api.openLogs) HC.api.openLogs();
+      }
     });
 
     root.querySelector("#s_density").addEventListener("click", function(e){
@@ -841,12 +784,6 @@
       document.documentElement.classList.toggle("density-comfort", densityKey === "comfort");
       document.body.classList.toggle("density-comfort", densityKey === "comfort");
     });
-
-    root.querySelector("#s_smartfiles").onclick = function(){
-      smartFilesOn = !smartFilesOn;
-      setSw("#s_smartfiles", smartFilesOn);
-      try{ localStorage.setItem("hc_smart_files", smartFilesOn ? "1" : "0"); }catch(err){}
-    };
 
     root.querySelector("#s_selbar").onclick = function(){
       selbarOn = !selbarOn;
@@ -878,25 +815,14 @@
       onEdit();
     };
 
-    root.querySelector("#s_keepdup").onclick = function(){
-      keepDupOn = !keepDupOn;
-      setSw("#s_keepdup", keepDupOn);
-      onEdit();
-    };
 
-    root.querySelector("#s_progline").onclick = function(){
-      progLineOn = !progLineOn;
-      setSw("#s_progline", progLineOn);
-      lookResetPreview();
-      onEdit();
-    };
 
-    root.querySelector("#btnSave").onclick = function(){
-      var btn = this;
+    function saveChanges(onSuccess){
+      var btn = root.querySelector("#btnSave");
+      if (btn) btn.disabled = true;
       var fields = readFields();
-      btn.disabled = true;
-      HC.api.saveSettings(fields).then(function(r){
-        btn.disabled = false;
+      return HC.api.saveSettings(fields).then(function(r){
+        if (btn) btn.disabled = false;
         if (r && r.ok){
           HC.settings = Object.assign({}, HC.settings, fields);
           if (HC.applyProgressLook) HC.applyProgressLook("");
@@ -904,17 +830,25 @@
           onEdit();
           if (HC.sfx && HC.sfx.play) HC.sfx.play("done");
           HC.motion.toast("设置已保存", "ok");
+          if (onSuccess) onSuccess();
+          return true;
         } else {
           var errors = (r && r.errors) || [];
           markErrors(errors);
           if (HC.sfx && HC.sfx.play) HC.sfx.play("fail");
           HC.motion.toast(errors[0] || "有设置项不合法", "err");
+          return false;
         }
       }).catch(function(e){
-        btn.disabled = false;
+        if (btn) btn.disabled = false;
         if (HC.sfx && HC.sfx.play) HC.sfx.play("fail");
         HC.motion.toast(String(e && e.message ? e.message : e), "err");
+        return false;
       });
+    }
+
+    root.querySelector("#btnSave").onclick = function(){
+      saveChanges();
     };
 
     root.querySelector("#btnReset").onclick = function(){
@@ -926,9 +860,7 @@
         }).then(function(res){
           HC.settings = Object.assign({}, res[0] || {});
           try{ localStorage.removeItem("hc_row_density"); }catch(e){}
-          try{ localStorage.removeItem("hc_smart_files"); }catch(e){}
           densityKey = "compact";
-          smartFilesOn = false;
           document.documentElement.classList.remove("density-comfort");
           document.body.classList.remove("density-comfort");
           fill(res[0] || {}, res[1] || []);
@@ -950,27 +882,29 @@
       location.hash = "search";
     }
 
-    function tryClose(){
-      if (snapshot() !== baseline){
-        HC.motion.confirm("有未保存的改动", "放弃并关闭", function(){
-          baseline = snapshot();
-          revertApplied();
-          goSearch();
-        });
+    function promptUnsaved(onProceed){
+      if (snapshot() === baseline){
+        onProceed();
         return;
       }
-      goSearch();
+      HC.motion.confirmUnsaved(function(){
+        saveChanges(onProceed);
+      }, function(){
+        baseline = snapshot();
+        lookStop();
+        revertApplied();
+        onProceed();
+      });
+    }
+
+    function tryClose(){
+      promptUnsaved(goSearch);
     }
 
     var leaveGuard = function(action){
       if (!root || !root.isConnected) return false;
       if (snapshot() === baseline) return false;
-      HC.motion.confirm("有未保存的改动", "放弃并关闭", function(){
-        baseline = snapshot();
-        lookStop();
-        revertApplied();
-        action();
-      });
+      promptUnsaved(action);
       return true;
     };
     HC.leaveGuard = leaveGuard;
@@ -984,10 +918,7 @@
       e.preventDefault();
       e.stopPropagation();
       var href = a.getAttribute("href");
-      HC.motion.confirm("有未保存的改动", "放弃并离开", function(){
-        baseline = snapshot();
-        lookStop();
-        revertApplied();
+      promptUnsaved(function(){
         location.hash = href;
       });
     };
@@ -1015,20 +946,8 @@
     };
     document.addEventListener("keydown", mount._docKey);
 
-    root.querySelector("#btnLogs").onclick = function(){
-      HC.api.openLogs();
-    };
-
     root.querySelector("#btnRepo").onclick = function(){
       HC.api.openRepo();
-    };
-
-    root.querySelector("#btnReloadRoles").onclick = function(){
-      HC.api.reloadQueryRoles().then(function(){
-        HC.motion.toast("词表已重新载入", "ok");
-      }, function(){
-        HC.motion.toast("词表载入失败", "err");
-      });
     };
   }
 

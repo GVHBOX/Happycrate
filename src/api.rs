@@ -934,6 +934,17 @@ impl Api {
             .is_ok()
     }
 
+    pub fn open_data_dir(&self) -> bool {
+        let directory = crate::paths::data_dir();
+        if std::fs::create_dir_all(&directory).is_err() {
+            return false;
+        }
+        std::process::Command::new("explorer")
+            .arg(directory.as_os_str())
+            .spawn()
+            .is_ok()
+    }
+
 }
 
 fn map_torrent_error(error: crate::model::SourceError) -> TorrentError {
@@ -1066,11 +1077,12 @@ pub fn deliver_prepared(
     } else {
         String::new()
     };
-    if crate::downloaders::pick_default(&prefer, true).is_none() {
-        return deliver_result(false, "没找到可用的下载工具");
-    }
+    let target = match crate::downloaders::pick_default(&prefer, true) {
+        Some(t) => t,
+        None => return deliver_result(false, "没找到可用的下载工具"),
+    };
 
-    let outcome = crate::downloaders::add(&items, timeout);
+    let outcome = crate::downloaders::add_target(target.key, &items, timeout);
     if !outcome.ok {
         crate::log::warning(
             crate::log::API,

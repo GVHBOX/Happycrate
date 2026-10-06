@@ -190,6 +190,11 @@ fn open_logs(state: tauri::State<AppState>) -> bool {
 }
 
 #[tauri::command]
+fn open_data_dir(state: tauri::State<AppState>) -> bool {
+    state.api().open_data_dir()
+}
+
+#[tauri::command]
 fn open_repo() -> bool {
     std::process::Command::new("explorer")
         .arg("https://github.com/GVHBOX/Happycrate")
@@ -287,6 +292,7 @@ pub fn run() {
             selftest,
             app_info,
             open_logs,
+            open_data_dir,
             open_repo,
             proxy_status,
             net_throughput,

@@ -7,10 +7,9 @@ Rust + Tauri 2 重写版。**迁移已于 2026-09 完成**（v1.0.3 已发布）
 ## 1. 仓库现状
 
 - 产品名 / Cargo 包名 / 可执行文件名一律 `happycrate`；目录叫 `happycrate-rust`
-  只为与老 Python 仓 `D:\AI\happycrate` 区分。
+  只为与老 Python 仓区分。
 - **GitHub `GVHBOX/Happycrate` 的 `main` 就是本仓**（2026-09-29 由本仓强制覆盖接管，
-  工作分支 `main` 直接推）。Python 版在远端只剩 tag `v1.0.0`（首发根提交快照；
-  该 tag 仅远端有，本地克隆未 fetch）。本地 Python 仓保有全部提交，仅作行为参照，不再改动。
+  工作分支 `main` 直接推）。老 Python 版已彻底清理下线，全仓完全自包含。
 - tags：远端 `v1.0.0`（Python 首发快照）、`v1.0.2`、`v1.0.3`、`rust-v1.0.1/2/3`。
 - 布局：单 crate 根布局——`tauri.conf.json` / `build.rs` / `capabilities/` 都在根，
   不拆 workspace。前端 `web/` **编译期内嵌**进 exe（`frontendDist: "web"`），
@@ -65,8 +64,7 @@ win_min  win_max  win_close  set_window_tone
 
 - **金样**：`tests/fixtures/` 存 12 源的**原始响应体**，与 Python 侧跑出的期望
   （`golden.json`）逐字段 diff，不是只比条数；回放按 `(url, 规范化请求体)` 命中。
-- **对照表**：`tests/parity/*.json` 全部由 Python 侧实际行为生成
-  （`tools/legacy_generators/`），**不手写期望值**，覆盖 util / core / outcome /
+- **对照表**：`tests/parity/*.json` 固化了各模块的行为对照断言，不手写期望值，覆盖 util / core / outcome /
   config / paths / net / migrate / query / torrent 等模块。
 - **流水线**：`tests/search_pipeline.rs` 对照整条搜索的事件序列（5 场景，3 MB）。
 - **空金样是假绿**：条数为 0 的金样解析器写错也照样过；新增源要人工确认条数显著大于 0。
@@ -83,8 +81,8 @@ win_min  win_max  win_close  set_window_tone
 cargo test                              # 金样 + 工具函数对照
 cargo build --release                   # 产物 target\release\happycrate.exe，直接跑
 python tools/scan_comment.py            # 铁律 1：零注释
+python tools/scan_comment.py --selfcheck
 python tools/check_front_hygiene.py     # 铁律 2：界面文案
-python tools/check_data_compat.py <目录> # 真实数据兼容（不要比字节，Rust 的键是排序的）
 ```
 
 - 发布门：`cargo check --all-targets` 零警告 + 干净克隆能编。
@@ -127,8 +125,7 @@ python tools/check_data_compat.py <目录> # 真实数据兼容（不要比字�
 
 ## 8. 已拍板决策（不再动的东西）
 
-- **web/ 是复制来的，冻结 Python 仓的前端**，改动只在 Rust 仓做。
-  查漂移：`diff -rq "D:/AI/happycrate-rust/web" "D:/AI/happycrate/web"`。
+- **`web/` 前端完全在此仓维护**，老 Python 仓前端已随项目下线清理。
 - **`src/util.rs` 不拆文件**（全是无状态纯函数，行数不是臃肿的判据，死代码和冗余才是）。
   触发点：超约 1,300 行或时间解析段继续膨胀时，把时间解析整块搬 `src/time.rs`。
 - **diagnostics 命令不移植**，`source_issues` 只报 err；健康度不持久化——

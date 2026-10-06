@@ -82,11 +82,15 @@
   var selSig = "";
   var esc = HC.esc;
   var SOURCE_BASE_TYPICAL = {
-    apibay: 550, nyaa: 950, sukebei: 1050, mikan: 1100, dmhy: 1250,
-    eztv: 1800, bitsearch: 1900, javbus: 2400, xccl263: 2600,
-    javdb: 2800, knaben: 3200, tpb: 3600
+    apibay: 2000, nyaa: 4000, sukebei: 6000, dmhy: 7000, mikan: 10000,
+    bitsearch: 14000, xccl263: 14000, javbus: 16000, javdb: 18000,
+    knaben: 18000, eztv: 20000, tpb: 25000
   };
   var sourceHist = {};
+  try {
+    var savedHist = localStorage.getItem("hc_source_hist");
+    if (savedHist) sourceHist = JSON.parse(savedHist) || {};
+  } catch(e){}
 
   function fmtCount(n){
     if (n === null || n === undefined) return "—";
@@ -320,7 +324,7 @@
   function badgeHtml(){
     var n = selCount(), total = st.items.length;
     var merged = st.rawTotal && st.dupCount
-      ? '<i class="add">+' + st.rawTotal + '</i><em>条合并</em><i class="del">-' + st.dupCount + '</i>'
+      ? ' <span class="dedup">· 去重 <b>' + st.dupCount + '</b></span>'
       : (st.dupKept ? "（重复已保留）" : "");
     var lax = st.relaxed ? " · 已放宽：去掉 " + esc(st.relaxed) : "";
     var flt = st.filterSource ? " · " + esc(st.names[st.filterSource] || st.filterSource) + " " + visible().length + " 条" : "";
@@ -527,40 +531,11 @@
     return i === undefined ? -1 : i;
   }
 
-  function fileSizeBytes(str){
-    if (!str) return 0;
-    var m = /^([0-9.]+)\s*([A-Za-z]+)?$/.exec(String(str).trim());
-    if (!m) return 0;
-    var n = parseFloat(m[1]) || 0;
-    var u = (m[2] || "").toUpperCase();
-    if (u === "GB" || u === "GIB") return n * 1073741824;
-    if (u === "MB" || u === "MIB") return n * 1048576;
-    if (u === "KB" || u === "KIB") return n * 1024;
-    if (u === "TB" || u === "TIB") return n * 1099511627776;
-    return n;
-  }
-
   function fpanelInner(it){
     var files = (it.files && it.files.length) ? it.files : st.filesCache[it.hash];
     if (files && files.length){
-      var smart = localStorage.getItem("hc_smart_files") === "1";
-      var maxIdx = -1;
-      if (smart && files.length > 1){
-        var maxBytes = -1;
-        files.forEach(function(f, idx){
-          var name = (f.n || "").toLowerCase();
-          var isVid = /\.(mp4|mkv|avi|mov|wmv|iso|ts)$/i.test(name);
-          var bytes = fileSizeBytes(f.s);
-          if (isVid && bytes > maxBytes){
-            maxBytes = bytes;
-            maxIdx = idx;
-          }
-        });
-      }
-      return files.map(function(f, idx){
-        var isMain = idx === maxIdx;
-        var tag = isMain ? '<span class="fmain-tag">主视频</span>' : '';
-        return '<div class="fline' + (isMain ? " main" : "") + '"><span class="fname">' + hlTitle(f.n) + tag +
+      return files.map(function(f){
+        return '<div class="fline"><span class="fname">' + hlTitle(f.n) +
           '</span><span class="fsize">' + esc(f.s || "") + '</span></div>';
       }).join("");
     }
@@ -864,6 +839,8 @@
     paintBadge(still);
     if (selbarEl){
       selbarEl.querySelector("#selN").textContent = n;
+      var dlBtn = selbarEl.querySelector('[data-s="dl"]');
+      if (dlBtn) dlBtn.textContent = "投递 " + dlLabel();
       selbarEl.classList.toggle("show", st.selbarOn && n > 0);
       selbarEl.classList.toggle("island", localStorage.getItem("hc_action_island") === "1");
     }
@@ -1008,17 +985,12 @@
       var text = busy
         ? runningLabel({name:name, startedAt:ss.startedAt, typical:ss.typical})
         : esc(name) + " · " + (ss.count > 0 ? "<b>" + stripLabel(ss) + "</b>" : stripLabel(ss));
-      if (settled && ss.state !== "cancel" && !el.querySelector(".tick")){
-        var tick = document.createElement("span");
-        tick.className = "tick";
-        el.appendChild(tick);
-      }
       var title = el.querySelector(".stitle");
       if (title && title.innerHTML !== text) title.innerHTML = text;
       var fill = el.querySelector(".track .fill");
       if (fill){
-        if (settled) fill.style.transform = "scaleX(1)";
-        else if (!busy) fill.style.transform = "scaleX(0)";
+        if (settled) fill.style.width = "100%";
+        else if (!busy) fill.style.width = "0%";
       }
       var at = stripEl.children[i];
       if (at !== el) stripEl.insertBefore(el, at || null);
@@ -1063,6 +1035,14 @@
     setTimeout(function(){ el.remove(); }, 150);
   }
 
+  function dlLabel(){
+    var key = (HC.settings && HC.settings.default_downloader) || "thunder";
+    if (key === "115") return "115";
+    if (key === "pikpak") return "PikPak";
+    if (key === "all") return "全部";
+    return "迅雷";
+  }
+
   function openCtx(x, y){
     closeCtx();
     ctxEl = document.createElement("div");
@@ -1073,7 +1053,7 @@
     ctxEl.innerHTML =
       '<button class="mi" data-a="copy">' + ICONS.copy + '复制磁力</button>' +
       '<button class="mi" data-a="title">' + ICONS.copy + '复制标题</button>' +
-      '<button class="mi" data-a="dl">' + ICONS.dl + '投递到迅雷</button>';
+      '<button class="mi" data-a="dl">' + ICONS.dl + '投递到' + dlLabel() + '</button>';
     document.body.appendChild(ctxEl);
     ctxEl.style.left = Math.max(4, Math.min(x, window.innerWidth - ctxEl.offsetWidth - 8)) + "px";
     ctxEl.style.top = Math.max(4, Math.min(y, window.innerHeight - ctxEl.offsetHeight - 8)) + "px";
@@ -1242,12 +1222,21 @@
     track.className = "track";
     progEl.appendChild(track);
     if (st.progStyle !== "flow"){
-      var order = st.segOrder && st.segOrder.length ? st.segOrder : [];
+      var order = st.segOrder && st.segOrder.length ? st.segOrder :
+        (st.srcList && st.srcList.length ? st.srcList.map(function(s){ return s.key; }) : []);
+      if (!order.length){
+        for (var k = 0; k < 9; k++) order.push("src_" + k);
+      }
       order.forEach(function(key, i){
         var seg = document.createElement("div");
         seg.className = "pseg";
         seg.dataset.key = key;
         seg.style.animationDelay = (i * 0.08) + "s";
+        var sub = document.createElement("div");
+        sub.className = "sub-fill";
+        sub.style.width = "0%";
+        sub.style.opacity = "0";
+        seg.appendChild(sub);
         track.appendChild(seg);
       });
     } else {
@@ -1272,6 +1261,11 @@
       if (isSeg){
         [].slice.call(progEl.querySelectorAll(".pseg")).forEach(function(seg){
           seg.className = "pseg on";
+          var sub = seg.querySelector(".sub-fill");
+          if (sub){
+            sub.style.width = "100%";
+            sub.style.opacity = "1";
+          }
         });
       } else {
         progEl.classList.remove("slow");
@@ -1281,28 +1275,26 @@
       var dlNow = progEl.querySelector(".deadline");
       if (dlNow) dlNow.classList.remove("show", "passed");
     }
-    var hold = celebrate ? HC.lookParam("hold") : 60;
+    var hold = celebrate ? 280 : 60;
     setTimeout(function(){
       if (gen !== st.progGen) return;
       var dl = progEl.querySelector(".deadline");
       if (dl) dl.classList.remove("show", "passed");
-      var tail = PROG_TAIL_MS;
-      if (isSeg){
-        var u = HC.progUnlight(progEl, {
-          lit: ".pseg.on, .pseg.err",
-          alive: function(){ return gen === st.progGen; }
-        });
-        tail += u.count * u.step;
-      } else {
-        progEl.classList.add("receding");
-      }
+      progEl.classList.add("receding");
       var p = progEl;
       setTimeout(function(){
         if (p !== progEl || gen !== st.progGen) return;
-        progEl.classList.remove("receding");
-        buildProg();
+        progEl.classList.remove("receding", "slow");
+        progEl.querySelectorAll(".pseg").forEach(function(seg){
+          seg.className = "pseg";
+          var sub = seg.querySelector(".sub-fill");
+          if (sub){
+            sub.style.width = "0%";
+            sub.style.opacity = "0";
+          }
+        });
         progEl.style.setProperty("--p", "0");
-      }, tail);
+      }, 360);
     }, hold);
   }
 
@@ -1330,14 +1322,22 @@
       var fill = el.querySelector(".track .fill");
       if (fill){
         var used = now - ss.startedAt;
-        var typ = ss.typical || SOURCE_BASE_TYPICAL[el.dataset.key] || 2000;
-        var ratio;
-        if (used < typ){
-          ratio = (used / typ) * 0.86;
-        } else {
-          ratio = 0.86 + 0.10 * (1 - Math.exp(-(used - typ) / (typ * 0.8)));
+        var typ = ss.typical || SOURCE_BASE_TYPICAL[el.dataset.key] || 10000;
+        var ratio = typ > 0 ? Math.min(0.985, used / typ) : 0;
+        fill.style.width = (ratio * 100).toFixed(1) + "%";
+        if (progEl && st.progStyle !== "flow"){
+          var seg = progEl.querySelector('.pseg[data-key="' + el.dataset.key + '"]');
+          if (seg && !seg.classList.contains("on") && !seg.classList.contains("err")){
+            var psub = seg.querySelector(".sub-fill");
+            if (psub){
+              psub.style.width = (ratio * 100).toFixed(1) + "%";
+              psub.style.opacity = ratio > 0 ? "1" : "0";
+            }
+            if (used > typ && !seg.classList.contains("warned")){
+              seg.classList.add("warned");
+            }
+          }
         }
-        fill.style.transform = "scaleX(" + Math.min(0.96, ratio) + ")";
       }
     });
   }
@@ -1351,15 +1351,6 @@
       dl.style.left = (ratio * 100) + "%";
       dl.classList.add("show");
       dl.classList.toggle("passed", ratio >= 1);
-      if (ratio >= 1){
-        [].slice.call(progEl.querySelectorAll(".pseg")).forEach(function(seg){
-          var one = st.strip[seg.dataset.key];
-          if (one && one.state === "pending" &&
-              seg.className.indexOf("warned") < 0 && seg.className.indexOf("err") < 0){
-            seg.className = "pseg warned";
-          }
-        });
-      }
     }
     if (st.progStyle === "flow"){
       progEl.classList.toggle("slow", st.deadline > 0 &&
@@ -1434,10 +1425,16 @@
           .map(reEscape).join("|"), "gi")
       : null;
     reset();
-    st.srcList.forEach(function(s){ st.strip[s.key] = {state:"pending"}; });
+    st.t0 = performance.now();
+    st.srcList.forEach(function(s){
+      st.strip[s.key] = {
+        state: "pending",
+        startedAt: st.t0,
+        typical: sourceHist[s.key] || SOURCE_BASE_TYPICAL[s.key] || 10000
+      };
+    });
     st.segOrder = st.srcList.map(function(s){ return s.key; });
     if (!st.segOrder.length) st.segOrder = Object.keys(st.strip);
-    st.t0 = performance.now();
     var dlMs = HC.settings ? parseInt(HC.settings.soft_deadline_ms, 10) : NaN;
     st.deadline = isNaN(dlMs) ? 3000 : dlMs;
     st.progGen = (st.progGen || 0) + 1;
@@ -1624,7 +1621,7 @@
         if (!dispatch("start", d)) return;
         var one = st.strip[d.key];
         if (!one || one.state !== "pending") return;
-        one.startedAt = performance.now();
+        if (!one.startedAt) one.startedAt = performance.now();
         one.typical = sourceHist[d.key] || Number(d.typical_ms) || SOURCE_BASE_TYPICAL[d.key] || 2000;
         paintStrip();
       },
@@ -1635,11 +1632,16 @@
         var actualMs = performance.now() - (one && one.startedAt ? one.startedAt : st.t0);
         if (actualMs > 80){
           sourceHist[d.key] = sourceHist[d.key] ? Math.round(sourceHist[d.key] * 0.4 + actualMs * 0.6) : Math.round(actualMs);
+          try { localStorage.setItem("hc_source_hist", JSON.stringify(sourceHist)); } catch(e){}
         }
         if (progEl) progEl.classList.remove("wait");
         var segRed = d.state === "err" || (!d.state && d.err && d.outcome !== "empty");
         var seg = progEl && progEl.querySelector('.pseg[data-key="' + d.key + '"]');
-        if (seg) seg.className = "pseg" + (segRed ? " err" : " on");
+        if (seg){
+          seg.className = "pseg" + (segRed ? " err" : " on");
+          var psub = seg.querySelector(".sub-fill");
+          if (psub) psub.style.width = "100%";
+        }
         setProgress();
         var name = st.names[d.key] || d.key;
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
@@ -1865,7 +1867,6 @@
               '</button>' +
             '</div>' +
           '</div>' +
-          '<div class="spacer"></div>' +
           '<div class="sentry">' + ICONS.search +
             '<input id="inp" placeholder="输入搜索内容" autocomplete="off" title="搜索 (Ctrl+K)">' +
             '<button class="sentry-clear" id="sentryClear" type="button" tabindex="-1" hidden>' + ICONS.clear + '</button>' +
@@ -1879,8 +1880,8 @@
           '</div>' +
         '</div>' +
         '<div class="progrow">' +
-          '<span class="progclock" id="progClock"></span>' +
           '<div class="progress" id="prog"><div class="track"><div class="fill"></div></div></div>' +
+          '<span class="progclock" id="progClock"></span>' +
         '</div>' +
         '<div class="srcstrip" id="srcstrip" hidden></div>' +
         '<div class="div"></div>' +
@@ -2233,7 +2234,7 @@
       '<span class="sdiv"></span>' +
       '<button class="sbtn" data-s="copy">复制磁力</button>' +
       '<button class="sbtn" data-s="title">复制标题</button>' +
-      '<button class="sbtn primary" data-s="dl">投递迅雷</button>' +
+      '<button class="sbtn primary" data-s="dl">投递 ' + dlLabel() + '</button>' +
       '<span class="ssp"></span>' +
       '<button class="sclose" data-s="close">' +
         '<svg width="12" height="12" viewBox="-1 -1 16 16" fill="none"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +

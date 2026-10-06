@@ -221,7 +221,11 @@ pub fn registry_proxies() -> BTreeMap<String, String> {
         let Some((protocol, address)) = piece.split_once('=') else {
             continue;
         };
+        let protocol = protocol.trim().to_ascii_lowercase();
         let address = address.trim();
+        if protocol.is_empty() || address.is_empty() {
+            continue;
+        }
         let prefixed = match address.find("://") {
             Some(at) => !address[..at].contains(['/', ':']),
             None => false,
@@ -233,7 +237,7 @@ pub fn registry_proxies() -> BTreeMap<String, String> {
         } else {
             format!("http://{address}")
         };
-        proxies.insert(protocol.to_string(), value);
+        proxies.insert(protocol, value);
     }
     if let Some(socks) = proxies.get("socks").cloned() {
         let socks = socks.strip_prefix("socks://").map_or(socks.clone(), |rest| {
@@ -667,7 +671,6 @@ impl HttpClient {
         let mut builder = reqwest::Client::builder()
             .user_agent(&self.ua)
             .default_headers(base)
-            .timeout(Duration::from_millis(timeout_ms))
             .connect_timeout(Duration::from_millis(timeout_ms))
             .read_timeout(Duration::from_millis(timeout_ms))
             .tcp_keepalive(Some(Duration::from_secs(60)))

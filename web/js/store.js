@@ -96,16 +96,15 @@
   var netStatusCache = null;
 
   function proxyState(data, source, tun){
-    var title = tun ? "代理 + TUN" : "代理";
+    var title = tun ? "系统代理 + 虚拟网卡" : (source === "手动设置" ? "自定义代理" : "系统代理");
     var addr = tun ? [data.addr || "", tun].filter(Boolean).join(" · ") : (data.addr || "");
     if (!data.portOk){
-      return {dot:"err", title:title, addr:addr, note:"代理端口无响应"};
+      return {dot:"err", title:title, addr:addr, note:"端口无响应"};
     }
     if (data.works){
-      return {dot:"ok", title:title, addr:addr,
-              note:source + " · 外网连通", muted:true};
+      return {dot:"ok", title:title, addr:addr, note:"", muted:true};
     }
-    return {dot:"err", title:title, addr:addr, note:"代理未转发请求"};
+    return {dot:"err", title:title, addr:addr, note:"未转发请求"};
   }
 
   function netState(data){
@@ -114,14 +113,14 @@
     if (data.mode === "manual") return proxyState(data, "手动设置", tun);
     if (data.mode === "system"){
       if (!data.systemOn){
-        return {dot:"err", title:"代理", addr:data.addr || "",
+        return {dot:"err", title:"系统代理", addr:data.addr || "",
                 note:"系统代理已关闭", off:true};
       }
-      return proxyState(data, "跟随系统", tun);
+      return proxyState(data, "系统代理", tun);
     }
-    var title = tun ? "TUN" : "直连";
+    var title = tun ? "虚拟网卡" : "直连";
     if (data.directWorks){
-      return {dot:"ok", title:title, addr:tun, note:"外网连通", muted:true};
+      return {dot:"ok", title:title, addr:tun, note:"", muted:true};
     }
     return {dot:"err", title:title, addr:tun, note:"外网不可达"};
   }

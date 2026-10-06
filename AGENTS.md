@@ -1,14 +1,11 @@
-# happycrate 作业规程（Rust 重写版）
+# happycrate 作业规程（Rust 版）
 
-`D:\AI\happycrate` 的 Rust 重写版：Rust + Tauri 2 后端，前端 `web/` 从原项目整份带走。
-**目录叫 `happycrate-rust` 只是为了跟老 Python 仓并存；产品名、包名、可执行文件名一律叫 `happycrate`。**
+原 Python 版已于 2026-09 彻底下线并清理。本项目为全量自包含的 Rust + Tauri 2 架构，前端 `web/` 编译期内嵌。
+**产品名、包名、可执行文件名一律叫 `happycrate`。**
 仓库现状、依赖理由与版本史在 `PLAN.md`，本文件只讲规矩。
 
-**当前阶段：v1.0.3 已发布，本仓已是 GitHub 上的主线** —— `GVHBOX/Happycrate` 的 `main`
-已被本仓强制覆盖（2026-09-29），Python 版源码在远端只剩 tag `v1.0.0`（指向首发根提交）。
-本地 `D:\AI\happycrate` 仍保有 Python 版全部提交。详见 `PLAN.md` §1。
-
-工作分支就是 `main`，直接推。`rust-rewrite` 分支已删除，别再建同名的。
+**当前阶段：v1.0.3 已发布，本仓是 GitHub 上的唯一主线** —— `GVHBOX/Happycrate` 的 `main`。
+工作分支就是 `main`，直接推。
 
 ## 4 条铁律
 
@@ -84,12 +81,10 @@ TUN 还是系统代理 / PAC / 安全软件 / 地区封锁），只有用户知�
 浏览器能不能开」一起告诉用户 → 等确认。
 禁止：反复试探、反复重装 Runtime、把环境问题当成代码问题改代码。
 
-## 迁移纪律
+## 维护纪律
 
-- **不发明。** 任何行为改动先对照 Python 侧金样（`tests/fixtures/`、`tests/parity/`）。
-  顺手重构会让金样 diff 无法判断「是重写错了还是重构改的」。
-- **Python 版已下线**（2026-09-29 用户拍板切换，并行期跳过）；
-  本地 `D:\AI\happycrate` 保留全史，仅作行为参照，不再改动。
+- **不随意发明。** 任何行为改动先通过固化金样（`tests/fixtures/`、`tests/parity/`）回归。
+- **Python 版已彻底下线并清理**（2026-09 切换接管，历史过渡脚手架已清理）。Rust 版全量独立自包含，后续新增源或功能迭代直接基于 Rust 原生实现与测试。
 - 加了依赖要在 `PLAN.md` §2 写理由。
 
 ## 测试与检查
@@ -105,17 +100,12 @@ python tools/check_front_hygiene.py     # 铁律 2
   这个项目 90% 的坑在行为上（12 个站点适配器的 quirk）。
 - **空金样是假的绿。** 条数为 0 的 golden.json 解析器写错也照样通过。
   新增源时人工确认条数显著大于 0 且覆盖多条响应，别只看测试是绿的。
-- 金样表与工具函数对照表都由 Python 侧生成，**不手写**：
-  - `tools/capture_fixtures.py` → `tests/fixtures/`
-  - `tools/legacy_generators/gen_*.py` → `tests/parity/*.json`（一个模块一份对照表）
-  - `tools/legacy_generators/gen_search_pipeline.py` → `tests/parity/search_pipeline.json`
-    （整条搜索流水线的事件序列，最贵的一份，3 MB）
-  - `tools/legacy_generators/gen_migrate_parity.py` → `tests/legacy/` + `tests/parity/migrate_cases.json`
-    （老配置迁移；老目录是**合成**的边角样本，不搬用户真实数据进仓库）
+- 金样表与对照表已全部固化在仓库中：
+  - `tests/fixtures/`（12 源原始响应体与期望解析结果）
+  - `tests/parity/*.json`（各模块行为对照表）
+  - `tests/parity/search_pipeline.json`（整条搜索流水线的事件序列）
+  - `tests/legacy/` + `tests/parity/migrate_cases.json`（老配置迁移样本）
 - **前端排障工具**：`web/js/diagnostics.js` 为前端运行时错误收集器，由快捷键 `Ctrl+Shift+D` 呼出，界面不设常驻按钮，不是未清理遗留物。
-- **真实数据兼容性**用 `tools/check_data_compat.py <写到哪> [参照]`：
-  拿 Python 自己的 config/settings 去加载 Rust 写过的目录，再看逐键差异。
-  **不要比字节**——Rust 侧 serde 的键是排序过的，Python 保持插入序，文件名内容都合法。
 - **日志**：`<数据目录>/logs/happycrate.log`，1 MB × 3 轮转，格式与 Python 版一致
   （`2026-09-28 20:57:35 [INFO] happycrate.app.api: …`）。
   级别用环境变量 `HAPPYCRATE_LOG_LEVEL`（DEBUG/INFO/WARNING/ERROR）。
@@ -134,14 +124,6 @@ python tools/check_front_hygiene.py     # 铁律 2
   3. **验收凭证原则（拒绝幽灵验证）**：自测必须有新产物运行的确定性证据（如新 PID、新启动日志、最新文件时间戳），严禁在旧进程残余输出上做假验证。
 - **干净克隆验收门（Clean Clone Test）**：
   发布前验收靠：`cargo check` 零警告 + **干净克隆能编**（在空目录 `git clone` 后编译，能过才算没把构建必需文件漏在仓库外）。
-
-```bash
-# 采集 / 重采 fixture（要用 happycrate 的 venv，因为要 import app 包）
-cd /d D:\AI\happycrate
-.venv\Scripts\python.exe D:\AI\happycrate-rust\tools\capture_fixtures.py
-.venv\Scripts\python.exe D:\AI\happycrate-rust\tools\capture_fixtures.py --query=nyaa:frieren nyaa
-.venv\Scripts\python.exe D:\AI\happycrate-rust\tools\legacy_generators\gen_util_parity.py
-```
 
 ## 环境事实
 
@@ -195,14 +177,10 @@ cd /d D:\AI\happycrate
   Unicode 码点转义直接语法错误，字符字面量里的转义让 Rust 报「只能有一个字符」。
   **规则：不在 heredoc 里写任何反斜杠**——用编辑工具写文件，或改用
   `std::path::MAIN_SEPARATOR` 这类常量绕开。
-- **沙箱批量删除阈值 50 个文件**：采集脚本一次跑 12 个源会触发。
-  所以 `capture_fixtures.py` **不清理旧响应体**——`meta.json` 是唯一真相源，
-  回放只看它列出的文件，遗留的不会被引用。
 - **依赖克制**：允许的依赖清单与理由在 `PLAN.md` §2，**看表，不在这里抄**。
   已经明确不引：`regex`（不支持 lookaround）· 日期库 · HTML 实体库 · `scraper`/`html5ever`
   · `anyhow`。加依赖要在 §2 补理由。
-- **`web/` 是复制来的，要立刻冻结原项目的 `web/`**，改动只在 Rust 仓做。
-  确认没漂：`diff -rq "D:/AI/happycrate-rust/web" "D:/AI/happycrate/web"`。
+- **`web/` 前端完全在此仓维护**，老 Python 仓前端已随项目下线清理。
 - **单实例 mutex 已换名**：Rust 版用 `Local\happycrate_rust_v1_SingleInstance_...`（带 `_rust`），
   与 Python 版的 `Local\happycrate_v1_SingleInstance_7d4a9e2c6b1f8053` 区分，不会互抢。
 

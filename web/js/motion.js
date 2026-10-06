@@ -71,6 +71,27 @@
     };
   }
 
+  function confirmUnsaved(onSave, onDiscard){
+    var m = openModal(
+      '<div class="dhead"><div class="dtitle">有未保存的改动</div></div>' +
+      '<div class="div"></div>' +
+      '<div class="mfoot">' +
+        '<button class="btn btn-ghost" data-close>取消</button>' +
+        '<div class="spacer"></div>' +
+        '<button class="btn btn-ghost" id="mDiscard">放弃</button>' +
+        '<button class="btn btn-brand" id="mSave">保存</button>' +
+      '</div>'
+    );
+    m.querySelector("#mDiscard").onclick = function(){
+      closeModal();
+      if (onDiscard) onDiscard();
+    };
+    m.querySelector("#mSave").onclick = function(){
+      closeModal();
+      if (onSave) onSave();
+    };
+  }
+
   function openModal(html, wide){
     closeModal();
     var bd = document.createElement("div");
@@ -337,6 +358,7 @@
     dragRows: dragRows,
     openModal: openModal,
     closeModal: closeModal,
-    confirm: confirm
+    confirm: confirm,
+    confirmUnsaved: confirmUnsaved
   };
 })();

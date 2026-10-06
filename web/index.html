@@ -223,14 +223,10 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
     var look = readLook(raw);
     var st = document.documentElement.style;
     Object.keys(LOOK_COLORS).forEach(function(k){
-      var v = look[k];
-      if (v && LOOK_HEX.test(v)) st.setProperty(LOOK_COLORS[k], v);
-      else st.removeProperty(LOOK_COLORS[k]);
+      st.removeProperty(LOOK_COLORS[k]);
     });
-    if (look.on && LOOK_HEX.test(look.on)) st.setProperty("--prog-on-stripe", shade(look.on, -0.12));
-    else st.removeProperty("--prog-on-stripe");
-    if (look.warn && LOOK_HEX.test(look.warn)) st.setProperty("--prog-warn-stripe", shade(look.warn, -0.09));
-    else st.removeProperty("--prog-warn-stripe");
+    st.removeProperty("--prog-on-stripe");
+    st.removeProperty("--prog-warn-stripe");
     Object.keys(LOOK_VARS).forEach(function(k){
       var spec = LOOK_VARS[k];
       var v = look[k] * (spec[2] || 1);

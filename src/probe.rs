@@ -1,7 +1,7 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use serde_json::{json, Value};
 
@@ -14,6 +14,8 @@ use crate::util::LocalNow;
 pub const WORD: &str = "test";
 pub const FALLBACK_WORD: &str = "1080p";
 pub const WORKERS: usize = 8;
+pub const TIMEOUT_CAP: u64 = 8;
+pub const BUDGET_MS: u64 = 30000;
 
 static TOKEN: AtomicI64 = AtomicI64::new(0);
 
@@ -27,20 +29,13 @@ fn alive(token: i64) -> bool {
 
 fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
     let started = Instant::now();
+    let budget = target.timeout.min(TIMEOUT_CAP);
     let bound = Scoped {
         inner: fetch,
-        timeout: target.timeout,
+        timeout: budget,
         batch: None,
     };
-    let mut found = sources::search(
-        &target.key,
-        &target.base,
-        WORD,
-        1,
-        now,
-        target.timeout,
-        &bound,
-    );
+    let mut found = sources::search(&target.key, &target.base, WORD, 1, now, budget, &bound);
     if matches!(&found, Ok(items) if items.is_empty()) {
         found = sources::search(
             &target.key,
@@ -48,7 +43,7 @@ fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i6
             FALLBACK_WORD,
             1,
             now,
-            target.timeout,
+            budget,
             &bound,
         );
     }
@@ -75,42 +70,47 @@ pub fn execute<F: Fetch + Sync>(
         return;
     }
     let workers = targets.len().min(WORKERS).max(1);
+    let queue = Mutex::new(targets.iter().collect::<VecDeque<&Target>>());
+    let deadline = Instant::now() + Duration::from_millis(BUDGET_MS);
     std::thread::scope(|scope| {
-        for lane in 0..workers {
-            scope.spawn(move || {
-                for target in targets.iter().skip(lane).step_by(workers) {
-                    if !alive(token) {
-                        return;
-                    }
-                    let row = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                        run(target, fetch, now)
-                    }));
-                    let (ok, ms, count, err) = match row {
-                        Ok(res) => res,
-                        Err(_) => (false, 0, 0, "内部异常".to_string()),
-                    };
-                    if !alive(token) {
-                        return;
-                    }
-                    let (outcome, code) = classify(ok, count, &err, ms);
-                    let text = outcome_text(outcome, code);
-                    let state = state_of(&[outcome.to_string()]);
-                    crate::log::info(
-                        crate::log::SOURCES,
-                        &format!("测速 {}：{} 条 {}ms（{}）", target.key, count, ms, outcome),
-                    );
-                    let payload = json!({
-                        "key": target.key,
-                        "state": state,
-                        "ms": ms,
-                        "err": text,
-                        "outcome": outcome,
-                    });
-                    if let Ok(mut guard) = seen.lock() {
-                        guard.insert(target.key.clone(), payload.clone());
-                    }
-                    sink(Event::Probe(payload));
+        for _ in 0..workers {
+            let queue = &queue;
+            scope.spawn(move || loop {
+                if !alive(token) || Instant::now() >= deadline {
+                    return;
                 }
+                let target = match queue.lock().unwrap_or_else(|e| e.into_inner()).pop_front() {
+                    Some(target) => target,
+                    None => return,
+                };
+                let row = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    run(target, fetch, now)
+                }));
+                let (ok, ms, count, err) = match row {
+                    Ok(res) => res,
+                    Err(_) => (false, 0, 0, "内部异常".to_string()),
+                };
+                if !alive(token) {
+                    return;
+                }
+                let (outcome, code) = classify(ok, count, &err, ms);
+                let text = outcome_text(outcome, code);
+                let state = state_of(&[outcome.to_string()]);
+                crate::log::info(
+                    crate::log::SOURCES,
+                    &format!("测速 {}：{} 条 {}ms（{}）", target.key, count, ms, outcome),
+                );
+                let payload = json!({
+                    "key": target.key,
+                    "state": state,
+                    "ms": ms,
+                    "err": text,
+                    "outcome": outcome,
+                });
+                if let Ok(mut guard) = seen.lock() {
+                    guard.insert(target.key.clone(), payload.clone());
+                }
+                sink(Event::Probe(payload));
             });
         }
     });

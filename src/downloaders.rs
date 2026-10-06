@@ -519,7 +519,3 @@ pub fn add_target(key: &str, magnets: &[String], timeout: i64) -> DeliveryResult
         }
     }
 }
-
-pub fn add(magnets: &[String], timeout: i64) -> DeliveryResult {
-    add_target("thunder", magnets, timeout)
-}

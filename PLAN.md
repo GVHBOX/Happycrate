@@ -102,6 +102,18 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
 - **v1.0.3**：导航 Tabs、明暗主题、右键批量复制、冗余元素清理。
 - **v1.0.3 之后**：TUN 探测修复（`ipconfig` 在中文 Windows 是 GBK，按 UTF-8 解码
   永远扫不出来）、出口状态四档、头部两簇、`net_throughput`（口径是解压后字节）。
+- **v1.0.4**：搜索请求放大治理。
+  - `runner()` 增加 `relax_futile`：上一轮 `reached == 0`（全是 timeout/net/blocked
+    或压根没发请求）时不再放宽重搜——断网场景原本会跑满 3 轮（345 个请求）。
+  - 新增 `hard_timeout_ms` 设置项（默认 45000）：到点 `cancel_batch` 并照常推 `Done`
+    （带 `hardStopped`），只是不写缓存。`soft_deadline_ms` 仍然只管 UI。
+  - `tpb::more_pages` 改用镜像轮询的 `deadline` 算每页超时，原先它拿的是源配置的
+    原始 timeout，不受预算约束（单源最长约 75 s，会撞前端 60 s 看门狗）。
+  - `js_of` 转义 U+2028 / U+2029：JSON 允许但 JS 字符串字面量不允许，未转义时整批
+    `eval` 抛 SyntaxError 且静默丢批。
+  - `probe` 改用动态任务队列（原静态 `step_by` 分片会让慢源串在同一条道上），
+    单源超时封顶 8 s，整体预算 30 s。
+  - `dedupe` 的哈希查找由线性扫描换成 HashMap，去掉 `expect("已登记的哈希必在输出中")`。
 
 ## 7. 教训精选（每条都真踩过）
 

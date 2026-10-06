@@ -651,6 +651,7 @@ impl Api {
             min_len,
             keep_dup: self.settings.get("keep_duplicates") == Value::Bool(true),
             soft_deadline_ms: self.settings.as_int("soft_deadline_ms", 3000),
+            hard_timeout_ms: self.settings.as_int("hard_timeout_ms", 45000).max(0),
             max_workers: self.settings.as_int("max_workers", 12).max(1) as usize,
             stamp: crate::search::source_stamp(&self.config.sources()),
             now: crate::util::local_now(),

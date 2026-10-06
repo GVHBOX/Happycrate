@@ -162,6 +162,10 @@ fn job_of(scenario: &Value, now: &LocalNow) -> Job {
         min_len: scenario["min_len"].as_i64().unwrap(),
         keep_dup: scenario["keep_dup"].as_bool().unwrap(),
         soft_deadline_ms: scenario["soft_deadline_ms"].as_i64().unwrap(),
+        hard_timeout_ms: scenario
+            .get("hard_timeout_ms")
+            .and_then(Value::as_i64)
+            .unwrap_or(0),
         max_workers: scenario["max_workers"].as_i64().unwrap() as usize,
         stamp: scenario["stamp"].as_str().unwrap().to_string(),
         now: now.clone(),

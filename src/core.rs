@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde_json::{Map, Value};
 
 use crate::config::py_str;
@@ -386,8 +388,14 @@ fn lower_hash(item: &Map<String, Value>) -> String {
         .to_lowercase()
 }
 
+struct Slot {
+    entry: Map<String, Value>,
+    at: usize,
+}
+
 pub fn dedupe(items: &[Value]) -> Vec<Value> {
-    let mut by_hash: Vec<(String, Map<String, Value>)> = Vec::new();
+    let mut slots: HashMap<String, usize> = HashMap::new();
+    let mut kept: Vec<Slot> = Vec::new();
     let mut out: Vec<Value> = Vec::new();
 
     for item in items {
@@ -401,20 +409,24 @@ pub fn dedupe(items: &[Value]) -> Vec<Value> {
             continue;
         }
 
-        let position = by_hash.iter().position(|(h, _)| *h == hash);
-        let Some(index) = position else {
+        let index = slots.get(&hash).copied();
+        let Some(index) = index else {
             let mut merged = entry.clone();
             merged.insert("sources".to_string(), Value::Array(source_list(entry)));
             merged.insert(
                 "altTitles".to_string(),
                 Value::Array(merge_titles(&[entry.get("title").unwrap_or(&Value::Null)])),
             );
-            by_hash.push((hash, merged.clone()));
+            slots.insert(hash, kept.len());
+            kept.push(Slot {
+                entry: merged.clone(),
+                at: out.len(),
+            });
             out.push(Value::Object(merged));
             continue;
         };
 
-        let mut cur = by_hash[index].1.clone();
+        let mut cur = kept[index].entry.clone();
         let mut sources: Vec<String> = match cur.get("sources") {
             Some(Value::Array(names)) => names.iter().map(title_text).collect(),
             _ => Vec::new(),
@@ -476,16 +488,9 @@ pub fn dedupe(items: &[Value]) -> Vec<Value> {
             }
         }
 
-        by_hash[index].1 = cur.clone();
-        let slot = out
-            .iter()
-            .position(|v| {
-                v.as_object()
-                    .map(|o| lower_hash(o) == hash)
-                    .unwrap_or(false)
-            })
-            .expect("已登记的哈希必在输出中");
-        out[slot] = Value::Object(cur);
+        let at = kept[index].at;
+        kept[index].entry = cur.clone();
+        out[at] = Value::Object(cur);
     }
 
     out

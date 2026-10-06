@@ -80,6 +80,15 @@
   var nohashSeq = 0;
   var hashIdx = {};
   var selSig = "";
+  var sortStamp = 0;
+  var histDirty = false;
+  var SORT_THROTTLE_MS = 500;
+
+  function flushHist(){
+    if (!histDirty) return;
+    histDirty = false;
+    try { localStorage.setItem("hc_source_hist", JSON.stringify(sourceHist)); } catch(e){}
+  }
   var esc = HC.esc;
   var SOURCE_BASE_TYPICAL = {
     apibay: 2000, nyaa: 4000, sukebei: 6000, dmhy: 7000, mikan: 10000,
@@ -468,6 +477,10 @@
       return;
     }
     if (document.hidden || typeof HC.api.netThroughput !== "function") return;
+    if (!st.busy){
+      if (st.speed !== 0){ st.speed = 0; paintNetCrew(); }
+      return;
+    }
     HC.api.netThroughput().then(function(d){
       st.speed = (d && d.down) || 0;
       paintNetCrew();
@@ -1147,6 +1160,7 @@
     st.errors = {};
     st.lines = [];
     st.strip = {};
+    sortStamp = 0;
     st.cursor = -1;
     st.parsed = null;
     st.done = 0;
@@ -1370,6 +1384,7 @@
 
   function abortSearch(msg){
     clearWatchdog();
+    flushHist();
     if (st.token) HC.api.cancelSearch(st.token);
     st.startSeq++;
     st.busy = false;
@@ -1393,6 +1408,7 @@
     }
     if (st.busy){
       clearWatchdog();
+      flushHist();
       HC.api.cancelSearch(st.token);
       st.startSeq++;
       st.busy = false;
@@ -1477,8 +1493,10 @@
   function searchDone(){
     clearWatchdog();
     cancelPaint();
+    flushHist();
     st.busy = false;
     st.searched = true;
+    st.rev++;
     goBtn.innerHTML = GO_BTN_INNER;
     goBtn.classList.remove("stop");
     stopProgress(true);
@@ -1632,7 +1650,7 @@
         var actualMs = performance.now() - (one && one.startedAt ? one.startedAt : st.t0);
         if (actualMs > 80){
           sourceHist[d.key] = sourceHist[d.key] ? Math.round(sourceHist[d.key] * 0.4 + actualMs * 0.6) : Math.round(actualMs);
-          try { localStorage.setItem("hc_source_hist", JSON.stringify(sourceHist)); } catch(e){}
+          histDirty = true;
         }
         if (progEl) progEl.classList.remove("wait");
         var segRed = d.state === "err" || (!d.state && d.err && d.outcome !== "empty");
@@ -1694,7 +1712,11 @@
             fresh++;
           }
         });
-        if (st.field || st.settled) st.rev++;
+        if (st.settled) st.rev++;
+        else if (st.field && performance.now() - sortStamp > SORT_THROTTLE_MS){
+          sortStamp = performance.now();
+          st.rev++;
+        }
         if (bumped) for (var bk in bumped) st.pendingBumped[bk] = true;
         st.pendingFresh += fresh;
         for (var ai = 0; ai < d.items.length; ai++) st.pendingArrived.push(d.items[ai]);
@@ -1713,6 +1735,7 @@
           renderTip();
           tipEl.classList.add("show");
         }
+        if (d.hardStopped) flash("已到搜索时限，只列出已收到的结果", "warn");
         searchDone();
       }
     };

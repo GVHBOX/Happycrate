@@ -185,6 +185,7 @@ fn more_pages<F: Fetch + Sync>(
     first: Vec<Item>,
     now_iso: &LocalNow,
     timeout: u64,
+    deadline: Instant,
 ) -> Vec<Item> {
     let mut seen: HashSet<String> = HashSet::new();
     let mut items: Vec<Item> = Vec::new();
@@ -198,7 +199,11 @@ fn more_pages<F: Fetch + Sync>(
 
     let first_page = page_no.max(1);
     let (pages, _) = gather_pages(first_page + 1..first_page + PAGES, 6, |&p| {
-        let text = fetch_page(root, query, p, fetch, timeout)?;
+        let left = deadline.saturating_duration_since(Instant::now()).as_secs();
+        if left < 1 {
+            return Ok(Vec::new());
+        }
+        let text = fetch_page(root, query, p, fetch, left.min(timeout))?;
         if text.contains(RESULT_MARK) {
             Ok(parse(&text, now_iso))
         } else {
@@ -247,7 +252,9 @@ pub fn search<F: Fetch + Sync>(
         }
         let items = parse(&text, now_iso);
         if !items.is_empty() {
-            return Ok(more_pages(root, query, page_no, fetch, items, now_iso, timeout));
+            return Ok(more_pages(
+                root, query, page_no, fetch, items, now_iso, timeout, deadline,
+            ));
         }
         let lower = text.to_lowercase();
         if lower.contains("no hits") || lower.contains("nothing found") {

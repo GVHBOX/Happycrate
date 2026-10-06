@@ -1018,7 +1018,7 @@ pub fn down_rate() -> f64 {
 }
 
 async fn read_body(mut response: reqwest::Response, limit: usize, strict: bool) -> BodyRead {
-    let mut out: Vec<u8> = Vec::new();
+    let mut out: Vec<u8> = Vec::with_capacity(limit.min(16 * 1024));
     let mut got = 0usize;
     loop {
         match response.chunk().await {

@@ -30,10 +30,11 @@
     max_workers:{min:1, max:32, step:1},
     timeout:{min:1, max:120, step:1, unit:"s"},
     retries:{min:0, max:5, step:1},
-    soft_deadline_ms:{min:0, max:60000, step:500, unit:"ms"}
+    soft_deadline_ms:{min:0, max:60000, step:500, unit:"ms"},
+    hard_timeout_ms:{min:0, max:180000, step:1000, unit:"ms"}
   };
   var NUM_FALLBACKS = {min_query_len:2, max_workers:12, timeout:15, retries:1,
-                       soft_deadline_ms:3000};
+                       soft_deadline_ms:3000, hard_timeout_ms:45000};
 
   var SOUND_VOLUME_DEFAULT = HC.SOUND_VOLUME_DEFAULT || 80;
 
@@ -43,6 +44,7 @@
     {key:"timeout", sel:"#s_timeout", label:"投递/清单超时"},
     {key:"retries", sel:"#s_retries", label:"重试次数"},
     {key:"soft_deadline_ms", sel:"#s_soft_deadline_ms", label:"软截止"},
+    {key:"hard_timeout_ms", sel:"#s_hard_timeout_ms", label:"搜索时限"},
     {key:"sound_volume", sel:"#sldVolume", label:"总音量"},
     {key:"ui_font_size", sel:"#s_font", label:"界面字号"}
   ];
@@ -287,7 +289,7 @@
       '<div class="about-hero">' +
         '<div class="about-app">' +
           '<span class="about-name">happycrate</span>' +
-          '<span class="about-tag" id="aboutVer">v1.0.3</span>' +
+          '<span class="about-tag" id="aboutVer">v1.0.4</span>' +
         '</div>' +
         '<div class="about-actions">' +
           '<button type="button" class="btn-octo" id="btnRepo" title="GitHub 仓库" aria-label="GitHub 仓库">' + GITHUB_SVG + '</button>' +

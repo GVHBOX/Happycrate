@@ -36,6 +36,7 @@ pub struct Job {
     pub min_len: i64,
     pub keep_dup: bool,
     pub soft_deadline_ms: i64,
+    pub hard_timeout_ms: i64,
     pub max_workers: usize,
     pub stamp: String,
     pub now: LocalNow,
@@ -64,8 +65,16 @@ pub fn js_of(event: &Event) -> String {
         Event::Probe(value) => ("__onProbe", value),
         Event::ProbeDone => return "window.__onProbeDone && window.__onProbeDone()".to_string(),
     };
-    let text = serde_json::to_string(payload).unwrap_or_else(|_| "null".to_string());
+    let text = js_literal(&serde_json::to_string(payload).unwrap_or_else(|_| "null".to_string()));
     format!("window.{hook} && window.{hook}({text})")
+}
+
+fn js_literal(text: &str) -> String {
+    if !text.contains('\u{2028}') && !text.contains('\u{2029}') {
+        return text.to_string();
+    }
+    text.replace('\u{2028}', "\\u2028")
+        .replace('\u{2029}', "\\u2029")
 }
 
 pub type Sink = dyn Fn(Event) + Send + Sync;
@@ -83,6 +92,7 @@ struct Acc {
     source_counts: BTreeMap<String, i64>,
     relaxed_used: Vec<String>,
     relax_round: i64,
+    timed_out: bool,
 }
 
 #[derive(Clone)]
@@ -278,27 +288,30 @@ fn on_source(
     }
     let count = items.len() as i64;
     let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
-    if state.relax_round > 0 && err.is_empty() && count == 0 {
+    let relax_empty = state.relax_round > 0 && err.is_empty() && count == 0;
+    if relax_empty {
         crate::log::info(
             crate::log::SOURCES,
             &format!("源 {key}：放宽轮 0 条不计健康度（放宽词搜不到不算源失败）"),
         );
-        return;
     }
     let (outcome, code) = classify(err.is_empty(), count, err, ms);
     let text_err = outcome_text(outcome, code);
-    let fuzzy = !items.is_empty()
+    let fuzzy = !relax_empty
+        && !items.is_empty()
         && !state.needs.is_empty()
         && sources::keyword_hit_rate(items, &state.needs) < sources::FUZZY_RATE;
     if fuzzy {
         state.fuzzy_keys.insert(key.to_string());
-    } else if !items.is_empty() && err.is_empty() {
+    } else if !relax_empty && !items.is_empty() && err.is_empty() {
         state.ok_keys.insert(key.to_string());
     }
     if err.is_empty() {
         state.errors.remove(key);
     }
-    state.source_counts.insert(key.to_string(), count);
+    if !relax_empty {
+        state.source_counts.insert(key.to_string(), count);
+    }
     let state_text = state_of(&[outcome.to_string()]);
     drop(state);
 
@@ -430,7 +443,7 @@ fn run_round<F: Fetch + Sync>(
     fetch: &F,
     sink: &(dyn Fn(Event) + Sync),
     acc: &Mutex<Acc>,
-) {
+) -> (i64, BTreeMap<String, String>) {
     if crate::api::py_len(query_text.trim()) < job.min_len as usize {
         let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
         if state.rows.is_empty() && state.ok_keys.is_empty() {
@@ -438,7 +451,7 @@ fn run_round<F: Fetch + Sync>(
                 .errors
                 .insert(String::new(), crate::core::min_len_message(job.min_len));
         }
-        return;
+        return (0, BTreeMap::new());
     }
 
     let indices: Vec<usize> = match subset {
@@ -477,12 +490,33 @@ fn run_round<F: Fetch + Sync>(
             state.errors.insert(String::new(), fatal);
         }
     }
-    for (key, msg) in errors {
+    for (key, msg) in &errors {
         if !msg.is_empty() && msg != CANCEL_TEXT {
-            let (outcome, code) = classify(false, 0, &msg, 0);
-            state.errors.insert(key, outcome_text(outcome, code));
+            let (outcome, code) = classify(false, 0, msg, 0);
+            state.errors.insert(key.clone(), outcome_text(outcome, code));
         }
     }
+    drop(state);
+    (reached, errors)
+}
+
+fn relax_futile(reached: i64, errors: &BTreeMap<String, String>) -> bool {
+    if reached != 0 {
+        return false;
+    }
+    if errors.is_empty() {
+        return true;
+    }
+    errors.values().all(|msg| {
+        if msg.is_empty() || msg == CANCEL_TEXT {
+            return false;
+        }
+        let (outcome, _) = classify(false, 0, msg, 0);
+        matches!(
+            outcome,
+            crate::outcome::TIMEOUT | crate::outcome::NET | crate::outcome::BLOCKED
+        )
+    })
 }
 
 fn runner<F: Fetch + Sync>(
@@ -492,10 +526,17 @@ fn runner<F: Fetch + Sync>(
     acc: &Mutex<Acc>,
     retry: Option<&[String]>,
 ) {
-    run_round(job, &job.text, retry, fetch, sink, acc);
+    let mut last = run_round(job, &job.text, retry, fetch, sink, acc);
     let mut rounds = 0usize;
     while rounds < MAX_RELAX_ROUNDS {
         if !sources::batch_alive(job.token) {
+            return;
+        }
+        if relax_futile(last.0, &last.1) {
+            crate::log::info(
+                crate::log::API,
+                "上一轮没有任何源拿到响应，放宽关键词无意义，停止重搜",
+            );
             return;
         }
         let (exhausted, has_rows, relaxed_used) = {
@@ -523,7 +564,7 @@ fn runner<F: Fetch + Sync>(
             state.relaxed_used.push(dropped);
             state.relax_round = rounds as i64;
         }
-        run_round(job, &next, None, fetch, sink, acc);
+        last = run_round(job, &next, None, fetch, sink, acc);
     }
 }
 
@@ -595,6 +636,22 @@ impl Drop for DoneFlag<'_> {
     }
 }
 
+fn wait_until(gate: &(Mutex<bool>, Condvar), until: Instant) -> bool {
+    let (lock, alarm) = gate;
+    let guard = lock.lock().unwrap_or_else(|e| e.into_inner());
+    if *guard {
+        return true;
+    }
+    let left = until.saturating_duration_since(Instant::now());
+    if left.is_zero() {
+        return false;
+    }
+    let (guard, _) = alarm
+        .wait_timeout(guard, left)
+        .unwrap_or_else(|e| e.into_inner());
+    *guard
+}
+
 pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sync)) {
     let acc = Mutex::new(Acc {
         needs: query::needles(&job.parsed),
@@ -631,17 +688,34 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
             }
         });
 
-        if job.soft_deadline_ms > 0 {
-            let (lock, alarm) = &gate;
-            let guard = lock.lock().unwrap_or_else(|e| e.into_inner());
-            let (guard, _) = alarm
-                .wait_timeout(guard, Duration::from_millis(job.soft_deadline_ms as u64))
-                .unwrap_or_else(|e| e.into_inner());
-            if !*guard && sources::batch_alive(job.token) && !acc.lock().unwrap_or_else(|e| e.into_inner()).rows.is_empty() {
-                drop(guard);
-                sink(Event::Settled(json!({"token": job.token})));
+        scope.spawn(|| {
+            let started = Instant::now();
+            if job.soft_deadline_ms > 0 {
+                let settled = wait_until(
+                    &gate,
+                    started + Duration::from_millis(job.soft_deadline_ms as u64),
+                );
+                if !settled
+                    && sources::batch_alive(job.token)
+                    && !acc.lock().unwrap_or_else(|e| e.into_inner()).rows.is_empty()
+                {
+                    sink(Event::Settled(json!({"token": job.token})));
+                }
             }
-        }
+            if job.hard_timeout_ms > 0 {
+                let left = Duration::from_millis(job.hard_timeout_ms as u64)
+                    .saturating_sub(started.elapsed());
+                let ended = wait_until(&gate, Instant::now() + left);
+                if !ended && sources::batch_alive(job.token) {
+                    crate::log::warning(
+                        crate::log::API,
+                        &format!("搜索超过 {} ms 时限，停止剩余请求", job.hard_timeout_ms),
+                    );
+                    acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
+                    sources::cancel_batch(job.token);
+                }
+            }
+        });
 
         let (lock, alarm) = &gate;
         let mut guard = lock.lock().unwrap_or_else(|e| e.into_inner());
@@ -650,26 +724,28 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         }
     });
 
-    if !sources::batch_alive(job.token) {
+    let state = acc.into_inner().unwrap_or_else(|e| e.into_inner());
+    if !sources::batch_alive(job.token) && !state.timed_out {
         return;
     }
 
-    let state = acc.into_inner().unwrap_or_else(|e| e.into_inner());
-    cache_put(
-        &ckey,
-        Cached {
-            ts: now_secs(),
-            rows: state.rows.clone(),
-            raw: state.raw,
-            dup: state.dup,
-            ok: state.ok_keys.iter().cloned().collect(),
-            fuzzy: state.fuzzy_keys.iter().cloned().collect(),
-            errors: state.errors.clone(),
-            source_counts: state.source_counts.clone(),
-        },
-    );
+    if !state.timed_out {
+        cache_put(
+            &ckey,
+            Cached {
+                ts: now_secs(),
+                rows: state.rows.clone(),
+                raw: state.raw,
+                dup: state.dup,
+                ok: state.ok_keys.iter().cloned().collect(),
+                fuzzy: state.fuzzy_keys.iter().cloned().collect(),
+                errors: state.errors.clone(),
+                source_counts: state.source_counts.clone(),
+            },
+        );
+    }
 
-    sink(Event::Done(json!({
+    let mut done = json!({
         "token": job.token,
         "total": state.rows.len(),
         "errors": state.errors,
@@ -677,7 +753,11 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         "dup": state.dup,
         "relaxed": state.relaxed_used.join("、"),
         "kept": job.keep_dup,
-    })));
+    });
+    if state.timed_out {
+        done["hardStopped"] = Value::Bool(true);
+    }
+    sink(Event::Done(done));
 }
 
 pub fn spawn(

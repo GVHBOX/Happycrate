@@ -74,6 +74,7 @@ fn spec_of(key: &str) -> Option<Spec> {
         "theme" => text(),
         "brand" => text(),
         "soft_deadline_ms" => int(0, 60000),
+        "hard_timeout_ms" => int(0, 180000),
         "progress_style" => text(),
         "progress_look" => text(),
         _ => None,
@@ -84,11 +85,12 @@ pub fn spec_keys() -> Vec<&'static str> {
     SPEC_KEYS.to_vec()
 }
 
-const SPEC_KEYS: [&str; 25] = [
+const SPEC_KEYS: [&str; 26] = [
     "min_query_len", "max_workers", "timeout", "default_downloader", "retries", "user_agent",
     "proxy", "ui_font_size", "selbar", "sound", "sound_start", "sound_done", "sound_select",
     "sound_copy", "sound_deliver", "sound_fail", "sound_volume", "theme", "brand", "auto_files",
-    "soft_deadline_ms", "keep_duplicates", "progress_style", "progress_line", "progress_look",
+    "soft_deadline_ms", "hard_timeout_ms", "keep_duplicates", "progress_style", "progress_line",
+    "progress_look",
 ];
 
 pub fn setting_label(key: &str) -> &'static str {
@@ -114,6 +116,7 @@ pub fn setting_label(key: &str) -> &'static str {
         "brand" => "主题色",
         "auto_files" => "文件命中时自动展开",
         "soft_deadline_ms" => "软截止",
+        "hard_timeout_ms" => "搜索时限",
         "keep_duplicates" => "保留重复项",
         "progress_style" => "进度条样式",
         "progress_line" => "进度条警戒线",
@@ -166,6 +169,7 @@ pub fn settings_defaults() -> Value {
     map.insert("brand".to_string(), Value::from("lilac"));
     map.insert("auto_files".to_string(), Value::Bool(true));
     map.insert("soft_deadline_ms".to_string(), Value::from(3000));
+    map.insert("hard_timeout_ms".to_string(), Value::from(45000));
     map.insert("keep_duplicates".to_string(), Value::Bool(false));
     map.insert("progress_style".to_string(), Value::from("segment"));
     map.insert("progress_line".to_string(), Value::Bool(true));

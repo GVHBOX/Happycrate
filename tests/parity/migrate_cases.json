@@ -28,6 +28,7 @@
   "brand": "lilac",
   "auto_files": true,
   "soft_deadline_ms": 3000,
+  "hard_timeout_ms": 45000,
   "keep_duplicates": true,
   "progress_style": "segment",
   "progress_line": true,

@@ -475,11 +475,12 @@
     var out = {};
     Object.keys(NUMS).forEach(function(k){
       var el = root.querySelector("#s_" + k);
+      var spec = NUMS[k];
       if (!el){
-        out[k] = NUM_FALLBACKS[k];
+        out[k] = clamp(numOr((HC.settings || {})[k], NUM_FALLBACKS[k]),
+                       spec.min, spec.max);
         return;
       }
-      var spec = NUMS[k];
       out[k] = clamp(el.value, spec.min, spec.max);
     });
     out.proxy = proxyVal;

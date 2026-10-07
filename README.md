@@ -14,10 +14,6 @@
 
 <p><a href="https://github.com/GVHBOX/Happycrate/releases/latest"><strong>[ 前往 Releases 下载最新版 happycrate.exe ]</strong></a></p>
 
-<br/>
-
-<img src="assets/screenshot_1.png" alt="Happycrate 主界面" width="100%" />
-
 </div>
 
 ---
@@ -34,13 +30,19 @@
 
 ## 界面与演示
 
+### 演示视频
+
 https://github.com/user-attachments/assets/30a4efc5-d164-4b2b-9788-3589b3f11f4a
 
-<div align="center">
+### 界面截图
 
-<img src="assets/screenshot_2.png" alt="Happycrate 详情与操作" width="100%" />
+<p align="center">
+  <img src="assets/screenshot_1.png" alt="Happycrate 主界面" width="100%" />
+</p>
 
-</div>
+<p align="center">
+  <img src="assets/screenshot_2.png" alt="Happycrate 详情与操作" width="100%" />
+</p>
 
 ---
 

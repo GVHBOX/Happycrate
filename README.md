@@ -34,11 +34,11 @@
 
 ## 界面与演示
 
+https://github.com/user-attachments/assets/30a4efc5-d164-4b2b-9788-3589b3f11f4a
+
 <div align="center">
 
 <img src="assets/screenshot_2.png" alt="Happycrate 详情与操作" width="100%" />
-
-<p><a href="assets/preview.mp4">▶ 查看功能演示视频（preview.mp4）</a></p>
 
 </div>
 

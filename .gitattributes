@@ -4,3 +4,4 @@ tests/fixtures/** binary
 tests/parity/** binary
 tests/legacy/** binary
 tools/** linguist-vendored
+web/** linguist-vendored

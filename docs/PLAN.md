@@ -147,4 +147,4 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
 - **推送钩子不换 Tauri Channel**（eval 照抄现有 JS，前端零改动）。
 - 相对时间解析（tpb 的 `today` / `Y-day`）把「现在」做成显式参数进金样，
   不放宽 diff——能严格就别放宽。
-- 工程纪律（零注释、白描、.scratch 收纳、网络与代理）的权威在 `AGENTS.md`，本文不重抄。
+- 工程纪律（零注释、白描、.scratch 收纳、网络与代理）的权威在 `.agents/AGENTS.md`，本文不重抄。

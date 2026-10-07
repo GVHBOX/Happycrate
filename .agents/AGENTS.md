@@ -1,7 +1,7 @@
 # happycrate 作业规程（Rust 版）
 
 全量自包含 Rust + Tauri 2，前端 `web/` 编译期内嵌。产品名、包名、可执行文件名一律叫 `happycrate`。
-依赖清单与理由、版本史在 `PLAN.md`，本文件只讲规矩。
+依赖清单与理由、版本史在 `docs/PLAN.md`，本文件只讲规矩。
 当前版本 1.0.4，`GVHBOX/Happycrate` 的 `main` 是唯一主线，工作分支就是 `main`，直接推。
 
 ## 4 条铁律
@@ -43,14 +43,14 @@ python tools/scan_comment.py --selfcheck
 
 报告、备份、脚本、截图、数据导出、临时中间物全进 `.scratch/`，不进版本库；
 交付用原生 Windows 路径 `D:\...`，不用 `/d/...`。
-根目录只允许：`src/`、`tests/`、`web/`、`assets/`、`tools/`、`build.rs`、`Cargo.toml`、
-`Cargo.lock`、`tauri.conf.json`、`README.md`、`LICENSE`、`AGENTS.md`、`PLAN.md`、
+根目录只允许：`src/`、`tests/`、`web/`、`assets/`、`tools/`、`docs/`、`.agents/`、
+`build.rs`、`Cargo.toml`、`Cargo.lock`、`tauri.conf.json`、`README.md`、`LICENSE`、
 `.gitignore`、`.gitattributes`、`data/`（debug 数据目录，gitignored）、`target/`、`gen/`。
 `gen/` 是 tauri-build 每次编译生成的 schema，勿手改。
 `assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
 用户自己设计的图标，只装容器，不重画不缩放；改图标路径时同步 `tauri.conf.json` 的 `bundle.icon`。
-`assets/` 另有 README 引用的 `screenshot_1.png`、`screenshot_2.png` 与 `preview.mp4`。
-不写跨会话的记忆/日志文件，权威在本文件与 `PLAN.md`。
+`assets/` 另有 README 引用的 `screenshot_1.png` 与 `screenshot_2.png`（演示视频托管于 GitHub CDN）。
+不写跨会话的记忆/日志文件，权威在本文件与 `docs/PLAN.md`。
 
 ### 4. 网络与代理
 
@@ -65,7 +65,7 @@ Rust 侧 `reqwest` 不读 Windows 系统代理，必须显式构造；
 ## 维护纪律
 
 - 不随意发明：任何行为改动先过固化金样（`tests/fixtures/`、`tests/parity/`）回归。
-- 加依赖要在 `PLAN.md` §2 写理由。
+- 加依赖要在 `docs/PLAN.md` §2 写理由。
   已明确不引：`regex`（不支持 lookaround）、日期库、HTML 实体库、`scraper`/`html5ever`、`anyhow`。
 
 ## 测试与检查

@@ -45,12 +45,11 @@ python tools/scan_comment.py --selfcheck
 交付用原生 Windows 路径 `D:\...`，不用 `/d/...`。
 根目录只允许：`src/`、`tests/`、`web/`、`assets/`、`tools/`、`examples/`、`capabilities/`、
 `build.rs`、`Cargo.toml`、`Cargo.lock`、`tauri.conf.json`、`README.md`、`LICENSE`、
-`AGENTS.md`、`PLAN.md`、`.gitignore`、`data/`（debug 数据目录，gitignored）、`target/`、`gen/`。
+`AGENTS.md`、`PLAN.md`、`.gitignore`、`.gitattributes`、`data/`（debug 数据目录，gitignored）、`target/`、`gen/`。
 `gen/` 是 tauri-build 每次编译生成的 schema，勿手改。
 `assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
 用户自己设计的图标，只装容器，不重画不缩放；改图标路径时同步 `tauri.conf.json` 的 `bundle.icon`。
 `assets/` 另有 README 引用的 `ui_screenshot.png` 与 `core_features_preview.mp4`。
-不往 `.workbuddy/` 写东西，也不重建它。
 不写跨会话的记忆/日志文件，权威在本文件与 `PLAN.md`。
 
 ### 4. 网络与代理
@@ -108,9 +107,7 @@ python tools/check_front_hygiene.py     # 铁律 2
 - debug 版数据目录是仓库根 `data\`：`paths::program_dir()` 在 debug 下返回
   `CARGO_MANIFEST_DIR`（`paths.rs` 写死），`cargo run`（不带 `--release`）用这一份，
   与 exe 直跑不是同一目录。
-- Rust 1.98.1 + MSVC。Bash 工具 PATH 被破坏，每条命令前：
-  `export PATH="/c/Users/GVH/.workbuddy/binaries/PortableGit/versions/1.2.0/usr/bin:/c/Users/GVH/.cargo/bin:$PATH"`
-  （后者是 cargo 用的）。
+- Rust 1.98.1 + MSVC，Windows 原生环境（PowerShell / CMD）。
 - **验证窗口内行为走 CDP**：`node tools/cdp_eval.mjs 9222 '<JS 表达式>'`，起应用前设两个环境变量：
 
   ```
@@ -136,7 +133,7 @@ python tools/check_front_hygiene.py     # 铁律 2
   这类缺陷只有真机对照能抓（漏了 `Accept-Language` 让 knaben 从 8 秒变 49 秒）。
   改客户端默认头后跑 `cargo run --release --example live_smoke` 比耗时。
   网络诊断可用 `cargo run --example net_probe`（打印代理来源、绕过表、TUN 适配器）。
-- **Bash 工具的 heredoc 会吃掉一层反斜杠**（带引号的 `<<'EOF'` 也一样）：
+- **命令行 heredoc 会吃掉一层反斜杠**（带引号的 `<<'EOF'` 也一样）：
   不在 heredoc 里写任何反斜杠，用编辑工具写文件，或用 `std::path::MAIN_SEPARATOR` 这类常量绕开。
 - `web/` 前端完全在此仓维护。
 

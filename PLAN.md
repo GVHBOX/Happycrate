@@ -86,8 +86,9 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
 ```
 
 - 发布门：`cargo check --all-targets` 零警告 + 干净克隆能编。
-- `cargo clean` 会把 `target\{release,debug}\data` 的种子配置一起清掉，重铺从
-  `.scratch\test-data` 母本复制（debug 编译用的是仓库根 `data\`，不受影响）。
+- `cargo clean` 会把 `target\{release,debug}\data` 的现行配置一起清掉（debug 编译用的仓库根
+  `data\` 不受影响）。配置丢了应用会按 `DEFAULT_SOURCES` 与内置默认值自动重建，
+  手工只需补两处：bitsearch 源的开关与排序、`progress_look` 进度条配色。
 - exe 图标靠 `tauri.conf.json` 的 `bundle.icon`（`assets/icon.ico`）嵌入；
   图标由 `tools/make_icon.py` 从 `web/assets/app-256.png` 派生——那是用户自己设计的图标，
   只装容器，不重画不缩放。`bundle.active` 保持 false：便携应用装进 Program Files

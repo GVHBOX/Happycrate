@@ -49,7 +49,7 @@ python tools/scan_comment.py --selfcheck
 `gen/` 是 tauri-build 每次编译生成的 schema，勿手改。
 `assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
 用户自己设计的图标，只装容器，不重画不缩放；改图标路径时同步 `tauri.conf.json` 的 `bundle.icon`。
-`assets/` 另有 README 引用的 `ui_screenshot.png` 与 `core_features_preview.mp4`。
+`assets/` 另有 README 引用的 `screenshot_1.png`、`screenshot_2.png` 与 `preview.mp4`。
 不写跨会话的记忆/日志文件，权威在本文件与 `PLAN.md`。
 
 ### 4. 网络与代理

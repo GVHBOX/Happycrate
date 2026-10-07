@@ -6,9 +6,11 @@
 
 <p align="center"><a href="https://github.com/GVHBOX/Happycrate/releases/latest">下载</a></p>
 
-<p align="center"><img src="assets/ui_screenshot.png" alt="Happycrate 主界面" width="880"></p>
+<p align="center"><img src="assets/screenshot_1.png" alt="Happycrate 主界面" width="880"></p>
 
-<p align="center"><a href="assets/core_features_preview.mp4">演示视频</a></p>
+<p align="center"><img src="assets/screenshot_2.png" alt="Happycrate 详情" width="880"></p>
+
+<p align="center"><a href="assets/preview.mp4">演示视频</a></p>
 
 ## 特点
 

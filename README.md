@@ -12,6 +12,8 @@
 [![Rust](https://img.shields.io/badge/Rust-2021%20Edition-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![UI](https://img.shields.io/badge/UI-Tauri%20v2-24C8DB?logo=tauri&logoColor=white)](https://tauri.app/)
 
+<p><a href="https://github.com/GVHBOX/Happycrate/releases/latest"><strong>[ 前往 Releases 下载最新版 happycrate.exe ]</strong></a></p>
+
 <br/>
 
 <img src="assets/screenshot_1.png" alt="Happycrate 主界面" width="100%" />
@@ -22,7 +24,7 @@
 
 ## 特点
 
-- **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch（源站故障，默认关闭）、TPB 镜像、小草磁力、Knaben、JavBus、JavDB（需账号，默认关闭）
+- **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB 镜像、小草磁力、Knaben、JavBus、JavDB（需账号，默认关闭）
 - **去重合并**：并发检索多站，按 `info_hash` 聚合去重为单一列表
 - **批量操作**：多选、全选、列排序、文件大小筛选，右键批量复制磁力或标题
 - **量大保全**：0 做种与老种全量保留，分块懒加载；支持一键唤起迅雷 / 115 / PikPak
@@ -52,6 +54,9 @@
 
 **Q：如何配合下载工具使用？**  
 右键结果条目可一键唤起迅雷、115 浏览器或 PikPak；也可直接批量复制磁力链接粘贴至任意下载器或离线网盘。
+
+**Q：部分站点访问超时怎么处理？**  
+可在设置中填入本地 HTTP/HTTPS 代理（如 `http://127.0.0.1:7890`），应用会按各站点配置走代理通道。
 
 ---
 

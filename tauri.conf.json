@@ -23,7 +23,15 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "capabilities": [
+        {
+          "identifier": "default",
+          "description": "主窗口的默认权限",
+          "windows": ["main"],
+          "permissions": ["core:default", "core:window:allow-start-dragging"]
+        }
+      ]
     }
   },
   "bundle": {

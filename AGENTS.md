@@ -43,9 +43,9 @@ python tools/scan_comment.py --selfcheck
 
 报告、备份、脚本、截图、数据导出、临时中间物全进 `.scratch/`，不进版本库；
 交付用原生 Windows 路径 `D:\...`，不用 `/d/...`。
-根目录只允许：`src/`、`tests/`、`web/`、`assets/`、`tools/`、`examples/`、`capabilities/`、
-`build.rs`、`Cargo.toml`、`Cargo.lock`、`tauri.conf.json`、`README.md`、`LICENSE`、
-`AGENTS.md`、`PLAN.md`、`.gitignore`、`.gitattributes`、`data/`（debug 数据目录，gitignored）、`target/`、`gen/`。
+根目录只允许：`src/`、`tests/`、`web/`、`assets/`、`tools/`、`build.rs`、`Cargo.toml`、
+`Cargo.lock`、`tauri.conf.json`、`README.md`、`LICENSE`、`AGENTS.md`、`PLAN.md`、
+`.gitignore`、`.gitattributes`、`data/`（debug 数据目录，gitignored）、`target/`、`gen/`。
 `gen/` 是 tauri-build 每次编译生成的 schema，勿手改。
 `assets/icon.ico` 由 `python tools/make_icon.py` 从 `web/assets/app-256.png` 派生——
 用户自己设计的图标，只装容器，不重画不缩放；改图标路径时同步 `tauri.conf.json` 的 `bundle.icon`。

@@ -28,3 +28,11 @@ lto = "thin"
 codegen-units = 1
 strip = true
 panic = "unwind"
+
+[[example]]
+name = "live_smoke"
+path = "tools/live_smoke.rs"
+
+[[example]]
+name = "net_probe"
+path = "tools/net_probe.rs"

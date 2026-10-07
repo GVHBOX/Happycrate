@@ -11,11 +11,11 @@ Rust + Tauri 2 重写版。**迁移已于 2026-09 完成**（v1.0.3 已发布）
 - **GitHub `GVHBOX/Happycrate` 的 `main` 就是本仓**（2026-09-29 由本仓强制覆盖接管，
   工作分支 `main` 直接推）。老 Python 版已彻底清理下线，全仓完全自包含。
 - tags：远端 `v1.0.0`（Python 首发快照）、`v1.0.2`、`v1.0.3`、`rust-v1.0.1/2/3`。
-- 布局：单 crate 根布局——`tauri.conf.json` / `build.rs` / `capabilities/` 都在根，
+- 布局：单 crate 根布局——`tauri.conf.json` / `build.rs` 都在根，权限配置内联于 `tauri.conf.json`，
   不拆 workspace。前端 `web/` **编译期内嵌**进 exe（`frontendDist: "web"`），
   改 JS / CSS 必须重新 `cargo build`，不存在改文件即生效。
 - 窗口：`decorations: false` 自绘标题栏。拖动靠 `web/index.html` 的
-  `data-tauri-drag-region` 热区，由 `capabilities/default.json` 的
+  `data-tauri-drag-region` 热区，由 `tauri.conf.json` 的
   `core:window:allow-start-dragging` 授权——删了它标题栏拖不动。
 - 数据目录三分支（`src/paths.rs`）：环境变量 `HAPPYCRATE_DATA_DIR` → exe 旁 `data/`
   （便携模式）→ `%APPDATA%\Happycrate\data` 回退。**debug 编译的程序目录是仓库根**，
@@ -133,7 +133,7 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
    `added` 计的是「进程启动成功」，不是「迅雷收下了」——COM 也没这能力，不是 bug。
 9. 「注册表里有」不等于「能用」——ProgID 键存在但 CLSID 未注册，`Dispatch` 才是判据。
 10. fixture 回放不看请求头；「测过了」不等于请求头被测过。
-11. grep 核验调用点必须扫 `src/` + `tests/` + `examples/` 三处、禁用 head 截断——
+11. grep 核验调用点必须扫 `src/` + `tests/` + `tools/` 三处、禁用 head 截断——
     死代码清单曾因此错 4 处（2026-10-03 清理时编译器当场拦下）。
 
 ## 8. 已拍板决策（不再动的东西）

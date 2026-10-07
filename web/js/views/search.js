@@ -453,6 +453,7 @@
         }).join("");
       }
       paintSrcs();
+      buildProg();
       if (st.searched || st.busy){
         renderRows();
         updateSelUI(true);
@@ -460,7 +461,6 @@
         paintBadge(true);
         paintCursor();
         if (st.busy){
-          buildProg();
           [].slice.call(progEl.querySelectorAll(".pseg")).forEach(function(seg){
             var ss = st.strip[seg.dataset.key];
             if (!ss) return;

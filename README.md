@@ -12,8 +12,6 @@
 [![Rust](https://img.shields.io/badge/Rust-2021%20Edition-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![UI](https://img.shields.io/badge/UI-Tauri%20v2-24C8DB?logo=tauri&logoColor=white)](https://tauri.app/)
 
-<p><a href="https://github.com/GVHBOX/Happycrate/releases/latest"><strong>[ 前往 Releases 下载最新版 happycrate.exe ]</strong></a></p>
-
 </div>
 
 ---

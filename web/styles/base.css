@@ -579,7 +579,7 @@ input, textarea{
   transition:opacity .35s cubic-bezier(.16,1,.3,1)}
 .progress.receding{opacity:0}
 .progress.style-flow{background:var(--prog-gap)}
-.progrow{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) var(--sp-6) 0}
+.progrow{display:flex;align-items:center;gap:var(--sp-3);padding:2px var(--sp-6) 0}
 .progrow .progress{flex:1}
 .progclock{flex:none;font:600 var(--fs-2xs)/1 var(--font-num);color:var(--t4);
   font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
@@ -601,6 +601,7 @@ input, textarea{
 .progress .pseg.running .sub-fill{opacity:1}
 .progress .pseg.on .sub-fill{width:100% !important;background:var(--prog-on);opacity:1;
   transition:width .15s cubic-bezier(.16,1,.3,1) !important}
+.progress .pseg.on .sub-fill::after{display:none}
 .progress .pseg.warned .sub-fill{background:var(--prog-on);opacity:1}
 .progress .pseg.err .sub-fill{width:100% !important;background:var(--prog-err);opacity:1}
 .progress .pseg.err{background:var(--prog-err)}
@@ -775,7 +776,7 @@ input, textarea{
 .crew > .k .dedup b{color:var(--brand); font-weight:600; margin-left:1px}
 .crew > .k.pop{animation:countPop .28s cubic-bezier(.34,1.56,.64,1)}
 @keyframes countPop{0%{transform:scale(1)}50%{transform:scale(1.14); color:var(--brand-active)}100%{transform:scale(1)}}
-.crew > .k.aux{color:var(--t4); min-width:calc(58px*var(--frs))}
+.crew > .k.aux{color:var(--t4); min-width:calc(80px*var(--frs))}
 .crew.live > .k.aux{color:var(--t1)}
 .crew.warn{background:var(--warn-soft); color:var(--warn-strong)}
 .crew.warn > .k i{color:inherit}
@@ -784,9 +785,9 @@ input, textarea{
 .crew.ok .ndot{background:var(--ok)}
 .crew.err .ndot{background:var(--err)}
 .crew.busy .ndot{background:var(--brand); animation:netblink .6s linear infinite}
-.crew .chev{width:var(--icon-sm); height:var(--icon-sm); opacity:0; margin-left:-2px;
+.crew .chev{width:var(--icon-sm); height:var(--icon-sm); opacity:.5; margin-left:-2px;
   flex:none; transition:opacity .16s var(--e)}
-.crew:hover .chev{opacity:.5}
+.crew:hover .chev{opacity:.85}
 .rail{position:absolute; left:0; right:0; bottom:0; height:2.5px;
   border-radius:0 0 var(--r-chip) var(--r-chip); overflow:hidden; opacity:0; pointer-events:none; z-index:5;
   transition:opacity .3s var(--e)}
@@ -1016,7 +1017,7 @@ body.dark .rail i{
 
 .srcstrip{
   flex:none; display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-2);
-  padding:var(--sp-2) var(--sp-6); border-bottom:1px solid var(--divider);
+  padding:4px var(--sp-6) var(--sp-2); border-bottom:1px solid var(--divider);
   background:var(--head);
 }
 .srcstrip:not([hidden]) + .div{display:none}
@@ -1118,6 +1119,7 @@ body.dark .stile.ok.has-items .sdot{background:var(--ok)}
 .stile.warn b{color:var(--t1); font-weight:600; font-family:var(--font-num)}
 .stile.empty{color:var(--empty)}
 .stile.empty .sdot{background:var(--empty)}
+.stile .fuzzy{color:var(--t5); font-weight:400}
 .stile.cancel{color:var(--t5)}
 .stile .wipe{
   position:absolute; inset:0; transform-origin:left center;
@@ -1255,12 +1257,6 @@ body.dark .selbar .sclose:hover{color:#fff}
 .snav-t{display:flex; align-items:center; justify-content:space-between;
   font:700 calc(11px*var(--fr))/1 var(--font); color:var(--t3); letter-spacing:.08em;
   padding:0 calc(6px*var(--frs)) calc(10px*var(--frs))}
-.snav-back{display:flex; align-items:center; gap:calc(4px*var(--frs)); border:0;
-  background:transparent; color:var(--t3); padding:calc(3px*var(--frs));
-  border-radius:var(--r-ctrl); cursor:pointer; font:400 var(--fc-xs)/1 var(--font);
-  letter-spacing:0; transition:color var(--d-hover) var(--e), background var(--d-hover) var(--e)}
-.snav-back:hover{color:var(--t1); background:var(--hover)}
-.snav-back svg{width:calc(11px*var(--frs)); height:calc(11px*var(--frs))}
 .snav-i{display:flex; align-items:center; gap:calc(10px*var(--frs)); width:100%; height:calc(36px*var(--frs)); padding:0 calc(10px*var(--frs)); border:0; border-radius:var(--r-ctrl); background:transparent; color:var(--t2); font:400 var(--fs-md)/1 var(--font); text-align:left; cursor:pointer; transition:background var(--d-hover) var(--e), color var(--d-hover) var(--e)}
 .snav-i svg{width:calc(15px*var(--frs)); height:calc(15px*var(--frs)); color:var(--t4); flex:none; transition:color var(--d-hover) var(--e)}
 .snav-i:hover{background:var(--hover)}

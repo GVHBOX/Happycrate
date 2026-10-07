@@ -361,9 +361,9 @@
 
   function rateText(bps){
     var k = bps / 1024;
-    if (k < 1) return "↓0";
-    if (k < 1024) return "↓" + Math.round(k) + "K";
-    return "↓" + (k / 1024).toFixed(2) + "M";
+    if (k < 1) return "↓ 0 KB/s";
+    if (k < 1024) return "↓ " + Math.round(k) + " KB/s";
+    return "↓ " + (k / 1024).toFixed(2) + " MB/s";
   }
 
   function paintSrcWarn(){
@@ -460,10 +460,27 @@
         paintBadge(true);
         paintCursor();
         if (st.busy){
+          buildProg();
+          [].slice.call(progEl.querySelectorAll(".pseg")).forEach(function(seg){
+            var ss = st.strip[seg.dataset.key];
+            if (!ss) return;
+            if (ss.state === "err"){
+              seg.className = "pseg err";
+            } else if (ss.state && ss.state !== "pending" && ss.state !== "cancel"){
+              seg.className = "pseg on";
+            } else if (ss.state === "pending" && ss.startedAt){
+              seg.classList.add("running");
+            }
+          });
           goBtn.textContent = "停止";
           goBtn.classList.add("stop");
           progEl.classList.add("on");
           paintSrcs();
+        } else if (st.tEnd){
+          var clk = progEl.parentNode.querySelector(".progclock");
+          if (clk){
+            clk.textContent = ((st.tEnd - st.t0) / 1000).toFixed(1) + "s";
+          }
         }
       }
     }).catch(function(err){ console.warn("listSources failed", err); });
@@ -907,7 +924,7 @@
 
   function stripLabel(ss){
     if (ss.state === "ok") return "<b>" + esc(ss.count) + "</b> 条" +
-      (ss.fuzzy ? " · 未使用关键词" : "") +
+      (ss.fuzzy ? ' · <span class="fuzzy">未使用关键词</span>' : "") +
       (ss.cached ? " · 缓存" : "");
     if (ss.state === "empty") return "无结果";
     if (ss.state === "err") return esc(ss.err || "失败");
@@ -1295,9 +1312,8 @@
       var dl = progEl.querySelector(".deadline");
       if (dl) dl.classList.remove("show", "passed");
       progEl.classList.add("receding");
-      var p = progEl;
       setTimeout(function(){
-        if (p !== progEl || gen !== st.progGen) return;
+        if (!progEl || gen !== st.progGen) return;
         progEl.classList.remove("receding", "slow");
         progEl.querySelectorAll(".pseg").forEach(function(seg){
           seg.className = "pseg";
@@ -1379,6 +1395,7 @@
     if (!progEl) return;
     progEl.classList.remove("on");
     progEl.classList.remove("wait");
+    if (celebrate === true) st.tEnd = performance.now();
     recedeProg(celebrate === true);
   }
 
@@ -1886,7 +1903,7 @@
               '<button class="crew net busy" id="crewNet" type="button">' +
                 '<span class="k exit" id="ntExit"><span class="ndot"></span>' +
                   '<span class="tx">检测中</span>' + CHEV + '</span>' +
-                '<span class="k aux" id="ntSpeed">↓0</span>' +
+                '<span class="k aux" id="ntSpeed">↓ 0 KB/s</span>' +
               '</button>' +
             '</div>' +
           '</div>' +

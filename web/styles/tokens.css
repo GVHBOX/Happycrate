@@ -39,16 +39,16 @@
 
   --ok:#16A34A;
   --warn:#CA8A04;
-  --prog-warn:#817BF2;
-  --prog-warn-stripe:#6C65E8;
-  --prog-line:#817BF2;
+  --prog-warn:var(--brand);
+  --prog-warn-stripe:var(--brand-stripe);
+  --prog-line:var(--brand);
   --prog-err:var(--err);
-  --prog-on:#817BF2;
-  --prog-on-stripe:#6C65E8;
+  --prog-on:var(--brand);
+  --prog-on-stripe:var(--brand-stripe);
   --prog-light:rgba(129,123,242,.08);
   --prog-slot:var(--track-off);
   --prog-gap:var(--line);
-  --prog-h:10px;
+  --prog-h:12px;
   --prog-radius:2.5px;
   --prog-gapx:4px;
   --prog-skew:-16deg;
@@ -189,9 +189,9 @@
 }
 
 body{
-  --prog-on:#817BF2;
-  --prog-on-stripe:#6C65E8;
-  --prog-light:rgba(129,123,242,.08);
+  --prog-on:var(--brand);
+  --prog-on-stripe:var(--brand-stripe);
+  --prog-light:var(--brand-light);
 }
 
 body.dark{

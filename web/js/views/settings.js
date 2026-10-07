@@ -559,10 +559,7 @@
     root.className = "app settings";
     root.innerHTML =
       '<aside class="snav">' +
-        '<div class="snav-t"><span>设置</span>' +
-          '<button type="button" class="snav-back" id="btnSettingsBack" title="返回搜索">' +
-            '<svg viewBox="0 0 16 16" fill="none"><path d="M10.5 3.5L6 8l4.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-            '<span>返回</span></button></div>' +
+        '<div class="snav-t"><span>设置</span></div>' +
         NAV.map(function(n){
           return '<button type="button" class="snav-i' +
             (n.key === activePane ? " on" : "") + '" data-pane="' + n.key + '">' +
@@ -595,7 +592,6 @@
       this.classList.add("spinning");
       netCheck(true);
     };
-    root.querySelector("#btnSettingsBack").onclick = tryClose;
     root.querySelector("#btnSettingsClose").onclick = tryClose;
 
     function fill(settings, list){

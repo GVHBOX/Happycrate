@@ -42,6 +42,7 @@ pub struct Job {
     pub now: LocalNow,
     pub token: i64,
     pub hints: Hints,
+    pub seen: Option<crate::probe::Seen>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -313,6 +314,22 @@ fn on_source(
         state.source_counts.insert(key.to_string(), count);
     }
     let state_text = state_of(&[outcome.to_string()]);
+    if !relax_empty {
+        if let Some(seen) = &job.seen {
+            if let Ok(mut guard) = seen.lock() {
+                guard.insert(
+                    key.to_string(),
+                    json!({
+                        "key": key,
+                        "state": state_text,
+                        "ms": ms,
+                        "err": text_err,
+                        "outcome": outcome,
+                    }),
+                );
+            }
+        }
+    }
     drop(state);
 
     sink(Event::Source(json!({

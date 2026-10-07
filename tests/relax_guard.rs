@@ -48,6 +48,7 @@ fn job(text: &str, token: i64) -> Job {
             has_proxy: false,
             tun: String::new(),
         },
+        seen: None,
     }
 }
 

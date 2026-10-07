@@ -657,6 +657,7 @@ impl Api {
             now: crate::util::local_now(),
             token,
             hints,
+            seen: Some(self.probe_seen.clone()),
         };
         let total = job.targets.len();
         crate::search::spawn(job, http, self.push.clone());

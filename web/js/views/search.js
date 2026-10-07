@@ -17,7 +17,7 @@
     check: '<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none">' +
       '<path d="M2.8 7.4L5.6 10.2L11.2 4.2" stroke="currentColor" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    minus: '<svg width="10" height="10" viewBox="-1 -1 16 16" fill="none">' +
+    minus: '<svg width="10" height="10" viewBox="0 0 16 16" fill="none">' +
       '<path d="M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
     clear: '<svg width="10" height="10" viewBox="0 0 16 16" fill="none">' +
       '<path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
@@ -476,10 +476,21 @@
           goBtn.classList.add("stop");
           progEl.classList.add("on");
           paintSrcs();
-        } else if (st.tEnd){
-          var clk = progEl.parentNode.querySelector(".progclock");
-          if (clk){
-            clk.textContent = ((st.tEnd - st.t0) / 1000).toFixed(1) + "s";
+        } else {
+          [].slice.call(progEl.querySelectorAll(".pseg")).forEach(function(seg){
+            var ss = st.strip[seg.dataset.key];
+            if (!ss) return;
+            if (ss.state === "err"){
+              seg.className = "pseg err";
+            } else if (ss.state && ss.state !== "pending" && ss.state !== "cancel"){
+              seg.className = "pseg on";
+            }
+          });
+          if (st.tEnd){
+            var clk = progEl.parentNode.querySelector(".progclock");
+            if (clk){
+              clk.textContent = ((st.tEnd - st.t0) / 1000).toFixed(1) + "s";
+            }
           }
         }
       }

@@ -175,6 +175,7 @@ fn job_of(scenario: &Value, now: &LocalNow) -> Job {
             has_proxy: hints["has_proxy"].as_bool().unwrap(),
             tun: hints["tun"].as_str().unwrap().to_string(),
         },
+        seen: None,
     }
 }
 

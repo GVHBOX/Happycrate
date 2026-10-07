@@ -201,7 +201,7 @@ input, textarea{
 }
 .thead span{font:500 var(--fs-xs)/1 var(--font); color:var(--t3); text-align:center}
 .thead span:nth-child(3){text-align:left}
-.thead .r{text-align:right}
+.thead .r{text-align:center}
 
 .rows{display:flex; flex-direction:column}
 
@@ -218,6 +218,7 @@ input, textarea{
   transition:background var(--d-hover) var(--e);
 }
 .row:hover{background:var(--hover)}
+.row > span:nth-child(2){display:flex; justify-content:center; align-items:center}
 .row > span{transition:transform var(--d-push) var(--spring)}
 .row:hover > span{transform:translateX(calc(10px*var(--frs)))}
 .row.dragging > span{transform:none; transition:none}
@@ -309,8 +310,8 @@ input, textarea{
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-.health{display:flex; align-items:center; gap:var(--sp-2); justify-content:flex-end}
-.health .ms{font:500 var(--fs-sm)/1 var(--font-num); text-align:right}
+.health{display:flex; align-items:center; gap:var(--sp-2); justify-content:center}
+.health .ms{width:58px; font:500 var(--fs-sm)/1 var(--font-num); font-variant-numeric:tabular-nums; text-align:right}
 .health .ms.ok{color:var(--ok)}
 .health .ms.warn{color:var(--warn)}
 .health .ms.err{color:var(--err)}
@@ -592,18 +593,19 @@ input, textarea{
   background:var(--prog-gap);
   position:relative;overflow:hidden;transition:background .2s,opacity .3s}
 .progress .pseg .sub-fill{position:absolute;top:0;bottom:0;left:0;width:0%;
-  background:var(--prog-on);overflow:hidden;opacity:0;pointer-events:none;
+  background:transparent;overflow:hidden;opacity:0;pointer-events:none;
   transition:width .08s linear, opacity .12s ease}
 .progress .pseg .sub-fill::after{content:"";position:absolute;inset:-14px -20px;
   background:repeating-linear-gradient(var(--prog-ang),
-    var(--prog-on) 0 11px, var(--prog-on-stripe) 11px 16px);
+    var(--prog-run-a) 0 11px, var(--prog-run-b) 11px 16px);
   animation:segflow calc(var(--prog-flow) * 1.15) linear infinite}
 .progress .pseg.running .sub-fill{opacity:1}
-.progress .pseg.on .sub-fill{width:100% !important;background:var(--prog-on);opacity:1;
+.progress .pseg.on .sub-fill{width:100% !important;background:var(--prog-done-fill);opacity:1;
   transition:width .15s cubic-bezier(.16,1,.3,1) !important}
 .progress .pseg.on .sub-fill::after{display:none}
-.progress .pseg.warned .sub-fill{background:var(--prog-on);opacity:1}
+.progress .pseg.warned .sub-fill{opacity:1}
 .progress .pseg.err .sub-fill{width:100% !important;background:var(--prog-err);opacity:1}
+.progress .pseg.err .sub-fill::after{display:none}
 .progress .pseg.err{background:var(--prog-err)}
 .progress.style-flow .track{display:block}
 .progress.style-flow .fill{height:100%;width:calc(var(--p)*100%);position:relative;
@@ -611,11 +613,11 @@ input, textarea{
   overflow:hidden;transition:width .25s var(--e-out)}
 .progress.style-flow .fill .tex{position:absolute;inset:-14px -20px;
   background:repeating-linear-gradient(var(--prog-ang),
-    var(--prog-on) 0 11px, var(--prog-on-stripe) 11px 16px);
+    var(--prog-run-a) 0 11px, var(--prog-run-b) 11px 16px);
   animation:segflow calc(var(--prog-flow) * 1.15) linear infinite}
 .progress.style-flow.slow .fill .tex{
   background:repeating-linear-gradient(var(--prog-ang),
-    var(--prog-on) 0 11px, var(--prog-on-stripe) 11px 16px)}
+    var(--prog-run-a) 0 11px, var(--prog-run-b) 11px 16px)}
 .progress.on.wait .fill{width:40%;animation:indet 1.1s var(--e) infinite}
 @keyframes indet{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 .progress.wait .pseg{animation:segscan 1.9s linear infinite}
@@ -624,6 +626,7 @@ input, textarea{
 .progress .deadline{position:absolute;top:calc(-1 * var(--prog-dlout));bottom:calc(-1 * var(--prog-dlout));
   width:var(--prog-dlw);border-radius:1px;
   background:var(--prog-line);color:var(--prog-line);left:0;opacity:0;pointer-events:none;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.15);
   transition:opacity .3s}
 .progress .deadline.show{opacity:1}
 .progress .deadline.passed{animation:dlpulse var(--prog-pulse) ease-in-out infinite alternate}

@@ -1227,12 +1227,15 @@
 
   function dispatch(type, d){
     if (!st.busy) return false;
-    resetWatchdog();
-    if (st.token === null){
-      (st.pending || (st.pending = [])).push({type: type, d: d});
-      return false;
+    if (st.token !== null){
+      if (!d || d.token !== st.token) return false;
+      resetWatchdog();
+      return true;
     }
-    return d.token === st.token;
+    if (d && (st.pending || (st.pending = [])).length < 500){
+      st.pending.push({type: type, d: d});
+    }
+    return false;
   }
 
   var hooks = null;

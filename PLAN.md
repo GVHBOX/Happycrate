@@ -32,7 +32,7 @@ Rust + Tauri 2 重写版。**迁移已于 2026-09 完成**（v1.0.3 已发布）
 | `tauri` | 宿主：无边框窗口 + WebView2 + IPC |
 | `serde` / `serde_json` | 三份 JSON 的读写与 IPC 载荷 |
 | `reqwest`（rustls-tls-native-roots · gzip · brotli · http2） | HTTP。native-roots 读系统根证书（这些站点证书链杂，webpki 会误报） |
-| `tokio`（rt-multi-thread） | reqwest 的运行时；本项目只用 `block_on`，`time` feature 已摘（全仓无 `tokio::time`） |
+| `tokio`（rt-multi-thread · sync · time） | reqwest 的运行时；sync/time 支持请求与退避的即时取消与单调硬期限，不引新依赖 |
 | `encoding_rs` | gb18030 / big5 解码（Python `_decode` 顺序 utf-8 → gb18030 → big5 → latin-1，中文站点走第二档，手写不来） |
 | `unicode-normalization` | query 归一化要 NFKC（6,358 条真实标题里 367 条含全角/上标；中文输入法用户全角很常见） |
 | `time`（local-offset） | `util::local_now` 日志时间戳（标准库没有本地时区） |

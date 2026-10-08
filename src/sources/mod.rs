@@ -13,7 +13,8 @@ pub mod tpb;
 
 use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::sync::atomic::{AtomicI64, Ordering};
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
+use std::time::Instant;
 
 use crate::model::{Item, SourceError, SourceResult};
 
@@ -25,23 +26,33 @@ pub const OVERSEAS_KEYS: [&str; 9] = [
 ];
 
 static CANCEL_EPOCH: AtomicI64 = AtomicI64::new(0);
+static CANCEL_NOTIFY: LazyLock<tokio::sync::Notify> = LazyLock::new(tokio::sync::Notify::new);
 
 pub fn start_batch() -> i64 {
-    CANCEL_EPOCH.fetch_add(1, Ordering::SeqCst) + 1
+    let next = CANCEL_EPOCH.fetch_add(1, Ordering::SeqCst) + 1;
+    CANCEL_NOTIFY.notify_waiters();
+    next
 }
 
 pub fn cancel_batch(token: i64) {
-    let _ = CANCEL_EPOCH.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |current| {
+    let changed = CANCEL_EPOCH.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |current| {
         if current <= token {
             Some(token + 1)
         } else {
             None
         }
     });
+    if changed.is_ok() {
+        CANCEL_NOTIFY.notify_waiters();
+    }
 }
 
 pub fn batch_alive(token: i64) -> bool {
     CANCEL_EPOCH.load(Ordering::SeqCst) == token
+}
+
+pub fn cancel_notified() -> tokio::sync::futures::Notified<'static> {
+    CANCEL_NOTIFY.notified()
 }
 
 pub fn keyword_hit_rate(items: &[Item], needles: &[String]) -> f64 {
@@ -90,6 +101,7 @@ pub struct Req<'a> {
     pub retries: Option<u32>,
     pub timeout: Option<u64>,
     pub batch: Option<i64>,
+    pub deadline: Option<Instant>,
 }
 
 impl<'a> Req<'a> {
@@ -102,6 +114,7 @@ impl<'a> Req<'a> {
             retries: None,
             timeout: None,
             batch: None,
+            deadline: None,
         }
     }
 
@@ -131,12 +144,18 @@ impl<'a> Req<'a> {
         self.timeout = Some(seconds);
         self
     }
+
+    pub fn deadline(mut self, deadline: Instant) -> Self {
+        self.deadline = Some(deadline);
+        self
+    }
 }
 
 pub struct Scoped<'a, F: Fetch> {
     pub inner: &'a F,
     pub timeout: u64,
     pub batch: Option<i64>,
+    pub deadline: Option<Instant>,
 }
 
 impl<F: Fetch> Fetch for Scoped<'_, F> {
@@ -146,6 +165,9 @@ impl<F: Fetch> Fetch for Scoped<'_, F> {
         }
         if req.batch.is_none() {
             req.batch = self.batch;
+        }
+        if req.deadline.is_none() {
+            req.deadline = self.deadline;
         }
         self.inner.fetch(req)
     }
@@ -173,7 +195,11 @@ where
                     collected.insert(key, val);
                 }
                 Err(err) => {
+                    let is_cancelled = matches!(&err, SourceError::Cancelled);
                     failed.insert(key, err);
+                    if is_cancelled {
+                        break;
+                    }
                 }
             }
         }
@@ -195,7 +221,8 @@ where
                     None => break,
                 };
                 let res = work_ref(&key);
-                if tx.send((key, res)).is_err() {
+                let is_cancelled = matches!(&res, Err(SourceError::Cancelled));
+                if tx.send((key, res)).is_err() || is_cancelled {
                     break;
                 }
             });

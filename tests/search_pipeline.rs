@@ -176,6 +176,7 @@ fn job_of(scenario: &Value, now: &LocalNow) -> Job {
             tun: hints["tun"].as_str().unwrap().to_string(),
         },
         seen: None,
+        deadline: None,
     }
 }
 

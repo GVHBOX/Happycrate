@@ -1,6 +1,9 @@
 use std::collections::BTreeMap;
+use std::future::Future;
 use std::os::windows::process::CommandExt;
+use std::pin::Pin;
 use std::process::Command;
+use std::task::{Context, Poll};
 use std::time::{Duration, Instant};
 
 use crate::model::{SourceError, SourceResult};
@@ -585,6 +588,98 @@ enum Attempt {
     Other(String),
 }
 
+enum Either<A, B> {
+    Left(A),
+    Right(B),
+}
+
+struct Race<A, B> {
+    a: A,
+    b: B,
+}
+
+fn race<A, B>(a: A, b: B) -> Race<A, B> {
+    Race { a, b }
+}
+
+impl<A: Future + Unpin, B: Future + Unpin> Future for Race<A, B> {
+    type Output = Either<A::Output, B::Output>;
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        if let Poll::Ready(res) = Pin::new(&mut self.b).poll(cx) {
+            return Poll::Ready(Either::Right(res));
+        }
+        if let Poll::Ready(res) = Pin::new(&mut self.a).poll(cx) {
+            return Poll::Ready(Either::Left(res));
+        }
+        Poll::Pending
+    }
+}
+
+async fn await_with_cancel<F, T>(
+    fut: F,
+    batch: Option<i64>,
+    deadline: Option<Instant>,
+) -> Result<T, Attempt>
+where
+    F: Future<Output = T>,
+{
+    if let Some(token) = batch {
+        if !crate::sources::batch_alive(token) {
+            return Err(Attempt::Cancelled);
+        }
+    }
+    if let Some(dl) = deadline {
+        if Instant::now() >= dl {
+            return Err(Attempt::Timeout);
+        }
+    }
+
+    tokio::pin!(fut);
+    loop {
+        if let Some(token) = batch {
+            if !crate::sources::batch_alive(token) {
+                return Err(Attempt::Cancelled);
+            }
+        }
+        if let Some(dl) = deadline {
+            if Instant::now() >= dl {
+                return Err(Attempt::Timeout);
+            }
+        }
+
+        let notify = crate::sources::cancel_notified();
+        tokio::pin!(notify);
+
+        let race_fut = race(&mut fut, &mut notify);
+
+        let outcome = match deadline {
+            Some(dl) => {
+                let left = dl.saturating_duration_since(Instant::now());
+                if left.is_zero() {
+                    return Err(Attempt::Timeout);
+                }
+                match tokio::time::timeout(left, race_fut).await {
+                    Ok(either) => either,
+                    Err(_) => return Err(Attempt::Timeout),
+                }
+            }
+            None => race_fut.await,
+        };
+
+        match outcome {
+            Either::Left(res) => return Ok(res),
+            Either::Right(()) => {
+                if let Some(token) = batch {
+                    if !crate::sources::batch_alive(token) {
+                        return Err(Attempt::Cancelled);
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub struct HttpClient {
     rt: tokio::runtime::Runtime,
     ua: String,
@@ -819,10 +914,31 @@ impl HttpClient {
         format!("{PROXY_MARK} {} 连不上", crate::api::redact(&self.resolved.addr))
     }
 
+    fn backoff_sleep(
+        &self,
+        duration: Duration,
+        batch: Option<i64>,
+        deadline: Option<Instant>,
+    ) -> Result<(), SourceError> {
+        self.rt.block_on(async {
+            match await_with_cancel(tokio::time::sleep(duration), batch, deadline).await {
+                Ok(()) => Ok(()),
+                Err(Attempt::Cancelled) => Err(SourceError::Cancelled),
+                Err(Attempt::Timeout) => Err(SourceError::Timeout),
+                Err(_) => Err(SourceError::Cancelled),
+            }
+        })
+    }
+
     fn attempt(&self, req: &Req, use_lax: bool, limit: usize) -> Attempt {
         if let Some(token) = req.batch {
             if !crate::sources::batch_alive(token) {
                 return Attempt::Cancelled;
+            }
+        }
+        if let Some(deadline) = req.deadline {
+            if Instant::now() >= deadline {
+                return Attempt::Timeout;
             }
         }
         let timeout_ms = req.timeout.unwrap_or(self.default_timeout) * 1000;
@@ -840,6 +956,8 @@ impl HttpClient {
             .collect();
         let url = req.url.to_string();
         let data = req.data.map(|d| d.to_vec());
+        let batch = req.batch;
+        let deadline = req.deadline;
 
         self.rt.block_on(async move {
             let mut builder = match data {
@@ -852,14 +970,19 @@ impl HttpClient {
             for (name, value) in headers {
                 builder = builder.header(name, value);
             }
-            let response = match builder.send().await {
-                Ok(response) => response,
-                Err(error) => return classify_error(&error, proxy_in_play),
+            let response = match await_with_cancel(builder.send(), batch, deadline).await {
+                Ok(Ok(response)) => response,
+                Ok(Err(error)) => return classify_error(&error, proxy_in_play),
+                Err(Attempt::Cancelled) => return Attempt::Cancelled,
+                Err(Attempt::Timeout) => return Attempt::Timeout,
+                Err(other) => return other,
             };
             let status = response.status();
             if !status.is_success() {
-                let body = match read_body(response, CAPTCHA_SCAN_BYTES, false).await {
+                let body = match read_body(response, CAPTCHA_SCAN_BYTES, false, batch, deadline).await {
                     BodyRead::Ok(bytes) => bytes,
+                    BodyRead::Cancelled => return Attempt::Cancelled,
+                    BodyRead::Timeout => return Attempt::Timeout,
                     _ => Vec::new(),
                 };
                 return Attempt::Http {
@@ -867,9 +990,11 @@ impl HttpClient {
                     body: String::from_utf8_lossy(&body).to_string(),
                 };
             }
-            match read_body(response, limit, true).await {
+            match read_body(response, limit, true, batch, deadline).await {
                 BodyRead::Ok(bytes) => Attempt::Ok(bytes),
                 BodyRead::TooLarge => Attempt::TooLarge,
+                BodyRead::Cancelled => Attempt::Cancelled,
+                BodyRead::Timeout => Attempt::Timeout,
                 BodyRead::Failed(message) => Attempt::Other(message),
             }
         })
@@ -884,6 +1009,11 @@ impl HttpClient {
             if let Some(token) = req.batch {
                 if !crate::sources::batch_alive(token) {
                     return Err(SourceError::Cancelled);
+                }
+            }
+            if let Some(deadline) = req.deadline {
+                if Instant::now() >= deadline {
+                    return Err(SourceError::Timeout);
                 }
             }
             match self.attempt(req, use_lax, limit) {
@@ -901,7 +1031,11 @@ impl HttpClient {
                         ));
                     }
                     if RETRY_STATUS.contains(&code) && attempt <= retries {
-                        std::thread::sleep(Duration::from_secs_f64(1.0 * attempt as f64));
+                        self.backoff_sleep(
+                            Duration::from_secs_f64(1.0 * attempt as f64),
+                            req.batch,
+                            req.deadline,
+                        )?;
                         continue;
                     }
                     return Err(SourceError::Http { code, body });
@@ -927,12 +1061,16 @@ impl HttpClient {
                         crate::log::SOURCES,
                         &format!("代理不可达（{}）", host_of(req.url)),
                     );
-                    return Err(SourceError::ProxyUnreachable(self.proxy_hint()))
+                    return Err(SourceError::ProxyUnreachable(self.proxy_hint()));
                 }
                 Attempt::Timeout => return Err(SourceError::Timeout),
                 Attempt::Other(message) => {
                     if attempt <= retries {
-                        std::thread::sleep(Duration::from_secs_f64(1.5 * attempt as f64));
+                        self.backoff_sleep(
+                            Duration::from_secs_f64(1.5 * attempt as f64),
+                            req.batch,
+                            req.deadline,
+                        )?;
                         continue;
                     }
                     return Err(SourceError::Transport(message));
@@ -992,6 +1130,8 @@ fn classify_error(error: &reqwest::Error, proxy_in_play: bool) -> Attempt {
 enum BodyRead {
     Ok(Vec<u8>),
     TooLarge,
+    Cancelled,
+    Timeout,
     Failed(String),
 }
 
@@ -1017,11 +1157,23 @@ pub fn down_rate() -> f64 {
     rate
 }
 
-async fn read_body(mut response: reqwest::Response, limit: usize, strict: bool) -> BodyRead {
+async fn read_body(
+    mut response: reqwest::Response,
+    limit: usize,
+    strict: bool,
+    batch: Option<i64>,
+    deadline: Option<Instant>,
+) -> BodyRead {
     let mut out: Vec<u8> = Vec::with_capacity(limit.min(16 * 1024));
     let mut got = 0usize;
     loop {
-        match response.chunk().await {
+        let chunk_res = match await_with_cancel(response.chunk(), batch, deadline).await {
+            Ok(res) => res,
+            Err(Attempt::Cancelled) => return BodyRead::Cancelled,
+            Err(Attempt::Timeout) => return BodyRead::Timeout,
+            Err(_) => return BodyRead::Failed("中断".to_string()),
+        };
+        match chunk_res {
             Ok(Some(chunk)) => {
                 got += chunk.len();
                 RX_TOTAL.fetch_add(chunk.len() as u64, std::sync::atomic::Ordering::Relaxed);

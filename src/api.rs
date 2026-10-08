@@ -643,6 +643,12 @@ impl Api {
             has_proxy: http.has_proxy(),
             tun: http.tun_adapter(false),
         };
+        let hard_timeout_ms = self.settings.as_int("hard_timeout_ms", 45000).max(0);
+        let deadline = if hard_timeout_ms > 0 {
+            Some(std::time::Instant::now() + std::time::Duration::from_millis(hard_timeout_ms as u64))
+        } else {
+            None
+        };
         let job = crate::search::Job {
             text,
             page: page.max(1),
@@ -651,13 +657,14 @@ impl Api {
             min_len,
             keep_dup: self.settings.get("keep_duplicates") == Value::Bool(true),
             soft_deadline_ms: self.settings.as_int("soft_deadline_ms", 3000),
-            hard_timeout_ms: self.settings.as_int("hard_timeout_ms", 45000).max(0),
+            hard_timeout_ms,
             max_workers: self.settings.as_int("max_workers", 12).max(1) as usize,
             stamp: crate::search::source_stamp(&self.config.sources()),
             now: crate::util::local_now(),
             token,
             hints,
             seen: Some(self.probe_seen.clone()),
+            deadline,
         };
         let total = job.targets.len();
         crate::search::spawn(job, http, self.push.clone());
@@ -669,7 +676,9 @@ impl Api {
 
     pub fn cancel_search(&mut self, token: i64) -> bool {
         let target = if token == 0 { self.search_token } else { token };
-        self.search_token = 0;
+        if token == 0 || token == self.search_token {
+            self.search_token = 0;
+        }
         crate::sources::cancel_batch(target);
         true
     }

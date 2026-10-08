@@ -49,6 +49,7 @@ fn job(text: &str, token: i64) -> Job {
             tun: String::new(),
         },
         seen: None,
+        deadline: None,
     }
 }
 

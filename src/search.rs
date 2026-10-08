@@ -43,6 +43,7 @@ pub struct Job {
     pub token: i64,
     pub hints: Hints,
     pub seen: Option<crate::probe::Seen>,
+    pub deadline: Option<Instant>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -221,12 +222,14 @@ fn search_one<F: Fetch + Sync>(
     target: &Target,
     query_text: &str,
     fetch: &F,
+    deadline: Option<Instant>,
 ) -> (Vec<Item>, String, i64) {
     let started = Instant::now();
     let bound = Scoped {
         inner: fetch,
         timeout: target.timeout,
         batch: Some(job.token),
+        deadline,
     };
     let outcome = sources::search(
         &target.key,
@@ -402,6 +405,7 @@ fn fan_out<F: Fetch + Sync>(
     fetch: &F,
     sink: &(dyn Fn(Event) + Sync),
     acc: &Mutex<Acc>,
+    deadline: Option<Instant>,
 ) -> BTreeMap<String, (Vec<Item>, String, i64)> {
     let mut results: BTreeMap<String, (Vec<Item>, String, i64)> = BTreeMap::new();
     if indices.is_empty() {
@@ -419,6 +423,11 @@ fn fan_out<F: Fetch + Sync>(
                 if !sources::batch_alive(job.token) {
                     break;
                 }
+                if let Some(dl) = deadline {
+                    if Instant::now() >= dl {
+                        break;
+                    }
+                }
                 let index = match queue.lock().unwrap_or_else(|e| e.into_inner()).pop_front() {
                     Some(index) => index,
                     None => break,
@@ -426,7 +435,7 @@ fn fan_out<F: Fetch + Sync>(
                 let target = &job.targets[index];
                 on_start(job, &target.key, sink);
                 let row = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    search_one(job, target, query_text, fetch)
+                    search_one(job, target, query_text, fetch, deadline)
                 })) {
                     Ok(row) => row,
                     Err(_) => {
@@ -460,6 +469,7 @@ fn run_round<F: Fetch + Sync>(
     fetch: &F,
     sink: &(dyn Fn(Event) + Sync),
     acc: &Mutex<Acc>,
+    deadline: Option<Instant>,
 ) -> (i64, BTreeMap<String, String>) {
     if crate::api::py_len(query_text.trim()) < job.min_len as usize {
         let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
@@ -484,7 +494,7 @@ fn run_round<F: Fetch + Sync>(
         None => (0..job.targets.len()).collect(),
     };
 
-    let results = fan_out(job, &indices, query_text, fetch, sink, acc);
+    let results = fan_out(job, &indices, query_text, fetch, sink, acc, deadline);
 
     let mut reached = 0i64;
     let mut errors: BTreeMap<String, String> = BTreeMap::new();
@@ -542,12 +552,18 @@ fn runner<F: Fetch + Sync>(
     sink: &(dyn Fn(Event) + Sync),
     acc: &Mutex<Acc>,
     retry: Option<&[String]>,
+    deadline: Option<Instant>,
 ) {
-    let mut last = run_round(job, &job.text, retry, fetch, sink, acc);
+    let mut last = run_round(job, &job.text, retry, fetch, sink, acc, deadline);
     let mut rounds = 0usize;
     while rounds < MAX_RELAX_ROUNDS {
         if !sources::batch_alive(job.token) {
             return;
+        }
+        if let Some(dl) = deadline {
+            if Instant::now() >= dl {
+                return;
+            }
         }
         if relax_futile(last.0, &last.1) {
             crate::log::info(
@@ -581,7 +597,7 @@ fn runner<F: Fetch + Sync>(
             state.relaxed_used.push(dropped);
             state.relax_round = rounds as i64;
         }
-        last = run_round(job, &next, None, fetch, sink, acc);
+        last = run_round(job, &next, None, fetch, sink, acc, deadline);
     }
 }
 
@@ -655,21 +671,29 @@ impl Drop for DoneFlag<'_> {
 
 fn wait_until(gate: &(Mutex<bool>, Condvar), until: Instant) -> bool {
     let (lock, alarm) = gate;
-    let guard = lock.lock().unwrap_or_else(|e| e.into_inner());
-    if *guard {
-        return true;
+    let mut guard = lock.lock().unwrap_or_else(|e| e.into_inner());
+    while !*guard {
+        let left = until.saturating_duration_since(Instant::now());
+        if left.is_zero() {
+            return false;
+        }
+        let (next_guard, _) = alarm
+            .wait_timeout(guard, left)
+            .unwrap_or_else(|e| e.into_inner());
+        guard = next_guard;
     }
-    let left = until.saturating_duration_since(Instant::now());
-    if left.is_zero() {
-        return false;
-    }
-    let (guard, _) = alarm
-        .wait_timeout(guard, left)
-        .unwrap_or_else(|e| e.into_inner());
-    *guard
+    true
 }
 
 pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sync)) {
+    let started = Instant::now();
+    let deadline = job.deadline.or_else(|| {
+        if job.hard_timeout_ms > 0 {
+            Some(started + Duration::from_millis(job.hard_timeout_ms as u64))
+        } else {
+            None
+        }
+    });
     let acc = Mutex::new(Acc {
         needs: query::needles(&job.parsed),
         ..Acc::default()
@@ -697,7 +721,7 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         scope.spawn(|| {
             let _done = DoneFlag(&gate);
             if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                runner(job, fetch, sink, &acc, retry.as_deref());
+                runner(job, fetch, sink, &acc, retry.as_deref(), deadline);
             }))
             .is_err()
             {
@@ -707,22 +731,13 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
 
         scope.spawn(|| {
             let started = Instant::now();
-            if job.soft_deadline_ms > 0 {
-                let settled = wait_until(
-                    &gate,
-                    started + Duration::from_millis(job.soft_deadline_ms as u64),
-                );
-                if !settled
-                    && sources::batch_alive(job.token)
-                    && !acc.lock().unwrap_or_else(|e| e.into_inner()).rows.is_empty()
-                {
-                    sink(Event::Settled(json!({"token": job.token})));
-                }
-            }
-            if job.hard_timeout_ms > 0 {
-                let left = Duration::from_millis(job.hard_timeout_ms as u64)
-                    .saturating_sub(started.elapsed());
-                let ended = wait_until(&gate, Instant::now() + left);
+            let has_soft = job.soft_deadline_ms > 0;
+            let has_hard = job.hard_timeout_ms > 0;
+            let soft_dur = Duration::from_millis(job.soft_deadline_ms.max(0) as u64);
+            let hard_dur = Duration::from_millis(job.hard_timeout_ms.max(0) as u64);
+
+            if has_hard && (!has_soft || soft_dur >= hard_dur) {
+                let ended = wait_until(&gate, started + hard_dur);
                 if !ended && sources::batch_alive(job.token) {
                     crate::log::warning(
                         crate::log::API,
@@ -730,6 +745,28 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
                     );
                     acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
                     sources::cancel_batch(job.token);
+                }
+            } else {
+                if has_soft {
+                    let settled = wait_until(&gate, started + soft_dur);
+                    if !settled
+                        && sources::batch_alive(job.token)
+                        && !acc.lock().unwrap_or_else(|e| e.into_inner()).rows.is_empty()
+                    {
+                        sink(Event::Settled(json!({"token": job.token})));
+                    }
+                }
+                if has_hard {
+                    let left = hard_dur.saturating_sub(started.elapsed());
+                    let ended = wait_until(&gate, Instant::now() + left);
+                    if !ended && sources::batch_alive(job.token) {
+                        crate::log::warning(
+                            crate::log::API,
+                            &format!("搜索超过 {} ms 时限，停止剩余请求", job.hard_timeout_ms),
+                        );
+                        acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
+                        sources::cancel_batch(job.token);
+                    }
                 }
             }
         });

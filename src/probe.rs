@@ -34,6 +34,7 @@ fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i6
         inner: fetch,
         timeout: budget,
         batch: None,
+        deadline: None,
     };
     let mut found = sources::search(&target.key, &target.base, WORD, 1, now, budget, &bound);
     if matches!(&found, Ok(items) if items.is_empty()) {

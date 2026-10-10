@@ -133,6 +133,22 @@ fn failed_page_is_refetched() {
 }
 
 #[test]
+fn failed_page_survives_two_refetches() {
+    let script = Script::new(
+        HashMap::from([
+            (1, page_html(45, &hashes_for(0, 20))),
+            (2, page_html(45, &hashes_for(20, 20))),
+            (3, page_html(45, &hashes_for(40, 5))),
+        ]),
+        HashMap::from([(2, 2)]),
+    );
+    let items = xccl263::search("", "样例", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 45);
+    let calls = script.calls();
+    assert_eq!(calls.iter().filter(|&&page| page == 2).count(), 3);
+}
+
+#[test]
 fn exhausted_refetch_keeps_partial_result() {
     let script = Script::new(
         HashMap::from([
@@ -145,7 +161,7 @@ fn exhausted_refetch_keeps_partial_result() {
     let items = xccl263::search("", "样例", 1, &script).expect("搜索失败");
     assert_eq!(items.len(), 25);
     let calls = script.calls();
-    assert_eq!(calls.iter().filter(|&&page| page == 2).count(), 2);
+    assert_eq!(calls.iter().filter(|&&page| page == 2).count(), 3);
 }
 
 #[test]

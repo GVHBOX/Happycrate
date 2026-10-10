@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, HashSet};
+use std::time::Duration;
 
 use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{
@@ -12,6 +13,7 @@ use crate::util::{
 pub const PAGES: i64 = 4;
 pub const PAGE_SIZE: i64 = 20;
 pub const MAX_HITS: usize = 200;
+const RETRY_PAUSE_MS: u64 = 2000;
 
 fn starts_ci(chars: &[char], needle: &str, at: usize) -> bool {
     let needle: Vec<char> = needle.chars().collect();
@@ -173,6 +175,28 @@ fn worth_retry(error: &SourceError) -> bool {
     }
 }
 
+fn retry_keys(failed: &BTreeMap<i64, SourceError>) -> Vec<i64> {
+    failed
+        .iter()
+        .filter(|(_, error)| worth_retry(error))
+        .map(|(page, _)| *page)
+        .collect()
+}
+
+fn refill<F: Fetch + Sync>(
+    root: &str,
+    query: &str,
+    keys: &[i64],
+    fetch: &F,
+    pages: &mut BTreeMap<i64, Vec<Item>>,
+) -> BTreeMap<i64, SourceError> {
+    let (found, lost) = gather_pages(keys.iter().copied(), 2, |&p| {
+        page(root, p, query, fetch).map(|(items, _)| items)
+    });
+    pages.extend(found);
+    lost
+}
+
 pub fn parse_html(text: &str) -> Vec<Item> {
     let mut items = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
@@ -251,16 +275,17 @@ fn search_words<F: Fetch + Sync>(
         failed.extend(lost);
     }
     if !pages.is_empty() {
-        let again: Vec<i64> = failed
-            .iter()
-            .filter(|(_, error)| worth_retry(error))
-            .map(|(page, _)| *page)
-            .collect();
-        if !again.is_empty() {
-            let (found, _) = gather_pages(again, 2, |&p| {
-                page(root, p, query, fetch).map(|(items, _)| items)
-            });
-            pages.extend(found);
+        let quick = retry_keys(&failed);
+        if !quick.is_empty() {
+            let lost = refill(root, query, &quick, fetch, &mut pages);
+            failed.retain(|page, _| !quick.contains(page));
+            failed.extend(lost);
+        }
+        let spaced = retry_keys(&failed);
+        if !spaced.is_empty() {
+            std::thread::sleep(Duration::from_millis(RETRY_PAUSE_MS));
+            let lost = refill(root, query, &spaced, fetch, &mut pages);
+            failed.extend(lost);
         }
     }
     if pages.is_empty() && !failed.is_empty() {

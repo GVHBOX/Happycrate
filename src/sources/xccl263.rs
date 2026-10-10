@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{
@@ -10,6 +10,7 @@ use crate::util::{
 };
 
 pub const PAGES: i64 = 4;
+pub const PAGE_SIZE: i64 = 20;
 pub const MAX_HITS: usize = 200;
 
 fn starts_ci(chars: &[char], needle: &str, at: usize) -> bool {
@@ -119,6 +120,59 @@ fn blocks(text: &str) -> Vec<String> {
     out
 }
 
+fn found_total(text: &str) -> Option<i64> {
+    let chars: Vec<char> = text.chars().collect();
+    let mark: Vec<char> = "找到".chars().collect();
+    let mut from = 0usize;
+    while let Some(at) = find_ci(&chars, &mark, from) {
+        let mut i = at + mark.len();
+        let mut digits = String::new();
+        while i < chars.len() {
+            let c = chars[i];
+            if c.is_ascii_digit() {
+                digits.push(c);
+                i += 1;
+            } else if c == ',' || c == '，' {
+                i += 1;
+            } else {
+                break;
+            }
+        }
+        if !digits.is_empty() && chars.get(i) == Some(&'条') {
+            if let Ok(total) = digits.parse::<i64>() {
+                return Some(total);
+            }
+        }
+        from = at + mark.len();
+    }
+    None
+}
+
+fn wanted_pages(total: Option<i64>) -> i64 {
+    match total {
+        Some(0) => 1,
+        Some(n) if n > 0 => {
+            let mut need = (n + PAGE_SIZE - 1) / PAGE_SIZE;
+            if n % PAGE_SIZE == 0 && need < PAGES {
+                need += 1;
+            }
+            need.clamp(1, PAGES)
+        }
+        _ => PAGES,
+    }
+}
+
+fn worth_retry(error: &SourceError) -> bool {
+    match error {
+        SourceError::Cancelled
+        | SourceError::Blocked(_)
+        | SourceError::TooLarge { .. }
+        | SourceError::ProxyUnreachable(_) => false,
+        SourceError::Http { code, .. } => *code == 429 || *code >= 500,
+        _ => true,
+    }
+}
+
 pub fn parse_html(text: &str) -> Vec<Item> {
     let mut items = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
@@ -146,15 +200,25 @@ pub fn parse_html(text: &str) -> Vec<Item> {
     items
 }
 
-fn page<F: Fetch>(root: &str, page_no: i64, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
+fn fetch_text<F: Fetch>(root: &str, page_no: i64, query: &str, fetch: &F) -> SourceResult<String> {
     let url = format!("{root}/search/kw-{}-{page_no}.html", quote(query));
-    let text = fetch.fetch(
+    fetch.fetch(
         Req::get(&url)
             .referer(&format!("{root}/"))
             .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
             .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
-    )?;
-    Ok(parse_html(&text))
+    )
+}
+
+fn page<F: Fetch>(
+    root: &str,
+    page_no: i64,
+    query: &str,
+    fetch: &F,
+) -> SourceResult<(Vec<Item>, Option<i64>)> {
+    let text = fetch_text(root, page_no, query, fetch)?;
+    let total = found_total(&text);
+    Ok((parse_html(&text), total))
 }
 
 fn search_words<F: Fetch + Sync>(
@@ -164,9 +228,41 @@ fn search_words<F: Fetch + Sync>(
     fetch: &F,
 ) -> SourceResult<Vec<Item>> {
     let first = page_no.max(1);
-    let (pages, failed) = gather_pages(first..first + PAGES, 2, |&p| {
-        page(root, p, query, fetch)
-    });
+    let mut pages: BTreeMap<i64, Vec<Item>> = BTreeMap::new();
+    let mut failed: BTreeMap<i64, SourceError> = BTreeMap::new();
+    let mut total: Option<i64> = None;
+    match page(root, first, query, fetch) {
+        Ok((items, count)) => {
+            if first == 1 {
+                total = count;
+            }
+            pages.insert(first, items);
+        }
+        Err(exc) => {
+            failed.insert(first, exc);
+        }
+    }
+    let need = if first == 1 { wanted_pages(total) } else { PAGES };
+    if need > 1 {
+        let (found, lost) = gather_pages(first + 1..first + need, 2, |&p| {
+            page(root, p, query, fetch).map(|(items, _)| items)
+        });
+        pages.extend(found);
+        failed.extend(lost);
+    }
+    if !pages.is_empty() {
+        let again: Vec<i64> = failed
+            .iter()
+            .filter(|(_, error)| worth_retry(error))
+            .map(|(page, _)| *page)
+            .collect();
+        if !again.is_empty() {
+            let (found, _) = gather_pages(again, 2, |&p| {
+                page(root, p, query, fetch).map(|(items, _)| items)
+            });
+            pages.extend(found);
+        }
+    }
     if pages.is_empty() && !failed.is_empty() {
         return Err(first_failure(&failed));
     }

@@ -2,7 +2,10 @@
 
 全量自包含 Rust + Tauri 2，前端 `web/` 编译期内嵌。产品名、包名、可执行文件名一律叫 `happycrate`。
 依赖清单与理由、版本史在 `PLAN.md`，本文件只讲规矩。
-当前版本 1.0.4，`GVHBOX/Happycrate` 的 `main` 是唯一主线，工作分支就是 `main`，直接推。
+当前版本 1.0.4.01。版本号规则：小改动按 `1.0.4.01` → `1.0.4.99` 递增，
+满 99 才进 `1.0.5`；展示版本在 `api::APP_VERSION`（窗口标题、关于页、启动日志），
+`Cargo.toml` 与 `tauri.conf.json` 只保留合法三段 semver，随进位同步。
+`GVHBOX/Happycrate` 的 `main` 是唯一主线，工作分支就是 `main`，直接推。
 
 ## 4 条铁律
 

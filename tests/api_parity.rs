@@ -293,9 +293,11 @@ fn test_version_aligned() {
     let tauri_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tauri.conf.json");
     let content = fs::read_to_string(tauri_path).unwrap();
     let parsed: Value = serde_json::from_str(&content).unwrap();
-    assert_eq!(
-        parsed["version"].as_str().unwrap(),
-        happycrate::api::APP_VERSION
+    let base = parsed["version"].as_str().unwrap();
+    let version = happycrate::api::APP_VERSION;
+    assert!(
+        version == base || version.starts_with(&format!("{base}.")),
+        "APP_VERSION 需以 tauri.conf.json 的 version 为前缀：{base} / {version}"
     );
     assert_eq!(
         parsed["app"]["windows"][0]["title"].as_str().unwrap(),

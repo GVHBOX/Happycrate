@@ -163,6 +163,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -337,6 +349,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -546,6 +567,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -722,6 +755,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -873,6 +915,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1050,6 +1101,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -1226,6 +1289,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -1377,6 +1449,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1554,6 +1635,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -1728,6 +1821,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1939,6 +2041,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -2116,6 +2230,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2268,6 +2391,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -2444,6 +2576,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -2621,6 +2765,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2773,6 +2926,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -2952,6 +3114,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -3129,6 +3303,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3281,6 +3464,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -3457,6 +3649,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -3633,6 +3837,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3784,6 +3997,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -3960,6 +4182,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -4137,6 +4371,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4289,6 +4532,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -4470,6 +4722,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -4644,6 +4908,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -4859,6 +5132,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -5033,6 +5318,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -5248,6 +5542,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -5422,6 +5728,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -5638,6 +5953,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -5812,6 +6139,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -6027,6 +6363,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -6201,6 +6549,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -6415,6 +6772,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -6589,6 +6958,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -6800,6 +7178,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -6974,6 +7364,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -7181,6 +7580,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -7355,6 +7766,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -7556,6 +7976,18 @@
      },
      "key": "bt4g",
      "label": "BT4G"
+    },
+    {
+     "addr": "https://btdig.com",
+     "enabled": true,
+     "health": {
+      "err": "",
+      "ms": 0,
+      "outcomes": [],
+      "state": "na"
+     },
+     "key": "btdig",
+     "label": "BTDigg"
     }
    ],
    "get_settings": {
@@ -7730,6 +8162,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }

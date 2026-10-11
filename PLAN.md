@@ -167,6 +167,17 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
     BitSearch/BTDigg 侧哈希交叉一致。
   - `tests/web_fetch_queue.rs` 新增 5 条通道单测（回传、串行、超时、取消、
     错误透传）。
+- **v1.0.4.05**：BTDigg 接入取数通道（第 14 个源）。
+  - 新增 `src/sources/btdig.rs`：搜索页 `one_result` 块解析（标题、体积、
+    哈希直接取自列表页磁力链接），单页 10 条；`WEBVIEW_KEYS`、`DEFAULT_BASES`、
+    分发表、`DEFAULT_SOURCES`（默认开启，order 13）与 `OVERSEAS_KEYS` 同步。
+  - fixtures 与 golden.json（10 条）入库；`tests/golden.rs` 增 `golden_btdig`、
+    fixture 源数改 14。
+  - 对照表更新：api/config/migrate 三处按「新增内置源随默认配置补齐」追加
+    btdig（深比对仅 btdig 一项变化）。注意：遗留 Python 配置样本中本就含有
+    btdig 项，迁移合并数因此 4 → 5（属正确合并行为，非回归）。
+  - 实测：btdig 结果页可通过内置浏览器通道访问；条目哈希与既有源
+    （BitSearch、小草磁力）交叉一致。
 
 ## 7. 教训精选（每条都真踩过）
 

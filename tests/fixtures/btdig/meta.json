@@ -1,0 +1,18 @@
+{
+  "key": "btdig",
+  "query": "MIAD-251",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 3000,
+  "fetched_at": "2026-10-11T12:58:43+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-btdig.com-search-q-MIAD-251-6ac06a.html",
+      "url": "https://btdig.com/search?q=MIAD-251",
+      "request_body": null,
+      "bytes": 103454,
+      "sha1": "29b1843b8077134d9a533a77274a8d4ecb3d1a3e"
+    }
+  ]
+}

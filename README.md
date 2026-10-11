@@ -18,7 +18,7 @@
 
 ## 特点
 
-- **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB 镜像、小草磁力、Knaben、JavBus、JavDB（需账号，默认关闭）、BT4G
+- **内置源**：海盗湾、Nyaa、蜜柑计划、动漫花园、Sukebei、EZTV、BitSearch、TPB 镜像、小草磁力、Knaben、JavBus、JavDB（需账号，默认关闭）、BT4G、BTDigg
 - **去重合并**：并发检索多站，按 `info_hash` 聚合去重为单一列表
 - **批量操作**：多选、全选、列排序、文件大小筛选，右键批量复制磁力或标题
 - **量大保全**：0 做种与老种全量保留，分块懒加载；支持一键唤起迅雷 / 115 / PikPak

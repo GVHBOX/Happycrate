@@ -3,7 +3,7 @@
  "report": {
   "done": true,
   "settings": 8,
-  "sources": 4
+  "sources": 5
  },
  "settings": {
   "version": 1,
@@ -159,6 +159,15 @@
    "timeout": 20,
    "base": "",
    "order": 12
+  },
+  {
+   "key": "btdig",
+   "label": "BTDigg",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 20,
+   "base": "",
+   "order": 13
   }
  ]
 }

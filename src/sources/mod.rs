@@ -1,6 +1,7 @@
 pub mod apibay;
 pub mod bitsearch;
 pub mod bt4g;
+pub mod btdig;
 pub mod dmhy;
 pub mod eztv;
 pub mod javbus;
@@ -20,11 +21,12 @@ use std::time::Instant;
 use crate::model::{Item, SourceError, SourceResult};
 
 pub const PAGELESS_KEYS: &[&str] = &["apibay", "mikan", "dmhy", "eztv"];
-pub const WEBVIEW_KEYS: &[&str] = &["bt4g"];
+pub const WEBVIEW_KEYS: &[&str] = &["bt4g", "btdig"];
 pub const KEYWORD_SAMPLE: usize = 12;
 pub const FUZZY_RATE: f64 = 0.2;
-pub const OVERSEAS_KEYS: [&str; 10] = [
+pub const OVERSEAS_KEYS: [&str; 11] = [
     "nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb", "javbus", "javdb", "bt4g",
+    "btdig",
 ];
 
 static CANCEL_EPOCH: AtomicI64 = AtomicI64::new(0);
@@ -90,6 +92,7 @@ pub const DEFAULT_BASES: &[(&str, &str)] = &[
     ("bitsearch", "https://bitsearch.to"),
     ("tpb", "https://thepiratebay10.org"),
     ("bt4g", "https://bt4gprx.com"),
+    ("btdig", "https://btdig.com"),
     ("xccl263", "https://www.xccl263.xyz"),
     ("knaben", "https://api.knaben.org/v1"),
     ("javbus", "https://www.javbus.com"),
@@ -270,6 +273,7 @@ pub fn search<F: Fetch + Sync>(
         "eztv" => eztv::search(base, query, fetch),
         "bitsearch" => bitsearch::search(base, query, page, fetch),
         "bt4g" => bt4g::search(base, query, page, fetch),
+        "btdig" => btdig::search(base, query, page, fetch),
         "tpb" => tpb::search(base, query, page, fetch, now, timeout),
         "xccl263" => xccl263::search(base, query, page, fetch),
         "knaben" => knaben::search(base, query, page, fetch),

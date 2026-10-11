@@ -122,6 +122,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -244,6 +253,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -372,6 +390,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -494,6 +521,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -622,6 +658,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -744,6 +789,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -872,6 +926,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -994,6 +1057,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1122,6 +1194,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -1244,6 +1325,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1372,6 +1462,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -1494,6 +1593,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1622,6 +1730,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -1744,6 +1861,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -1872,6 +1998,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -1994,6 +2129,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -2122,6 +2266,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2244,6 +2397,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -2372,6 +2534,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2494,6 +2665,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -2631,6 +2811,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2764,6 +2953,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -2890,6 +3088,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3012,6 +3219,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -3176,6 +3392,15 @@
       "order": 16,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 17,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3336,6 +3561,15 @@
       "order": 16,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 17,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3489,6 +3723,15 @@
       "order": 15,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 16,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3640,6 +3883,15 @@
       "order": 15,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 16,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3775,6 +4027,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -3906,6 +4167,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 13,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
       "timeout": 20,
       "type": "builtin"
      }
@@ -4047,6 +4317,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4182,6 +4461,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 13,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
       "timeout": 20,
       "type": "builtin"
      }
@@ -4323,6 +4611,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4454,6 +4751,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 13,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
       "timeout": 20,
       "type": "builtin"
      }
@@ -4592,6 +4898,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4726,6 +5041,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4852,6 +5176,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4976,6 +5309,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -4999,7 +5341,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -5014,7 +5357,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -5137,6 +5481,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -5158,7 +5511,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -5173,7 +5527,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": true,
    "has_a": false,
@@ -5297,6 +5652,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -5326,7 +5690,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -5341,7 +5706,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -5462,6 +5828,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -5494,7 +5869,8 @@
     "xccl263",
     "javbus",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -5509,7 +5885,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -5630,6 +6007,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }
@@ -5661,7 +6047,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -5676,7 +6063,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -5799,6 +6187,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -5828,7 +6225,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "a",
@@ -5844,7 +6242,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": true,
    "has_a": true,
@@ -5980,6 +6379,15 @@
       "order": 13,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 14,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -6008,7 +6416,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -6023,7 +6432,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -6146,6 +6556,15 @@
       "order": 12,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -6175,7 +6594,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "a",
@@ -6192,7 +6612,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": true,
@@ -6333,6 +6754,15 @@
       "order": 14,
       "timeout": 20,
       "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 15,
+      "timeout": 20,
+      "type": "builtin"
      }
     ],
     "version": 1
@@ -6360,7 +6790,8 @@
     "knaben",
     "xccl263",
     "javbus",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "all_keys": [
     "apibay",
@@ -6375,7 +6806,8 @@
     "javbus",
     "bitsearch",
     "javdb",
-    "bt4g"
+    "bt4g",
+    "btdig"
    ],
    "order_locked": false,
    "has_a": false,
@@ -6496,6 +6928,15 @@
       "key": "bt4g",
       "label": "BT4G",
       "order": 12,
+      "timeout": 20,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
+      "key": "btdig",
+      "label": "BTDigg",
+      "order": 13,
       "timeout": 20,
       "type": "builtin"
      }

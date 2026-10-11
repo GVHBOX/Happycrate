@@ -296,6 +296,68 @@ fn search_words<F: Fetch + Sync>(
     Ok(items)
 }
 
+fn alternate_code(word: &str) -> Option<String> {
+    let chars: Vec<char> = word.chars().collect();
+    let mut i = 0usize;
+    while i < chars.len() && chars[i].is_ascii_alphabetic() {
+        i += 1;
+    }
+    if !(2..=12).contains(&i) {
+        return None;
+    }
+    let letters: String = chars[..i].iter().collect();
+    let mut sep = false;
+    if i < chars.len() && (chars[i] == '-' || chars[i] == '_') {
+        sep = true;
+        i += 1;
+    }
+    let start = i;
+    while i < chars.len() && chars[i].is_ascii_digit() {
+        i += 1;
+    }
+    let digits: String = chars[start..i].iter().collect();
+    if i != chars.len() || !(2..=5).contains(&digits.len()) {
+        return None;
+    }
+    if sep {
+        Some(format!("{letters}{digits}"))
+    } else {
+        Some(format!("{letters}-{digits}"))
+    }
+}
+
+fn merge_alternate<F: Fetch + Sync>(
+    root: &str,
+    page_no: i64,
+    items: Vec<Item>,
+    alternate: &str,
+    fetch: &F,
+) -> Vec<Item> {
+    let mut merged: Vec<Item> = Vec::new();
+    let mut seen: HashSet<String> = HashSet::new();
+    for item in items {
+        if item.info_hash.is_empty() || !seen.insert(item.info_hash.clone()) {
+            continue;
+        }
+        merged.push(item);
+        if merged.len() >= MAX_HITS {
+            return merged;
+        }
+    }
+    if let Ok(found) = search_words(root, alternate, page_no, fetch) {
+        for item in found {
+            if item.info_hash.is_empty() || !seen.insert(item.info_hash.clone()) {
+                continue;
+            }
+            merged.push(item);
+            if merged.len() >= MAX_HITS {
+                return merged;
+            }
+        }
+    }
+    merged
+}
+
 pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("xccl263"));
     let words: Vec<String> = query
@@ -307,6 +369,11 @@ pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F)
     }
 
     let items = search_words(&root, query, page_no, fetch)?;
+    if words.len() == 1 {
+        if let Some(alternate) = alternate_code(&words[0]) {
+            return Ok(merge_alternate(&root, page_no, items, &alternate, fetch));
+        }
+    }
     if !items.is_empty() || words.len() < 2 {
         return Ok(items);
     }

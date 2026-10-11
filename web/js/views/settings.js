@@ -289,7 +289,7 @@
       '<div class="about-hero">' +
         '<div class="about-app">' +
           '<span class="about-name">happycrate</span>' +
-          '<span class="about-tag" id="aboutVer">v1.0.4.02</span>' +
+          '<span class="about-tag" id="aboutVer">v1.0.4.03</span>' +
         '</div>' +
         '<div class="about-actions">' +
           '<button type="button" class="btn-octo" id="btnRepo" title="GitHub 仓库" aria-label="GitHub 仓库">' + GITHUB_SVG + '</button>' +

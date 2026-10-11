@@ -193,3 +193,111 @@ fn first_page_failure_falls_back_to_rest() {
     assert_eq!(items.len(), 45);
     assert_eq!(script.calls(), vec![1, 1, 2, 3, 4]);
 }
+
+fn kw_page_of(url: &str) -> (String, i64) {
+    let tail = url.rsplit('/').next().unwrap_or("");
+    let body = tail.strip_suffix(".html").unwrap_or(tail);
+    let stem = body.strip_prefix("kw-").unwrap_or(body);
+    match stem.rsplit_once('-') {
+        Some((kw, page)) => (kw.to_string(), page.parse().unwrap_or(0)),
+        None => (stem.to_string(), 0),
+    }
+}
+
+struct UrlScript {
+    served: HashMap<(String, i64), String>,
+    calls: Mutex<Vec<(String, i64)>>,
+}
+
+impl UrlScript {
+    fn new(served: HashMap<(String, i64), String>) -> UrlScript {
+        UrlScript {
+            served,
+            calls: Mutex::new(Vec::new()),
+        }
+    }
+
+    fn calls(&self) -> Vec<(String, i64)> {
+        let mut calls = self.calls.lock().unwrap().clone();
+        calls.sort();
+        calls
+    }
+}
+
+impl Fetch for UrlScript {
+    fn fetch(&self, req: Req) -> SourceResult<String> {
+        let key = kw_page_of(req.url);
+        self.calls.lock().unwrap().push(key.clone());
+        match self.served.get(&key) {
+            Some(body) => Ok(body.clone()),
+            None => Err(SourceError::Http {
+                code: 404,
+                body: String::new(),
+            }),
+        }
+    }
+}
+
+#[test]
+fn hyphen_code_checks_compact_variant() {
+    let script = UrlScript::new(HashMap::from([
+        (("MIAD-251".to_string(), 1), page_html(0, &[])),
+        (("MIAD251".to_string(), 1), page_html(1, &hashes_for(0, 1))),
+    ]));
+    let items = xccl263::search("", "MIAD-251", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 1);
+    assert_eq!(
+        script.calls(),
+        vec![("MIAD-251".to_string(), 1), ("MIAD251".to_string(), 1)]
+    );
+}
+
+#[test]
+fn compact_code_checks_hyphen_variant() {
+    let script = UrlScript::new(HashMap::from([
+        (("MIAD802".to_string(), 1), page_html(1, &hashes_for(1, 1))),
+        (("MIAD-802".to_string(), 1), page_html(2, &hashes_for(0, 2))),
+    ]));
+    let items = xccl263::search("", "MIAD802", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 2);
+    assert_eq!(items[0].info_hash, hashes_for(1, 1)[0]);
+    assert_eq!(
+        script.calls(),
+        vec![("MIAD-802".to_string(), 1), ("MIAD802".to_string(), 1)]
+    );
+}
+
+#[test]
+fn variant_failure_keeps_primary_items() {
+    let script = UrlScript::new(HashMap::from([(
+        ("MIAD-802".to_string(), 1),
+        page_html(3, &hashes_for(0, 3)),
+    )]));
+    let items = xccl263::search("", "MIAD-802", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 3);
+    let calls = script.calls();
+    assert!(calls.contains(&("MIAD-802".to_string(), 1)));
+    assert!(calls.contains(&("MIAD802".to_string(), 1)));
+}
+
+#[test]
+fn plain_word_has_no_variant_request() {
+    let script = UrlScript::new(HashMap::from([(
+        ("ubuntu".to_string(), 1),
+        page_html(6, &hashes_for(0, 6)),
+    )]));
+    let items = xccl263::search("", "ubuntu", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 6);
+    assert_eq!(script.calls().len(), 1);
+}
+
+#[test]
+fn malformed_code_has_no_variant_request() {
+    let script = UrlScript::new(HashMap::from([(
+        ("MIAD-251X".to_string(), 1),
+        page_html(2, &hashes_for(0, 2)),
+    )]));
+    let items = xccl263::search("", "MIAD-251X", 1, &script).expect("搜索失败");
+    assert_eq!(items.len(), 2);
+    assert_eq!(script.calls().len(), 1);
+}

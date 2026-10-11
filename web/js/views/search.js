@@ -253,6 +253,28 @@
     return groups ? miss : 0;
   }
 
+  function codeQueryOf(){
+    if (st.qtokens.length !== 1) return null;
+    var m = /^([a-z]{2,12})[-_ ]?([0-9]{2,5})$/.exec(normText(st.qtokens[0]));
+    if (!m) return null;
+    return { letters: m[1], digits: m[2] };
+  }
+
+  function codeTier(it, code){
+    var title = normText(it.title);
+    var files = normText(fileNames(it));
+    var compact = code.letters + code.digits;
+    if (title.replace(/[\s_-]+/g, "").indexOf(compact) >= 0
+        || files.replace(/[\s_-]+/g, "").indexOf(compact) >= 0) return 0;
+    var text = title + "\n" + files;
+    var hasLetters = text.indexOf(code.letters) >= 0;
+    var hasDigits = text.indexOf(code.digits) >= 0;
+    if (hasLetters && hasDigits) return 1;
+    if (hasLetters) return 2;
+    if (hasDigits) return 3;
+    return 4;
+  }
+
   var visCache = { key: null, list: null };
 
   function computeVisible(){
@@ -265,10 +287,17 @@
     if (!st.field){
       if ((st.busy && !st.settled) || !st.qtokens.length) return baseItems;
       var neutral = neutralSeed();
+      var code = codeQueryOf();
       var scored = baseItems.map(function(it){
-        return { it: it, m: contentMiss(it), r: relevance(it, neutral) };
+        return {
+          it: it,
+          m: contentMiss(it),
+          r: relevance(it, neutral),
+          t: code ? codeTier(it, code) : -1
+        };
       });
       scored.sort(function(a, b){
+        if (a.t !== b.t) return a.t - b.t;
         return a.m !== b.m ? a.m - b.m : b.r - a.r;
       });
       return scored.map(function(s){ return s.it; });

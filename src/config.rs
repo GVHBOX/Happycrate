@@ -12,7 +12,7 @@ pub const TMP_PREFIX: &str = ".happycrate-tmp-";
 
 pub const RETIRED_SOURCES: [&str; 2] = ["btdig", "apibay_adult"];
 
-pub const DEFAULT_SOURCES: [(&str, &str, i64, i64, bool); 12] = [
+pub const DEFAULT_SOURCES: [(&str, &str, i64, i64, bool); 13] = [
     ("apibay", "海盗湾", 15, 0, true),
     ("nyaa", "Nyaa", 15, 1, true),
     ("mikan", "蜜柑计划", 15, 2, true),
@@ -25,6 +25,7 @@ pub const DEFAULT_SOURCES: [(&str, &str, i64, i64, bool); 12] = [
     ("javbus", "JavBus", 20, 9, true),
     ("bitsearch", "BitSearch", 15, 10, false),
     ("javdb", "JavDB", 20, 11, false),
+    ("bt4g", "BT4G", 20, 12, true),
 ];
 
 fn default_source(key: &str, label: &str, timeout: i64, order: i64, enabled: bool) -> Value {

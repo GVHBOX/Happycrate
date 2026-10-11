@@ -17,3 +17,4 @@ pub mod settings;
 pub mod single;
 pub mod sources;
 pub mod util;
+pub mod web_fetch;

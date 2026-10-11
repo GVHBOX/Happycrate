@@ -220,8 +220,8 @@ fn fixtures_complete() {
 
         found.push(name);
     }
-    found.sort();
-    assert_eq!(found.len(), 12, "fixture 源数量应为 12，实际 {found:?}");
+        found.sort();
+        assert_eq!(found.len(), 13, "fixture 源数量应为 13，实际 {found:?}");
 }
 
 #[test]
@@ -323,6 +323,13 @@ fn golden_tpb() {
 fn golden_javbus() {
     run_golden("javbus", |r, q| {
         happycrate::sources::javbus::search("", q, 1, r).expect("javbus 解析失败")
+    });
+}
+
+#[test]
+fn golden_bt4g() {
+    run_golden("bt4g", |r, q| {
+        happycrate::sources::bt4g::search("", q, 1, r).expect("bt4g 解析失败")
     });
 }
 

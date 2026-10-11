@@ -150,6 +150,15 @@
    "timeout": 20,
    "base": "",
    "order": 11
+  },
+  {
+   "key": "bt4g",
+   "label": "BT4G",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 20,
+   "base": "",
+   "order": 12
   }
  ]
 }

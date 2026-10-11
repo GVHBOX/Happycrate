@@ -1,0 +1,42 @@
+{
+  "key": "bt4g",
+  "query": "MIAD-251",
+  "page": 1,
+  "timeout": 20,
+  "elapsed_ms_at_capture": 8085,
+  "fetched_at": "2026-10-11T12:15:17+00:00",
+  "captures": [
+    {
+      "n": 1,
+      "file": "01-bt4gprx.com-search-q-MIAD-251-orderby-seeders-p-1-ab20f5.html",
+      "url": "https://bt4gprx.com/search?q=MIAD-251&orderby=seeders&p=1",
+      "request_body": null,
+      "bytes": 30164,
+      "sha1": "5415a5238c6f412938fe3a62af836bcc04f06413"
+    },
+    {
+      "n": 2,
+      "file": "02-bt4gprx.com-magnet-jrenIBgwGxYkLcfK3tjJk7t5uRFAk6rCC-6bf47e.html",
+      "url": "https://bt4gprx.com/magnet/jrenIBgwGxYkLcfK3tjJk7t5uRFAk6rCC",
+      "request_body": null,
+      "bytes": 25329,
+      "sha1": "2911cd7a89e2f5acbe603da72db3ab69510e918c"
+    },
+    {
+      "n": 3,
+      "file": "03-bt4gprx.com-magnet-3nNixxSpPMtO3fB8K5fOEfUGXWYVQnRnA-1b15b9.html",
+      "url": "https://bt4gprx.com/magnet/3nNixxSpPMtO3fB8K5fOEfUGXWYVQnRnA",
+      "request_body": null,
+      "bytes": 18667,
+      "sha1": "13afc42adc460012a4abb0f4836f464ce96bc2c9"
+    },
+    {
+      "n": 4,
+      "file": "04-bt4gprx.com-magnet-U0zbZU1g1GJ3LZ3JeMrlfdDfeKDuQcWPF-604d00.html",
+      "url": "https://bt4gprx.com/magnet/U0zbZU1g1GJ3LZ3JeMrlfdDfeKDuQcWPF",
+      "request_body": null,
+      "bytes": 22338,
+      "sha1": "4c74129bcea8f43ebb6b692fbeef74a40c3fcbf4"
+    }
+  ]
+}

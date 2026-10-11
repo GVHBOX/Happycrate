@@ -217,6 +217,30 @@ pub fn proxy_hint_for(hints: &Hints, errors: &BTreeMap<String, String>) -> Strin
     crate::outcome::NET_FAIL_TEXT.to_string()
 }
 
+fn call_source<T: Fetch + Sync>(
+    job: &Job,
+    target: &Target,
+    query_text: &str,
+    fetch: &T,
+    deadline: Option<Instant>,
+) -> crate::model::SourceResult<Vec<Item>> {
+    let bound = Scoped {
+        inner: fetch,
+        timeout: target.timeout,
+        batch: Some(job.token),
+        deadline,
+    };
+    sources::search(
+        &target.key,
+        &target.base,
+        query_text,
+        job.page,
+        &job.now,
+        target.timeout,
+        &bound,
+    )
+}
+
 fn search_one<F: Fetch + Sync>(
     job: &Job,
     target: &Target,
@@ -225,21 +249,15 @@ fn search_one<F: Fetch + Sync>(
     deadline: Option<Instant>,
 ) -> (Vec<Item>, String, i64) {
     let started = Instant::now();
-    let bound = Scoped {
-        inner: fetch,
-        timeout: target.timeout,
-        batch: Some(job.token),
-        deadline,
+    let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
+        crate::web_fetch::shared()
+    } else {
+        None
     };
-    let outcome = sources::search(
-        &target.key,
-        &target.base,
-        query_text,
-        job.page,
-        &job.now,
-        target.timeout,
-        &bound,
-    );
+    let outcome = match webview {
+        Some(web) => call_source(job, target, query_text, &*web, deadline),
+        None => call_source(job, target, query_text, fetch, deadline),
+    };
     let ms = started.elapsed().as_millis() as i64;
     match outcome {
         Ok(items) => {

@@ -149,6 +149,24 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
     列排序不变。消除首屏被“251”类无关命中与无关联合集占据的现象。
   - `tests/xccl263_pages.rs` 新增变体用例 5 条（双向、失败保留、纯词跳过、
     畸形番号跳过）。
+- **v1.0.4.04**：内置浏览器取数通道（bt4g 试点）。
+  - 新增 `src/web_fetch.rs` 取数通道：隐藏 WebView2 窗口（懒创建、独立数据目录
+    `data/webview`）+ 单 worker 串行队列；经 `eval_with_callback` 取回整页 HTML
+    （tauri 2.12 自带能力，页面侧无需任何权限，capability 零改动）；挑战页自动
+    等待，超 8 秒窗口浮出供人工点验，通过后收回；取消/超时即复位 about:blank。
+    被拦源（`sources::WEBVIEW_KEYS`）在 `search.rs` 按 key 路由改走该通道，
+    其余 12 源与前端不变。
+  - 新增第 13 个源 bt4g（bt4gprx.com）：搜索页解析标题/大小/做种/时间，
+    `/magnet/{id}` 详情页取 infohash；fixtures 与 golden.json 入库，
+    `tests/golden.rs` 增 `golden_bt4g`、fixture 源数改 13；`WEBVIEW_KEYS`
+    之外同步 `DEFAULT_BASES`、分发表、`DEFAULT_SOURCES`（默认开启）与
+    `OVERSEAS_KEYS`。
+  - 对照表更新：api/config/migrate 三处对照按「新增内置源随默认配置补齐」语义
+    追加 bt4g（37 个断言点逐用例核对，仅 bt4g 一项变化）。
+  - 实测：隐藏窗口直接取回 bt4g 搜索结果页（未出现人工验证）；金样 3 条与
+    BitSearch/BTDigg 侧哈希交叉一致。
+  - `tests/web_fetch_queue.rs` 新增 5 条通道单测（回传、串行、超时、取消、
+    错误透传）。
 
 ## 7. 教训精选（每条都真踩过）
 

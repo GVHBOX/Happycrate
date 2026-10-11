@@ -331,6 +331,10 @@ pub fn run() {
                         crate::log::warning(crate::log::SHELL, "推送前端失败");
                     }
                 }));
+            crate::web_fetch::init(app.handle());
+            if crate::web_fetch::probe_enabled() {
+                crate::web_fetch::start_probe(app.handle());
+            }
             Ok(())
         })
         .run(tauri::generate_context!());

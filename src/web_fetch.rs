@@ -51,6 +51,18 @@ const CONTENT_SCRIPT: &str = r##"
 })();
 "##;
 
+static CHALLENGE_HOOK: OnceLock<Arc<dyn Fn() + Send + Sync>> = OnceLock::new();
+
+pub fn on_challenge_surfaced(hook: Arc<dyn Fn() + Send + Sync>) {
+    let _ = CHALLENGE_HOOK.set(hook);
+}
+
+fn notify_challenge() {
+    if let Some(hook) = CHALLENGE_HOOK.get() {
+        hook();
+    }
+}
+
 pub trait Driver: Send + Sync {
     fn load(&self, url: &str, deadline: Instant, batch: Option<i64>) -> SourceResult<String>;
 }
@@ -234,6 +246,7 @@ impl Driver for WindowDriver {
                 let _ = window.show();
                 let _ = window.set_focus();
                 surfaced = true;
+                notify_challenge();
             }
         }
     }

@@ -23,6 +23,7 @@
   "sound_copy": true,
   "sound_deliver": true,
   "sound_fail": false,
+  "sound_captcha": true,
   "sound_volume": 80,
   "theme": "dark",
   "brand": "lilac",

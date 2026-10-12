@@ -67,7 +67,8 @@ fn spec_of(key: &str) -> Option<Spec> {
             choices: Some(&FONT_CHOICES),
         }),
         "selbar" | "sound" | "sound_start" | "sound_done" | "sound_select" | "sound_copy"
-        | "sound_deliver" | "sound_fail" | "auto_files" | "keep_duplicates" | "progress_line" => {
+        | "sound_deliver" | "sound_fail" | "sound_captcha" | "auto_files" | "keep_duplicates"
+        | "progress_line" => {
             flag()
         }
         "sound_volume" => int(0, 100),
@@ -85,12 +86,12 @@ pub fn spec_keys() -> Vec<&'static str> {
     SPEC_KEYS.to_vec()
 }
 
-const SPEC_KEYS: [&str; 26] = [
+const SPEC_KEYS: [&str; 27] = [
     "min_query_len", "max_workers", "timeout", "default_downloader", "retries", "user_agent",
     "proxy", "ui_font_size", "selbar", "sound", "sound_start", "sound_done", "sound_select",
-    "sound_copy", "sound_deliver", "sound_fail", "sound_volume", "theme", "brand", "auto_files",
-    "soft_deadline_ms", "hard_timeout_ms", "keep_duplicates", "progress_style", "progress_line",
-    "progress_look",
+    "sound_copy", "sound_deliver", "sound_fail", "sound_captcha", "sound_volume", "theme", "brand",
+    "auto_files", "soft_deadline_ms", "hard_timeout_ms", "keep_duplicates", "progress_style",
+    "progress_line", "progress_look",
 ];
 
 pub fn setting_label(key: &str) -> &'static str {
@@ -111,6 +112,7 @@ pub fn setting_label(key: &str) -> &'static str {
         "sound_copy" => "复制提示音",
         "sound_deliver" => "投递提示音",
         "sound_fail" => "失败提示音",
+        "sound_captcha" => "人机验证提示音",
         "sound_volume" => "总音量",
         "theme" => "主题",
         "brand" => "主题色",
@@ -164,6 +166,7 @@ pub fn settings_defaults() -> Value {
     map.insert("sound_copy".to_string(), Value::Bool(true));
     map.insert("sound_deliver".to_string(), Value::Bool(true));
     map.insert("sound_fail".to_string(), Value::Bool(false));
+    map.insert("sound_captcha".to_string(), Value::Bool(true));
     map.insert("sound_volume".to_string(), Value::from(80));
     map.insert("theme".to_string(), Value::from("light"));
     map.insert("brand".to_string(), Value::from("lilac"));

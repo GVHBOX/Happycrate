@@ -86,6 +86,10 @@
     fail: function(){
       tone({freq: 300, to: 247, type: "square", dur: 0.1, gain: 0.2, rel: 0.12, filter: 1100});
       tone({freq: 300, to: 247, type: "triangle", dur: 0.1, gain: 0.17, rel: 0.12, t0: ctx.currentTime + 0.13});
+    },
+    captcha: function(){
+      seq([[880, 0], [659.25, 0.15], [880, 0.32]],
+          {type: "triangle", dur: 0.11, gain: 0.5, rel: 0.13});
     }
   };
 

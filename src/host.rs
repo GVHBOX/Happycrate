@@ -336,6 +336,10 @@ pub fn run() {
                         crate::log::warning(crate::log::SHELL, "推送前端失败");
                     }
                 }));
+            let captcha_handle = window.clone();
+            crate::web_fetch::on_challenge_surfaced(std::sync::Arc::new(move || {
+                let _ = captcha_handle.eval("window.__onCaptcha && window.__onCaptcha()");
+            }));
             crate::web_fetch::init(app.handle());
             if crate::web_fetch::probe_enabled() {
                 crate::web_fetch::start_probe(app.handle());

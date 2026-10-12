@@ -74,7 +74,8 @@
     {key:"select", label:"勾选提示音"},
     {key:"copy", label:"复制提示音"},
     {key:"deliver", label:"投递提示音"},
-    {key:"fail", label:"失败提示音"}
+    {key:"fail", label:"失败提示音"},
+    {key:"captcha", label:"人机验证提示音"}
   ];
   var sfxOn = {};
   var volumeVal = SOUND_VOLUME_DEFAULT;

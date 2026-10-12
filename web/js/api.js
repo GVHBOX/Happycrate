@@ -54,6 +54,10 @@
     if (probeOne) probeOne(p.key, p);
   };
 
+  window.__onCaptcha = function(){
+    if (window.HC && HC.sfx) HC.sfx.play("captcha");
+  };
+
   window.__onProbeDone = function(p){
     if (p && p.token !== undefined && p.token !== probeToken) return;
     probeDoneSubs.slice().forEach(function(fn){

@@ -134,13 +134,22 @@
    "order": 9
   },
   {
+   "key": "btdig",
+   "label": "BTDigg",
+   "type": "builtin",
+   "enabled": true,
+   "timeout": 20,
+   "base": "",
+   "order": 10
+  },
+  {
    "key": "bitsearch",
    "label": "BitSearch",
    "type": "builtin",
    "enabled": false,
    "timeout": 15,
    "base": "",
-   "order": 10
+   "order": 11
   },
   {
    "key": "javdb",
@@ -149,20 +158,11 @@
    "enabled": false,
    "timeout": 20,
    "base": "",
-   "order": 11
+   "order": 12
   },
   {
    "key": "bt4g",
    "label": "BT4G",
-   "type": "builtin",
-   "enabled": true,
-   "timeout": 20,
-   "base": "",
-   "order": 12
-  },
-  {
-   "key": "btdig",
-   "label": "BTDigg",
    "type": "builtin",
    "enabled": true,
    "timeout": 20,

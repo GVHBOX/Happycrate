@@ -272,7 +272,7 @@ pub fn search<F: Fetch + Sync>(
         "sukebei" => sukebei::search(base, query, page, fetch),
         "eztv" => eztv::search(base, query, fetch),
         "bitsearch" => bitsearch::search(base, query, page, fetch),
-        "bt4g" => bt4g::search(base, query, page, fetch),
+        "bt4g" => bt4g::search(base, query, page, fetch, timeout),
         "btdig" => btdig::search(base, query, page, fetch),
         "tpb" => tpb::search(base, query, page, fetch, now, timeout),
         "xccl263" => xccl263::search(base, query, page, fetch),

@@ -83,7 +83,7 @@ pub fn plan_gaps(count: usize, timeout: i64) -> Vec<f64> {
     let ideal = warm as f64 * GAP_WARMUP + (left - warm) as f64 * GAP_BATCH;
     if ideal <= budget {
         let mut gaps = vec![GAP_WARMUP; warm];
-        gaps.extend(std::iter::repeat(GAP_BATCH).take(left - warm));
+        gaps.extend(std::iter::repeat_n(GAP_BATCH, left - warm));
         return gaps;
     }
     let share = budget / left as f64;
@@ -144,9 +144,7 @@ fn quoted_exe(command: &str) -> Option<String> {
     let mut rest = command;
     while let Some(start) = rest.find('"') {
         let after = &rest[start + 1..];
-        let Some(end) = after.find('"') else {
-            return None;
-        };
+        let end = after.find('"')?;
         let inner = &after[..end];
         if !inner.is_empty() && inner.ends_with(".exe") {
             return Some(inner.to_string());

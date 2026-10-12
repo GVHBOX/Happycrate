@@ -38,9 +38,9 @@ fn label_value(block: &str, label: &str, attrs: bool) -> Option<String> {
                 pos = s + 1;
                 continue;
             }
-            match find_tag_end(&chars, i + 2) {
-                Some(gt) => gt + 1,
-                None => return None,
+            {
+                let gt = find_tag_end(&chars, i + 2)?;
+                gt + 1
             }
         } else {
             if !starts_ci(&chars, "<b>", i) {

@@ -109,9 +109,7 @@ fn enclosure_url(chunk: &str) -> Option<String> {
     let marker: Vec<char> = "url=\"".chars().collect();
     let mut pos = 0usize;
     while let Some(s) = find_ci(&chars, &open, pos) {
-        let Some(gt) = find_tag_end(&chars, s + open.len()) else {
-            return None;
-        };
+        let gt = find_tag_end(&chars, s + open.len())?;
         if let Some(p) = find_ci(&chars[s..gt], &marker, 0) {
             let mut i = s + p + marker.len();
             let mut url = String::new();

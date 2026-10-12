@@ -70,10 +70,28 @@ fn page<F: Fetch>(root: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>
     Ok(out)
 }
 
+fn needles_of(query: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut token = String::new();
+    for c in query.trim().chars() {
+        if c.is_whitespace() || matches!(c, '.' | '-' | '_' | '/') {
+            if !token.is_empty() {
+                out.push(std::mem::take(&mut token));
+            }
+            continue;
+        }
+        token.extend(c.to_lowercase());
+    }
+    if !token.is_empty() {
+        out.push(token);
+    }
+    out
+}
+
 pub fn search<F: Fetch + Sync>(base: &str, query: &str, fetch: &F) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("eztv"));
-    let needle = query.trim().to_lowercase();
-    if needle.is_empty() {
+    let needles = needles_of(query);
+    if needles.is_empty() {
         return Ok(Vec::new());
     }
 
@@ -96,7 +114,8 @@ pub fn search<F: Fetch + Sync>(base: &str, query: &str, fetch: &F) -> SourceResu
     let mut items = Vec::new();
     for page_items in pages.values() {
         for item in page_items {
-            if !item.title.to_lowercase().contains(&needle) {
+            let title = item.title.to_lowercase();
+            if !needles.iter().all(|needle| title.contains(needle.as_str())) {
                 continue;
             }
             if !seen.insert(item.info_hash.clone()) {

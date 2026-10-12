@@ -329,7 +329,7 @@ fn golden_javbus() {
 #[test]
 fn golden_bt4g() {
     run_golden("bt4g", |r, q| {
-        happycrate::sources::bt4g::search("", q, 1, r).expect("bt4g 解析失败")
+        happycrate::sources::bt4g::search("", q, 1, r, 20).expect("bt4g 解析失败")
     });
 }
 

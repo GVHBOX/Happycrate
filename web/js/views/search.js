@@ -319,7 +319,7 @@
     if (marquee && marquee.active && marquee.visList) return marquee.visList;
     var key = st.rev + "|" + st.field + "|" + (st.desc ? 1 : 0) +
       "|" + (st.busy ? 1 : 0) + (st.settled ? 1 : 0) + "|" + st.qphrase +
-      "|" + (st.filterSource || "");
+      "|" + (st.filterSource || "") + "|" + st.items.length;
     if (visCache.key !== key){
       visCache.key = key;
       visCache.list = computeVisible();
@@ -2133,7 +2133,7 @@
       if (chev){
         var ch = chev.dataset.hash;
         if (st.open[ch]){ delete st.open[ch]; st.userShut[ch] = true; }
-        else { st.open[ch] = true; delete st.userShut[ch]; }
+        else { st.open[ch] = true; delete st.userShut[ch]; delete st.filesErr[ch]; }
         renderPanels();
         return;
       }

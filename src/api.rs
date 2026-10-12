@@ -79,7 +79,7 @@ fn scheme_and_host(url: &str) -> (String, String) {
     (split.0.to_string(), authority.to_string())
 }
 pub const APP_TITLE: &str = "happycrate";
-pub const APP_VERSION: &str = "1.0.4.05";
+pub const APP_VERSION: &str = "1.0.4.06";
 
 pub fn hex_color_ok(value: &str) -> bool {
     let bytes = value.as_bytes();
@@ -453,7 +453,9 @@ impl Api {
 
     pub fn reset_http(&self) {
         let mut guard = self.http.lock().unwrap_or_else(|e| e.into_inner());
-        *guard = None;
+        if let Some(previous) = guard.take() {
+            std::thread::spawn(move || drop(previous));
+        }
     }
 
     pub fn http(&self) -> Option<std::sync::Arc<crate::net::HttpClient>> {
@@ -904,10 +906,8 @@ impl Api {
     pub fn app_info(&self) -> Value {
         let (directory, _mode, label) = crate::paths::describe();
         let mut recovered: Vec<Value> = Vec::new();
-        for backup in [&self.config.broken, &self.settings.broken] {
-            if let Some(path) = backup {
-                recovered.push(Value::from(path.to_string_lossy().to_string()));
-            }
+        for path in [&self.config.broken, &self.settings.broken].into_iter().flatten() {
+            recovered.push(Value::from(path.to_string_lossy().to_string()));
         }
         let mut out = Map::new();
         out.insert("version".to_string(), Value::from(APP_VERSION));

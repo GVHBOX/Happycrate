@@ -121,7 +121,7 @@ fn append(line_text: &str) -> bool {
             return false;
         }
     }
-    let pending = line_text.as_bytes().len() as u64;
+    let pending = line_text.len() as u64;
     let current = fs::metadata(path).map(|meta| meta.len()).unwrap_or(0);
     if current > 0 && current + pending >= MAX_BYTES {
         rotate(path);

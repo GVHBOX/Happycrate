@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
 
 use serde_json::{json, Value};
 
-use crate::model::SourceError;
+use crate::model::{Item, SourceError, SourceResult};
 use crate::outcome::{classify, outcome_text, state_of, CANCEL_TEXT};
 use crate::search::{Event, Sink, Target};
 use crate::sources::{self, Fetch, Scoped};
@@ -27,26 +27,39 @@ fn alive(token: i64) -> bool {
     TOKEN.load(Ordering::SeqCst) == token
 }
 
-fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
-    let started = Instant::now();
-    let budget = target.timeout.min(TIMEOUT_CAP);
+fn probe_word<F: Fetch + Sync>(
+    target: &Target,
+    fetch: &F,
+    now: &LocalNow,
+    budget: u64,
+    word: &str,
+) -> SourceResult<Vec<Item>> {
     let bound = Scoped {
         inner: fetch,
         timeout: budget,
         batch: None,
         deadline: None,
     };
-    let mut found = sources::search(&target.key, &target.base, WORD, 1, now, budget, &bound);
+    sources::search(&target.key, &target.base, word, 1, now, budget, &bound)
+}
+
+fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
+    let started = Instant::now();
+    let budget = target.timeout.min(TIMEOUT_CAP);
+    let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
+        crate::web_fetch::shared()
+    } else {
+        None
+    };
+    let mut found = match webview.as_ref() {
+        Some(web) => probe_word(target, &**web, now, budget, WORD),
+        None => probe_word(target, fetch, now, budget, WORD),
+    };
     if matches!(&found, Ok(items) if items.is_empty()) {
-        found = sources::search(
-            &target.key,
-            &target.base,
-            FALLBACK_WORD,
-            1,
-            now,
-            budget,
-            &bound,
-        );
+        found = match webview.as_ref() {
+            Some(web) => probe_word(target, &**web, now, budget, FALLBACK_WORD),
+            None => probe_word(target, fetch, now, budget, FALLBACK_WORD),
+        };
     }
     let ms = started.elapsed().as_millis() as i64;
     match found {
@@ -70,7 +83,7 @@ pub fn execute<F: Fetch + Sync>(
         sink(Event::ProbeDone);
         return;
     }
-    let workers = targets.len().min(WORKERS).max(1);
+    let workers = targets.len().clamp(1, WORKERS);
     let queue = Mutex::new(targets.iter().collect::<VecDeque<&Target>>());
     let deadline = Instant::now() + Duration::from_millis(BUDGET_MS);
     std::thread::scope(|scope| {

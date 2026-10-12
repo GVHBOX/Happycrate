@@ -2968,16 +2968,25 @@
    }
   },
   {
-   "name": "已下线源被剔除",
+   "name": "已下线源被剔除，其余源按用户条目保留",
    "raw": "{\"sources\": [{\"key\": \"btdig\"}, {\"key\": \"apibay_adult\"}]}",
    "data": {
     "sources": [
      {
       "base": "",
       "enabled": true,
+      "key": "btdig",
+      "label": "btdig",
+      "order": 0,
+      "timeout": 15,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
       "key": "apibay",
       "label": "海盗湾",
-      "order": 0,
+      "order": 1,
       "timeout": 15,
       "type": "builtin"
      },
@@ -2986,7 +2995,7 @@
       "enabled": true,
       "key": "nyaa",
       "label": "Nyaa",
-      "order": 1,
+      "order": 2,
       "timeout": 15,
       "type": "builtin"
      },
@@ -2995,7 +3004,7 @@
       "enabled": true,
       "key": "mikan",
       "label": "蜜柑计划",
-      "order": 2,
+      "order": 3,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3004,7 +3013,7 @@
       "enabled": true,
       "key": "dmhy",
       "label": "动漫花园",
-      "order": 3,
+      "order": 4,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3013,7 +3022,7 @@
       "enabled": true,
       "key": "sukebei",
       "label": "Sukebei",
-      "order": 4,
+      "order": 5,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3022,7 +3031,7 @@
       "enabled": true,
       "key": "eztv",
       "label": "EZTV",
-      "order": 5,
+      "order": 6,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3031,7 +3040,7 @@
       "enabled": true,
       "key": "tpb",
       "label": "TPB镜像",
-      "order": 6,
+      "order": 7,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3040,7 +3049,7 @@
       "enabled": true,
       "key": "knaben",
       "label": "Knaben",
-      "order": 7,
+      "order": 8,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3049,7 +3058,7 @@
       "enabled": true,
       "key": "xccl263",
       "label": "小草磁力",
-      "order": 8,
+      "order": 9,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3058,7 +3067,7 @@
       "enabled": true,
       "key": "javbus",
       "label": "JavBus",
-      "order": 9,
+      "order": 10,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3067,7 +3076,7 @@
       "enabled": false,
       "key": "bitsearch",
       "label": "BitSearch",
-      "order": 10,
+      "order": 11,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3076,7 +3085,7 @@
       "enabled": false,
       "key": "javdb",
       "label": "JavDB",
-      "order": 11,
+      "order": 12,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3085,15 +3094,6 @@
       "enabled": true,
       "key": "bt4g",
       "label": "BT4G",
-      "order": 12,
-      "timeout": 20,
-      "type": "builtin"
-     },
-     {
-      "base": "",
-      "enabled": true,
-      "key": "btdig",
-      "label": "BTDigg",
       "order": 13,
       "timeout": 20,
       "type": "builtin"
@@ -3108,9 +3108,18 @@
      {
       "base": "",
       "enabled": true,
+      "key": "btdig",
+      "label": "btdig",
+      "order": 0,
+      "timeout": 15,
+      "type": "builtin"
+     },
+     {
+      "base": "",
+      "enabled": true,
       "key": "apibay",
       "label": "海盗湾",
-      "order": 0,
+      "order": 1,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3119,7 +3128,7 @@
       "enabled": true,
       "key": "nyaa",
       "label": "Nyaa",
-      "order": 1,
+      "order": 2,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3128,7 +3137,7 @@
       "enabled": true,
       "key": "mikan",
       "label": "蜜柑计划",
-      "order": 2,
+      "order": 3,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3137,7 +3146,7 @@
       "enabled": true,
       "key": "dmhy",
       "label": "动漫花园",
-      "order": 3,
+      "order": 4,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3146,7 +3155,7 @@
       "enabled": true,
       "key": "sukebei",
       "label": "Sukebei",
-      "order": 4,
+      "order": 5,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3155,7 +3164,7 @@
       "enabled": true,
       "key": "eztv",
       "label": "EZTV",
-      "order": 5,
+      "order": 6,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3164,7 +3173,7 @@
       "enabled": true,
       "key": "tpb",
       "label": "TPB镜像",
-      "order": 6,
+      "order": 7,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3173,7 +3182,7 @@
       "enabled": true,
       "key": "knaben",
       "label": "Knaben",
-      "order": 7,
+      "order": 8,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3182,7 +3191,7 @@
       "enabled": true,
       "key": "xccl263",
       "label": "小草磁力",
-      "order": 8,
+      "order": 9,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3191,7 +3200,7 @@
       "enabled": true,
       "key": "javbus",
       "label": "JavBus",
-      "order": 9,
+      "order": 10,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3200,7 +3209,7 @@
       "enabled": false,
       "key": "bitsearch",
       "label": "BitSearch",
-      "order": 10,
+      "order": 11,
       "timeout": 15,
       "type": "builtin"
      },
@@ -3209,7 +3218,7 @@
       "enabled": false,
       "key": "javdb",
       "label": "JavDB",
-      "order": 11,
+      "order": 12,
       "timeout": 20,
       "type": "builtin"
      },
@@ -3218,15 +3227,6 @@
       "enabled": true,
       "key": "bt4g",
       "label": "BT4G",
-      "order": 12,
-      "timeout": 20,
-      "type": "builtin"
-     },
-     {
-      "base": "",
-      "enabled": true,
-      "key": "btdig",
-      "label": "BTDigg",
       "order": 13,
       "timeout": 20,
       "type": "builtin"

@@ -168,7 +168,7 @@ fn detail<F: Fetch>(root: &str, url: &str, fetch: &F) -> SourceResult<Vec<Item>>
             .header("Accept-Language", "zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7"),
     )?;
     let Some(gid) = digits_after(&page, "var gid = ", ';') else {
-        return Ok(Vec::new());
+        return Err(SourceError::Shape("javbus 详情页缺少 gid".to_string()));
     };
     let uc = digits_after(&page, "var uc = ", ';').unwrap_or_else(|| "0".to_string());
     let img = quoted_after(&page, "var img = '", '\'').unwrap_or_default();
@@ -222,7 +222,7 @@ fn search_page<F: Fetch>(root: &str, word: &str, page_no: i64, fetch: &F) -> Sou
             i += 1;
         }
         let path: String = chars[start..i].iter().collect();
-        if seen.insert(path.clone()) {
+        if !path.is_empty() && seen.insert(path.clone()) {
             out.push(path);
         }
         pos = start;

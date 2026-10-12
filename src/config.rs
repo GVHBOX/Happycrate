@@ -10,7 +10,7 @@ pub const SOURCE_TIMEOUT_MIN: i64 = 1;
 pub const SOURCE_TIMEOUT_MAX: i64 = 120;
 pub const TMP_PREFIX: &str = ".happycrate-tmp-";
 
-pub const RETIRED_SOURCES: [&str; 2] = ["btdig", "apibay_adult"];
+pub const RETIRED_SOURCES: [&str; 1] = ["apibay_adult"];
 
 pub const DEFAULT_SOURCES: [(&str, &str, i64, i64, bool); 14] = [
     ("apibay", "海盗湾", 15, 0, true),

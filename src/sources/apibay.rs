@@ -76,7 +76,7 @@ fn rows(text: &str, source_key: &str) -> SourceResult<Vec<Item>> {
         if h.is_empty() || !is_hash40(&h) || h == zero_hash {
             continue;
         }
-        if name.to_lowercase() == "no results" {
+        if name.to_lowercase().starts_with("no results") {
             continue;
         }
         items.push(make_item(

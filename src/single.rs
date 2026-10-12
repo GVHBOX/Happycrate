@@ -72,12 +72,6 @@ extern "system" {
         hwnd: *mut core::ffi::c_void,
         process_id: *mut u32,
     ) -> u32;
-    fn GetWindowTextW(
-        hwnd: *mut core::ffi::c_void,
-        string: *mut u16,
-        max_count: i32,
-    ) -> i32;
-    fn GetWindowTextLengthW(hwnd: *mut core::ffi::c_void) -> i32;
     fn GetWindow(hwnd: *mut core::ffi::c_void, cmd: u32) -> *mut core::ffi::c_void;
     fn IsWindow(hwnd: *mut core::ffi::c_void) -> i32;
     fn IsIconic(hwnd: *mut core::ffi::c_void) -> i32;
@@ -111,13 +105,14 @@ fn to_wide(s: &str) -> Vec<u16> {
     OsStr::new(s).encode_wide().chain(std::iter::once(0)).collect()
 }
 
-pub fn register_main_window(hwnd: *mut core::ffi::c_void) {
-    if hwnd.is_null() {
+pub fn register_main_window(pointer: usize) {
+    if pointer == 0 {
         return;
     }
+    let hwnd = pointer as *mut core::ffi::c_void;
     unsafe {
         let wide_prop = to_wide(PROP_NAME);
-        SetPropW(hwnd, wide_prop.as_ptr(), 1usize as *mut core::ffi::c_void);
+        SetPropW(hwnd, wide_prop.as_ptr(), std::ptr::dangling_mut::<core::ffi::c_void>());
 
         let wide_map = to_wide(HWND_MAP_NAME);
         let h_map = CreateFileMappingW(
@@ -231,19 +226,6 @@ unsafe extern "system" fn enum_windows_callback(
     let lower_path = path.to_lowercase();
     if !lower_path.ends_with("happycrate.exe") {
         return 1;
-    }
-
-    let len = GetWindowTextLengthW(hwnd);
-    if len > 0 {
-        let mut buf = vec![0u16; (len + 1) as usize];
-        let read = GetWindowTextW(hwnd, buf.as_mut_ptr(), len + 1);
-        if read > 0 {
-            let title = String::from_utf16_lossy(&buf[..read as usize]);
-            let lower_title = title.to_lowercase();
-            if lower_title.contains("antigravity") || lower_title.contains("code") {
-                return 1;
-            }
-        }
     }
 
     *result = Some(hwnd);

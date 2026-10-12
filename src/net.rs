@@ -549,14 +549,25 @@ const CAPTCHA_STRONG: [&str; 10] = [
 const CAPTCHA_WEAK: [&str; 3] = ["captcha", "enable javascript and cookies", "验证码"];
 
 pub fn captcha_text(text: &str) -> bool {
-    let head: String = text.chars().take(4096).collect::<String>().to_lowercase();
-    if !head.contains("<html") && !head.contains("<!doctype") {
+    let head: String = text.chars().take(4096).collect();
+    let head_low = head.to_lowercase();
+    if !head_low.contains("<html") && !head_low.contains("<!doctype") {
         return false;
     }
-    if CAPTCHA_STRONG.iter().any(|s| head.contains(s)) {
+    if captcha_signs(&head_low) {
         return true;
     }
-    CAPTCHA_WEAK.iter().filter(|s| head.contains(*s)).count() >= 2
+    if head.len() == text.len() {
+        return false;
+    }
+    captcha_signs(&text.to_lowercase())
+}
+
+fn captcha_signs(low: &str) -> bool {
+    if CAPTCHA_STRONG.iter().any(|s| low.contains(s)) {
+        return true;
+    }
+    CAPTCHA_WEAK.iter().filter(|s| low.contains(*s)).count() >= 2
 }
 
 pub fn captcha_wall(body: &[u8]) -> bool {
@@ -779,8 +790,10 @@ impl HttpClient {
             for (scheme, url) in &self.resolved.mapping {
                 let proxy = if scheme == "https" {
                     reqwest::Proxy::https(url)
-                } else {
+                } else if scheme == "http" {
                     reqwest::Proxy::http(url)
+                } else {
+                    continue;
                 };
                 builder = builder
                     .proxy(proxy.map_err(|e| SourceError::Transport(e.to_string()))?);

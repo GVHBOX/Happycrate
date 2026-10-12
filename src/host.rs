@@ -16,12 +16,12 @@ impl AppState {
     }
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn list_sources(state: tauri::State<AppState>) -> Vec<Value> {
     state.api().list_sources()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn source_issues(state: tauri::State<AppState>) -> Vec<Value> {
     state.api().source_issues()
 }
@@ -38,7 +38,7 @@ fn save_result(ok: bool, reason: String) -> Value {
     })
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> Value {
     let mut api = state.api();
     let ok = api.toggle_source(&key, on);
@@ -46,7 +46,7 @@ fn toggle_source(state: tauri::State<AppState>, key: String, on: bool) -> Value 
     save_result(ok, reason)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn reorder_sources(state: tauri::State<AppState>, keys: Vec<String>) -> Value {
     let mut api = state.api();
     let ok = api.reorder_sources(&keys);
@@ -54,7 +54,7 @@ fn reorder_sources(state: tauri::State<AppState>, keys: Vec<String>) -> Value {
     save_result(ok, reason)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn set_auto_order(state: tauri::State<AppState>, on: bool) -> Value {
     let mut api = state.api();
     let ok = api.set_auto_order(on);
@@ -62,17 +62,17 @@ fn set_auto_order(state: tauri::State<AppState>, on: bool) -> Value {
     save_result(ok, reason)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn get_settings(state: tauri::State<AppState>) -> Value {
     state.api().get_settings()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn default_settings(state: tauri::State<AppState>) -> Value {
     state.api().default_settings()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn save_settings(state: tauri::State<AppState>, fields: Value) -> Value {
     state.api().save_settings(&fields)
 }
@@ -82,12 +82,12 @@ fn reload_query_roles(state: tauri::State<AppState>) -> bool {
     state.api().reload_query_roles()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn selftest(state: tauri::State<AppState>) -> Value {
     state.api().selftest()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn app_info(state: tauri::State<AppState>) -> Value {
     state.api().app_info()
 }
@@ -113,7 +113,7 @@ async fn torrent_files(app: tauri::AppHandle, payload: Value) -> Result<Value, S
     Ok(outcome)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn downloaders(state: tauri::State<AppState>) -> Vec<Value> {
     state.api().downloaders()
 }
@@ -146,12 +146,12 @@ async fn deliver(
     Ok(outcome)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn probe_sources(state: tauri::State<AppState>, keys: Option<Vec<String>>) -> i64 {
     state.api().probe_sources(keys.as_deref())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn start_search(state: tauri::State<AppState>, query: String, page: Option<i64>) -> Value {
     let page = page.unwrap_or(1);
     state.api().start_search(&query, page)
@@ -184,17 +184,17 @@ fn net_throughput() -> Value {
     serde_json::json!({ "down": crate::net::down_rate() })
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn open_logs(state: tauri::State<AppState>) -> bool {
     state.api().open_logs()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn open_data_dir(state: tauri::State<AppState>) -> bool {
     state.api().open_data_dir()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn open_repo() -> bool {
     std::process::Command::new("explorer")
         .arg("https://github.com/GVHBOX/Happycrate")
@@ -307,7 +307,7 @@ pub fn run() {
         .setup(|app| {
             let window = app.get_webview_window("main").ok_or("找不到主窗口")?;
             if let Ok(hwnd) = window.hwnd() {
-                crate::single::register_main_window(hwnd.0);
+                crate::single::register_main_window(hwnd.0 as usize);
             }
             window.set_focus()?;
             crate::log::info(
@@ -327,7 +327,7 @@ pub fn run() {
                 .unwrap_or_else(|e| e.into_inner())
                 .set_push(std::sync::Arc::new(move |event| {
                     let _guard = push_gate.lock().unwrap_or_else(|e| e.into_inner());
-                    if handle.eval(&crate::search::js_of(&event)).is_err() {
+                    if handle.eval(crate::search::js_of(&event)).is_err() {
                         crate::log::warning(crate::log::SHELL, "推送前端失败");
                     }
                 }));

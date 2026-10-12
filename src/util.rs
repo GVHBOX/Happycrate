@@ -628,6 +628,9 @@ fn parse_tz(token: &str) -> Option<i64> {
             (h, m, s)
         }
         None => {
+            if !body.bytes().all(|b| b.is_ascii_digit()) {
+                return None;
+            }
             if body.len() != 4 && body.len() != 6 {
                 return None;
             }
@@ -819,7 +822,7 @@ fn b32_value(c: char) -> Option<u32> {
 
 pub fn b32_to_hex(text: &str) -> Option<String> {
     let upper: Vec<char> = text.to_uppercase().chars().collect();
-    if upper.len() % 8 != 0 {
+    if !upper.len().is_multiple_of(8) {
         return None;
     }
     let mut bits: u32 = 0;
@@ -907,7 +910,7 @@ pub fn find_title_attr(row: &str) -> Option<String> {
             let cs = seg_start + pos + 7;
             let run: String = row[cs..].chars().take_while(|c| *c != '"').collect();
             let n = run.chars().count();
-            if n >= 2 && n <= 400 && row[cs..].chars().nth(n) == Some('"') {
+            if (2..=400).contains(&n) && row[cs..].chars().nth(n) == Some('"') {
                 return Some(run);
             }
             end = pos;
@@ -1229,7 +1232,7 @@ fn days_in_month(year: i64, month: i64) -> i64 {
 }
 
 pub fn civil_stamp(year: i64, month: i64, day: i64) -> Option<i64> {
-    if month < 1 || month > 12 || day < 1 || day > days_in_month(year, month) {
+    if !(1..=12).contains(&month) || day < 1 || day > days_in_month(year, month) {
         return None;
     }
     Some(days_from_civil(year, month, day))

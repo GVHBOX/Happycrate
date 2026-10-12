@@ -177,11 +177,11 @@ pub fn load_roles(path: &Path) -> Roles {
 static ROLES: Mutex<Option<std::sync::Arc<Roles>>> = Mutex::new(None);
 
 pub fn reload() {
-    *ROLES.lock().unwrap() = None;
+    *ROLES.lock().unwrap_or_else(|e| e.into_inner()) = None;
 }
 
 pub fn roles() -> std::sync::Arc<Roles> {
-    let mut guard = ROLES.lock().unwrap();
+    let mut guard = ROLES.lock().unwrap_or_else(|e| e.into_inner());
     if let Some(found) = guard.as_ref() {
         return found.clone();
     }

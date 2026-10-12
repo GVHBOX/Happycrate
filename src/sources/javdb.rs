@@ -211,6 +211,9 @@ fn search_page<F: Fetch>(root: &str, query: &str, page_no: i64, fetch: &F) -> So
             .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
             .header("Accept-Language", "zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7"),
     )?;
+    if login_wall(&text) {
+        return Err(SourceError::Blocked(LOGIN_TEXT.to_string()));
+    }
     let chars: Vec<char> = text.chars().collect();
     let prefix: Vec<char> = "<a href=\"".chars().collect();
     let mut out: Vec<String> = Vec::new();

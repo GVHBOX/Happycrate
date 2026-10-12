@@ -4,7 +4,7 @@ use crate::model::{FetchTarget, Item, SourceResult};
 use crate::sources::{nyaa, Fetch};
 use crate::util::{
     cell_text, find_hex_after, find_title_attr, find_torrent_path, findall_bounded, make_item,
-    num_from_f64, parse_size_text, to_int, ts_cn_or_iso, unescape,
+    num_from_f64, parse_size_text, to_int, ts_from_iso, unescape,
 };
 
 pub fn parse_html(page_text: &str, root: &str, source_key: &str) -> Vec<Item> {
@@ -28,7 +28,7 @@ pub fn parse_html(page_text: &str, root: &str, source_key: &str) -> Vec<Item> {
             parse_size_text(&cell_text(&cells[3], " ", false)),
             to_int(&Value::String(cell_text(&cells[5], " ", false))),
             to_int(&Value::String(cell_text(&cells[6], " ", false))),
-            ts_cn_or_iso(&added_text).and_then(num_from_f64),
+            ts_from_iso(&added_text).and_then(num_from_f64),
             source_key,
         );
         if let Some(path) = find_torrent_path(&row) {

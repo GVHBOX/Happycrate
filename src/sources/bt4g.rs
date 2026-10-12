@@ -4,8 +4,12 @@ use crate::util::{
     find_hash40, make_item, num_from_f64, parse_size_text, quote, to_int, ts_from_cn_dash, unescape,
 };
 
+use std::time::Instant;
+
 pub const DETAILS: usize = 12;
 pub const MAX_HITS: usize = 300;
+pub const DETAIL_MS: u64 = 2000;
+pub const RESERVE_MS: u64 = 2000;
 
 struct Row {
     title: String,
@@ -106,8 +110,18 @@ fn detail<F: Fetch>(root: &str, row: &Row, fetch: &F) -> SourceResult<Item> {
     ))
 }
 
-fn fanout<F: Fetch + Sync>(root: &str, rows: &[Row], fetch: &F) -> SourceResult<Vec<Item>> {
-    let limit = rows.len().min(DETAILS);
+fn detail_budget(ms: u64) -> usize {
+    let usable = ms.saturating_sub(RESERVE_MS);
+    ((usable / DETAIL_MS) as usize).max(1)
+}
+
+fn fanout<F: Fetch + Sync>(
+    root: &str,
+    rows: &[Row],
+    fetch: &F,
+    budget_ms: u64,
+) -> SourceResult<Vec<Item>> {
+    let limit = rows.len().min(DETAILS).min(detail_budget(budget_ms));
     let (details, failed) = gather_pages(0..limit, 4, |&i| detail(root, &rows[i], fetch));
     if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
         return Err(err.clone());
@@ -126,7 +140,9 @@ pub fn search<F: Fetch + Sync>(
     query: &str,
     page_no: i64,
     fetch: &F,
+    timeout: u64,
 ) -> SourceResult<Vec<Item>> {
+    let started = Instant::now();
     let root = base_of(base, default_base("bt4g"));
     let url = format!(
         "{root}/search?q={}&orderby=seeders&p={}",
@@ -146,5 +162,7 @@ pub fn search<F: Fetch + Sync>(
     if rows.is_empty() {
         return Ok(Vec::new());
     }
-    fanout(&root, &rows, fetch)
+    let spent = started.elapsed().as_millis() as u64;
+    let budget = timeout.saturating_mul(1000).saturating_sub(spent);
+    fanout(&root, &rows, fetch, budget)
 }

@@ -289,7 +289,7 @@
       '<div class="about-hero">' +
         '<div class="about-app">' +
           '<span class="about-name">happycrate</span>' +
-          '<span class="about-tag" id="aboutVer">v1.0.4.05</span>' +
+          '<span class="about-tag" id="aboutVer">v1.0.4.06</span>' +
         '</div>' +
         '<div class="about-actions">' +
           '<button type="button" class="btn-octo" id="btnRepo" title="GitHub 仓库" aria-label="GitHub 仓库">' + GITHUB_SVG + '</button>' +
@@ -497,9 +497,9 @@
     out.brand = brandKey;
     out.auto_files = autoFilesOn;
     out.progress_style = progStyleKey;
-    out.progress_line = true;
-    out.keep_duplicates = false;
-    out.progress_look = "";
+    out.progress_line = (HC.settings || {}).progress_line !== false;
+    out.keep_duplicates = (HC.settings || {}).keep_duplicates === true;
+    out.progress_look = (HC.settings || {}).progress_look || "";
     return out;
   }
 
@@ -633,7 +633,7 @@
       brandKey = settings.brand || "";
       paintBrand(brandKey);
       if (HC.applyBrand) HC.applyBrand(brandKey);
-      if (HC.applyProgressLook) HC.applyProgressLook("");
+      if (HC.applyProgressLook) HC.applyProgressLook((HC.settings || {}).progress_look || "");
       lookResetPreview();
       baseline = snapshot();
       onEdit();
@@ -824,7 +824,7 @@
         if (btn) btn.disabled = false;
         if (r && r.ok){
           HC.settings = Object.assign({}, HC.settings, fields);
-          if (HC.applyProgressLook) HC.applyProgressLook("");
+          if (HC.applyProgressLook) HC.applyProgressLook(fields.progress_look || "");
           baseline = snapshot();
           onEdit();
           if (HC.sfx && HC.sfx.play) HC.sfx.play("done");

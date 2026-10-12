@@ -26,8 +26,11 @@ const STATUS_SCRIPT: &str = r##"
 (function () {
   try {
     var title = document.title || "";
+    var lead = document.querySelector("h1, h2");
+    var note = lead && lead.textContent ? lead.textContent.toLowerCase() : "";
     var challenge = /just a moment|请稍候|正在验证|安全验证|checking your browser|attention required/i.test(title)
-      || !!document.querySelector("#challenge-running, #challenge-stage, .cf-browser-verification, #cf-challenge-running");
+      || /one more step|please complete the security check|正在验证|安全验证|请稍候/i.test(note)
+      || !!document.querySelector("#challenge-running, #challenge-stage, .cf-browser-verification, #cf-challenge-running, #g-recaptcha, .g-recaptcha, iframe[src*='recaptcha'], form[action*='recaptcha']");
     return {
       ready: document.readyState === "complete",
       challenge: challenge

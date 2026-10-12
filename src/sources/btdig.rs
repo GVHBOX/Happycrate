@@ -74,7 +74,9 @@ pub fn search<F: Fetch + Sync>(
         if !seen.insert(hash.clone()) {
             continue;
         }
-        let title = title_of(&block).unwrap_or_default();
+        let Some(title) = title_of(&block).filter(|text| !text.trim().is_empty()) else {
+            continue;
+        };
         let size = class_text(&block, "torrent_size")
             .map(|raw| parse_size_text(&unescape(&raw)))
             .unwrap_or(0);

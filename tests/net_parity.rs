@@ -46,6 +46,31 @@ fn parity_bypass() {
 }
 
 #[test]
+fn captcha_sign_survives_beyond_head_window() {
+    let mut page = String::from("<!DOCTYPE html><html><head><title>btdig.com</title></head><body>");
+    while page.len() < 6000 {
+        page.push_str("<div style=\"margin:0;padding:0\">blocked</div>");
+    }
+    assert!(
+        !happycrate::net::captcha_text(&page),
+        "纯样式填充页不应判为验证码页"
+    );
+    page.push_str("<h1>One more step</h1><div id=\"g-recaptcha\"></div></body></html>");
+    assert!(
+        happycrate::net::captcha_text(&page),
+        "标记落在 4096 字符之后的挑战页应被识别"
+    );
+}
+
+#[test]
+fn captcha_weak_sign_needs_two_hits() {
+    let single = "<html><body><a href=\"/captcha\">x</a></body></html>";
+    assert!(!happycrate::net::captcha_text(single));
+    let double = "<html><body><a href=\"/captcha\">输入验证码</a></body></html>";
+    assert!(happycrate::net::captcha_text(double));
+}
+
+#[test]
 fn live_registry_matches_python() {
     let python = Path::new("D:/AI/happycrate/.venv/Scripts/python.exe");
     if !python.is_file() {

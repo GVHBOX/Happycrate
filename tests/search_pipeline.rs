@@ -168,7 +168,7 @@ fn job_of(scenario: &Value, now: &LocalNow) -> Job {
             .unwrap_or(0),
         max_workers: scenario["max_workers"].as_i64().unwrap() as usize,
         stamp: scenario["stamp"].as_str().unwrap().to_string(),
-        now: now.clone(),
+        now: *now,
         token: scenario["token"].as_i64().unwrap(),
         hints: Hints {
             proxy: hints["proxy"].as_str().unwrap().to_string(),

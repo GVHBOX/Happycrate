@@ -5,7 +5,7 @@ if (!expression) {
   process.exit(2);
 }
 
-const response = await fetch(`http://127.0.0.1:${port}/json`);
+const response = await fetch(`http://localhost:${port}/json`);
 const targets = await response.json();
 const page = targets.find((t) => t.type === "page");
 if (!page) {

@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::mpsc::{channel, Receiver, RecvTimeoutError, Sender};
 use std::sync::{Arc, Mutex, OnceLock};
@@ -10,7 +11,9 @@ use tauri::{AppHandle, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 use crate::model::{SourceError, SourceResult};
 use crate::sources::{batch_alive, Fetch, Req};
 
-pub const LABEL: &str = "fetch";
+pub fn label_for(key: &str) -> String {
+    format!("fetch-{key}")
+}
 
 const POLL_INTERVAL: Duration = Duration::from_millis(400);
 const POLL_SLICE: Duration = Duration::from_millis(200);
@@ -33,7 +36,8 @@ const STATUS_SCRIPT: &str = r##"
       || !!document.querySelector("#challenge-running, #challenge-stage, .cf-browser-verification, #cf-challenge-running, #g-recaptcha, .g-recaptcha, iframe[src*='recaptcha'], form[action*='recaptcha']");
     return {
       ready: document.readyState === "complete",
-      challenge: challenge
+      challenge: challenge,
+      href: String(location.href)
     };
   } catch (error) {
     return { ready: false, challenge: false };
@@ -148,13 +152,15 @@ fn worker_loop<D: Driver>(driver: D, rx: Receiver<Job>) {
 
 pub struct WindowDriver {
     app: AppHandle,
+    label: String,
     window: Mutex<Option<WebviewWindow>>,
 }
 
 impl WindowDriver {
-    pub fn new(app: AppHandle) -> WindowDriver {
+    pub fn new(app: AppHandle, label: String) -> WindowDriver {
         WindowDriver {
             app,
+            label,
             window: Mutex::new(None),
         }
     }
@@ -178,10 +184,11 @@ impl WindowDriver {
         let start = blank_url();
         let (tx, rx) = channel();
         let app = self.app.clone();
+        let label = self.label.clone();
         self.app
             .run_on_main_thread(move || {
-                let outcome = WebviewWindowBuilder::new(&app, LABEL, WebviewUrl::External(start))
-                    .title("fetch")
+                let outcome = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(start))
+                    .title(&label)
                     .visible(false)
                     .skip_taskbar(true)
                     .inner_size(1100.0, 760.0)
@@ -204,6 +211,7 @@ impl Driver for WindowDriver {
         let target = url
             .parse::<tauri::Url>()
             .map_err(|_| SourceError::Transport(format!("取数地址无法解析：{url}")))?;
+        let expected = target.as_str().to_string();
         let window = self.window()?;
         window
             .navigate(target)
@@ -232,7 +240,7 @@ impl Driver for WindowDriver {
                 Err(SourceError::Shape(_)) | Err(SourceError::Timeout) => continue,
                 Err(other) => return Err(other),
             };
-            if status.ready && !status.challenge {
+            if status.ready && !status.challenge && status.href == expected {
                 if surfaced {
                     let _ = window.hide();
                 }
@@ -279,6 +287,7 @@ fn eval_json<T: for<'de> Deserialize<'de>>(window: &WebviewWindow, script: &str)
 struct PageStatus {
     ready: bool,
     challenge: bool,
+    href: String,
 }
 
 #[derive(Deserialize)]
@@ -290,22 +299,26 @@ pub fn probe_enabled() -> bool {
     matches!(std::env::var(PROBE_ENV), Ok(value) if value == "1")
 }
 
-static SHARED: OnceLock<Arc<WebFetch>> = OnceLock::new();
+static CHANNELS: OnceLock<HashMap<&'static str, Arc<WebFetch>>> = OnceLock::new();
 
 pub fn init(app: &AppHandle) {
-    let fetch = Arc::new(WebFetch::start(WindowDriver::new(app.clone())));
-    let _ = SHARED.set(fetch);
+    let mut channels = HashMap::new();
+    for key in crate::sources::WEBVIEW_KEYS {
+        let driver = WindowDriver::new(app.clone(), label_for(key));
+        channels.insert(*key, Arc::new(WebFetch::start(driver)));
+    }
+    let _ = CHANNELS.set(channels);
 }
 
-pub fn shared() -> Option<Arc<WebFetch>> {
-    SHARED.get().cloned()
+pub fn shared(key: &str) -> Option<Arc<WebFetch>> {
+    CHANNELS.get()?.get(key).cloned()
 }
 
 pub fn start_probe(app: &AppHandle) {
     let url = std::env::var(PROBE_URL_ENV).unwrap_or_else(|_| "https://example.com".to_string());
     let app = app.clone();
     thread::spawn(move || {
-        let fetch = WebFetch::start(WindowDriver::new(app));
+        let fetch = WebFetch::start(WindowDriver::new(app, label_for("probe")));
         let started = Instant::now();
         let outcome = fetch.fetch(Req::get(&url).timeout(30));
         let dir = crate::paths::data_dir();

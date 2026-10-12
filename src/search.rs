@@ -250,7 +250,7 @@ fn search_one<F: Fetch + Sync>(
 ) -> (Vec<Item>, String, i64) {
     let started = Instant::now();
     let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
-        crate::web_fetch::shared()
+        crate::web_fetch::shared(&target.key)
     } else {
         None
     };

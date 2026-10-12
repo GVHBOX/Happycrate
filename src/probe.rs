@@ -55,7 +55,7 @@ fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i6
     let started = Instant::now();
     let budget = target.timeout.min(TIMEOUT_CAP);
     let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
-        crate::web_fetch::shared()
+        crate::web_fetch::shared(&target.key)
     } else {
         None
     };

@@ -186,12 +186,18 @@ fn first_page_failure_falls_back_to_rest() {
             (2, page_html(45, &hashes_for(20, 20))),
             (3, page_html(45, &hashes_for(40, 5))),
             (4, page_html(45, &[])),
+            (5, page_html(45, &[])),
+            (6, page_html(45, &[])),
+            (7, page_html(45, &[])),
+            (8, page_html(45, &[])),
+            (9, page_html(45, &[])),
+            (10, page_html(45, &[])),
         ]),
         HashMap::from([(1, 1)]),
     );
     let items = xccl263::search("", "样例", 1, &script).expect("搜索失败");
     assert_eq!(items.len(), 45);
-    assert_eq!(script.calls(), vec![1, 1, 2, 3, 4]);
+    assert_eq!(script.calls(), vec![1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 }
 
 fn kw_page_of(url: &str) -> (String, i64) {

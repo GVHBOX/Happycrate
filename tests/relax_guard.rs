@@ -84,10 +84,10 @@ fn relax_skipped_when_every_source_times_out() {
         starts, 2,
         "全网超时时只该跑一轮，实际发出了 {starts} 个开始事件、{call_count} 次请求"
     );
-    let one_round = 2 + 4;
+    let one_round = 2 + 10;
     assert_eq!(
         call_count, one_round,
-        "bitsearch 2 页 + xccl263 4 页，全网超时时只该有这一轮的量"
+        "bitsearch 2 页 + xccl263 10 页，全网超时时只该有这一轮的量"
     );
 
     let done = events

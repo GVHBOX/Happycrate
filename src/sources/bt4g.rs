@@ -4,12 +4,10 @@ use crate::util::{
     find_hash40, make_item, num_from_f64, parse_size_text, quote, to_int, ts_from_cn_dash, unescape,
 };
 
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
-pub const DETAILS: usize = 12;
+pub const DETAILS: usize = 30;
 pub const MAX_HITS: usize = 300;
-pub const DETAIL_MS: u64 = 2000;
-pub const RESERVE_MS: u64 = 2000;
 
 struct Row {
     title: String,
@@ -90,12 +88,13 @@ fn row_of(block: &str) -> Option<Row> {
     })
 }
 
-fn detail<F: Fetch>(root: &str, row: &Row, fetch: &F) -> SourceResult<Item> {
+fn detail<F: Fetch>(root: &str, row: &Row, fetch: &F, deadline: Instant) -> SourceResult<Item> {
     let page = fetch.fetch(
         Req::get(&format!("{root}{}", row.path))
             .referer(&format!("{root}/"))
             .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
-            .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
+            .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+            .deadline(deadline),
     )?;
     let hash = find_hash40(&page)
         .ok_or_else(|| SourceError::Shape("bt4g 磁力页缺少 info hash".to_string()))?;
@@ -110,19 +109,14 @@ fn detail<F: Fetch>(root: &str, row: &Row, fetch: &F) -> SourceResult<Item> {
     ))
 }
 
-fn detail_budget(ms: u64) -> usize {
-    let usable = ms.saturating_sub(RESERVE_MS);
-    ((usable / DETAIL_MS) as usize).max(1)
-}
-
 fn fanout<F: Fetch + Sync>(
     root: &str,
     rows: &[Row],
     fetch: &F,
-    budget_ms: u64,
+    deadline: Instant,
 ) -> SourceResult<Vec<Item>> {
-    let limit = rows.len().min(DETAILS).min(detail_budget(budget_ms));
-    let (details, failed) = gather_pages(0..limit, 4, |&i| detail(root, &rows[i], fetch));
+    let limit = rows.len().min(DETAILS);
+    let (details, failed) = gather_pages(0..limit, 4, |&i| detail(root, &rows[i], fetch, deadline));
     if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
         return Err(err.clone());
     }
@@ -162,7 +156,6 @@ pub fn search<F: Fetch + Sync>(
     if rows.is_empty() {
         return Ok(Vec::new());
     }
-    let spent = started.elapsed().as_millis() as u64;
-    let budget = timeout.saturating_mul(1000).saturating_sub(spent);
-    fanout(&root, &rows, fetch, budget)
+    let deadline = started + Duration::from_secs(timeout.max(1));
+    fanout(&root, &rows, fetch, deadline)
 }

@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 
-use crate::model::{Item, SourceResult};
+use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{base_of, default_base, Fetch, Req};
-use crate::util::{cell_text, find_hex_after, make_item, parse_size_text, quote, unescape};
+use crate::util::{cell_text, find_hex_after, make_item, parse_size_text, quote_plus, unescape};
 
+pub const PAGES: i64 = 8;
 pub const MAX_HITS: usize = 200;
 
 fn blocks(text: &str) -> Vec<String> {
@@ -46,28 +47,9 @@ fn title_of(block: &str) -> Option<String> {
     Some(cell_text(&rest[after_anchor..close], "", true))
 }
 
-pub fn search<F: Fetch + Sync>(
-    base: &str,
-    query: &str,
-    page_no: i64,
-    fetch: &F,
-) -> SourceResult<Vec<Item>> {
-    let root = base_of(base, default_base("btdig"));
-    let page = page_no.max(1);
-    let url = if page <= 1 {
-        format!("{root}/search?q={}", quote(query))
-    } else {
-        format!("{root}/search?q={}&p={}", quote(query), page - 1)
-    };
-    let text = fetch.fetch(
-        Req::get(&url)
-            .referer(&format!("{root}/"))
-            .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
-            .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
-    )?;
+fn parse_page(text: &str, seen: &mut HashSet<String>) -> Vec<Item> {
     let mut items = Vec::new();
-    let mut seen: HashSet<String> = HashSet::new();
-    for block in blocks(&text) {
+    for block in blocks(text) {
         let Some(hash) = find_hex_after(&block, "xt=urn:btih:", 40) else {
             continue;
         };
@@ -85,5 +67,59 @@ pub fn search<F: Fetch + Sync>(
             break;
         }
     }
+    items
+}
+
+fn page_url(root: &str, query: &str, page: i64) -> String {
+    if page <= 0 {
+        format!("{root}/search?q={}", quote_plus(query))
+    } else {
+        format!("{root}/search?q={}&p={}", quote_plus(query), page)
+    }
+}
+
+pub fn search<F: Fetch + Sync>(
+    base: &str,
+    query: &str,
+    page_no: i64,
+    fetch: &F,
+) -> SourceResult<Vec<Item>> {
+    let root = base_of(base, default_base("btdig"));
+    let start = page_no.max(1) - 1;
+    let mut items: Vec<Item> = Vec::new();
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut last_error: Option<SourceError> = None;
+    for offset in 0..PAGES {
+        let url = page_url(&root, query, start + offset);
+        let text = match fetch.fetch(
+            Req::get(&url)
+                .referer(&format!("{root}/"))
+                .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
+                .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
+        ) {
+            Ok(text) => text,
+            Err(exc) => {
+                if matches!(exc, SourceError::Cancelled) {
+                    return Err(exc);
+                }
+                last_error = Some(exc);
+                continue;
+            }
+        };
+        let found = parse_page(&text, &mut seen);
+        if found.is_empty() {
+            break;
+        }
+        items.extend(found);
+        if items.len() >= MAX_HITS {
+            break;
+        }
+    }
+    if items.is_empty() {
+        if let Some(exc) = last_error {
+            return Err(exc);
+        }
+    }
+    items.truncate(MAX_HITS);
     Ok(items)
 }

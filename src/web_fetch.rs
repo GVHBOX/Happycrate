@@ -12,7 +12,7 @@ use crate::sources::{batch_alive, Fetch, Req};
 
 pub const LABEL: &str = "fetch";
 
-const POLL_INTERVAL: Duration = Duration::from_millis(1200);
+const POLL_INTERVAL: Duration = Duration::from_millis(400);
 const POLL_SLICE: Duration = Duration::from_millis(200);
 const WAIT_GRACE: Duration = Duration::from_millis(600);
 const EVAL_TIMEOUT: Duration = Duration::from_secs(10);

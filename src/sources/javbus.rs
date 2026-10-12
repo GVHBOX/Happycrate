@@ -1,16 +1,21 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
+use std::time::{Duration, Instant};
 
 use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{base_of, default_base, gather_pages, merge_details, Fetch, Req};
 use crate::util::{
     cell_text, find_ci, find_hash40, find_tag_end, findall_bounded, make_item, num_from_f64,
-    parse_size_text, quote, quote_plus, ts_from_cn_ymd,
+    parse_size_text, quote_plus, ts_from_cn_ymd,
 };
 
-pub const DETAILS: usize = 12;
-pub const MAX_HITS: usize = 300;
+pub const MAX_MOVIES: usize = 90;
+pub const MAX_HITS: usize = 800;
 
 const EMPTY_SIGNS: [&str; 3] = ["沒有您要的結果", "沒有找到", "沒有相關"];
+const RETRY_PAUSE_MS: u64 = 9000;
+const MAX_ROUNDS: usize = 3;
+const WAVE: usize = 20;
+const TOTAL_BUDGET_SECS: u64 = 30;
 
 fn starts_ci(chars: &[char], needle: &str, at: usize) -> bool {
     let needle: Vec<char> = needle.chars().collect();
@@ -230,22 +235,63 @@ fn search_page<F: Fetch>(root: &str, word: &str, page_no: i64, fetch: &F) -> Sou
     Ok(out)
 }
 
+fn worth_retry(error: &SourceError) -> bool {
+    match error {
+        SourceError::Cancelled
+        | SourceError::Blocked(_)
+        | SourceError::TooLarge { .. }
+        | SourceError::ProxyUnreachable(_)
+        | SourceError::Shape(_)
+        | SourceError::MissingFixture { .. } => false,
+        SourceError::Http { code, .. } => *code == 429 || *code >= 500,
+        SourceError::Timeout | SourceError::Transport(_) => true,
+    }
+}
+
 fn fanout<F: Fetch + Sync>(
     root: &str,
     links: &[String],
     fetch: &F,
+    deadline: Instant,
 ) -> SourceResult<Vec<Item>> {
-    let limit = links.len().min(DETAILS);
-    let (details, failed) = gather_pages(0..limit, 4, |&i| {
-        detail(root, &links[i], fetch)
-    });
-    if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
-        return Err(err.clone());
+    let limit = links.len().min(MAX_MOVIES);
+    let mut queue: Vec<usize> = (0..limit).collect();
+    let mut groups: BTreeMap<usize, Vec<Item>> = BTreeMap::new();
+    let mut first_error: Option<SourceError> = None;
+    for round in 0..MAX_ROUNDS {
+        if queue.is_empty() || Instant::now() >= deadline {
+            break;
+        }
+        let wave: Vec<usize> = queue.drain(..queue.len().min(WAVE)).collect();
+        let (found, failed) = gather_pages(wave.iter().copied(), 6, |&i| {
+            detail(root, &links[i], fetch)
+        });
+        groups.extend(found);
+        if let Some(err) = failed.values().find(|e| matches!(e, SourceError::Cancelled)) {
+            return Err(err.clone());
+        }
+        for (index, error) in &failed {
+            if first_error.is_none() {
+                first_error = Some(error.clone());
+            }
+            if worth_retry(error) {
+                queue.push(*index);
+            }
+        }
+        if !queue.is_empty() && round + 1 < MAX_ROUNDS {
+            let pause = Duration::from_millis(RETRY_PAUSE_MS);
+            if Instant::now() + pause >= deadline {
+                break;
+            }
+            if !crate::sources::pause(fetch.batch(), RETRY_PAUSE_MS) {
+                return Err(SourceError::Cancelled);
+            }
+        }
     }
-    let found: Vec<Vec<Item>> = details.into_values().collect();
+    let found: Vec<Vec<Item>> = groups.into_values().collect();
     if found.is_empty() {
-        if let Some(exc) = failed.values().next() {
-            return Err(exc.clone());
+        if let Some(exc) = first_error {
+            return Err(exc);
         }
     }
     Ok(merge_details(&found, MAX_HITS))
@@ -256,12 +302,8 @@ fn words_for<F: Fetch + Sync>(
     word: &str,
     page_no: i64,
     fetch: &F,
-) -> SourceResult<Vec<Item>> {
-    let links = search_page(root, &quote(word), page_no, fetch)?;
-    if links.is_empty() {
-        return Ok(Vec::new());
-    }
-    fanout(root, &links, fetch)
+) -> SourceResult<Vec<String>> {
+    search_page(root, &quote_plus(word), page_no, fetch)
 }
 
 pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F) -> SourceResult<Vec<Item>> {
@@ -272,26 +314,20 @@ pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F)
         return Ok(Vec::new());
     }
 
-    match words_for(&root, query, first, fetch) {
-        Ok(items) => return Ok(items),
-        Err(SourceError::Http { code, .. }) if words.len() >= 2 && (code == 403 || code == 404) => {}
-        Err(SourceError::Shape(_)) if words.len() >= 2 => {}
-        Err(exc) => return Err(exc),
+    let mut probes: Vec<String> = vec![query.to_string()];
+    if words.len() > 1 {
+        probes.extend(words.iter().cloned());
     }
 
-    let mut merged: Vec<Item> = Vec::new();
+    let mut links: Vec<String> = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
     let mut first_error: Option<SourceError> = None;
-    for word in &words {
+    for word in &probes {
         match words_for(&root, word, first, fetch) {
-            Ok(items) => {
-                for item in items {
-                    if item.info_hash.is_empty() || !seen.insert(item.info_hash.clone()) {
-                        continue;
-                    }
-                    merged.push(item);
-                    if merged.len() >= MAX_HITS {
-                        return Ok(merged);
+            Ok(found) => {
+                for path in found {
+                    if seen.insert(path.clone()) {
+                        links.push(path);
                     }
                 }
             }
@@ -302,10 +338,12 @@ pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F)
             }
         }
     }
-    if merged.is_empty() {
+    if links.is_empty() {
         if let Some(exc) = first_error {
             return Err(exc);
         }
+        return Ok(Vec::new());
     }
-    Ok(merged)
+    let deadline = Instant::now() + Duration::from_secs(TOTAL_BUDGET_SECS);
+    fanout(&root, &links, fetch, deadline)
 }

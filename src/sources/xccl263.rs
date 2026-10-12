@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, HashSet};
-use std::time::Duration;
 
 use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{
@@ -10,11 +9,10 @@ use crate::util::{
     ts_from_cn_dash, unescape,
 };
 
-pub const PAGES: i64 = 4;
+pub const PAGES: i64 = 10;
 pub const PAGE_SIZE: i64 = 20;
-pub const MAX_HITS: usize = 200;
+pub const MAX_HITS: usize = 400;
 const RETRY_PAUSE_MS: u64 = 2000;
-const PAUSE_STEP_MS: u64 = 100;
 
 fn starts_ci(chars: &[char], needle: &str, at: usize) -> bool {
     let needle: Vec<char> = needle.chars().collect();
@@ -150,22 +148,6 @@ fn found_total(text: &str) -> Option<i64> {
     None
 }
 
-fn pause(batch: Option<i64>, ms: u64) -> bool {
-    let step = PAUSE_STEP_MS.min(ms);
-    let mut left = ms;
-    while left > 0 {
-        if let Some(token) = batch {
-            if !crate::sources::batch_alive(token) {
-                return false;
-            }
-        }
-        let slice = step.min(left);
-        std::thread::sleep(Duration::from_millis(slice));
-        left -= slice;
-    }
-    true
-}
-
 fn wanted_pages(total: Option<i64>) -> i64 {
     match total {
         Some(0) => 1,
@@ -299,7 +281,7 @@ fn search_words<F: Fetch + Sync>(
         }
         let spaced = retry_keys(&failed);
         if !spaced.is_empty() {
-            if !pause(fetch.batch(), RETRY_PAUSE_MS) {
+            if !crate::sources::pause(fetch.batch(), RETRY_PAUSE_MS) {
                 return Err(SourceError::Cancelled);
             }
             let lost = refill(root, query, &spaced, fetch, &mut pages);

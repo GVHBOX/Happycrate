@@ -1,5 +1,5 @@
 {
-  "count": 80,
+  "count": 197,
   "err": "",
   "items": [
     {
@@ -801,6 +801,1176 @@
       "size": 679477248,
       "source": "xccl263",
       "title": "ubuntu-12.04.3-server-i386.iso"
+    },
+    {
+      "added": 1762704000.0,
+      "info_hash": "be9c2a6b988243e84475c5b1425799564149a64a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:be9c2a6b988243e84475c5b1425799564149a64a&dn=ubuntu-20.04-arm64-utm",
+      "seeders": 754,
+      "size": 3876207984,
+      "source": "xccl263",
+      "title": "ubuntu-20.04-arm64-utm"
+    },
+    {
+      "added": 1763481600.0,
+      "info_hash": "bf5ed448253bfc169ac14ed9ff47805b97a839ce",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:bf5ed448253bfc169ac14ed9ff47805b97a839ce&dn=ubuntu-22.04.4-desktop-amd64_202504",
+      "seeders": 7,
+      "size": 5025111736,
+      "source": "xccl263",
+      "title": "ubuntu-22.04.4-desktop-amd64_202504"
+    },
+    {
+      "added": 1764345600.0,
+      "info_hash": "60e730914b6d0c2573a98a05180a53cc6eaa825f",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:60e730914b6d0c2573a98a05180a53cc6eaa825f&dn=ubuntu-unity-24.04.3-LTS-AMD64",
+      "seeders": 1,
+      "size": 1845493,
+      "source": "xccl263",
+      "title": "ubuntu-unity-24.04.3-LTS-AMD64"
+    },
+    {
+      "added": 1764432000.0,
+      "info_hash": "dd40fcec450b556c9454c0843aae24a47dd88229",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:dd40fcec450b556c9454c0843aae24a47dd88229&dn=ubuntu-19.04-desktop-amd64_201906",
+      "seeders": 79,
+      "size": 2093796556,
+      "source": "xccl263",
+      "title": "ubuntu-19.04-desktop-amd64_201906"
+    },
+    {
+      "added": 1764691200.0,
+      "info_hash": "44c514b69b9148237671e3b52409925359098fa8",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:44c514b69b9148237671e3b52409925359098fa8&dn=ubuntu-20.04-desktop-amd64_202505",
+      "seeders": 281,
+      "size": 2738041651,
+      "source": "xccl263",
+      "title": "ubuntu-20.04-desktop-amd64_202505"
+    },
+    {
+      "added": 1765468800.0,
+      "info_hash": "831f9a62dc212f65cd92c5e9be5c27d0939d8979",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:831f9a62dc212f65cd92c5e9be5c27d0939d8979&dn=ubuntu-12.7z",
+      "seeders": 14,
+      "size": 4970250,
+      "source": "xccl263",
+      "title": "ubuntu-12.7z"
+    },
+    {
+      "added": 1769702400.0,
+      "info_hash": "20240d67be00866b179c56da61b338e9f4797fbb",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:20240d67be00866b179c56da61b338e9f4797fbb&dn=Ubuntu-Hour-20220211",
+      "seeders": 50,
+      "size": 90229964,
+      "source": "xccl263",
+      "title": "Ubuntu-Hour-20220211"
+    },
+    {
+      "added": 1777564800.0,
+      "info_hash": "9f54de1ff2092a051b850cebc2692c0e6f51664d",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:9f54de1ff2092a051b850cebc2692c0e6f51664d&dn=ubuntu-22.04-desktop-amd64_202505",
+      "seeders": 3,
+      "size": 3672197038,
+      "source": "xccl263",
+      "title": "ubuntu-22.04-desktop-amd64_202505"
+    },
+    {
+      "added": 1779465600.0,
+      "info_hash": "bf04d2e58f9382f4a87951747ac8734900101df5",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:bf04d2e58f9382f4a87951747ac8734900101df5&dn=ubuntu-18.04-x86",
+      "seeders": 8,
+      "size": 1374389534,
+      "source": "xccl263",
+      "title": "ubuntu-18.04-x86"
+    },
+    {
+      "added": 1781193600.0,
+      "info_hash": "77d1f9af3b433364e917bb644d7738917bd346ef",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:77d1f9af3b433364e917bb644d7738917bd346ef&dn=ubuntu-20.04-desktop-amd64",
+      "seeders": 2,
+      "size": 2716566814,
+      "source": "xccl263",
+      "title": "ubuntu-20.04-desktop-amd64"
+    },
+    {
+      "added": 1785340800.0,
+      "info_hash": "5bf3abdfe6c2eda3561a8bc5002a312b878df04b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:5bf3abdfe6c2eda3561a8bc5002a312b878df04b&dn=ubuntu-9.10-i-386-cd",
+      "seeders": 6,
+      "size": 725499248,
+      "source": "xccl263",
+      "title": "ubuntu-9.10-i-386-cd"
+    },
+    {
+      "added": 1785340800.0,
+      "info_hash": "9f00b9623885127d9a738a68a3d37b0e156d3b1f",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:9f00b9623885127d9a738a68a3d37b0e156d3b1f&dn=ubuntu-5.04-x-86-installer-disc",
+      "seeders": 6,
+      "size": 615346339,
+      "source": "xccl263",
+      "title": "ubuntu-5.04-x-86-installer-disc"
+    },
+    {
+      "added": 1785340800.0,
+      "info_hash": "8530a9055fd834a986abe98cf878dd205509f877",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:8530a9055fd834a986abe98cf878dd205509f877&dn=ubuntu-21.10",
+      "seeders": 3,
+      "size": 3124588707,
+      "source": "xccl263",
+      "title": "ubuntu-21.10"
+    },
+    {
+      "added": 1785427200.0,
+      "info_hash": "b4b557e487291ece39d2874f58e4b5fa9c8f06ec",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:b4b557e487291ece39d2874f58e4b5fa9c8f06ec&dn=ubuntu-20.04.4-live-server-amd64",
+      "seeders": 13,
+      "size": 1331439861,
+      "source": "xccl263",
+      "title": "ubuntu-20.04.4-live-server-amd64"
+    },
+    {
+      "added": 1788969600.0,
+      "info_hash": "7e2199b7ee6695678ef366e5ce08943997acf5d0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:7e2199b7ee6695678ef366e5ce08943997acf5d0&dn=ubuntu-21.04-desktop-amd64_20250511",
+      "seeders": 1,
+      "size": 2834678415,
+      "source": "xccl263",
+      "title": "ubuntu-21.04-desktop-amd64_20250511"
+    },
+    {
+      "added": 1788969600.0,
+      "info_hash": "4d4645200dd71741539c156765acaa9b52ff3bcf",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:4d4645200dd71741539c156765acaa9b52ff3bcf&dn=ubuntu-24.04.2-desktop-amd64",
+      "seeders": 6,
+      "size": 6388763852,
+      "source": "xccl263",
+      "title": "ubuntu-24.04.2-desktop-amd64"
+    },
+    {
+      "added": 1788969600.0,
+      "info_hash": "8dcd0a939b7a3cbd841bbb61d8ee2cfbebe716b9",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:8dcd0a939b7a3cbd841bbb61d8ee2cfbebe716b9&dn=ubuntu-23.04-desktop-amd64_202505",
+      "seeders": 1,
+      "size": 4971424645,
+      "source": "xccl263",
+      "title": "ubuntu-23.04-desktop-amd64_202505"
+    },
+    {
+      "added": 1789056000.0,
+      "info_hash": "ff3f512e99c0e746f4b5cdac9a5c49112df2fc0b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:ff3f512e99c0e746f4b5cdac9a5c49112df2fc0b&dn=ubuntu-20.04.1-desktop-amd64_202505",
+      "seeders": 2,
+      "size": 2813203578,
+      "source": "xccl263",
+      "title": "ubuntu-20.04.1-desktop-amd64_202505"
+    },
+    {
+      "added": 1576166400.0,
+      "info_hash": "075e1d4aa7e82cf39802cc8f781de7ac37491c7c",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:075e1d4aa7e82cf39802cc8f781de7ac37491c7c&dn=Ubuntu-16.04%20%5B2xDVD%5D",
+      "seeders": 1244,
+      "size": 2985002270,
+      "source": "xccl263",
+      "title": "Ubuntu-16.04 [2xDVD]"
+    },
+    {
+      "added": 1630339200.0,
+      "info_hash": "8571a152c222852a29ff51c3e91ffcb39c207e50",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:8571a152c222852a29ff51c3e91ffcb39c207e50&dn=ubuntu-pack-16.04-gnome_classic",
+      "seeders": 3040,
+      "size": 4337916968,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-gnome_classic"
+    },
+    {
+      "added": 1630512000.0,
+      "info_hash": "c6b81b73b247131c2e378d1d96b42ae58b79dc74",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c6b81b73b247131c2e378d1d96b42ae58b79dc74&dn=ubuntu-oem-12.04-unity",
+      "seeders": 2044,
+      "size": 2018634629,
+      "source": "xccl263",
+      "title": "ubuntu-oem-12.04-unity"
+    },
+    {
+      "added": 1630512000.0,
+      "info_hash": "25dd6f97e00f57ac6f911cb53dc02d53bcfe4275",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:25dd6f97e00f57ac6f911cb53dc02d53bcfe4275&dn=ubuntu-unity-20.10",
+      "seeders": 683,
+      "size": 2630667468,
+      "source": "xccl263",
+      "title": "ubuntu-unity-20.10"
+    },
+    {
+      "added": 1630598400.0,
+      "info_hash": "e519ed7b0fc942519bf9f0d1ac69e70c5bc9a7b2",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:e519ed7b0fc942519bf9f0d1ac69e70c5bc9a7b2&dn=Ubuntu%20x86-x64",
+      "seeders": 2381,
+      "size": 1728724336,
+      "source": "xccl263",
+      "title": "Ubuntu x86-x64"
+    },
+    {
+      "added": 1630684800.0,
+      "info_hash": "51e0676b4df763aab7ac2663b249fd4e389d2d54",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:51e0676b4df763aab7ac2663b249fd4e389d2d54&dn=Ubuntu%2015.10%20Wily%20Werewolf",
+      "seeders": 187,
+      "size": 2405181685,
+      "source": "xccl263",
+      "title": "Ubuntu 15.10 Wily Werewolf"
+    },
+    {
+      "added": 1630684800.0,
+      "info_hash": "689e858510c82a5c8043884165257ea34b5ec416",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:689e858510c82a5c8043884165257ea34b5ec416&dn=ubuntu-12.04-server",
+      "seeders": 308,
+      "size": 1428076625,
+      "source": "xccl263",
+      "title": "ubuntu-12.04-server"
+    },
+    {
+      "added": 1631030400.0,
+      "info_hash": "1831ad66e040ee61e3fde2064ed211f669b736b0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:1831ad66e040ee61e3fde2064ed211f669b736b0&dn=Ubuntu-20.04.1",
+      "seeders": 953,
+      "size": 3747358965,
+      "source": "xccl263",
+      "title": "Ubuntu-20.04.1"
+    },
+    {
+      "added": 1631289600.0,
+      "info_hash": "7e9488e1d8f9917a779b1fe3a2ab215e1f3b7e3b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:7e9488e1d8f9917a779b1fe3a2ab215e1f3b7e3b&dn=Ubuntu-18.04.4",
+      "seeders": 1378,
+      "size": 3038689361,
+      "source": "xccl263",
+      "title": "Ubuntu-18.04.4"
+    },
+    {
+      "added": 1631635200.0,
+      "info_hash": "702aa9a13a7cc93cd5a3da550c0461ef54263e21",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:702aa9a13a7cc93cd5a3da550c0461ef54263e21&dn=Ubuntu-20.04.2.0",
+      "seeders": 1502,
+      "size": 4090956349,
+      "source": "xccl263",
+      "title": "Ubuntu-20.04.2.0"
+    },
+    {
+      "added": 1631894400.0,
+      "info_hash": "c3cff06b3aad2fc778f57da73a5e48d7e07c7ed1",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c3cff06b3aad2fc778f57da73a5e48d7e07c7ed1&dn=ubuntu-pack-14.04.2-gnome",
+      "seeders": 4340,
+      "size": 2587717795,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.04.2-gnome"
+    },
+    {
+      "added": 1632153600.0,
+      "info_hash": "93b9d03dba35854325a841803bc2a81cdf92fb77",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:93b9d03dba35854325a841803bc2a81cdf92fb77&dn=ubuntu-web-20.04.1-livecd",
+      "seeders": 290,
+      "size": 2759516487,
+      "source": "xccl263",
+      "title": "ubuntu-web-20.04.1-livecd"
+    },
+    {
+      "added": 1632499200.0,
+      "info_hash": "19b5dc2504f19ca441b695516c7034b10c43d874",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:19b5dc2504f19ca441b695516c7034b10c43d874&dn=Ubuntu-12.04-x86",
+      "seeders": 82,
+      "size": 1653562408,
+      "source": "xccl263",
+      "title": "Ubuntu-12.04-x86"
+    },
+    {
+      "added": 1633276800.0,
+      "info_hash": "64a6984a984ac6f5a8665722bf8ec07753e05b8b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:64a6984a984ac6f5a8665722bf8ec07753e05b8b&dn=ubuntu-pack-14.04-flashback",
+      "seeders": 9,
+      "size": 2405181685,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.04-flashback"
+    },
+    {
+      "added": 1633449600.0,
+      "info_hash": "208a72794483497760cf84363754c65ef2132b0a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:208a72794483497760cf84363754c65ef2132b0a&dn=ubuntu-unity-20.10.img",
+      "seeders": 506,
+      "size": 2061584302,
+      "source": "xccl263",
+      "title": "ubuntu-unity-20.10.img"
+    },
+    {
+      "added": 1633449600.0,
+      "info_hash": "253d913cb0051833cf77ea4ad4d5f088c756079a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:253d913cb0051833cf77ea4ad4d5f088c756079a&dn=ubuntu-mate-18.04.2-lhsv2-desktop-amd64",
+      "seeders": 24,
+      "size": 2630667468,
+      "source": "xccl263",
+      "title": "ubuntu-mate-18.04.2-lhsv2-desktop-amd64"
+    },
+    {
+      "added": 1633708800.0,
+      "info_hash": "88c8073869cb06c8f00fcbc20742faea87f1bf8a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:88c8073869cb06c8f00fcbc20742faea87f1bf8a&dn=ubuntu-lumini-18.04-experimental-amd64",
+      "seeders": 4069,
+      "size": 2201170739,
+      "source": "xccl263",
+      "title": "ubuntu-lumini-18.04-experimental-amd64"
+    },
+    {
+      "added": 1635609600.0,
+      "info_hash": "99443debcb9e018174748dc62da84e0c16a8d409",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:99443debcb9e018174748dc62da84e0c16a8d409&dn=ubuntu-pack-14.10-classic",
+      "seeders": 1256,
+      "size": 3210488053,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.10-classic"
+    },
+    {
+      "added": 1636041600.0,
+      "info_hash": "01e317821e8232917e877b688a89db6e601d4bf0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:01e317821e8232917e877b688a89db6e601d4bf0&dn=ubuntu-unity-20.04.1-desktop-amd64",
+      "seeders": 151,
+      "size": 2415919104,
+      "source": "xccl263",
+      "title": "ubuntu-unity-20.04.1-desktop-amd64"
+    },
+    {
+      "added": 1636387200.0,
+      "info_hash": "bfcf4d10eafb6d9538056ddc02caa0b5df6bdd9f",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:bfcf4d10eafb6d9538056ddc02caa0b5df6bdd9f&dn=Ubuntu%20Linux%20-%20Bible%20%5B2007%5D",
+      "seeders": 1494,
+      "size": 46682603,
+      "source": "xccl263",
+      "title": "Ubuntu Linux - Bible [2007]"
+    },
+    {
+      "added": 1638115200.0,
+      "info_hash": "8682b287319fba4f1ee0f9c08f7ade397b1978c0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:8682b287319fba4f1ee0f9c08f7ade397b1978c0&dn=Ubuntu%2013.04%20desk",
+      "seeders": 2,
+      "size": 1653562408,
+      "source": "xccl263",
+      "title": "Ubuntu 13.04 desk"
+    },
+    {
+      "added": 1638806400.0,
+      "info_hash": "445ec3e5bea3158c0ef0f3f0b6f7a86e27743604",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:445ec3e5bea3158c0ef0f3f0b6f7a86e27743604&dn=Ubuntu%2019.10%20%28Eoan%20Ermine%29%20Desktop%20amd%20x64%202019%20%7BSPirate%7D",
+      "seeders": 430,
+      "size": 2469606195,
+      "source": "xccl263",
+      "title": "Ubuntu 19.10 (Eoan Ermine) Desktop amd x64 2019 {SPirate}"
+    },
+    {
+      "added": 1639065600.0,
+      "info_hash": "50b01303219077d84ad1293f1d10f34cb8157d64",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:50b01303219077d84ad1293f1d10f34cb8157d64&dn=ubuntu-server-pack-12.04",
+      "seeders": 149,
+      "size": 7548405022,
+      "source": "xccl263",
+      "title": "ubuntu-server-pack-12.04"
+    },
+    {
+      "added": 1639152000.0,
+      "info_hash": "46a7f630821b3a66ee75f682865b383d4135e7c3",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:46a7f630821b3a66ee75f682865b383d4135e7c3&dn=Ubuntu%20GamePack%2016.04",
+      "seeders": 8,
+      "size": 4391604060,
+      "source": "xccl263",
+      "title": "Ubuntu GamePack 16.04"
+    },
+    {
+      "added": 1640016000.0,
+      "info_hash": "41028b2a12387b61ce0e966e0aa6c5eaccdc966b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:41028b2a12387b61ce0e966e0aa6c5eaccdc966b&dn=ubuntu-pack-16.04-flashback",
+      "seeders": 220,
+      "size": 2985002270,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-flashback"
+    },
+    {
+      "added": 1640448000.0,
+      "info_hash": "73e1f850de93dec19bf0cac0021fadbf30a149ae",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:73e1f850de93dec19bf0cac0021fadbf30a149ae&dn=ubuntu-pack-14.10-unity",
+      "seeders": 181,
+      "size": 3146063544,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.10-unity"
+    },
+    {
+      "added": 1641398400.0,
+      "info_hash": "4c7e1f68bd5dff5b2dbc4a3bb86be124783e2864",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:4c7e1f68bd5dff5b2dbc4a3bb86be124783e2864&dn=Ubuntu%2010.10%20Netbook%20Edition",
+      "seeders": 2403,
+      "size": 782919270,
+      "source": "xccl263",
+      "title": "Ubuntu 10.10 Netbook Edition"
+    },
+    {
+      "added": 1642435200.0,
+      "info_hash": "f9a73c754074275cb4f7dec3f3356a22a584622b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:f9a73c754074275cb4f7dec3f3356a22a584622b&dn=ubuntu-oem-12.04-cinnamon",
+      "seeders": 1001,
+      "size": 2050846883,
+      "source": "xccl263",
+      "title": "ubuntu-oem-12.04-cinnamon"
+    },
+    {
+      "added": 1643385600.0,
+      "info_hash": "700a6681db92b1521c64c4529bc737394db256e6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:700a6681db92b1521c64c4529bc737394db256e6&dn=ubuntu-pack-14.10-gnome-shell",
+      "seeders": 1432,
+      "size": 3189013217,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.10-gnome-shell"
+    },
+    {
+      "added": 1643644800.0,
+      "info_hash": "9313bc748384046a5bfe15af69b814bf03a320fd",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:9313bc748384046a5bfe15af69b814bf03a320fd&dn=Ubuntu%20Go%21%2011.01%20Proper",
+      "seeders": 1394,
+      "size": 2437393940,
+      "source": "xccl263",
+      "title": "Ubuntu Go! 11.01 Proper"
+    },
+    {
+      "added": 1644854400.0,
+      "info_hash": "0bf465482bd05af346a8bf9eac75741ef0bdd75e",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:0bf465482bd05af346a8bf9eac75741ef0bdd75e&dn=ubuntu-20-gui-torrent",
+      "seeders": 56,
+      "size": 2866890670,
+      "source": "xccl263",
+      "title": "ubuntu-20-gui-torrent"
+    },
+    {
+      "added": 1645113600.0,
+      "info_hash": "f7ef43d3ba847f2ed4eddd1f9e2ee4ede0785319",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:f7ef43d3ba847f2ed4eddd1f9e2ee4ede0785319&dn=ubuntu-pack-14.04-mate",
+      "seeders": 1682,
+      "size": 3940632494,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.04-mate"
+    },
+    {
+      "added": 1645200000.0,
+      "info_hash": "e16dc462e135c380c070cca8523b995bf1cd751b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:e16dc462e135c380c070cca8523b995bf1cd751b&dn=ubuntu-oem-12.04-classic",
+      "seeders": 1276,
+      "size": 2018634629,
+      "source": "xccl263",
+      "title": "ubuntu-oem-12.04-classic"
+    },
+    {
+      "added": 1646064000.0,
+      "info_hash": "6deac5e4b9e2a14cb8d54eeea09a785538a820cd",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:6deac5e4b9e2a14cb8d54eeea09a785538a820cd&dn=ubuntu-pack-16.04-classic3",
+      "seeders": 1355,
+      "size": 3049426780,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-classic3"
+    },
+    {
+      "added": 1647100800.0,
+      "info_hash": "acaaaca6d4675c462072d7d0cd64391604d43332",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:acaaaca6d4675c462072d7d0cd64391604d43332&dn=Ubuntu%20Hacks%20Tips%20and%20Tools%20for%20Exploring%2C%20Using%2C%20and%20Tuning%20Linux",
+      "seeders": 16,
+      "size": 3879731,
+      "source": "xccl263",
+      "title": "Ubuntu Hacks Tips and Tools for Exploring, Using, and Tuning Linux"
+    },
+    {
+      "added": 1647100800.0,
+      "info_hash": "c194d4abf6cc4f92eecfc7aba528aedfaa3cbded",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c194d4abf6cc4f92eecfc7aba528aedfaa3cbded&dn=ubuntu-pack-14.04-cinnamon",
+      "seeders": 1257,
+      "size": 3715146711,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.04-cinnamon"
+    },
+    {
+      "added": 1647360000.0,
+      "info_hash": "60af7b90af83834ec6be1279d0544c197fb42025",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:60af7b90af83834ec6be1279d0544c197fb42025&dn=Ubuntu%20x64%20Imagick_138",
+      "seeders": 13,
+      "size": 309420181422,
+      "source": "xccl263",
+      "title": "Ubuntu x64 Imagick_138"
+    },
+    {
+      "added": 1650816000.0,
+      "info_hash": "e43ced1a0c827e3999402378c76c47e35412ac3a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:e43ced1a0c827e3999402378c76c47e35412ac3a&dn=Ubuntu%20%28Linux%29%2013.10%20Saucy%20Salamander%2032%2064%20Bit%20TR%20fomindir.in%20%7B-uSt-%7D",
+      "seeders": 46,
+      "size": 1868310773,
+      "source": "xccl263",
+      "title": "Ubuntu (Linux) 13.10 Saucy Salamander 32 64 Bit TR fomindir.in {-uSt-}"
+    },
+    {
+      "added": 1650988800.0,
+      "info_hash": "3db49351803b3b550f03b6c1009beee2acfab0c3",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:3db49351803b3b550f03b6c1009beee2acfab0c3&dn=ubuntu-pack-14.10-gnome-shell-classic",
+      "seeders": 1090,
+      "size": 3199750635,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.10-gnome-shell-classic"
+    },
+    {
+      "added": 1651420800.0,
+      "info_hash": "d203115be095f73992ec86a68509cbc8e1a4b029",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:d203115be095f73992ec86a68509cbc8e1a4b029&dn=ubuntu-12.04-desktop",
+      "seeders": 378,
+      "size": 1471026298,
+      "source": "xccl263",
+      "title": "ubuntu-12.04-desktop"
+    },
+    {
+      "added": 1657555200.0,
+      "info_hash": "6455be097bd95d767593f12ebac114eaf1257925",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:6455be097bd95d767593f12ebac114eaf1257925&dn=Ubuntu%2012.04%20LTS%20%5Bx86%2C%20x86-64%5D%20%282xCD%29",
+      "seeders": 419,
+      "size": 1471026298,
+      "source": "xccl263",
+      "title": "Ubuntu 12.04 LTS [x86, x86-64] (2xCD)"
+    },
+    {
+      "added": 1661011200.0,
+      "info_hash": "ca9a182a9d12fb3d9326fcac958cfe99d7bdd9e2",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:ca9a182a9d12fb3d9326fcac958cfe99d7bdd9e2&dn=Ubuntu-MATE-15.10",
+      "seeders": 543,
+      "size": 2330019758,
+      "source": "xccl263",
+      "title": "Ubuntu-MATE-15.10"
+    },
+    {
+      "added": 1673625600.0,
+      "info_hash": "b05eb2bc915d84adc431dc4544e529a36fc1551b",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:b05eb2bc915d84adc431dc4544e529a36fc1551b&dn=ubuntu-9.10-i386",
+      "seeders": 5,
+      "size": 724691845,
+      "source": "xccl263",
+      "title": "ubuntu-9.10-i386"
+    },
+    {
+      "added": 1681142400.0,
+      "info_hash": "0aee45e391ea8374e57bbd998ee2c18a06734ed6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:0aee45e391ea8374e57bbd998ee2c18a06734ed6&dn=Ubuntu-17.04-adm64",
+      "seeders": 12,
+      "size": 2330019758,
+      "source": "xccl263",
+      "title": "Ubuntu-17.04-adm64"
+    },
+    {
+      "added": 1688140800.0,
+      "info_hash": "bd8fe81a30057a1a24037fdc9cfdcada9ba62ccf",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:bd8fe81a30057a1a24037fdc9cfdcada9ba62ccf&dn=ubuntu-pack-14.04.2-cinnamon",
+      "seeders": 373,
+      "size": 2641404887,
+      "source": "xccl263",
+      "title": "ubuntu-pack-14.04.2-cinnamon"
+    },
+    {
+      "added": 1702396800.0,
+      "info_hash": "f19eba58a22edf0abad26fd571da768b6677cf24",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:f19eba58a22edf0abad26fd571da768b6677cf24&dn=ubuntu-pack-15.04-unity",
+      "seeders": 4,
+      "size": 3296387399,
+      "source": "xccl263",
+      "title": "ubuntu-pack-15.04-unity"
+    },
+    {
+      "added": 1712851200.0,
+      "info_hash": "c788d4b3ca84341c0aafb484fcb8baff6a91dd64",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c788d4b3ca84341c0aafb484fcb8baff6a91dd64&dn=Ubuntu%20Linux%20Toolbox%201000%2B%20Commands%20%7Bsan%7D",
+      "seeders": 33,
+      "size": 3376414,
+      "source": "xccl263",
+      "title": "Ubuntu Linux Toolbox 1000+ Commands {san}"
+    },
+    {
+      "added": 1723996800.0,
+      "info_hash": "603078395248def82f51c96903faea24704686d1",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:603078395248def82f51c96903faea24704686d1&dn=ubuntu-23.10.1-desktop-amd64_202402",
+      "seeders": 46,
+      "size": 4552665333,
+      "source": "xccl263",
+      "title": "ubuntu-23.10.1-desktop-amd64_202402"
+    },
+    {
+      "added": 1730563200.0,
+      "info_hash": "83a27f7628f2d27d6e10c6b185d8eca8f7fd71bb",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:83a27f7628f2d27d6e10c6b185d8eca8f7fd71bb&dn=ubuntu-game-pack-16.04",
+      "seeders": 360,
+      "size": 5035849154,
+      "source": "xccl263",
+      "title": "ubuntu-game-pack-16.04"
+    },
+    {
+      "added": 1730563200.0,
+      "info_hash": "508a0ebeab422f1608a4f103777e7630332fe348",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:508a0ebeab422f1608a4f103777e7630332fe348&dn=Ubuntu%2022.04",
+      "seeders": 2112,
+      "size": 5121748500,
+      "source": "xccl263",
+      "title": "Ubuntu 22.04"
+    },
+    {
+      "added": 1730649600.0,
+      "info_hash": "bf8d827b4d5b5a00be56a7879280d90187601f2f",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:bf8d827b4d5b5a00be56a7879280d90187601f2f&dn=ubuntu-serverpack-16.04",
+      "seeders": 731,
+      "size": 8010114007,
+      "source": "xccl263",
+      "title": "ubuntu-serverpack-16.04"
+    },
+    {
+      "added": 1730822400.0,
+      "info_hash": "748a8ab2035d011d2d2921854c06cdc8575bcea0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:748a8ab2035d011d2d2921854c06cdc8575bcea0&dn=ubuntu-pack-16.04-mate",
+      "seeders": 389,
+      "size": 4681514352,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-mate"
+    },
+    {
+      "added": 1730822400.0,
+      "info_hash": "c898e066e577f1cece1f5f7205a9d0ec4b18a203",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c898e066e577f1cece1f5f7205a9d0ec4b18a203&dn=ubuntu-business-pack-16.04",
+      "seeders": 658,
+      "size": 5615669739,
+      "source": "xccl263",
+      "title": "ubuntu-business-pack-16.04"
+    },
+    {
+      "added": 1730908800.0,
+      "info_hash": "c90df6ea350d5eaa612e90267b7287b8aa439765",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c90df6ea350d5eaa612e90267b7287b8aa439765&dn=ubuntu-game-pack-16.04",
+      "seeders": 890,
+      "size": 6539087708,
+      "source": "xccl263",
+      "title": "ubuntu-game-pack-16.04"
+    },
+    {
+      "added": 1730908800.0,
+      "info_hash": "80f5b7a0c5386d218ced747d7ed767f8855f7358",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:80f5b7a0c5386d218ced747d7ed767f8855f7358&dn=ubuntu-server-pack-14.04",
+      "seeders": 696,
+      "size": 6893422510,
+      "source": "xccl263",
+      "title": "ubuntu-server-pack-14.04"
+    },
+    {
+      "added": 1730995200.0,
+      "info_hash": "d834a34c220aa6d64fd103854bdc729e299a54d0",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:d834a34c220aa6d64fd103854bdc729e299a54d0&dn=ubuntu-business-pack-16.04",
+      "seeders": 410,
+      "size": 4831838208,
+      "source": "xccl263",
+      "title": "ubuntu-business-pack-16.04"
+    },
+    {
+      "added": 1731081600.0,
+      "info_hash": "0831867c3a0a03bc33fa6add369d7a73c04c85f3",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:0831867c3a0a03bc33fa6add369d7a73c04c85f3&dn=ubuntu-game-pack-16.04",
+      "seeders": 737,
+      "size": 4391604060,
+      "source": "xccl263",
+      "title": "ubuntu-game-pack-16.04"
+    },
+    {
+      "added": 1731254400.0,
+      "info_hash": "c871a18141cb08e0a6c06e848fc21ba5d7c18c70",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c871a18141cb08e0a6c06e848fc21ba5d7c18c70&dn=Ubuntu%20EducationPack",
+      "seeders": 749,
+      "size": 8504035246,
+      "source": "xccl263",
+      "title": "Ubuntu EducationPack"
+    },
+    {
+      "added": 1731427200.0,
+      "info_hash": "b968a47173de211ed7a1b6fdb39a0131ea11781d",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:b968a47173de211ed7a1b6fdb39a0131ea11781d&dn=ubuntu-pack-16.04-flashback",
+      "seeders": 415,
+      "size": 2985002270,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-flashback"
+    },
+    {
+      "added": 1731686400.0,
+      "info_hash": "6d8912675d813038d5736838ce1301fe5d1a8839",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:6d8912675d813038d5736838ce1301fe5d1a8839&dn=ubuntu-pack-16.04-gnome",
+      "seeders": 622,
+      "size": 4337916968,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-gnome"
+    },
+    {
+      "added": 1731686400.0,
+      "info_hash": "0bca1a6c084e9e5467905f13c58498cdc219b636",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:0bca1a6c084e9e5467905f13c58498cdc219b636&dn=ubuntu-server-pack-12.04",
+      "seeders": 455,
+      "size": 7548405022,
+      "source": "xccl263",
+      "title": "ubuntu-server-pack-12.04"
+    },
+    {
+      "added": 1731945600.0,
+      "info_hash": "4e58ef854fb05b8aefb4ca8b84b29a46e902e5d6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:4e58ef854fb05b8aefb4ca8b84b29a46e902e5d6&dn=ubuntu-pack-16.04-unity",
+      "seeders": 319,
+      "size": 2985002270,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-unity"
+    },
+    {
+      "added": 1732464000.0,
+      "info_hash": "35c9f3f74c16539822f222410f20f7577bca8545",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:35c9f3f74c16539822f222410f20f7577bca8545&dn=Ubuntu%2024.10",
+      "seeders": 1615,
+      "size": 7763153387,
+      "source": "xccl263",
+      "title": "Ubuntu 24.10"
+    },
+    {
+      "added": 1733328000.0,
+      "info_hash": "68453974e70963f558b3680511afe4d25a492aed",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:68453974e70963f558b3680511afe4d25a492aed&dn=ubuntu-business-pack-16.04",
+      "seeders": 626,
+      "size": 7355131494,
+      "source": "xccl263",
+      "title": "ubuntu-business-pack-16.04"
+    },
+    {
+      "added": 1733846400.0,
+      "info_hash": "3648baf850d5930510c1f172b534200ebb5496e6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:3648baf850d5930510c1f172b534200ebb5496e6&dn=Ubuntu%2024.04",
+      "seeders": 968,
+      "size": 8869107466,
+      "source": "xccl263",
+      "title": "Ubuntu 24.04"
+    },
+    {
+      "added": 1734019200.0,
+      "info_hash": "55d240fae3b6eb47f1f0709fe9c1aa863b73f407",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:55d240fae3b6eb47f1f0709fe9c1aa863b73f407&dn=Ubuntu-20.04.3",
+      "seeders": 46,
+      "size": 4337916968,
+      "source": "xccl263",
+      "title": "Ubuntu-20.04.3"
+    },
+    {
+      "added": 1736870400.0,
+      "info_hash": "7edb6d38e8c0bd898276e35eeb85c6e56f2c6270",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:7edb6d38e8c0bd898276e35eeb85c6e56f2c6270&dn=ubuntu-pack-16.04-flashback",
+      "seeders": 327,
+      "size": 4284229877,
+      "source": "xccl263",
+      "title": "ubuntu-pack-16.04-flashback"
+    },
+    {
+      "added": 1737993600.0,
+      "info_hash": "10c783b1df27ce88056b22be890b753597ec6a4f",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:10c783b1df27ce88056b22be890b753597ec6a4f&dn=ubuntu-businesspack-14.04",
+      "seeders": 399,
+      "size": 5830418104,
+      "source": "xccl263",
+      "title": "ubuntu-businesspack-14.04"
+    },
+    {
+      "added": 1758729600.0,
+      "info_hash": "f343066dff67aa3e7a893c61ab964a7682c68533",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:f343066dff67aa3e7a893c61ab964a7682c68533&dn=Ubuntu%2017.04",
+      "seeders": 2,
+      "size": 3242700308,
+      "source": "xccl263",
+      "title": "Ubuntu 17.04"
+    },
+    {
+      "added": 1777737600.0,
+      "info_hash": "31e6e104c43bfa95fb1632360d882691cc4bdaca",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:31e6e104c43bfa95fb1632360d882691cc4bdaca&dn=Ubuntu%2026.04",
+      "seeders": 243,
+      "size": 9438190632,
+      "source": "xccl263",
+      "title": "Ubuntu 26.04"
+    },
+    {
+      "added": 1785772800.0,
+      "info_hash": "31761760b7031b657a2ae142cb5c149eb3eff98e",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:31761760b7031b657a2ae142cb5c149eb3eff98e&dn=Ubuntu-18.04.5",
+      "seeders": 8,
+      "size": 3189013217,
+      "source": "xccl263",
+      "title": "Ubuntu-18.04.5"
+    },
+    {
+      "added": 1575993600.0,
+      "info_hash": "08b13e97d9d1ba38ed5195a494114ce5a9019c84",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:08b13e97d9d1ba38ed5195a494114ce5a9019c84&dn=Ubuntu%2012.10%20Desktop%20%28i386%29",
+      "seeders": 1346,
+      "size": 789881815,
+      "source": "xccl263",
+      "title": "Ubuntu 12.10 Desktop (i386)"
+    },
+    {
+      "added": 1575993600.0,
+      "info_hash": "0c5b427c2f833b09ea0e3dc7c624f6c187125267",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:0c5b427c2f833b09ea0e3dc7c624f6c187125267&dn=Ubuntu%20Linux%20Go%20from%20Beginner%20to%20Power%20User%21",
+      "seeders": 277,
+      "size": 1138166333,
+      "source": "xccl263",
+      "title": "Ubuntu Linux Go from Beginner to Power User!"
+    },
+    {
+      "added": 1630252800.0,
+      "info_hash": "8e400ee4356b589baeeeb4d6a0986c6f6174307d",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:8e400ee4356b589baeeeb4d6a0986c6f6174307d&dn=Ubuntu%2020.04%20LTS%20%28Focal%20Fossa%29%20Desktop%20amd%20x64%202020%20%7BSPirate%7D",
+      "seeders": 1485,
+      "size": 2716566814,
+      "source": "xccl263",
+      "title": "Ubuntu 20.04 LTS (Focal Fossa) Desktop amd x64 2020 {SPirate}"
+    },
+    {
+      "added": 1630339200.0,
+      "info_hash": "653208f65fe885f6ad89d0593d6098edcbbc7cbf",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:653208f65fe885f6ad89d0593d6098edcbbc7cbf&dn=Ubuntu%20-%2020.04%20-%20David1893",
+      "seeders": 2513,
+      "size": 2716566814,
+      "source": "xccl263",
+      "title": "Ubuntu - 20.04 - David1893"
+    },
+    {
+      "added": 1630857600.0,
+      "info_hash": "c0cd0b4f03749dcead1fc32fa9227d5f88cadcb2",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c0cd0b4f03749dcead1fc32fa9227d5f88cadcb2&dn=Ubuntu%20Server%20Cookbook",
+      "seeders": 395,
+      "size": 4330618,
+      "source": "xccl263",
+      "title": "Ubuntu Server Cookbook"
+    },
+    {
+      "added": 1631030400.0,
+      "info_hash": "2db20fa694f58e352661921c534093aa3a0def04",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:2db20fa694f58e352661921c534093aa3a0def04&dn=ubuntu%20rescue%20pack%20amd64%2021.05",
+      "seeders": 468,
+      "size": 2942052597,
+      "source": "xccl263",
+      "title": "ubuntu rescue pack amd64 21.05"
+    },
+    {
+      "added": 1631721600.0,
+      "info_hash": "02af990281d6a4382708685e433de00b04c056d6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:02af990281d6a4382708685e433de00b04c056d6&dn=Ubuntu%208.10%20Linux%20Bible",
+      "seeders": 794,
+      "size": 54001664,
+      "source": "xccl263",
+      "title": "Ubuntu 8.10 Linux Bible"
+    },
+    {
+      "added": 1632153600.0,
+      "info_hash": "7a3dcd34a51b11f61cad983f494f8c13a2a52773",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:7a3dcd34a51b11f61cad983f494f8c13a2a52773&dn=ubuntu%20educationpack%2016.04%20i386",
+      "seeders": 82,
+      "size": 4123168604,
+      "source": "xccl263",
+      "title": "ubuntu educationpack 16.04 i386"
+    },
+    {
+      "added": 1632412800.0,
+      "info_hash": "7f6cb0e9b38dd53f6b28e7ac184638a02cb2e3a8",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:7f6cb0e9b38dd53f6b28e7ac184638a02cb2e3a8&dn=ubuntu%20educationpack%2016.04%20amd64",
+      "seeders": 132,
+      "size": 4380866641,
+      "source": "xccl263",
+      "title": "ubuntu educationpack 16.04 amd64"
+    },
+    {
+      "added": 1632844800.0,
+      "info_hash": "d4e09a9bb452541fcbd7645bba370b002c83fbfd",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:d4e09a9bb452541fcbd7645bba370b002c83fbfd&dn=Ubuntu%20An%20Absolute%20Beginners%20Guide",
+      "seeders": 357,
+      "size": 9279897,
+      "source": "xccl263",
+      "title": "Ubuntu An Absolute Beginners Guide"
+    },
+    {
+      "added": 1633017600.0,
+      "info_hash": "d35506e89356cc0ef643cb5e30a22b8b2328ecf8",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:d35506e89356cc0ef643cb5e30a22b8b2328ecf8&dn=Ubuntu%20710%20Desktop%20Live%20CD",
+      "seeders": 33,
+      "size": 729609666,
+      "source": "xccl263",
+      "title": "Ubuntu 710 Desktop Live CD"
+    },
+    {
+      "added": 1635177600.0,
+      "info_hash": "42b55341902f6921e0db1a968b7db68b2f9f5ec1",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:42b55341902f6921e0db1a968b7db68b2f9f5ec1&dn=Ubuntu%20budgie%2021.10%20desktop%20amd64%20ISO",
+      "seeders": 499,
+      "size": 3199750635,
+      "source": "xccl263",
+      "title": "Ubuntu budgie 21.10 desktop amd64 ISO"
+    },
+    {
+      "added": 1636041600.0,
+      "info_hash": "acaa6afe1916eaa7819db36f8c48d75a2b75e8c9",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:acaa6afe1916eaa7819db36f8c48d75a2b75e8c9&dn=Ubuntu%20Facile%20N.91%20-%20Agosto%20Settembre%202021",
+      "seeders": 51,
+      "size": 16462643,
+      "source": "xccl263",
+      "title": "Ubuntu Facile N.91 - Agosto Settembre 2021"
+    },
+    {
+      "added": 1636992000.0,
+      "info_hash": "822fe60d60a28f83fadcd4eed15b91749fa0c8cb",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:822fe60d60a28f83fadcd4eed15b91749fa0c8cb&dn=Ubuntu%20Linux%20Server%20Basics",
+      "seeders": 1224,
+      "size": 3672197038,
+      "source": "xccl263",
+      "title": "Ubuntu Linux Server Basics"
+    },
+    {
+      "added": 1638547200.0,
+      "info_hash": "e1e58394d74e28066796a66a7436504b3c6726b3",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:e1e58394d74e28066796a66a7436504b3c6726b3&dn=Ubuntu%20Linux%20Go%20from%20Beginner%20to%20Power%20User%20%5BUpdated%5D",
+      "seeders": 746,
+      "size": 2491081031,
+      "source": "xccl263",
+      "title": "Ubuntu Linux Go from Beginner to Power User [Updated]"
+    },
+    {
+      "added": 1638633600.0,
+      "info_hash": "a1869b8377e12a7738c9c79d4d601fb467b01135",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:a1869b8377e12a7738c9c79d4d601fb467b01135&dn=Ubuntu%2012.10%20Desktop%20%28amd64%29",
+      "seeders": 524,
+      "size": 800063488,
+      "source": "xccl263",
+      "title": "Ubuntu 12.10 Desktop (amd64)"
+    },
+    {
+      "added": 1641225600.0,
+      "info_hash": "651ed48814daf971eb158a50463f4d4ade8013b5",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:651ed48814daf971eb158a50463f4d4ade8013b5&dn=Ubuntu%20Linux%20Bible%5BEbook%5D%5BENG-PDF%5DST",
+      "seeders": 542,
+      "size": 46672117,
+      "source": "xccl263",
+      "title": "Ubuntu Linux Bible[Ebook][ENG-PDF]ST"
+    },
+    {
+      "added": 1642867200.0,
+      "info_hash": "582b1c317a3e4908dc1cedc1c6f97763299cb3a6",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:582b1c317a3e4908dc1cedc1c6f97763299cb3a6&dn=Ubuntu%2021%20Server%20Vbox",
+      "seeders": 140,
+      "size": 1095216660,
+      "source": "xccl263",
+      "title": "Ubuntu 21 Server Vbox"
+    },
+    {
+      "added": 1642953600.0,
+      "info_hash": "c00deb1eea18824957918fdaae099a800b568788",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c00deb1eea18824957918fdaae099a800b568788&dn=ubuntu-14.04.4-desktop-x64-xfce4-LikeWindows7",
+      "seeders": 1857,
+      "size": 4241280204,
+      "source": "xccl263",
+      "title": "ubuntu-14.04.4-desktop-x64-xfce4-LikeWindows7"
+    },
+    {
+      "added": 1643212800.0,
+      "info_hash": "65c739a6b5794d821db43b7e8f4ec9017558bd1d",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:65c739a6b5794d821db43b7e8f4ec9017558bd1d&dn=ubuntu-14.04-desktop-i386-xfce4-LikeWindows7",
+      "seeders": 2046,
+      "size": 3811783475,
+      "source": "xccl263",
+      "title": "ubuntu-14.04-desktop-i386-xfce4-LikeWindows7"
+    },
+    {
+      "added": 1643385600.0,
+      "info_hash": "03329cb08f2b94b2be4fc599dee068731022355c",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:03329cb08f2b94b2be4fc599dee068731022355c&dn=ubuntu-20.04.3-desktop-amd64",
+      "seeders": 15,
+      "size": 3070901616,
+      "source": "xccl263",
+      "title": "ubuntu-20.04.3-desktop-amd64"
+    },
+    {
+      "added": 1643385600.0,
+      "info_hash": "3743dbd3701d20430748e622dd9b72f328bc756a",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:3743dbd3701d20430748e622dd9b72f328bc756a&dn=ubuntu-16.04-desktop-x64-xfce4-LikeWindows7",
+      "seeders": 2243,
+      "size": 4080218931,
+      "source": "xccl263",
+      "title": "ubuntu-16.04-desktop-x64-xfce4-LikeWindows7"
+    },
+    {
+      "added": 1643472000.0,
+      "info_hash": "763a4d1b6748b6e100d178629d518a88cff9c072",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:763a4d1b6748b6e100d178629d518a88cff9c072&dn=Ubuntu%2014.10%20Wallpapers%20%5BMED%5D",
+      "seeders": 180,
+      "size": 349857382,
+      "source": "xccl263",
+      "title": "Ubuntu 14.10 Wallpapers [MED]"
+    },
+    {
+      "added": 1644508800.0,
+      "info_hash": "c88af8ed089329ab257048956a654e1cb61528ad",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:c88af8ed089329ab257048956a654e1cb61528ad&dn=Ubuntu%20Facile%20%E2%80%93%20Febbraio%202022",
+      "seeders": 122,
+      "size": 33627832,
+      "source": "xccl263",
+      "title": "Ubuntu Facile – Febbraio 2022"
+    },
+    {
+      "added": 1660665600.0,
+      "info_hash": "6a037d4819c7852efd23877f555afdab71131494",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:6a037d4819c7852efd23877f555afdab71131494&dn=Ubuntu%20Facile%20N%2097%20-%20Agosto%20Settembre%202022",
+      "seeders": 112,
+      "size": 11607736,
+      "source": "xccl263",
+      "title": "Ubuntu Facile N 97 - Agosto Settembre 2022"
+    },
+    {
+      "added": 1667318400.0,
+      "info_hash": "018c082b6ba6637c519f68a8c7dfba14f693d110",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:018c082b6ba6637c519f68a8c7dfba14f693d110&dn=Ubuntu%20%282020%29%20MP3",
+      "seeders": 6,
+      "size": 189949542,
+      "source": "xccl263",
+      "title": "Ubuntu (2020) MP3"
+    },
+    {
+      "added": 1678377600.0,
+      "info_hash": "d06ced1e42c849be1c2be596650c979c6db04a94",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:d06ced1e42c849be1c2be596650c979c6db04a94&dn=Ubuntu%20Server%2022.04%20%2B%20GenieACS",
+      "seeders": 233,
+      "size": 3908420239,
+      "source": "xccl263",
+      "title": "Ubuntu Server 22.04 + GenieACS"
+    },
+    {
+      "added": 1693065600.0,
+      "info_hash": "1e900493ab2b7d32bb770bd8207af39cee41aa77",
+      "leechers": null,
+      "magnet": "magnet:?xt=urn:btih:1e900493ab2b7d32bb770bd8207af39cee41aa77&dn=Ubuntu%2019.04%20Server%20%2864-bit%29",
+      "seeders": 10,
+      "size": 12079595,
+      "source": "xccl263",
+      "title": "Ubuntu 19.04 Server (64-bit)"
     }
   ],
   "key": "xccl263",

@@ -24,6 +24,7 @@ pub const PAGELESS_KEYS: &[&str] = &["apibay", "mikan", "dmhy", "eztv"];
 pub const WEBVIEW_KEYS: &[&str] = &["bt4g", "btdig"];
 pub const KEYWORD_SAMPLE: usize = 12;
 pub const FUZZY_RATE: f64 = 0.2;
+pub const PAUSE_STEP_MS: u64 = 100;
 pub const OVERSEAS_KEYS: [&str; 11] = [
     "nyaa", "sukebei", "mikan", "dmhy", "eztv", "bitsearch", "tpb", "javbus", "javdb", "bt4g",
     "btdig",
@@ -341,6 +342,22 @@ pub fn first_failure(failed: &BTreeMap<i64, SourceError>) -> SourceError {
         .next()
         .cloned()
         .unwrap_or(SourceError::Shape("全部页面失败".to_string()))
+}
+
+pub fn pause(batch: Option<i64>, ms: u64) -> bool {
+    let step = PAUSE_STEP_MS.min(ms);
+    let mut left = ms;
+    while left > 0 {
+        if let Some(token) = batch {
+            if !batch_alive(token) {
+                return false;
+            }
+        }
+        let slice = step.min(left);
+        std::thread::sleep(std::time::Duration::from_millis(slice));
+        left -= slice;
+    }
+    true
 }
 
 pub fn merge_details(found: &[Vec<Item>], max_hits: usize) -> Vec<Item> {

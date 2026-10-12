@@ -1,0 +1,335 @@
+       
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919">
+                	SSIS919                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919">
+                	1.59GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:2a6ce90a1ccebbc1d43fd826980ad8b276633bde&dn=SSIS919">
+                	2025-08-01                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919">
+                	SSIS-919                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919">
+                	1.06GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:54504702CB91B98FD30DD16D41B1678EDB5ADE0E&dn=SSIS-919">
+                	2024-12-01                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C">
+                	SSIS919C  <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C">
+                	2.40GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F4B23A7174F7879696850A20AD7A6AE8ECC7A9B8&dn=SSIS919C">
+                	2024-09-11                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD">
+                	SSIS-919_CH.HD <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD">
+                	3.38GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:080C19434ADC851A00639DB4136EC71FFE6CF48C&dn=SSIS-919_CH.HD">
+                	2024-06-13                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH">
+                	SSIS-919_60FPS_FHD_CH                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH">
+                	1.32GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:44F8ADCD8CB1ED391663424F8B22516A651095AD&dn=SSIS-919_60FPS_FHD_CH">
+                	2024-03-13                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88">
+                	SSIS-919  宮城りえ <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88">
+                	6.18GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D3BD9ADC3487AFE53EA9971AA4DB5D52B8CAE2A3&dn=SSIS-919++%E5%AE%AE%E5%9F%8E%E3%82%8A%E3%81%88">
+                	2024-01-14                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5">
+                	SSIS-919-C_GG5 <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a> <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5">
+                	5.19GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:475D88CF4445C489A63394131B3CACD56361A40E&dn=SSIS-919-C_GG5">
+                	2024-01-04                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5">
+                	[MD]SSIS-919-C_GG5  <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5">
+                	2.68GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:D90617CD505F35DC0E8ED8579BF0EC0EDEC43614&dn=%5BMD%5DSSIS-919-C_GG5">
+                	2023-12-31                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK">
+                	SSIS-919.[4K]@RUNBKK <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK">
+                	19.54GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:21ACE63AA558AEFD148CF7CC1A4AD1C167B66EDA&dn=SSIS-919.%5B4K%5D%40RUNBKK">
+                	2023-12-30                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD">
+                	SSIS-919-FHD <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD">
+                	3.22GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7EA27FBF9E71E3786951EDDB0E10A4E9CC6F1844&dn=SSIS-919-FHD">
+                	2023-12-29                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI">
+                	SSIS-919-AI <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI">
+                	3.63GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7DE7237AB8E674B2B40E3FA06BE1386DA86DE340&dn=SSIS-919-AI">
+                	2023-12-28                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C">
+                	SSIS-919C  <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C">
+                	1.24GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:0E145FC9BAEF07146BCC4940DA236D6CC576E26B&dn=SSIS-919C">
+                	2023-12-28                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C">
+                	SSIS-919-C <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a> <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C">
+                	5.15GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:7BECE8D7899A1DCE02B551E97489507483F25891&dn=SSIS-919-C">
+                	2023-12-27                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch">
+                	ssis-919ch <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a> <a class="btn btn-mini-new btn-warning disabled" title="包含字幕的磁力連結">字幕</a>                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch">
+                	5.27GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:342F644FFD138ACA6107136750AE147CBEDD03B4&dn=ssis-919ch">
+                	2023-12-27                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k">
+                	ssis-919-4k <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k">
+                	19.58GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:76A6ACEAAD0C352D6EAA50A8EC85AF467D86F113&dn=ssis-919-4k">
+                	2023-12-25                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919">
+                	SSIS-919                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919">
+                	1.73GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:F7F8BA8066C3735FC15A99662CFF841B20859C4F&dn=SSIS-919">
+                	2023-12-23                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919">
+                	SSIS-919                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919">
+                	1.46GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:51684AC2C5008C5E85B17E989D39822D25117F82&dn=SSIS-919">
+                	2023-12-22                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919">
+                	ssis-919 <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919">
+                	5.17GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:E8CE86B32FCA522DFF09920AA3B7C6C70BD4F72E&dn=ssis-919">
+                	2023-12-22                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919">
+                	@SSIS919                 	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919">
+                	1.59GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:91A81B6ADBC9BB0079BA8C78A9BFEB922A84DA59&dn=%40SSIS919">
+                	2023-12-22                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919">
+                	SSIS-919 <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919">
+                	5.29GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:CD9E34D820495BA0CA309355E039841438318D6B&dn=SSIS-919">
+                	2023-12-21                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919">
+                	ssis-919 <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919">
+                	5.21GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:73DB987C4ADD7F656E8EA7C4CD13191A5FFC4360&dn=ssis-919">
+                	2023-12-21                	</a>
+                </td>            
+            </tr>
+		         
+            <tr onmouseover="this.style.backgroundColor='#F4F9FD';this.style.cursor='pointer';" onmouseout="this.style.backgroundColor='#FFFFFF'" height="35px" style=" border-top:#DDDDDD solid 1px">
+                <td width="70%" onclick="window.open('magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919">
+                	SSIS-919 <a class="btn btn-mini-new btn-primary disabled" title="包含高清HD的磁力連結">高清</a>                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919">
+                	5.14GB                	</a>
+                </td>
+                <td style="text-align:center;white-space:nowrap" onclick="window.open('magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919','_self')">
+                	<a style="color:#333" rel="nofollow" title="滑鼠右鍵點擊並選擇【複製連結網址】" href="magnet:?xt=urn:btih:5CCAA4B696D638E872BC5EE764BFE22EB9DDB84C&dn=SSIS-919">
+                	2023-12-21                	</a>
+                </td>            
+            </tr>
+		  
+			<script type="text/javascript">
+			$('#movie-loading').hide();
+			</script>
+        

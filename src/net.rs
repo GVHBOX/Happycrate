@@ -547,6 +547,13 @@ const CAPTCHA_STRONG: [&str; 10] = [
     "turnstile",
 ];
 const CAPTCHA_WEAK: [&str; 3] = ["captcha", "enable javascript and cookies", "验证码"];
+const CAPTCHA_DEEP: [&str; 5] = [
+    "one more step",
+    "please complete the security check",
+    "just a moment",
+    "checking your browser",
+    "cf-browser-verification",
+];
 
 pub fn captcha_text(text: &str) -> bool {
     let head: String = text.chars().take(4096).collect();
@@ -560,7 +567,8 @@ pub fn captcha_text(text: &str) -> bool {
     if head.len() == text.len() {
         return false;
     }
-    captcha_signs(&text.to_lowercase())
+    let low = text.to_lowercase();
+    CAPTCHA_DEEP.iter().any(|s| low.contains(s))
 }
 
 fn captcha_signs(low: &str) -> bool {

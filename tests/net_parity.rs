@@ -71,6 +71,36 @@ fn captcha_weak_sign_needs_two_hits() {
 }
 
 #[test]
+fn captcha_infrastructure_marker_is_not_a_wall() {
+    let mut page = String::from(
+        "<!DOCTYPE html><html><head><title>中出 磁力链接 - 小草磁力</title></head><body>",
+    );
+    while page.len() < 7000 {
+        page.push_str("<div class=\"search-item\">结果</div>");
+    }
+    page.push_str("<style>span[data-href^=\"https://www.hcaptcha.com/\"] > #icon { color: red }</style>");
+    page.push_str("<script src=\"/cdn-cgi/challenge-platform/scripts/jsd/main.js\"></script>");
+    page.push_str("<a href=\"/help/captcha\">captcha</a>");
+    assert!(
+        !happycrate::net::captcha_text(&page),
+        "正常结果页里的 Cloudflare 脚本与样式引用不得判为验证码页"
+    );
+}
+
+#[test]
+fn captcha_interstitial_phrase_still_wins() {
+    let mut page = String::from("<!DOCTYPE html><html><head><title>example</title></head><body>");
+    while page.len() < 7000 {
+        page.push_str("<div>filler</div>");
+    }
+    page.push_str("<h1>Just a moment</h1>");
+    assert!(
+        happycrate::net::captcha_text(&page),
+        "挑战页文案落在正文深处仍须识别"
+    );
+}
+
+#[test]
 fn live_registry_matches_python() {
     let python = Path::new("D:/AI/happycrate/.venv/Scripts/python.exe");
     if !python.is_file() {

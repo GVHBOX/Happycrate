@@ -27,6 +27,14 @@ fn alive(token: i64) -> bool {
     TOKEN.load(Ordering::SeqCst) == token
 }
 
+pub fn cancel() {
+    TOKEN.fetch_add(1, Ordering::SeqCst);
+}
+
+pub fn current() -> i64 {
+    TOKEN.load(Ordering::SeqCst)
+}
+
 fn probe_word<F: Fetch + Sync>(
     target: &Target,
     fetch: &F,
@@ -80,7 +88,7 @@ pub fn execute<F: Fetch + Sync>(
     seen: &Seen,
 ) {
     if targets.is_empty() {
-        sink(Event::ProbeDone);
+        sink(Event::ProbeDone(json!({ "token": token })));
         return;
     }
     let workers = targets.len().clamp(1, WORKERS);
@@ -115,6 +123,7 @@ pub fn execute<F: Fetch + Sync>(
                     &format!("测速 {}：{} 条 {}ms（{}）", target.key, count, ms, outcome),
                 );
                 let payload = json!({
+                    "token": token,
                     "key": target.key,
                     "state": state,
                     "ms": ms,
@@ -129,7 +138,7 @@ pub fn execute<F: Fetch + Sync>(
         }
     });
     if alive(token) {
-        sink(Event::ProbeDone);
+        sink(Event::ProbeDone(json!({ "token": token })));
     }
 }
 
@@ -139,7 +148,7 @@ pub fn spawn(
     sink: Option<Arc<Sink>>,
     now: LocalNow,
     seen: Seen,
-) {
+) -> i64 {
     let token = start_token();
     std::thread::spawn(move || {
         let push = move |event: Event| {
@@ -149,4 +158,5 @@ pub fn spawn(
         };
         execute(&targets, http.as_ref(), &now, &push, token, &seen);
     });
+    token
 }

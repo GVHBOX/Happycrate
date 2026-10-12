@@ -54,7 +54,7 @@ pub enum Event {
     Settled(Value),
     Done(Value),
     Probe(Value),
-    ProbeDone,
+    ProbeDone(Value),
 }
 
 pub fn js_of(event: &Event) -> String {
@@ -65,7 +65,7 @@ pub fn js_of(event: &Event) -> String {
         Event::Settled(value) => ("__onSearchSettled", value),
         Event::Done(value) => ("__onSearchDone", value),
         Event::Probe(value) => ("__onProbe", value),
-        Event::ProbeDone => return "window.__onProbeDone && window.__onProbeDone()".to_string(),
+        Event::ProbeDone(value) => ("__onProbeDone", value),
     };
     let text = js_literal(&serde_json::to_string(payload).unwrap_or_else(|_| "null".to_string()));
     format!("window.{hook} && window.{hook}({text})")

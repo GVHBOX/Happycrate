@@ -165,7 +165,7 @@
         '<div class="div"></div>' +
         '<div class="bar">' +
           '<div class="group">' +
-            '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span>测速</button>' +
+            '<button class="btn btn-ghost" id="btnProbe"><span class="i-bolt">' + ICON.bolt + '</span><span class="i-load">' + ICON.load + '</span><span id="btnProbeLbl">测速</span></button>' +
             '<button class="btn btn-ghost" id="btnAuto">自动排序</button>' +
           '</div>' +
           '<div class="spacer"></div>' +
@@ -215,19 +215,36 @@
       onSaveResult(api.setAutoOrder(autoOrder));
     };
 
+    function paintProbeBtn(){
+      var btn = root.querySelector("#btnProbe");
+      if (!btn) return;
+      btn.classList.toggle("busy", !!store.get().probing);
+      var lbl = root.querySelector("#btnProbeLbl");
+      if (lbl) lbl.textContent = store.get().probing ? "停止" : "测速";
+    }
+
+    function stopProbe(){
+      api.probeCancel();
+      store.set({probing: false});
+      store.get().sources.forEach(function(s){ if (s.probing) s.probing = false; });
+      paintProbeBtn();
+      render();
+    }
+
     root.querySelector("#btnProbe").onclick = function(){
+      if (store.get().probing){ stopProbe(); return; }
       var st = store.get();
-      if (st.probing) return;
       var targets = st.sources.filter(function(s){ return s.enabled; });
       if (!targets.length){ M.toast("没有启用的数据源可测"); return; }
       store.set({probing: true, probeDone: 0, probeTotal: targets.length});
-      root.querySelector("#btnProbe").classList.add("busy");
+      paintProbeBtn();
       targets.forEach(function(s){ s.probing = true; });
       render();
 
       api.onProbeDone(function(){
         store.set({probing: false});
-        root.querySelector("#btnProbe").classList.remove("busy");
+        store.get().sources.forEach(function(s){ if (s.probing) s.probing = false; });
+        paintProbeBtn();
         render();
       });
 

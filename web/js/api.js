@@ -45,14 +45,17 @@
 
   var probeOne = null;
   var probeDoneSubs = [];
+  var probeToken = -1;
   var sHooks = {};
   var MAGNET_CAP = 200;
 
   window.__onProbe = function(p){
-    if (probeOne && p) probeOne(p.key, p);
+    if (!p || p.token !== probeToken) return;
+    if (probeOne) probeOne(p.key, p);
   };
 
-  window.__onProbeDone = function(){
+  window.__onProbeDone = function(p){
+    if (p && p.token !== undefined && p.token !== probeToken) return;
     probeDoneSubs.slice().forEach(function(fn){
       try{ fn(); }catch(e){}
     });
@@ -89,7 +92,15 @@
 
     probeSources: function(keys, onOne){
       probeOne = onOne || null;
-      return invoke("probe_sources", {keys: keys || null});
+      return invoke("probe_sources", {keys: keys || null}).then(function(token){
+        probeToken = token;
+        return token;
+      });
+    },
+
+    probeCancel: function(){
+      probeToken = -1;
+      return invoke("probe_cancel");
     },
 
     setAutoOrder: function(on){

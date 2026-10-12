@@ -165,6 +165,10 @@ pub struct Scoped<'a, F: Fetch> {
 }
 
 impl<F: Fetch> Fetch for Scoped<'_, F> {
+    fn batch(&self) -> Option<i64> {
+        self.batch
+    }
+
     fn fetch(&self, mut req: Req) -> SourceResult<String> {
         if req.timeout.is_none() {
             req.timeout = Some(self.timeout);
@@ -285,6 +289,10 @@ pub fn search<F: Fetch + Sync>(
 
 pub trait Fetch {
     fn fetch(&self, req: Req) -> SourceResult<String>;
+
+    fn batch(&self) -> Option<i64> {
+        None
+    }
 
     fn get(&self, url: &str, data: Option<&[u8]>) -> SourceResult<String> {
         let req = match data {

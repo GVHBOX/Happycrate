@@ -134,8 +134,8 @@ fn split(event: Event) -> (String, Value) {
         | Event::Batch(value)
         | Event::Settled(value)
         | Event::Done(value)
-        | Event::Probe(value) => value,
-        Event::ProbeDone => Value::Null,
+        | Event::Probe(value)
+        | Event::ProbeDone(value) => value,
     };
     (hook, payload)
 }

@@ -109,6 +109,7 @@
 
   function netState(data){
     if (!data) return {busy:true, dot:"busy", note:"检测中", muted:true};
+    if (data.error) return {dot:"err", title:"代理检测", note:data.error};
     var tun = data.tunActive || data.tun || "";
     if (data.mode === "manual") return proxyState(data, "手动设置", tun);
     if (data.mode === "system"){

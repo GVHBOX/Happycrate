@@ -70,6 +70,44 @@ fn abs_link(page: &[u8]) -> Option<String> {
     None
 }
 
+fn private_v4(v4: &std::net::Ipv4Addr) -> bool {
+    v4.is_loopback()
+        || v4.is_private()
+        || v4.is_link_local()
+        || v4.is_unspecified()
+        || (v4.octets()[0] == 100 && (v4.octets()[1] & 0xc0) == 64)
+}
+
+fn host_is_local(authority: &str) -> bool {
+    let authority = authority.rsplit('@').next().unwrap_or("");
+    let host = match authority.strip_prefix('[') {
+        Some(rest) => rest.split(']').next().unwrap_or(""),
+        None => authority.rsplit_once(':').map_or(authority, |(head, _)| head),
+    };
+    let name = host.trim().to_lowercase();
+    if name.is_empty()
+        || name == "localhost"
+        || name.ends_with(".localhost")
+        || name.ends_with(".local")
+    {
+        return true;
+    }
+    match name.parse::<std::net::IpAddr>() {
+        Ok(std::net::IpAddr::V4(v4)) => private_v4(&v4),
+        Ok(std::net::IpAddr::V6(v6)) => {
+            if v6.is_loopback() || v6.is_unspecified() {
+                return true;
+            }
+            if let Some(mapped) = v6.to_ipv4() {
+                return private_v4(&mapped);
+            }
+            matches!(v6.segments()[0] & 0xfe00, 0xfc00)
+                || (v6.segments()[0] & 0xffc0) == 0xfe80
+        }
+        Err(_) => false,
+    }
+}
+
 fn scheme_and_host(url: &str) -> (String, String) {
     let split = match url.find("://") {
         Some(at) => (&url[..at], &url[at + 3..]),
@@ -580,27 +618,30 @@ impl Api {
 
     pub fn probe_sources(&mut self, keys: Option<&[String]>) -> i64 {
         let targets = self.enabled_targets(keys);
-        if targets.is_empty() {
+        if targets.is_empty() || self.http().is_none() {
+            let token = crate::probe::current();
             if let Some(sink) = self.push.as_ref() {
-                sink(crate::search::Event::ProbeDone);
+                sink(crate::search::Event::ProbeDone(
+                    serde_json::json!({ "token": token }),
+                ));
             }
-            return 0;
+            return token;
         }
-        let Some(http) = self.http() else {
-            if let Some(sink) = self.push.as_ref() {
-                sink(crate::search::Event::ProbeDone);
-            }
-            return 0;
+        let http = match self.http() {
+            Some(http) => http,
+            None => return crate::probe::current(),
         };
-        let count = targets.len() as i64;
         crate::probe::spawn(
             targets,
             http,
             self.push.clone(),
             crate::util::local_now(),
             self.probe_seen.clone(),
-        );
-        count
+        )
+    }
+
+    pub fn probe_cancel(&mut self) {
+        crate::probe::cancel();
     }
 
     pub fn start_search(&mut self, text: &str, page: i64) -> Value {
@@ -1019,6 +1060,9 @@ pub fn torrent_files_fetch(
         return torrent_result(false, Vec::new(), "缺少有效的种子地址");
     }
     let (scheme, host) = scheme_and_host(&url);
+    if host.is_empty() || host_is_local(&host) {
+        return torrent_result(false, Vec::new(), "种子地址指向内网，已拒绝");
+    }
     let referer = format!("{scheme}://{host}/");
     match torrent_meta_fetch(client, &url, timeout, &referer) {
         Err(TorrentError::TooLarge) => {

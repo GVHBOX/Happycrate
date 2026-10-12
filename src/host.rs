@@ -152,6 +152,11 @@ fn probe_sources(state: tauri::State<AppState>, keys: Option<Vec<String>>) -> i6
 }
 
 #[tauri::command(async)]
+fn probe_cancel(state: tauri::State<AppState>) {
+    state.api().probe_cancel()
+}
+
+#[tauri::command(async)]
 fn start_search(state: tauri::State<AppState>, query: String, page: Option<i64>) -> Value {
     let page = page.unwrap_or(1);
     state.api().start_search(&query, page)
@@ -169,13 +174,12 @@ async fn proxy_status(app: tauri::AppHandle, force: bool) -> Result<Value, Strin
         let api = state.api();
         api.http()
     };
-    if let Some(http) = http {
-        let outcome = tauri::async_runtime::spawn_blocking(move || http.proxy_status(force))
-            .await
-            .unwrap_or_default();
-        Ok(outcome)
-    } else {
-        Ok(serde_json::Value::Null)
+    let Some(http) = http else {
+        return Ok(serde_json::json!({ "error": "网络层不可用" }));
+    };
+    match tauri::async_runtime::spawn_blocking(move || http.proxy_status(force)).await {
+        Ok(outcome) => Ok(outcome),
+        Err(_) => Ok(serde_json::json!({ "error": "代理检测失败" })),
     }
 }
 
@@ -283,6 +287,7 @@ pub fn run() {
             reorder_sources,
             set_auto_order,
             probe_sources,
+            probe_cancel,
             start_search,
             cancel_search,
             get_settings,

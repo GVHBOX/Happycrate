@@ -4,7 +4,7 @@ use crate::model::{Item, SourceError, SourceResult};
 use crate::sources::{base_of, default_base, Fetch, Req};
 use crate::util::{cell_text, find_hex_after, make_item, parse_size_text, quote_plus, unescape};
 
-pub const PAGES: i64 = 8;
+pub const PAGES: i64 = 16;
 pub const MAX_HITS: usize = 200;
 
 fn blocks(text: &str) -> Vec<String> {

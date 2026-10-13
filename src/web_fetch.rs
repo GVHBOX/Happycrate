@@ -17,11 +17,14 @@ pub fn label_for(key: &str) -> String {
 
 const POLL_INTERVAL: Duration = Duration::from_millis(400);
 const POLL_SLICE: Duration = Duration::from_millis(200);
+const BATCH_POLL: Duration = Duration::from_millis(200);
 const WAIT_GRACE: Duration = Duration::from_millis(600);
 const EVAL_TIMEOUT: Duration = Duration::from_secs(10);
 const WINDOW_CREATE_TIMEOUT: Duration = Duration::from_secs(12);
 const CHALLENGE_SURFACE_AFTER: Duration = Duration::from_secs(8);
 const DEFAULT_TIMEOUT_SECS: u64 = 30;
+const BATCH_GROUP: usize = 10;
+const BATCH_ITEM_TIMEOUT_MS: u64 = 8000;
 const PROBE_ENV: &str = "HAPPYCRATE_WEBFETCH_PROBE";
 const PROBE_URL_ENV: &str = "HAPPYCRATE_WEBFETCH_PROBE_URL";
 
@@ -55,6 +58,28 @@ const CONTENT_SCRIPT: &str = r##"
 })();
 "##;
 
+const BATCH_START: &str = r##"
+window.__hc_r = null;
+(function () {
+  var urls = __URLS__;
+  var limit = __ITEM_TIMEOUT_MS__;
+  Promise.all(urls.map(function (u) {
+    return new Promise(function (done) {
+      var timer = setTimeout(function () { done({ ok: false, html: "" }); }, limit);
+      fetch(u, { credentials: "same-origin" }).then(function (r) {
+        return r.text().then(function (t) { clearTimeout(timer); done({ ok: r.ok, html: t }); });
+      }).catch(function () { clearTimeout(timer); done({ ok: false, html: "" }); });
+    });
+  })).then(function (items) {
+    window.__hc_r = { items: items };
+  });
+})();
+"##;
+
+const BATCH_POLL_SCRIPT: &str = "window.__hc_r";
+
+const BATCH_CLEAR: &str = "window.__hc_r = null";
+
 static CHALLENGE_HOOK: OnceLock<Arc<dyn Fn() + Send + Sync>> = OnceLock::new();
 
 pub fn on_challenge_surfaced(hook: Arc<dyn Fn() + Send + Sync>) {
@@ -69,13 +94,25 @@ fn notify_challenge() {
 
 pub trait Driver: Send + Sync {
     fn load(&self, url: &str, deadline: Instant, batch: Option<i64>) -> SourceResult<String>;
+
+    fn batch(&self, urls: &[String], deadline: Instant, batch: Option<i64>) -> Vec<SourceResult<String>> {
+        urls.iter().map(|url| self.load(url, deadline, batch)).collect()
+    }
 }
 
-struct Job {
-    url: String,
-    deadline: Instant,
-    batch: Option<i64>,
-    reply: Sender<SourceResult<String>>,
+enum Job {
+    One {
+        url: String,
+        deadline: Instant,
+        batch: Option<i64>,
+        reply: Sender<SourceResult<String>>,
+    },
+    Many {
+        urls: Vec<String>,
+        deadline: Instant,
+        batch: Option<i64>,
+        reply: Sender<Vec<SourceResult<String>>>,
+    },
 }
 
 pub struct WebFetch {
@@ -90,19 +127,23 @@ impl WebFetch {
     }
 }
 
+fn effective_deadline(req: &Req) -> Instant {
+    let by_timeout = Instant::now()
+        + Duration::from_secs(req.timeout.unwrap_or(DEFAULT_TIMEOUT_SECS).max(1));
+    match req.deadline {
+        Some(given) => given.min(by_timeout),
+        None => by_timeout,
+    }
+}
+
 impl Fetch for WebFetch {
     fn fetch(&self, req: Req) -> SourceResult<String> {
         if req.url.is_empty() {
             return Err(SourceError::Transport("取数地址为空".to_string()));
         }
-        let by_timeout = Instant::now()
-            + Duration::from_secs(req.timeout.unwrap_or(DEFAULT_TIMEOUT_SECS).max(1));
-        let deadline = match req.deadline {
-            Some(given) => given.min(by_timeout),
-            None => by_timeout,
-        };
+        let deadline = effective_deadline(&req);
         let (reply, rx) = channel();
-        let job = Job {
+        let job = Job::One {
             url: req.url.to_string(),
             deadline,
             batch: req.batch,
@@ -131,22 +172,103 @@ impl Fetch for WebFetch {
             }
         }
     }
+
+    fn fetch_many(&self, reqs: Vec<Req>) -> Vec<SourceResult<String>> {
+        let count = reqs.len();
+        if count == 0 {
+            return Vec::new();
+        }
+        if reqs.iter().any(|req| req.url.is_empty()) {
+            return reqs
+                .iter()
+                .map(|_| Err(SourceError::Transport("取数地址为空".to_string())))
+                .collect();
+        }
+        let mut deadline = effective_deadline(&reqs[0]);
+        for req in reqs.iter().skip(1) {
+            deadline = deadline.min(effective_deadline(req));
+        }
+        let batch = reqs.iter().find_map(|req| req.batch);
+        let urls: Vec<String> = reqs.iter().map(|req| req.url.to_string()).collect();
+        let (reply, rx) = channel();
+        let job = Job::Many {
+            urls,
+            deadline,
+            batch,
+            reply,
+        };
+        if self.tx.send(job).is_err() {
+            return (0..count)
+                .map(|_| Err(SourceError::Transport("取数通道不可用".to_string())))
+                .collect();
+        }
+        let give_up = deadline + WAIT_GRACE;
+        loop {
+            if let Some(token) = batch {
+                if !batch_alive(token) {
+                    return (0..count).map(|_| Err(SourceError::Cancelled)).collect();
+                }
+            }
+            match rx.recv_timeout(POLL_SLICE) {
+                Ok(results) => return results,
+                Err(RecvTimeoutError::Timeout) => {
+                    if Instant::now() >= give_up {
+                        return (0..count).map(|_| Err(SourceError::Timeout)).collect();
+                    }
+                }
+                Err(RecvTimeoutError::Disconnected) => {
+                    return (0..count)
+                        .map(|_| Err(SourceError::Transport("取数通道已断开".to_string())))
+                        .collect();
+                }
+            }
+        }
+    }
 }
 
 fn worker_loop<D: Driver>(driver: D, rx: Receiver<Job>) {
     while let Ok(job) = rx.recv() {
-        let result = if Instant::now() >= job.deadline {
-            Err(SourceError::Timeout)
-        } else if let Some(token) = job.batch {
-            if batch_alive(token) {
-                driver.load(&job.url, job.deadline, Some(token))
-            } else {
-                Err(SourceError::Cancelled)
+        match job {
+            Job::One {
+                url,
+                deadline,
+                batch,
+                reply,
+            } => {
+                let result = if Instant::now() >= deadline {
+                    Err(SourceError::Timeout)
+                } else if let Some(token) = batch {
+                    if batch_alive(token) {
+                        driver.load(&url, deadline, Some(token))
+                    } else {
+                        Err(SourceError::Cancelled)
+                    }
+                } else {
+                    driver.load(&url, deadline, None)
+                };
+                let _ = reply.send(result);
             }
-        } else {
-            driver.load(&job.url, job.deadline, None)
-        };
-        let _ = job.reply.send(result);
+            Job::Many {
+                urls,
+                deadline,
+                batch,
+                reply,
+            } => {
+                let count = urls.len();
+                let results = if Instant::now() >= deadline {
+                    (0..count).map(|_| Err(SourceError::Timeout)).collect()
+                } else if let Some(token) = batch {
+                    if batch_alive(token) {
+                        driver.batch(&urls, deadline, Some(token))
+                    } else {
+                        (0..count).map(|_| Err(SourceError::Cancelled)).collect()
+                    }
+                } else {
+                    driver.batch(&urls, deadline, None)
+                };
+                let _ = reply.send(results);
+            }
+        }
     }
 }
 
@@ -154,6 +276,7 @@ pub struct WindowDriver {
     app: AppHandle,
     label: String,
     window: Mutex<Option<WebviewWindow>>,
+    last_origin: Mutex<Option<String>>,
 }
 
 impl WindowDriver {
@@ -162,7 +285,19 @@ impl WindowDriver {
             app,
             label,
             window: Mutex::new(None),
+            last_origin: Mutex::new(None),
         }
+    }
+
+    fn set_origin(&self, origin: Option<String>) {
+        *self.last_origin.lock().unwrap_or_else(|e| e.into_inner()) = origin;
+    }
+
+    fn origin(&self) -> Option<String> {
+        self.last_origin
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .clone()
     }
 
     fn window(&self) -> SourceResult<WebviewWindow> {
@@ -212,6 +347,7 @@ impl Driver for WindowDriver {
             .parse::<tauri::Url>()
             .map_err(|_| SourceError::Transport(format!("取数地址无法解析：{url}")))?;
         let expected = target.as_str().to_string();
+        let home = origin_of_url(&target);
         let window = self.window()?;
         window
             .navigate(target)
@@ -222,23 +358,29 @@ impl Driver for WindowDriver {
             if let Some(token) = batch {
                 if !batch_alive(token) {
                     reset(&window);
+                    self.set_origin(None);
                     return Err(SourceError::Cancelled);
                 }
             }
             let left = deadline.saturating_duration_since(Instant::now());
             if left.is_zero() {
                 reset(&window);
+                self.set_origin(None);
                 return Err(SourceError::Timeout);
             }
             thread::sleep(left.min(POLL_INTERVAL));
             if Instant::now() >= deadline {
                 reset(&window);
+                self.set_origin(None);
                 return Err(SourceError::Timeout);
             }
             let status: PageStatus = match eval_json(&window, STATUS_SCRIPT) {
                 Ok(status) => status,
                 Err(SourceError::Shape(_)) | Err(SourceError::Timeout) => continue,
-                Err(other) => return Err(other),
+                Err(other) => {
+                    self.set_origin(None);
+                    return Err(other);
+                }
             };
             if status.ready && !status.challenge && status.href == expected {
                 if surfaced {
@@ -248,6 +390,7 @@ impl Driver for WindowDriver {
                 if content.html.is_empty() {
                     return Err(SourceError::Shape("取数窗口返回空页面".to_string()));
                 }
+                self.set_origin(home);
                 return Ok(content.html);
             }
             if status.challenge && !surfaced && started.elapsed() >= CHALLENGE_SURFACE_AFTER {
@@ -257,6 +400,130 @@ impl Driver for WindowDriver {
                 notify_challenge();
             }
         }
+    }
+
+    fn batch(&self, urls: &[String], deadline: Instant, batch: Option<i64>) -> Vec<SourceResult<String>> {
+        let count = urls.len();
+        let mut results: Vec<Option<SourceResult<String>>> =
+            (0..count).map(|_| None).collect();
+        let window = match self.window() {
+            Ok(window) => window,
+            Err(error) => return (0..count).map(|_| Err(error.clone())).collect(),
+        };
+        let home = self.origin();
+        let mut pending: Vec<usize> = Vec::new();
+        for (index, url) in urls.iter().enumerate() {
+            let same = match (&home, url.parse::<tauri::Url>().ok()) {
+                (Some(home), Some(parsed)) => origin_of_url(&parsed).as_deref() == Some(home.as_str()),
+                _ => false,
+            };
+            if same {
+                pending.push(index);
+            } else {
+                results[index] = Some(self.load(url, deadline, batch));
+            }
+        }
+        let mut offset = 0usize;
+        while offset < pending.len() {
+            if let Some(token) = batch {
+                if !batch_alive(token) {
+                    for index in &pending[offset..] {
+                        results[*index] = Some(Err(SourceError::Cancelled));
+                    }
+                    break;
+                }
+            }
+            if Instant::now() >= deadline {
+                for index in &pending[offset..] {
+                    results[*index] = Some(Err(SourceError::Timeout));
+                }
+                break;
+            }
+            let end = (offset + BATCH_GROUP).min(pending.len());
+            let group: Vec<usize> = pending[offset..end].to_vec();
+            let group_urls: Vec<String> = group.iter().map(|&i| urls[i].to_string()).collect();
+            let outcome = in_page_fetch(&window, &group_urls, deadline, batch);
+            match outcome {
+                Ok(items) => {
+                    for (index, item) in group.iter().zip(items.into_iter()) {
+                        results[*index] = Some(item);
+                    }
+                }
+                Err(error) => {
+                    for index in &group {
+                        results[*index] = Some(Err(error.clone()));
+                    }
+                }
+            }
+            offset = end;
+        }
+        results
+            .into_iter()
+            .map(|result| result.unwrap_or(Err(SourceError::Timeout)))
+            .collect()
+    }
+}
+
+fn origin_of_url(url: &tauri::Url) -> Option<String> {
+    if url.scheme() == "about" {
+        return None;
+    }
+    let host = url.host_str()?;
+    Some(match url.port_or_known_default() {
+        Some(port) => format!("{}://{}:{}", url.scheme(), host, port),
+        None => format!("{}://{}", url.scheme(), host),
+    })
+}
+
+fn in_page_fetch(
+    window: &WebviewWindow,
+    urls: &[String],
+    deadline: Instant,
+    batch: Option<i64>,
+) -> SourceResult<Vec<SourceResult<String>>> {
+    let list = serde_json::to_string(urls)
+        .map_err(|_| SourceError::Transport("批量取数地址序列化失败".to_string()))?;
+    let starter = BATCH_START
+        .replace("__URLS__", &list)
+        .replace("__ITEM_TIMEOUT_MS__", &BATCH_ITEM_TIMEOUT_MS.to_string());
+    window
+        .eval(starter)
+        .map_err(|error| SourceError::Transport(error.to_string()))?;
+    loop {
+        if let Some(token) = batch {
+            if !batch_alive(token) {
+                let _ = window.eval(BATCH_CLEAR);
+                return Err(SourceError::Cancelled);
+            }
+        }
+        if Instant::now() >= deadline {
+            let _ = window.eval(BATCH_CLEAR);
+            return Err(SourceError::Timeout);
+        }
+        thread::sleep(BATCH_POLL);
+        let ready: Option<BatchReady> = match eval_json(window, BATCH_POLL_SCRIPT) {
+            Ok(value) => value,
+            Err(SourceError::Shape(_)) | Err(SourceError::Timeout) => continue,
+            Err(other) => return Err(other),
+        };
+        let Some(ready) = ready else {
+            continue;
+        };
+        let _ = window.eval(BATCH_CLEAR);
+        if ready.items.len() != urls.len() {
+            return Err(SourceError::Shape("批量取数条数不符".to_string()));
+        }
+        return Ok(ready
+            .items
+            .into_iter()
+            .map(|item| {
+                if item.ok && !item.html.is_empty() {
+                    Ok(item.html)
+                } else {
+                    Err(SourceError::Transport("页内取数失败".to_string()))
+                }
+            })
+            .collect());
     }
 }
 
@@ -293,6 +560,17 @@ struct PageStatus {
 #[derive(Deserialize)]
 struct PageContent {
     html: String,
+}
+
+#[derive(Deserialize)]
+struct BatchItem {
+    ok: bool,
+    html: String,
+}
+
+#[derive(Deserialize)]
+struct BatchReady {
+    items: Vec<BatchItem>,
 }
 
 pub fn probe_enabled() -> bool {

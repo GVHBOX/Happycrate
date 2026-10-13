@@ -5,6 +5,7 @@ use crate::sources::{base_of, default_base, Fetch, Req};
 use crate::util::{cell_text, find_hex_after, make_item, parse_size_text, quote_plus, unescape};
 
 pub const PAGES: i64 = 16;
+pub const PAGES_PER_BATCH: i64 = 4;
 pub const MAX_HITS: usize = 200;
 
 fn blocks(text: &str) -> Vec<String> {
@@ -85,36 +86,80 @@ pub fn search<F: Fetch + Sync>(
     fetch: &F,
 ) -> SourceResult<Vec<Item>> {
     let root = base_of(base, default_base("btdig"));
+    let referer = format!("{root}/");
     let start = page_no.max(1) - 1;
     let mut items: Vec<Item> = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
     let mut last_error: Option<SourceError> = None;
-    for offset in 0..PAGES {
-        let url = page_url(&root, query, start + offset);
-        let text = match fetch.fetch(
-            Req::get(&url)
-                .referer(&format!("{root}/"))
-                .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
-                .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
-        ) {
-            Ok(text) => text,
-            Err(exc) => {
-                if matches!(exc, SourceError::Cancelled) {
-                    return Err(exc);
-                }
-                last_error = Some(exc);
-                continue;
-            }
-        };
-        let found = parse_page(&text, &mut seen);
-        if found.is_empty() {
+    let mut done = false;
+
+    for offset in (0..PAGES).step_by(PAGES_PER_BATCH as usize) {
+        if done {
             break;
         }
-        items.extend(found);
-        if items.len() >= MAX_HITS {
-            break;
+        let chunk_end = (offset + PAGES_PER_BATCH).min(PAGES);
+        let urls: Vec<String> = (offset..chunk_end)
+            .map(|slot| page_url(&root, query, start + slot))
+            .collect();
+        let outcomes: Vec<SourceResult<String>> = if offset == 0 {
+            let mut collected = Vec::with_capacity(urls.len());
+            collected.push(fetch.fetch(
+                Req::get(&urls[0])
+                    .referer(&referer)
+                    .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
+                    .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
+            ));
+            if urls.len() > 1 {
+                let requests: Vec<Req> = urls[1..]
+                    .iter()
+                    .map(|url| {
+                        Req::get(url)
+                            .referer(&referer)
+                            .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
+                            .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    })
+                    .collect();
+                collected.extend(fetch.fetch_many(requests));
+            }
+            collected
+        } else {
+            let requests: Vec<Req> = urls
+                .iter()
+                .map(|url| {
+                    Req::get(url)
+                        .referer(&referer)
+                        .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
+                        .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                })
+                .collect();
+            fetch.fetch_many(requests)
+        };
+        for outcome in outcomes {
+            match outcome {
+                Ok(text) => {
+                    let found = parse_page(&text, &mut seen);
+                    if found.is_empty() {
+                        done = true;
+                        break;
+                    }
+                    items.extend(found);
+                    if items.len() >= MAX_HITS {
+                        done = true;
+                        break;
+                    }
+                }
+                Err(exc) => {
+                    if matches!(exc, SourceError::Cancelled) {
+                        return Err(exc);
+                    }
+                    if last_error.is_none() {
+                        last_error = Some(exc);
+                    }
+                }
+            }
         }
     }
+
     if items.is_empty() {
         if let Some(exc) = last_error {
             return Err(exc);

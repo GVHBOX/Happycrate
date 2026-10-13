@@ -182,6 +182,21 @@ impl<F: Fetch> Fetch for Scoped<'_, F> {
         }
         self.inner.fetch(req)
     }
+
+    fn fetch_many(&self, mut reqs: Vec<Req>) -> Vec<SourceResult<String>> {
+        for req in reqs.iter_mut() {
+            if req.timeout.is_none() {
+                req.timeout = Some(self.timeout);
+            }
+            if req.batch.is_none() {
+                req.batch = self.batch;
+            }
+            if req.deadline.is_none() {
+                req.deadline = self.deadline;
+            }
+        }
+        self.inner.fetch_many(reqs)
+    }
 }
 
 pub fn gather_pages<K: Ord + Send, V: Send, F>(
@@ -290,6 +305,10 @@ pub fn search<F: Fetch + Sync>(
 
 pub trait Fetch {
     fn fetch(&self, req: Req) -> SourceResult<String>;
+
+    fn fetch_many(&self, reqs: Vec<Req>) -> Vec<SourceResult<String>> {
+        reqs.into_iter().map(|req| self.fetch(req)).collect()
+    }
 
     fn batch(&self) -> Option<i64> {
         None

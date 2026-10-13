@@ -137,3 +137,54 @@ fn driver_error_passes_through() {
         other => panic!("未按预期透传：{other:?}"),
     }
 }
+
+#[test]
+fn batch_returns_results_in_order() {
+    let (driver, stats) = MockDriver::new(Duration::ZERO);
+    let fetch = WebFetch::start(driver);
+    let urls: Vec<String> = (0..4)
+        .map(|index| format!("https://example.com/{index}"))
+        .collect();
+    let reqs: Vec<Req> = urls.iter().map(|url| Req::get(url)).collect();
+    let results = fetch.fetch_many(reqs);
+    assert_eq!(results.len(), 4);
+    for (index, result) in results.iter().enumerate() {
+        assert_eq!(
+            result.as_ref().expect("批量取数失败"),
+            &format!("<html>https://example.com/{index}</html>")
+        );
+    }
+    assert_eq!(stats.calls.load(Ordering::SeqCst), 4);
+    assert_eq!(stats.peak.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn batch_cancel_marks_all_results() {
+    let (driver, _stats) = MockDriver::new(Duration::from_millis(50));
+    let fetch = Arc::new(WebFetch::start(driver));
+    let token = start_batch();
+    let worker = {
+        let fetch = fetch.clone();
+        thread::spawn(move || {
+            let urls: Vec<String> = (0..3)
+                .map(|index| format!("https://example.com/{index}"))
+                .collect();
+            let reqs: Vec<Req> = urls
+                .iter()
+                .map(|url| {
+                    let mut req = Req::get(url);
+                    req.batch = Some(token);
+                    req
+                })
+                .collect();
+            fetch.fetch_many(reqs)
+        })
+    };
+    thread::sleep(Duration::from_millis(30));
+    cancel_batch(token);
+    let results = worker.join().expect("线程失败");
+    assert_eq!(results.len(), 3);
+    assert!(results
+        .iter()
+        .all(|result| matches!(result, Err(SourceError::Cancelled))));
+}

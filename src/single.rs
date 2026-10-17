@@ -74,6 +74,7 @@ extern "system" {
     ) -> u32;
     fn GetWindow(hwnd: *mut core::ffi::c_void, cmd: u32) -> *mut core::ffi::c_void;
     fn IsWindow(hwnd: *mut core::ffi::c_void) -> i32;
+    fn IsWindowVisible(hwnd: *mut core::ffi::c_void) -> i32;
     fn IsIconic(hwnd: *mut core::ffi::c_void) -> i32;
     fn ShowWindow(hwnd: *mut core::ffi::c_void, cmd_show: i32) -> i32;
     fn SetForegroundWindow(hwnd: *mut core::ffi::c_void) -> i32;
@@ -141,11 +142,14 @@ pub fn register_main_window(pointer: usize) {
 
 fn bring_hwnd_to_front(hwnd: *mut core::ffi::c_void) -> bool {
     unsafe {
-        if IsWindow(hwnd) == 0 {
-            return false;
-        }
+    if IsWindow(hwnd) == 0 {
+        return false;
+    }
+    if IsWindowVisible(hwnd) == 0 {
+        return false;
+    }
 
-        let mut target_pid: u32 = 0;
+    let mut target_pid: u32 = 0;
         let target_thread = GetWindowThreadProcessId(hwnd, &mut target_pid);
         if target_pid != 0 {
             AllowSetForegroundWindow(target_pid);
@@ -200,6 +204,10 @@ unsafe extern "system" fn enum_windows_callback(
     }
 
     if !GetWindow(hwnd, GW_OWNER).is_null() {
+        return 1;
+    }
+
+    if IsWindowVisible(hwnd) == 0 {
         return 1;
     }
 

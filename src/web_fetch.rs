@@ -323,7 +323,7 @@ impl WindowDriver {
         self.app
             .run_on_main_thread(move || {
                 let outcome = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(start))
-                    .title(&label)
+                    .title("Happycrate 取数窗口")
                     .visible(false)
                     .skip_taskbar(true)
                     .inner_size(1100.0, 760.0)

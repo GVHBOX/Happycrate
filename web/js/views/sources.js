@@ -48,10 +48,16 @@
       ? "animation:rowIn .3s var(--land) both " + Math.min(i, 10) * 28 + "ms;"
       : "";
 
+    var login = s.key !== "javdb" ? "" : s.signedIn
+      ? '<span class="source-login-state">已登录</span>'
+      : '<button class="btn btn-ghost source-login" type="button" data-javdb-login aria-label="登录 JavDB">登录</button>';
+    var name = '<span class="name">' + esc(s.label) + '</span>';
+    if (login) name = '<span class="source-name">' + name + login + '</span>';
+
     return '<div class="row' + (s.enabled ? "" : " off") + '" data-key="' + esc(s.key) + '" style="' + anim + '">' +
       '<span class="handle" data-drag="' + esc(s.key) + '">' + ICON.drag + '</span>' +
       '<span><button class="sw ' + (s.enabled ? "" : "off") + '" aria-pressed="' + (s.enabled ? "true" : "false") + '" aria-label="' + esc(s.label) + '" data-sw="' + esc(s.key) + '"></button></span>' +
-      '<span class="namecell"><span class="name">' + esc(s.label) + '</span>' +
+      '<span class="namecell">' + name +
         '<div class="addr">' + esc(s.addr) + '</div></span>' +
       '<span class="health"><span class="ms ' + healthClass(s) + (s.just ? " up" : "") + '">' +
         healthText(s) + '</span><span class="hd ' + healthClass(s) + '"></span></span>' +
@@ -99,6 +105,13 @@
   }
 
   var root = null, rowsEl = null, autoOrder = true;
+
+  window.__onJavdbSession = function(signedIn){
+    var source = store.byKey("javdb");
+    if (!source) return;
+    source.signedIn = signedIn;
+    if (root && root.isConnected) renderRows();
+  };
 
   function paintAuto(){
     var b = root && root.querySelector("#btnAuto");
@@ -270,6 +283,14 @@
     };
 
     rowsEl.addEventListener("click", function(e){
+      var login = e.target.closest("[data-javdb-login]");
+      if (login){
+        login.disabled = true;
+        api.javdbLogin().catch(function(error){
+          M.toast(String(error), "err");
+        }).finally(function(){ login.disabled = false; });
+        return;
+      }
       var sw = e.target.closest("[data-sw]");
       if (!sw) return;
       var key = sw.dataset.sw, s = store.byKey(key);

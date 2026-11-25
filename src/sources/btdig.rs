@@ -103,12 +103,16 @@ pub fn search<F: Fetch + Sync>(
             .collect();
         let outcomes: Vec<SourceResult<String>> = if offset == 0 {
             let mut collected = Vec::with_capacity(urls.len());
-            collected.push(fetch.fetch(
+            let first = fetch.fetch(
                 Req::get(&urls[0])
                     .referer(&referer)
                     .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
                     .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
-            ));
+            );
+            if matches!(first, Err(SourceError::Cancelled)) {
+                return Err(SourceError::Cancelled);
+            }
+            collected.push(first);
             if urls.len() > 1 {
                 let requests: Vec<Req> = urls[1..]
                     .iter()

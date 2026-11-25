@@ -90,13 +90,20 @@
     captcha: function(){
       seq([[880, 0], [659.25, 0.15], [880, 0.32]],
           {type: "triangle", dur: 0.11, gain: 0.5, rel: 0.13});
+    },
+    captcha_done: function(){
+      seq([[659.25, 0], [987.77, 0.08], [1318.51, 0.16]],
+          {type: "sine", dur: 0.07, gain: 0.48, rel: 0.12});
     }
   };
+
+  var ALIAS = { captcha_done: "captcha" };
 
   function allowed(name){
     var s = HC.settings || {};
     if (s.sound === false) return false;
-    return s["sound_" + name] !== false;
+    var key = ALIAS[name] || name;
+    return s["sound_" + key] !== false;
   }
 
   function run(name){

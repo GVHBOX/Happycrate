@@ -18,6 +18,7 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
 </style>
 </head>
 <body>
+<script>if(document.documentElement.classList.contains("dark"))document.body.classList.add("dark");</script>
 <div class="titlebar">
   <button class="tb-home" id="tbHome" title="Happycrate">
     <img class="tb-logo" src="logo.png" alt="">
@@ -100,10 +101,28 @@ html.dark,html.dark body{background:#131419;color:#E7E9F2}
     if (n >= 12 && n <= 24) document.documentElement.style.setProperty("--fr", String(n / 13));
   }
   HC.applyFont = applyFont;
+  var snapRaf1 = 0;
+  var snapRaf2 = 0;
   HC.applyTheme = function(t){
-    try{ localStorage.setItem("hc_theme", t); }catch(e){}
-    document.documentElement.classList.toggle("dark", t === "dark");
-    document.body.classList.toggle("dark", t === "dark");
+    var dark = t === "dark";
+    try{ localStorage.setItem("hc_theme", dark ? "dark" : "light"); }catch(e){}
+    var rootEl = document.documentElement;
+    var bodyEl = document.body;
+    var changed = rootEl.classList.contains("dark") !== dark
+      || (bodyEl && bodyEl.classList.contains("dark") !== dark);
+    if (changed){
+      cancelAnimationFrame(snapRaf1);
+      cancelAnimationFrame(snapRaf2);
+      rootEl.classList.add("theme-snap");
+      rootEl.classList.toggle("dark", dark);
+      if (bodyEl) bodyEl.classList.toggle("dark", dark);
+      void rootEl.offsetHeight;
+      snapRaf1 = requestAnimationFrame(function(){
+        snapRaf2 = requestAnimationFrame(function(){
+          rootEl.classList.remove("theme-snap");
+        });
+      });
+    }
     syncWindowTone();
   };
   HC.applyBrand = function(v){

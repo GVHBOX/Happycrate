@@ -524,6 +524,9 @@ pub const HTTP_BODY_LIMIT: usize = 20 * 1024 * 1024;
 const CAPTCHA_SCAN_BYTES: usize = 8192;
 const LAX_TTL_SECS: u64 = 600;
 const LAX_LIMIT: usize = 32;
+const VT_LIMIT: usize = 32;
+const VT_DEFAULT_TTL_SECS: u64 = 1800;
+const VT_DELAY_MS: u64 = 320;
 
 const CAPTCHA_SIGNS: [&str; 7] = [
     "one more step",
@@ -596,10 +599,183 @@ pub fn decode(raw: &[u8]) -> String {
     raw.iter().map(|b| *b as char).collect()
 }
 
+pub struct VtGate {
+    pub nonce: String,
+    pub ch: String,
+}
+
+pub fn fnv1a32_utf16(text: &str) -> u32 {
+    let mut hash: u32 = 0x811c_9dc5;
+    for unit in text.encode_utf16() {
+        hash ^= unit as u32;
+        hash = hash.wrapping_mul(0x0100_0193);
+    }
+    hash
+}
+
+fn is_ident_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_' || b == b'$'
+}
+
+fn js_string_var(text: &str, name: &str) -> Option<String> {
+    let bytes = text.as_bytes();
+    let target = name.as_bytes();
+    let mut from = 0usize;
+    while let Some(rel) = text[from..].find(name) {
+        let at = from + rel;
+        from = at + name.len();
+        if at > 0 && is_ident_byte(bytes[at - 1]) {
+            continue;
+        }
+        let mut cursor = at + target.len();
+        if cursor < bytes.len() && is_ident_byte(bytes[cursor]) {
+            continue;
+        }
+        while cursor < bytes.len() && bytes[cursor].is_ascii_whitespace() {
+            cursor += 1;
+        }
+        if cursor >= bytes.len() || bytes[cursor] != b'=' {
+            continue;
+        }
+        cursor += 1;
+        while cursor < bytes.len() && bytes[cursor].is_ascii_whitespace() {
+            cursor += 1;
+        }
+        let Some(&quote) = bytes.get(cursor) else {
+            break;
+        };
+        if quote != b'"' && quote != b'\'' {
+            continue;
+        }
+        cursor += 1;
+        let start = cursor;
+        while cursor < bytes.len() {
+            let b = bytes[cursor];
+            if b == b'\\' || b == b'\n' || b == b'\r' {
+                break;
+            }
+            if b == quote {
+                if cursor > start {
+                    return Some(text[start..cursor].to_string());
+                }
+                break;
+            }
+            cursor += 1;
+        }
+    }
+    None
+}
+
+pub fn parse_vt_gate(body: &str) -> Option<VtGate> {
+    if !body.contains("/__vt")
+        || !body.contains("0x811c9dc5")
+        || !body.contains("0x01000193")
+    {
+        return None;
+    }
+    Some(VtGate {
+        nonce: js_string_var(body, "nonce")?,
+        ch: js_string_var(body, "ch")?,
+    })
+}
+
+pub fn vt_form_body(gate: &VtGate) -> String {
+    let ans = fnv1a32_utf16(&gate.nonce);
+    format!("c={}&a={ans}&w=0", crate::util::quote(&gate.ch))
+}
+
+pub fn origin_of(url: &str) -> Option<String> {
+    let scheme_end = url.find("://")?;
+    let scheme = &url[..scheme_end];
+    let after = &url[scheme_end + 3..];
+    let authority = after.split(['/', '?', '#']).next().unwrap_or("");
+    let host_port = match authority.rsplit_once('@') {
+        Some((_, rest)) => rest,
+        None => authority,
+    };
+    if scheme.is_empty() || host_port.is_empty() {
+        None
+    } else {
+        Some(format!("{}://{}", scheme.to_lowercase(), host_port))
+    }
+}
+
+pub fn parse_set_cookies(values: &[&str]) -> Option<(String, u64)> {
+    let mut pairs: Vec<String> = Vec::new();
+    let mut min_age: Option<u64> = None;
+    for raw in values {
+        let mut parts = raw.split(';');
+        let Some(first) = parts.next() else {
+            continue;
+        };
+        let Some((name, val)) = first.trim().split_once('=') else {
+            continue;
+        };
+        let name = name.trim();
+        let val = val.trim();
+        if name.is_empty() || val.is_empty() {
+            continue;
+        }
+        let mut expired = false;
+        for attr in parts {
+            let trimmed = attr.trim();
+            let Some((k, v)) = trimmed.split_once('=') else {
+                continue;
+            };
+            if k.trim().eq_ignore_ascii_case("max-age") {
+                if let Ok(secs) = v.trim().parse::<i64>() {
+                    if secs <= 0 {
+                        expired = true;
+                    } else {
+                        let secs = secs as u64;
+                        min_age = Some(min_age.map_or(secs, |cur| cur.min(secs)));
+                    }
+                }
+            }
+        }
+        if !expired {
+            pairs.push(format!("{name}={val}"));
+        }
+    }
+    if pairs.is_empty() {
+        return None;
+    }
+    let raw_ttl = min_age.unwrap_or(VT_DEFAULT_TTL_SECS);
+    let ttl = if raw_ttl > 60 {
+        (raw_ttl - 60).clamp(60, 86400)
+    } else {
+        raw_ttl.clamp(1, 60)
+    };
+    Some((pairs.join("; "), ttl))
+}
+
+fn cap_oldest<V>(
+    map: &mut std::collections::HashMap<String, V>,
+    limit: usize,
+    until_of: impl Fn(&V) -> Instant,
+) {
+    if map.len() <= limit {
+        return;
+    }
+    let mut entries: Vec<(String, Instant)> = map
+        .iter()
+        .map(|(k, v)| (k.clone(), until_of(v)))
+        .collect();
+    entries.sort_by_key(|(_, until)| *until);
+    let drop_count = entries.len() - limit;
+    for (name, _) in entries.into_iter().take(drop_count) {
+        map.remove(&name);
+    }
+}
+
 enum Attempt {
     Ok(Vec<u8>),
     TooLarge,
-    Http { code: u16, body: String },
+    Http {
+        code: u16,
+        url: String,
+        body: String,
+    },
     Timeout,
     Cert,
     ProxyDown,
@@ -709,6 +885,8 @@ pub struct HttpClient {
     probe: std::sync::Mutex<Option<(String, Instant, serde_json::Value)>>,
     tun: std::sync::Mutex<Option<(Instant, String)>>,
     lax: std::sync::Mutex<std::collections::HashMap<String, Instant>>,
+    vt_cookies: std::sync::Mutex<std::collections::HashMap<String, (String, Instant)>>,
+    vt_solve: std::sync::Mutex<()>,
 }
 
 fn host_of(url: &str) -> String {
@@ -740,17 +918,16 @@ fn chain_text(error: &(dyn std::error::Error + 'static)) -> String {
 }
 
 impl HttpClient {
-    pub fn new(
+    fn with_resolved(
         ua: String,
         retries: u32,
         default_timeout: u64,
-        manual_proxy: &str,
+        resolved: Resolved,
     ) -> SourceResult<Self> {
         let rt = tokio::runtime::Builder::new_multi_thread()
             .enable_all()
             .build()
             .map_err(|e| SourceError::Transport(e.to_string()))?;
-        let resolved = resolve(manual_proxy);
         Ok(HttpClient {
             rt,
             ua,
@@ -759,9 +936,34 @@ impl HttpClient {
             resolved,
             clients: std::sync::Mutex::new(std::collections::HashMap::new()),
             lax: std::sync::Mutex::new(std::collections::HashMap::new()),
+            vt_cookies: std::sync::Mutex::new(std::collections::HashMap::new()),
+            vt_solve: std::sync::Mutex::new(()),
             probe: std::sync::Mutex::new(None),
             tun: std::sync::Mutex::new(None),
         })
+    }
+
+    pub fn new(
+        ua: String,
+        retries: u32,
+        default_timeout: u64,
+        manual_proxy: &str,
+    ) -> SourceResult<Self> {
+        Self::with_resolved(ua, retries, default_timeout, resolve(manual_proxy))
+    }
+
+    pub fn new_direct(
+        ua: String,
+        retries: u32,
+        default_timeout: u64,
+    ) -> SourceResult<Self> {
+        let resolved = Resolved {
+            mode: "none",
+            addr: String::new(),
+            mapping: BTreeMap::new(),
+            overrides: String::new(),
+        };
+        Self::with_resolved(ua, retries, default_timeout, resolved)
     }
 
     pub fn resolved(&self) -> &Resolved {
@@ -826,14 +1028,31 @@ impl HttpClient {
         let host = host_of(url);
         let mut guard = self.lax.lock().unwrap_or_else(|e| e.into_inner());
         guard.insert(host, Instant::now() + Duration::from_secs(LAX_TTL_SECS));
-        if guard.len() > LAX_LIMIT {
-            let mut entries: Vec<(String, Instant)> =
-                guard.iter().map(|(k, v)| (k.clone(), *v)).collect();
-            entries.sort_by_key(|(_, until)| *until);
-            let drop_count = entries.len() - LAX_LIMIT;
-            for (name, _) in entries.into_iter().take(drop_count) {
-                guard.remove(&name);
-            }
+        cap_oldest(&mut guard, LAX_LIMIT, |until| *until);
+    }
+
+    fn vt_cookie(&self, host: &str) -> Option<String> {
+        let mut guard = self.vt_cookies.lock().unwrap_or_else(|e| e.into_inner());
+        let now = Instant::now();
+        guard.retain(|_, (_, until)| *until > now);
+        guard.get(host).map(|(cookie, _)| cookie.clone())
+    }
+
+    fn store_vt_cookie(&self, host: &str, cookie: String, ttl_secs: u64) {
+        let mut guard = self.vt_cookies.lock().unwrap_or_else(|e| e.into_inner());
+        let now = Instant::now();
+        guard.retain(|_, (_, until)| *until > now);
+        guard.insert(
+            host.to_string(),
+            (cookie, now + Duration::from_secs(ttl_secs)),
+        );
+        cap_oldest(&mut guard, VT_LIMIT, |(_, until)| *until);
+    }
+
+    fn invalidate_vt_cookie(&self, host: &str, expected: &str) {
+        let mut guard = self.vt_cookies.lock().unwrap_or_else(|e| e.into_inner());
+        if guard.get(host).is_some_and(|(cur, _)| cur == expected) {
+            guard.remove(host);
         }
     }
 
@@ -951,25 +1170,41 @@ impl HttpClient {
         })
     }
 
-    fn attempt(&self, req: &Req, use_lax: bool, limit: usize) -> Attempt {
+    fn send_once(
+        &self,
+        req: &Req,
+        use_lax: bool,
+        limit: usize,
+        cookie: Option<&str>,
+        want_cookies: bool,
+    ) -> (Attempt, Vec<String>) {
         if let Some(token) = req.batch {
             if !crate::sources::batch_alive(token) {
-                return Attempt::Cancelled;
+                return (Attempt::Cancelled, Vec::new());
             }
         }
         if let Some(deadline) = req.deadline {
             if Instant::now() >= deadline {
-                return Attempt::Timeout;
+                return (Attempt::Timeout, Vec::new());
             }
         }
         let timeout_ms = req.timeout.unwrap_or(self.default_timeout) * 1000;
         let proxied = !bypass(&host_of(req.url), &self.resolved);
         let client = match self.client(timeout_ms, use_lax, proxied) {
             Ok(client) => client,
-            Err(exc) => return Attempt::Other(exc.search_text()),
+            Err(exc) => return (Attempt::Other(exc.search_text()), Vec::new()),
         };
         let proxy_in_play = proxied && self.resolved.mode != "none";
         let referer = req.referer.to_string();
+        let has_cookie = req
+            .headers
+            .iter()
+            .any(|(k, _)| k.eq_ignore_ascii_case("cookie"));
+        let extra_cookie = if has_cookie {
+            None
+        } else {
+            cookie.map(str::to_string)
+        };
         let headers: Vec<(String, String)> = req
             .headers
             .iter()
@@ -988,43 +1223,172 @@ impl HttpClient {
             if !referer.is_empty() {
                 builder = builder.header(reqwest::header::REFERER, referer);
             }
+            if let Some(value) = extra_cookie {
+                builder = builder.header(reqwest::header::COOKIE, value);
+            }
             for (name, value) in headers {
                 builder = builder.header(name, value);
             }
             let response = match await_with_cancel(builder.send(), batch, deadline).await {
                 Ok(Ok(response)) => response,
-                Ok(Err(error)) => return classify_error(&error, proxy_in_play),
-                Err(Attempt::Cancelled) => return Attempt::Cancelled,
-                Err(Attempt::Timeout) => return Attempt::Timeout,
-                Err(other) => return other,
+                Ok(Err(error)) => return (classify_error(&error, proxy_in_play), Vec::new()),
+                Err(Attempt::Cancelled) => return (Attempt::Cancelled, Vec::new()),
+                Err(Attempt::Timeout) => return (Attempt::Timeout, Vec::new()),
+                Err(other) => return (other, Vec::new()),
+            };
+            let set_cookies = if want_cookies {
+                response
+                    .headers()
+                    .get_all(reqwest::header::SET_COOKIE)
+                    .iter()
+                    .filter_map(|v| v.to_str().ok().map(str::to_string))
+                    .collect()
+            } else {
+                Vec::new()
             };
             let status = response.status();
+            let final_url = response.url().to_string();
             if !status.is_success() {
                 let body = match read_body(response, CAPTCHA_SCAN_BYTES, false, batch, deadline).await {
                     BodyRead::Ok(bytes) => bytes,
-                    BodyRead::Cancelled => return Attempt::Cancelled,
-                    BodyRead::Timeout => return Attempt::Timeout,
+                    BodyRead::Cancelled => return (Attempt::Cancelled, set_cookies),
+                    BodyRead::Timeout => return (Attempt::Timeout, set_cookies),
                     _ => Vec::new(),
                 };
-                return Attempt::Http {
-                    code: status.as_u16(),
-                    body: String::from_utf8_lossy(&body).to_string(),
-                };
+                return (
+                    Attempt::Http {
+                        code: status.as_u16(),
+                        url: final_url,
+                        body: String::from_utf8_lossy(&body).to_string(),
+                    },
+                    set_cookies,
+                );
             }
-            match read_body(response, limit, true, batch, deadline).await {
+            let attempt = match read_body(response, limit, true, batch, deadline).await {
                 BodyRead::Ok(bytes) => Attempt::Ok(bytes),
                 BodyRead::TooLarge => Attempt::TooLarge,
                 BodyRead::Cancelled => Attempt::Cancelled,
                 BodyRead::Timeout => Attempt::Timeout,
                 BodyRead::Failed(message) => Attempt::Other(message),
-            }
+            };
+            (attempt, set_cookies)
         })
+    }
+
+    fn ensure_vt_cookie(
+        &self,
+        req: &Req,
+        fail_url: &str,
+        gate: &VtGate,
+        sent_cookie: Option<&str>,
+        use_lax: bool,
+    ) -> Result<(), SourceError> {
+        let req_host = host_of(req.url);
+        let post_url = if fail_url.is_empty() {
+            req.url
+        } else {
+            fail_url
+        };
+        let post_host = host_of(post_url);
+        let Some(origin) = origin_of(post_url) else {
+            return Err(SourceError::Shape("invalid origin".to_string()));
+        };
+        let _guard = self.vt_solve.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(current) = self.vt_cookie(&req_host) {
+            if sent_cookie != Some(current.as_str()) {
+                return Ok(());
+            }
+        }
+        if let Some(stale) = sent_cookie {
+            self.invalidate_vt_cookie(&req_host, stale);
+        }
+        self.backoff_sleep(
+            Duration::from_millis(VT_DELAY_MS),
+            req.batch,
+            req.deadline,
+        )?;
+        let vt_url = format!("{origin}/__vt");
+        let form = vt_form_body(gate);
+        let vt_req = Req {
+            url: &vt_url,
+            data: Some(form.as_bytes()),
+            referer: post_url,
+            headers: vec![
+                ("Content-Type", "application/x-www-form-urlencoded"),
+                ("Origin", &origin),
+                ("Accept", "*/*"),
+                ("Accept-Language", ACCEPT_LANGUAGE),
+            ],
+            retries: Some(0),
+            timeout: req.timeout,
+            batch: req.batch,
+            deadline: req.deadline,
+        };
+        let mut vt_lax = use_lax || self.known_lax(&vt_url);
+        for round in 0..2 {
+            let (outcome, raw_cookies) =
+                self.send_once(&vt_req, vt_lax, CAPTCHA_SCAN_BYTES, None, true);
+            match outcome {
+                Attempt::Ok(_) => {
+                    let refs: Vec<&str> = raw_cookies.iter().map(String::as_str).collect();
+                    let Some((cookie, ttl)) = parse_set_cookies(&refs) else {
+                        crate::log::warning(
+                            crate::log::SOURCES,
+                            &format!("站点校验未返回 Cookie：{req_host}"),
+                        );
+                        return Err(SourceError::Shape("missing vt cookie".to_string()));
+                    };
+                    self.store_vt_cookie(&req_host, cookie.clone(), ttl);
+                    if !post_host.is_empty() && post_host != req_host {
+                        self.store_vt_cookie(&post_host, cookie, ttl);
+                    }
+                    crate::log::info(
+                        crate::log::SOURCES,
+                        &format!("完成站点浏览器校验：{req_host}（{ttl}s）"),
+                    );
+                    return Ok(());
+                }
+                Attempt::Cert if round == 0 && !vt_lax => {
+                    self.mark_lax(&vt_url);
+                    vt_lax = true;
+                }
+                Attempt::Cancelled => return Err(SourceError::Cancelled),
+                Attempt::Timeout => return Err(SourceError::Timeout),
+                Attempt::ProxyDown => {
+                    return Err(SourceError::ProxyUnreachable(self.proxy_hint()));
+                }
+                Attempt::Http { code, body, .. } => {
+                    crate::log::warning(
+                        crate::log::SOURCES,
+                        &format!("站点校验失败（HTTP {code}）：{req_host}"),
+                    );
+                    return Err(SourceError::Http { code, body });
+                }
+                Attempt::Cert => {
+                    return Err(SourceError::Transport("证书校验失败".to_string()));
+                }
+                Attempt::TooLarge => {
+                    return Err(SourceError::TooLarge {
+                        limit: CAPTCHA_SCAN_BYTES,
+                    });
+                }
+                Attempt::Other(message) => {
+                    crate::log::warning(
+                        crate::log::SOURCES,
+                        &format!("站点校验异常（{req_host}）：{message}"),
+                    );
+                    return Err(SourceError::Transport(message));
+                }
+            }
+        }
+        Err(SourceError::Transport("站点校验未完成".to_string()))
     }
 
     pub fn run_raw(&self, req: &Req, limit: usize) -> SourceResult<Vec<u8>> {
         let retries = req.retries.unwrap_or(self.retries) as i64;
         let mut attempt: i64 = 0;
         let mut use_lax = self.known_lax(req.url);
+        let mut vt_solved = false;
         while attempt <= retries {
             attempt += 1;
             if let Some(token) = req.batch {
@@ -1037,11 +1401,44 @@ impl HttpClient {
                     return Err(SourceError::Timeout);
                 }
             }
-            match self.attempt(req, use_lax, limit) {
+            let sent_cookie = self.vt_cookie(&host_of(req.url));
+            match self
+                .send_once(req, use_lax, limit, sent_cookie.as_deref(), false)
+                .0
+            {
                 Attempt::Ok(raw) => return Ok(raw),
                 Attempt::Cancelled => return Err(SourceError::Cancelled),
                 Attempt::TooLarge => return Err(SourceError::TooLarge { limit }),
-                Attempt::Http { code, body } => {
+                Attempt::Http { code, url, body } => {
+                    if code == 403 && !vt_solved {
+                        if let Some(gate) = parse_vt_gate(&body) {
+                            vt_solved = true;
+                            match self.ensure_vt_cookie(
+                                req,
+                                &url,
+                                &gate,
+                                sent_cookie.as_deref(),
+                                use_lax,
+                            ) {
+                                Ok(()) => {
+                                    use_lax = self.known_lax(req.url);
+                                    attempt -= 1;
+                                    continue;
+                                }
+                                Err(err)
+                                    if matches!(
+                                        err,
+                                        SourceError::Cancelled
+                                            | SourceError::Timeout
+                                            | SourceError::ProxyUnreachable(_)
+                                    ) =>
+                                {
+                                    return Err(err);
+                                }
+                                Err(_) => {}
+                            }
+                        }
+                    }
                     if (code == 403 || code == 429) && captcha_wall(body.as_bytes()) {
                         crate::log::warning(
                             crate::log::SOURCES,

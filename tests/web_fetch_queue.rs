@@ -1,4 +1,4 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -187,4 +187,66 @@ fn batch_cancel_marks_all_results() {
     assert!(results
         .iter()
         .all(|result| matches!(result, Err(SourceError::Cancelled))));
+}
+
+#[test]
+fn close_interrupts_fetch() {
+    let (driver, _stats) = MockDriver::new(Duration::from_millis(800));
+    let fetch = Arc::new(WebFetch::start(driver));
+    let worker = {
+        let fetch = fetch.clone();
+        thread::spawn(move || fetch.fetch(Req::get("https://example.com/close")))
+    };
+    thread::sleep(Duration::from_millis(120));
+    fetch.close();
+    let outcome = worker.join().expect("线程失败");
+    assert!(matches!(outcome, Err(SourceError::Cancelled)));
+}
+
+#[test]
+fn batch_stops_on_first_cancel() {
+    let (driver, stats) = MockDriver::new(Duration::ZERO);
+    *stats.fail_with.lock().unwrap() = Some(SourceError::Cancelled);
+    let fetch = WebFetch::start(driver);
+    let urls: Vec<String> = (0..4)
+        .map(|index| format!("https://example.com/{index}"))
+        .collect();
+    let reqs: Vec<Req> = urls.iter().map(|url| Req::get(url)).collect();
+    let results = fetch.fetch_many(reqs);
+    assert_eq!(results.len(), 4);
+    assert!(results
+        .iter()
+        .all(|result| matches!(result, Err(SourceError::Cancelled))));
+    assert_eq!(stats.calls.load(Ordering::SeqCst), 1);
+}
+
+struct ChallengedDriver {
+    delay: Duration,
+    flag: Arc<AtomicBool>,
+}
+
+impl Driver for ChallengedDriver {
+    fn challenge_flag(&self) -> Option<Arc<AtomicBool>> {
+        Some(self.flag.clone())
+    }
+
+    fn load(&self, url: &str, _deadline: Instant, _batch: Option<i64>) -> SourceResult<String> {
+        self.flag.store(true, Ordering::SeqCst);
+        thread::sleep(self.delay);
+        self.flag.store(false, Ordering::SeqCst);
+        Ok(format!("<html>{url}</html>"))
+    }
+}
+
+#[test]
+fn challenge_flag_extends_fetch_timeout() {
+    let driver = ChallengedDriver {
+        delay: Duration::from_millis(2200),
+        flag: Arc::new(AtomicBool::new(false)),
+    };
+    let fetch = WebFetch::start(driver);
+    let outcome = fetch
+        .fetch(Req::get("https://example.com/challenge").timeout(1))
+        .expect("进入人机验证后不应被短超时掐断");
+    assert_eq!(outcome, "<html>https://example.com/challenge</html>");
 }

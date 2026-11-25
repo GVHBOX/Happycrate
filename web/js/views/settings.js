@@ -719,11 +719,10 @@
 
     root.querySelector("#s_theme").addEventListener("click", function(e){
       var b = e.target.closest("[data-theme]");
-      if (!b) return;
+      if (!b || b.dataset.theme === themeKey) return;
       themeKey = b.dataset.theme;
       syncSeg(this, "theme", themeKey);
       if (HC.applyTheme) HC.applyTheme(themeKey);
-      lookResetPreview();
       onEdit();
     });
 

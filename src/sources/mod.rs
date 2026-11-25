@@ -52,6 +52,11 @@ pub fn cancel_batch(token: i64) {
     }
 }
 
+pub fn cancel_active() {
+    CANCEL_EPOCH.fetch_add(1, Ordering::SeqCst);
+    CANCEL_NOTIFY.notify_waiters();
+}
+
 pub fn batch_alive(token: i64) -> bool {
     CANCEL_EPOCH.load(Ordering::SeqCst) == token
 }

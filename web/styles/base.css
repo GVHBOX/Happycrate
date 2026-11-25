@@ -15,7 +15,6 @@ body{
   font-size:var(--fs-md);
   color:var(--t1);
   background:var(--page);
-  transition:background-color var(--d-state) var(--e);
   display:flex;
   flex-direction:column;
 }
@@ -81,7 +80,6 @@ input, textarea{
 
 .card{
   background:var(--panel);
-  transition:background-color var(--d-state) var(--e);
   overflow:hidden;
 }
 
@@ -298,6 +296,9 @@ input, textarea{
 .cb.on,.cb.part{border-color:var(--brand); background:var(--brand); animation:cbPop var(--d-state) var(--e)}
 
 .namecell{min-width:0}
+.source-name{display:flex; align-items:center; gap:var(--sp-2); min-width:0}
+.source-login{height:22px; padding:0 8px; font-size:var(--fs-xs); flex:none}
+.source-login-state{color:var(--ok); font-size:var(--fs-xs); white-space:nowrap}
 .name{
   font:500 var(--fs-md)/1.2 var(--font);
   color:var(--t1);

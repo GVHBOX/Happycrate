@@ -91,6 +91,7 @@ struct Acc {
     errors: BTreeMap<String, String>,
     ok_keys: BTreeSet<String>,
     fuzzy_keys: BTreeSet<String>,
+    cancelled_keys: BTreeSet<String>,
     source_counts: BTreeMap<String, i64>,
     relaxed_used: Vec<String>,
     relax_round: i64,
@@ -249,13 +250,16 @@ fn search_one<F: Fetch + Sync>(
     deadline: Option<Instant>,
 ) -> (Vec<Item>, String, i64) {
     let started = Instant::now();
-    let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
-        crate::web_fetch::shared(&target.key)
-    } else {
-        None
-    };
+    let webview = crate::web_fetch::shared(&target.key);
     let outcome = match webview {
-        Some(web) => call_source(job, target, query_text, &*web, deadline),
+        Some(web) => {
+            let deadline = if target.key == crate::javdb_session::KEY {
+                deadline
+            } else {
+                None
+            };
+            call_source(job, target, query_text, &*web, deadline)
+        }
         None => call_source(job, target, query_text, fetch, deadline),
     };
     let ms = started.elapsed().as_millis() as i64;
@@ -328,8 +332,11 @@ fn on_source(
     } else if !relax_empty && !items.is_empty() && err.is_empty() {
         state.ok_keys.insert(key.to_string());
     }
-    if err.is_empty() {
+    if err.is_empty() || err == CANCEL_TEXT {
         state.errors.remove(key);
+    }
+    if err == CANCEL_TEXT {
+        state.cancelled_keys.insert(key.to_string());
     }
     if !relax_empty {
         state.source_counts.insert(key.to_string(), count);
@@ -499,17 +506,31 @@ fn run_round<F: Fetch + Sync>(
         return (0, BTreeMap::new());
     }
 
+    let skipped = {
+        let state = acc.lock().unwrap_or_else(|e| e.into_inner());
+        state.cancelled_keys.clone()
+    };
+
     let indices: Vec<usize> = match subset {
         Some(keys) => {
             let wanted: BTreeSet<&str> = keys.iter().map(String::as_str).collect();
             job.targets
                 .iter()
                 .enumerate()
-                .filter(|(_, target)| wanted.contains(target.key.as_str()))
+                .filter(|(_, target)| {
+                    wanted.contains(target.key.as_str())
+                        && !skipped.contains(target.key.as_str())
+                })
                 .map(|(index, _)| index)
                 .collect()
         }
-        None => (0..job.targets.len()).collect(),
+        None => job
+            .targets
+            .iter()
+            .enumerate()
+            .filter(|(_, target)| !skipped.contains(target.key.as_str()))
+            .map(|(index, _)| index)
+            .collect(),
     };
 
     let results = fan_out(job, &indices, query_text, fetch, sink, acc, deadline);
@@ -519,14 +540,16 @@ fn run_round<F: Fetch + Sync>(
     for (key, (_, err, _)) in &results {
         if err.is_empty() {
             reached += 1;
-        } else {
+        } else if err != CANCEL_TEXT {
             errors.insert(key.clone(), err.clone());
         }
     }
 
     let mut state = acc.lock().unwrap_or_else(|e| e.into_inner());
     if reached == 0 && !errors.is_empty() {
-        let fatal = if errors.values().all(|msg| msg.contains(&job.hints.proxy)) {
+        let fatal = if errors.values().all(|msg| msg == crate::outcome::LOGIN_TEXT) {
+            crate::outcome::LOGIN_TEXT.to_string()
+        } else if errors.values().all(|msg| msg.contains(&job.hints.proxy)) {
             job.hints.proxy.clone()
         } else {
             proxy_hint_for(&job.hints, &errors)
@@ -536,10 +559,8 @@ fn run_round<F: Fetch + Sync>(
         }
     }
     for (key, msg) in &errors {
-        if !msg.is_empty() && msg != CANCEL_TEXT {
-            let (outcome, code) = classify(false, 0, msg, 0);
-            state.errors.insert(key.clone(), outcome_text(outcome, code));
-        }
+        let (outcome, code) = classify(false, 0, msg, 0);
+        state.errors.insert(key.clone(), outcome_text(outcome, code));
     }
     drop(state);
     (reached, errors)
@@ -549,17 +570,11 @@ fn relax_futile(reached: i64, errors: &BTreeMap<String, String>) -> bool {
     if reached != 0 {
         return false;
     }
-    if errors.is_empty() {
-        return true;
-    }
     errors.values().all(|msg| {
-        if msg.is_empty() || msg == CANCEL_TEXT {
-            return false;
-        }
         let (outcome, _) = classify(false, 0, msg, 0);
         matches!(
             outcome,
-            crate::outcome::TIMEOUT | crate::outcome::NET | crate::outcome::BLOCKED
+            crate::outcome::TIMEOUT | crate::outcome::NET | crate::outcome::BLOCKED | crate::outcome::LOGIN
         )
     })
 }
@@ -703,6 +718,42 @@ fn wait_until(gate: &(Mutex<bool>, Condvar), until: Instant) -> bool {
     true
 }
 
+fn await_hard_stop(
+    gate: &(Mutex<bool>, Condvar),
+    token: i64,
+    hard_ms: i64,
+    wait_cap: Instant,
+    acc: &Mutex<Acc>,
+) {
+    if wait_until(gate, wait_cap) || !sources::batch_alive(token) {
+        return;
+    }
+    let mut held = false;
+    let hold_limit = Instant::now() + crate::web_fetch::CHALLENGE_TIMEOUT;
+    while sources::batch_alive(token)
+        && crate::web_fetch::has_active_challenge()
+        && Instant::now() < hold_limit
+    {
+        held = true;
+        if wait_until(gate, Instant::now() + Duration::from_millis(200)) {
+            return;
+        }
+    }
+    if held && sources::batch_alive(token) {
+        if wait_until(gate, Instant::now() + Duration::from_secs(15)) {
+            return;
+        }
+    }
+    if sources::batch_alive(token) {
+        crate::log::warning(
+            crate::log::API,
+            &format!("搜索超过 {hard_ms} ms 时限，停止剩余请求"),
+        );
+        acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
+        sources::cancel_batch(token);
+    }
+}
+
 pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sync)) {
     let started = Instant::now();
     let deadline = job.deadline.or_else(|| {
@@ -716,7 +767,12 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         needs: query::needles(&job.parsed),
         ..Acc::default()
     });
-    let ckey = cache_key(job);
+    let has_javdb = job.targets.iter().any(|target| target.key == crate::javdb_session::KEY);
+    let javdb_revision = crate::javdb_session::revision();
+    let mut ckey = cache_key(job);
+    if has_javdb {
+        ckey.push_str(&format!("|javdb:{javdb_revision}"));
+    }
     let cached = cache_take(&ckey);
     let retry: Option<Vec<String>> = cached
         .as_ref()
@@ -755,15 +811,7 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
             let hard_dur = Duration::from_millis(job.hard_timeout_ms.max(0) as u64);
 
             if has_hard && (!has_soft || soft_dur >= hard_dur) {
-                let ended = wait_until(&gate, started + hard_dur);
-                if !ended && sources::batch_alive(job.token) {
-                    crate::log::warning(
-                        crate::log::API,
-                        &format!("搜索超过 {} ms 时限，停止剩余请求", job.hard_timeout_ms),
-                    );
-                    acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
-                    sources::cancel_batch(job.token);
-                }
+                await_hard_stop(&gate, job.token, job.hard_timeout_ms, started + hard_dur, &acc);
             } else {
                 if has_soft {
                     let settled = wait_until(&gate, started + soft_dur);
@@ -776,15 +824,7 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
                 }
                 if has_hard {
                     let left = hard_dur.saturating_sub(started.elapsed());
-                    let ended = wait_until(&gate, Instant::now() + left);
-                    if !ended && sources::batch_alive(job.token) {
-                        crate::log::warning(
-                            crate::log::API,
-                            &format!("搜索超过 {} ms 时限，停止剩余请求", job.hard_timeout_ms),
-                        );
-                        acc.lock().unwrap_or_else(|e| e.into_inner()).timed_out = true;
-                        sources::cancel_batch(job.token);
-                    }
+                    await_hard_stop(&gate, job.token, job.hard_timeout_ms, Instant::now() + left, &acc);
                 }
             }
         });
@@ -801,7 +841,10 @@ pub fn execute<F: Fetch + Sync>(job: &Job, fetch: &F, sink: &(dyn Fn(Event) + Sy
         return;
     }
 
-    if !state.timed_out {
+    if !state.timed_out
+        && state.cancelled_keys.is_empty()
+        && (!has_javdb || javdb_revision == crate::javdb_session::revision())
+    {
         cache_put(
             &ckey,
             Cached {

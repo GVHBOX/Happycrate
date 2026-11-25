@@ -17,6 +17,7 @@
         key: s.key || "",
         label: s.label || s.key || "",
         enabled: s.enabled !== false,
+        signedIn: s.signed_in === true,
         addr: s.addr || "",
         health: {
           ms: (s.health && s.health.ms) || 0,
@@ -54,8 +55,13 @@
     if (probeOne) probeOne(p.key, p);
   };
 
-  window.__onCaptcha = function(){
+  window.__onCaptcha = function(d){
     if (window.HC && HC.sfx) HC.sfx.play("captcha");
+    if (sHooks.captcha && d) sHooks.captcha(d);
+  };
+
+  window.__onCaptchaDone = function(){
+    if (window.HC && HC.sfx) HC.sfx.play("captcha_done");
   };
 
   window.__onProbeDone = function(p){
@@ -84,6 +90,10 @@
       return invoke("list_sources").then(function(res){
         return coerce(res || []);
       });
+    },
+
+    javdbLogin: function(){
+      return invoke("javdb_login");
     },
 
     toggleSource: function(key, on){

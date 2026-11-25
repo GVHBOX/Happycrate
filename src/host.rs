@@ -18,7 +18,31 @@ impl AppState {
 
 #[tauri::command(async)]
 fn list_sources(state: tauri::State<AppState>) -> Vec<Value> {
-    state.api().list_sources()
+    let mut rows = state.api().list_sources();
+    if let Some(row) = rows
+        .iter_mut()
+        .find(|row| row["key"] == crate::javdb_session::KEY)
+    {
+        row["signed_in"] = Value::Bool(crate::javdb_session::signed_in());
+    }
+    rows
+}
+
+#[tauri::command(async)]
+fn javdb_login(window: tauri::WebviewWindow, state: tauri::State<AppState>) -> Result<(), String> {
+    if window.label() != "main" {
+        return Err("请从数据源管理打开 JavDB 登录".to_string());
+    }
+    let source = state
+        .api()
+        .config
+        .get(crate::javdb_session::KEY)
+        .ok_or_else(|| "找不到 JavDB 数据源".to_string())?;
+    let base = crate::api::base_of(
+        crate::javdb_session::KEY,
+        source["base"].as_str().unwrap_or(""),
+    );
+    crate::javdb_session::open(window.app_handle(), &base)
 }
 
 #[tauri::command(async)]
@@ -74,7 +98,11 @@ fn default_settings(state: tauri::State<AppState>) -> Value {
 
 #[tauri::command(async)]
 fn save_settings(state: tauri::State<AppState>, fields: Value) -> Value {
-    state.api().save_settings(&fields)
+    let outcome = state.api().save_settings(&fields);
+    if outcome.get("ok") == Some(&Value::Bool(true)) {
+        crate::web_fetch::refresh_theme();
+    }
+    outcome
 }
 
 #[tauri::command]
@@ -232,20 +260,45 @@ fn win_close(window: tauri::Window) -> bool {
 }
 
 #[tauri::command]
+fn dismiss_challenge(key: String) -> bool {
+    crate::web_fetch::dismiss(&key)
+}
+
+#[tauri::command]
 fn set_window_tone(window: tauri::Window, color: String) -> bool {
     let value = color.trim();
     if !crate::api::hex_color_ok(value) {
         return false;
     }
     let channel = |from: usize| u8::from_str_radix(&value[from..from + 2], 16).unwrap_or(0);
-    window
+    let ok = window
         .set_background_color(Some(tauri::window::Color(
             channel(1),
             channel(3),
             channel(5),
             255,
         )))
-        .is_ok()
+        .is_ok();
+    if ok && window.label() == "main" {
+        crate::web_fetch::refresh_theme();
+    }
+    ok
+}
+
+fn prepare_shutdown() {
+    crate::web_fetch::shutdown();
+    crate::sources::cancel_active();
+    crate::probe::cancel();
+}
+
+fn shutdown_app(app: &tauri::AppHandle) {
+    prepare_shutdown();
+    for (label, window) in app.windows() {
+        if label != "main" {
+            let _ = window.destroy();
+        }
+    }
+    app.exit(0);
 }
 
 pub fn run() {
@@ -282,6 +335,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             list_sources,
+            javdb_login,
             source_issues,
             toggle_source,
             reorder_sources,
@@ -307,8 +361,23 @@ pub fn run() {
             win_min,
             win_max,
             win_close,
+            dismiss_challenge,
             set_window_tone,
         ])
+        .on_window_event(|window, event| {
+            if window.label() != "main" {
+                return;
+            }
+            match event {
+                tauri::WindowEvent::CloseRequested { .. } => {
+                    prepare_shutdown();
+                }
+                tauri::WindowEvent::Destroyed => {
+                    shutdown_app(window.app_handle());
+                }
+                _ => {}
+            }
+        })
         .setup(|app| {
             let window = app.get_webview_window("main").ok_or("找不到主窗口")?;
             if let Ok(hwnd) = window.hwnd() {
@@ -337,8 +406,24 @@ pub fn run() {
                     }
                 }));
             let captcha_handle = window.clone();
-            crate::web_fetch::on_challenge_surfaced(std::sync::Arc::new(move || {
-                let _ = captcha_handle.eval("window.__onCaptcha && window.__onCaptcha()");
+            crate::web_fetch::on_challenge_surfaced(std::sync::Arc::new(move |token| {
+                let payload = serde_json::json!({
+                    "token": token,
+                    "wait_ms": crate::web_fetch::CHALLENGE_TIMEOUT.as_millis() as u64,
+                });
+                let _ = captcha_handle.eval(format!("window.__onCaptcha && window.__onCaptcha({payload})"));
+            }));
+            let done_handle = window.clone();
+            crate::web_fetch::on_challenge_passed(std::sync::Arc::new(move || {
+                let _ = done_handle.eval("window.__onCaptchaDone && window.__onCaptchaDone()");
+            }));
+            let theme_app = app.handle().clone();
+            crate::web_fetch::set_theme_provider(std::sync::Arc::new(move || {
+                let state = theme_app.state::<AppState>();
+                let api = state.api();
+                let theme = crate::config::py_str(&api.settings.get("theme"));
+                let brand = crate::config::py_str(&api.settings.get("brand"));
+                (theme, brand)
             }));
             crate::web_fetch::init(app.handle());
             if crate::web_fetch::probe_enabled() {
@@ -346,8 +431,19 @@ pub fn run() {
             }
             Ok(())
         })
-        .run(tauri::generate_context!());
+        .build(tauri::generate_context!());
 
-    crate::single::release();
-    outcome.expect("Tauri 启动失败");
+    match outcome {
+        Ok(app) => {
+            app.run(|_app_handle, event| {
+                if matches!(event, tauri::RunEvent::Exit) {
+                    crate::single::release();
+                }
+            });
+        }
+        Err(error) => {
+            crate::single::release();
+            panic!("Tauri 启动失败: {error}");
+        }
+    }
 }

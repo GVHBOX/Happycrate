@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>happycrate</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100vh;overflow:hidden}
+body{
+  user-select:none;-webkit-user-select:none;cursor:default;
+  font-family:var(--font);color:var(--t1);background:var(--page);
+  display:flex;align-items:stretch;
+  border-top:1px solid var(--border);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--divider);
+}
+.bar-drag{
+  flex:1;min-width:0;
+  display:flex;align-items:center;gap:8px;padding:0 12px;
+}
+.bar-dot{
+  width:7px;height:7px;border-radius:999px;flex:none;
+  background:var(--brand);
+  box-shadow:0 0 0 3px var(--brand-light);
+}
+.bar-title{
+  font:600 12.5px/1 var(--font);color:var(--t1);
+  letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  pointer-events:none;
+}
+.bar-close{
+  width:38px;height:100%;flex:none;
+  border:0;background:transparent;color:var(--t3);
+  display:grid;place-items:center;cursor:default;
+  transition:background .12s var(--e),color .12s var(--e);
+}
+.bar-close:hover{background:#E81123;color:#fff}
+.bar-close:focus-visible{outline:var(--focus-ring);outline-offset:-2px}
+</style>
+</head>
+<body>
+  <div class="bar-drag" data-tauri-drag-region>
+    <span class="bar-dot" aria-hidden="true"></span>
+    <span class="bar-title" id="chTitle"></span>
+  </div>
+  <button class="bar-close" id="chClose" type="button" title="关闭">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+    </svg>
+  </button>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var key = q.get("key") || "";
+  var label = q.get("label") || key.toUpperCase();
+  document.getElementById("chTitle").textContent = label;
+
+  function applyLook(theme, brand){
+    var dark = theme === "dark";
+    document.documentElement.classList.toggle("dark", dark);
+    document.body.classList.toggle("dark", dark);
+    document.body.setAttribute("data-brand", brand || "");
+  }
+  window.__hcApplyLook = applyLook;
+  applyLook(q.get("theme") || "", q.get("brand") || "");
+
+  function dismiss(){
+    var core = window.__TAURI__ && window.__TAURI__.core;
+    if (core && typeof core.invoke === "function") {
+      core.invoke("dismiss_challenge", { key: key });
+    }
+  }
+  document.getElementById("chClose").onclick = dismiss;
+  window.addEventListener("keydown", function(e){
+    if (e.key === "Escape") dismiss();
+  });
+})();
+</script>
+</body>
+</html>

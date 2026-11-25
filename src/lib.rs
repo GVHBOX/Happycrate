@@ -4,6 +4,7 @@ pub mod config;
 pub mod core;
 pub mod downloaders;
 pub mod host;
+mod javdb_session;
 pub mod log;
 pub mod migrate;
 pub mod model;

@@ -7,6 +7,8 @@ use happycrate::search::{self, Event, Hints, Job, Target};
 use happycrate::sources::{self, Fetch, Req};
 use serde_json::json;
 
+static SERIAL: Mutex<()> = Mutex::new(());
+
 struct DeadNet {
     calls: AtomicUsize,
 }
@@ -63,6 +65,7 @@ fn hook_of(event: &Event) -> String {
 
 #[test]
 fn relax_skipped_when_every_source_times_out() {
+    let _guard = SERIAL.lock().unwrap_or_else(|e| e.into_inner());
     search::cache_clear();
     let fetch = DeadNet {
         calls: AtomicUsize::new(0),
@@ -112,4 +115,53 @@ fn js_of_escapes_line_separators() {
         !js.contains('\u{2028}') && !js.contains('\u{2029}'),
         "JS 字面量里不能出现裸的分行符：{js}"
     );
+}
+
+struct CancelAndEmpty {
+    apibay_calls: AtomicUsize,
+    other_calls: AtomicUsize,
+}
+
+impl Fetch for CancelAndEmpty {
+    fn fetch(&self, req: Req) -> SourceResult<String> {
+        if req.url.contains("apibay") {
+            self.apibay_calls.fetch_add(1, Ordering::SeqCst);
+            return Err(SourceError::Cancelled);
+        }
+        self.other_calls.fetch_add(1, Ordering::SeqCst);
+        Ok(r#"{"hits":[]}"#.to_string())
+    }
+}
+
+#[test]
+fn cancelled_source_is_skipped_on_relax() {
+    let _guard = SERIAL.lock().unwrap_or_else(|e| e.into_inner());
+    search::cache_clear();
+    let fetch = CancelAndEmpty {
+        apibay_calls: AtomicUsize::new(0),
+        other_calls: AtomicUsize::new(0),
+    };
+    let token = sources::start_batch();
+    let mut j = job("ubuntu 1080p", token);
+    j.targets = vec![
+        Target {
+            key: "apibay".to_string(),
+            base: String::new(),
+            timeout: 5,
+        },
+        Target {
+            key: "knaben".to_string(),
+            base: String::new(),
+            timeout: 5,
+        },
+    ];
+    let seen: Mutex<Vec<Event>> = Mutex::new(Vec::new());
+    search::execute(&j, &fetch, &|event| seen.lock().unwrap().push(event));
+
+    assert_eq!(fetch.apibay_calls.load(Ordering::SeqCst), 1);
+    assert!(fetch.other_calls.load(Ordering::SeqCst) >= 2);
+
+    j.token = sources::start_batch();
+    search::execute(&j, &fetch, &|_| {});
+    assert_eq!(fetch.apibay_calls.load(Ordering::SeqCst), 2);
 }

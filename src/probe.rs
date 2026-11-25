@@ -54,11 +54,7 @@ fn probe_word<F: Fetch + Sync>(
 fn run<F: Fetch + Sync>(target: &Target, fetch: &F, now: &LocalNow) -> (bool, i64, i64, String) {
     let started = Instant::now();
     let budget = target.timeout.min(TIMEOUT_CAP);
-    let webview = if sources::WEBVIEW_KEYS.contains(&target.key.as_str()) {
-        crate::web_fetch::shared(&target.key)
-    } else {
-        None
-    };
+    let webview = crate::web_fetch::shared(&target.key);
     let mut found = match webview.as_ref() {
         Some(web) => probe_word(target, &**web, now, budget, WORD),
         None => probe_word(target, fetch, now, budget, WORD),

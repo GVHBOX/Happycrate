@@ -44,7 +44,7 @@
     items: [], sel: {}, anchor: "",
     rev: 0,
     pendingBumped: {}, pendingFresh: 0, pendingArrived: [],
-    field: "", desc: false,
+    field: "added", desc: true,
     busy: false, settled: false, searched: false, hero: true,
     token: 0, done: 0, total: 0, startSeq: 0,
     errors: {}, names: {},
@@ -307,10 +307,10 @@
       return { it: it, m: contentMiss(it) };
     });
     rows.sort(function(a, b){
-      if (a.m !== b.m) return a.m - b.m;
+      if (st.field !== "added" && a.m !== b.m) return a.m - b.m;
       var x = typeof a.it[st.field] === "number" ? a.it[st.field] : neutral;
       var y = typeof b.it[st.field] === "number" ? b.it[st.field] : neutral;
-      return st.desc ? y - x : x - y;
+      return (st.desc ? y - x : x - y) || a.m - b.m;
     });
     return rows.map(function(r){ return r.it; });
   }
@@ -1229,6 +1229,7 @@
     st.settled = false;
     st.searched = false;
     st.token = null;
+    st.challengeUntil = 0;
     st.pending = [];
     nohashSeq = 0;
     renderTip();
@@ -1251,13 +1252,14 @@
       if (st.busy){
         abortSearch("搜索超时");
       }
-    }, WATCHDOG_MS);
+    }, WATCHDOG_MS + Math.max(0, st.challengeUntil - performance.now()));
   }
 
   function dispatch(type, d){
     if (!st.busy) return false;
     if (st.token !== null){
       if (!d || d.token !== st.token) return false;
+      if (type === "captcha") st.challengeUntil = performance.now() + d.wait_ms;
       resetWatchdog();
       return true;
     }
@@ -1695,6 +1697,7 @@
 
   function buildHooks(){
     return {
+      captcha: function(d){ dispatch("captcha", d); },
       start: function(d){
         if (!dispatch("start", d)) return;
         var one = st.strip[d.key];
@@ -1723,7 +1726,10 @@
         setProgress();
         var name = st.names[d.key] || d.key;
         var ss = d.state || (d.err ? "err" : (d.count ? "ok" : "empty"));
-        if (ss === "err"){
+        if (d.outcome === "cancel"){
+          st.lines.push({text: name + "：已停止", bad: false});
+          st.strip[d.key] = {state:"cancel"};
+        } else if (ss === "err"){
           st.lines.push({text: name + "：失败（" + (d.err || "请求失败") + "）", bad: true});
           st.failed += 1;
           drawerShow(name, "失败", true);

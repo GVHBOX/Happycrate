@@ -11,7 +11,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Happycrate v1.0.4.12",
+        "title": "Happycrate v1.0.4.25",
         "width": 1400,
         "height": 900,
         "minWidth": 960,
@@ -29,6 +29,12 @@
           "identifier": "default",
           "description": "主窗口的默认权限",
           "windows": ["main"],
+          "permissions": ["core:default", "core:window:allow-start-dragging"]
+        },
+        {
+          "identifier": "challenge-bar",
+          "description": "人机验证浮窗顶栏权限",
+          "webviews": ["fetch-*-bar"],
           "permissions": ["core:default", "core:window:allow-start-dragging"]
         }
       ]

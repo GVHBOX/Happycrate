@@ -103,7 +103,7 @@ pub fn search<F: Fetch + Sync>(
     timeout: u64,
 ) -> SourceResult<Vec<Item>> {
     let started = Instant::now();
-    let deadline = started + Duration::from_secs(timeout.max(1));
+    let mut deadline = started + Duration::from_secs(timeout.max(1));
     let root = base_of(base, default_base("bt4g"));
     let referer = format!("{root}/");
     let first = page_no.max(1);
@@ -114,13 +114,15 @@ pub fn search<F: Fetch + Sync>(
     for offset in 0..LIST_PAGES {
         let url = list_url(&root, query, first + offset);
         let text = if offset == 0 {
-            fetch.fetch(
+            let page_text = fetch.fetch(
                 Req::get(&url)
                     .referer(&referer)
                     .header("Accept", "text/html,application/xhtml+xml,*/*;q=0.9")
                     .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
                     .deadline(deadline),
-            )?
+            )?;
+            deadline = Instant::now() + Duration::from_secs(timeout.max(1));
+            page_text
         } else {
             let outcome = fetch
                 .fetch_many(vec![

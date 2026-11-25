@@ -29,7 +29,7 @@ Rust + Tauri 2 重写版。**迁移已于 2026-09 完成**（v1.0.3 已发布）
 
 | 依赖 | 理由 |
 |---|---|
-| `tauri` | 宿主：无边框窗口 + WebView2 + IPC |
+| `tauri`（unstable） | 宿主：无边框窗口 + WebView2 + IPC；`unstable` 用于多视图 `Window::add_child`（验证浮窗独立自绘顶栏，零新增 crate） |
 | `serde` / `serde_json` | 三份 JSON 的读写与 IPC 载荷 |
 | `reqwest`（rustls-tls-native-roots · gzip · brotli · http2） | HTTP。native-roots 读系统根证书（这些站点证书链杂，webpki 会误报） |
 | `tokio`（rt-multi-thread · sync · time） | reqwest 的运行时；sync/time 支持请求与退避的即时取消与单调硬期限，不引新依赖 |
@@ -232,6 +232,13 @@ python tools/check_front_hygiene.py     # 铁律 2：界面文案
   - `tests/web_fetch_queue.rs` 增批量顺序与批量取消两条单测。
   - 真机实测（tokyo hot）：bt4g 15 → 60 条（4 页 × 15，15.1 秒）；
     btdig 160 条耗时 20 秒 → 8.5 秒；整次搜索 28.4 秒自然收尾。
+
+- **v1.0.4.22**：搜索等待已弹出的人机验证。关闭验证显示「已停止」，本次结果不写入搜索缓存。
+  取数窗口按浏览器实际提交的地址接收结果页，支持重定向。
+- **v1.0.4.23**：搜索结果默认按时间从新到旧排列。
+- **v1.0.4.24**：数据源管理提供 JavDB 手动登录。登录窗口与取数共用独立 WebView2 无痕会话，
+  退出应用后结束。区分登录要求与人机验证拦截。
+- **v1.0.4.25**：验证窗遇到页面加载错误时保留错误页。验证后的 HTTP 错误按请求失败处理。
 
 ## 7. 教训精选（每条都真踩过）
 

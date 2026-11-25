@@ -9,7 +9,7 @@ use crate::util::{
 
 pub const DETAILS: usize = 12;
 pub const MAX_HITS: usize = 300;
-pub const LOGIN_TEXT: &str = "部分影片需登入 JavDB 查看";
+pub const LOGIN_TEXT: &str = crate::outcome::LOGIN_TEXT;
 
 fn starts_ci(chars: &[char], needle: &str, at: usize) -> bool {
     let needle: Vec<char> = needle.chars().collect();
@@ -183,7 +183,7 @@ pub fn login_wall(text: &str) -> bool {
             }
             if starts_ci(&chars, "登", j) {
                 let mut k = j + 1;
-                if k < chars.len() && (chars[k] == '入' || chars[k] == '錄') {
+                if k < chars.len() && matches!(chars[k], '入' | '錄' | '录') {
                     k += 1;
                     while k < chars.len() && chars[k].is_whitespace() {
                         k += 1;
@@ -268,11 +268,11 @@ pub fn search<F: Fetch + Sync>(base: &str, query: &str, page_no: i64, fetch: &F)
         return Err(err.clone());
     }
 
-    let walled = failed.values().filter(|e| matches!(e, SourceError::Blocked(_))).count();
     let found: Vec<Vec<Item>> = details.into_values().collect();
-    let got_magnets = found.iter().any(|group| !group.is_empty());
-    if walled > 0 && !got_magnets {
-        return Err(SourceError::Blocked(LOGIN_TEXT.to_string()));
+    if found.iter().all(Vec::is_empty) {
+        if let Some(error) = failed.values().find(|error| matches!(error, SourceError::Blocked(_))) {
+            return Err(error.clone());
+        }
     }
     if found.is_empty() {
         if let Some(exc) = failed.values().next() {
